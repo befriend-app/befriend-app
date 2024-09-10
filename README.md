@@ -37,6 +37,11 @@ node scripts/ios_install.js
 
     ##### Todo
 
+### Plugins
+
+```
+cordova plugin add cordova-plugin-local-notification
+```
 
 ## Building
 
