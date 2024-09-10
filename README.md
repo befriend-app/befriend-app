@@ -17,6 +17,7 @@ cd befriend-app
 ```
 
 2. **Install Cordova**
+
 `npm install -g cordova`
 
 
@@ -26,24 +27,19 @@ cordova platform add ios
 cordova platform add android
 ```
 
-4. **Requirements**
+4. **iOS**
 
-Check for remaining installation requirements
 ```
-cordova requirements
+node scripts/ios_install.js
 ```
+
+5. **Android**
+
+    ##### Todo
+
+
+## Building
 
 ### iOS
 
-```
-npm install -g ios-deploy
-sudo gem install cocoapods
-```
-
-##### Todo
-System without Xcode installed
-
-### Android
-
-##### Todo
-
+`cordova build ios`
