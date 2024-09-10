@@ -30,7 +30,7 @@ cordova platform add android
 4. **iOS**
 
 ```
-node scripts/ios_install.js
+node scripts/install/ios.js
 ```
 
 5. **Android**
@@ -45,6 +45,31 @@ cordova plugin add cordova-plugin-local-notification
 
 ## Building
 
-### iOS
+### iOS and Android
+`
+node scripts/build/build.js
+`
 
-`cordova build ios`
+### Development
+
+```
+node scripts/build/build.js --dev
+
+# custom dev host:port
+node scripts/build/build.js --dev http://192.168.1.1:3001
+```
+
+### iOS only
+
+`node scripts/build/build.js --ios`
+
+### Android only
+
+`node scripts/build/build.js --android`
+
+## Serve Development
+
+`node scripts/dev/dev.js`
+
+
+
