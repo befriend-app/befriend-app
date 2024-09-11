@@ -20,20 +20,24 @@ cd befriend-app
 
 `npm install -g cordova`
 
+3. **Install Packages**
 
-3. **Add platforms**
+`npm install`
+
+
+4. **Add platforms**
 ```
 cordova platform add ios
 cordova platform add android
 ```
 
-4. **iOS**
+5. **iOS**
 
 ```
 node scripts/install/ios.js
 ```
 
-5. **Android**
+6. **Android**
 
     ##### Todo
 
@@ -47,29 +51,29 @@ cordova plugin add cordova-plugin-local-notification
 
 ### iOS and Android
 `
-node scripts/build/build.js
+node scripts/build/device.js
 `
 
 ### Development
 
 ```
-node scripts/build/build.js --dev
+node scripts/build/device.js --dev
 
 # custom dev host:port
-node scripts/build/build.js --dev http://192.168.1.1:3001
+node scripts/build/device.js --dev http://192.168.1.1:3001
 ```
 
 ### iOS only
 
-`node scripts/build/build.js --ios`
+`node scripts/build/device.js --ios`
 
 ### Android only
 
-`node scripts/build/build.js --android`
+`node scripts/build/device.js --android`
 
 ## Serve Development
 
-`node scripts/dev/dev.js`
+`node scripts/dev/serve.js`
 
 
 

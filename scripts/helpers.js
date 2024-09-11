@@ -3,6 +3,11 @@ const fs = require('fs')
 module.exports = {
     isMac: process.platform === 'darwin',
     isWindows: process.platform.startsWith('win'),
+    dateTimeStr: function () {
+        let date = new Date();
+
+        return date.toISOString().slice(0, 10) + ' ' + date.toISOString().substring(11, 19);
+    },
     devPort: function () {
         return parseInt(process.env.DEV_PORT || 3001);
     },
@@ -102,8 +107,6 @@ module.exports = {
     },
     writeFile: function (file_path, data) {
         return new Promise(async (resolve, reject) => {
-            const fs = require('fs');
-
             fs.writeFile(file_path, data, (err) => {
                 if (err) {
                     console.error(err);

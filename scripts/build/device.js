@@ -1,8 +1,8 @@
 let {devPort, joinPaths, loadScriptEnv, readFile, repoRoot, writeFile, execCmd} = require('../helpers');
 
-const yargs = require('yargs');
-
 loadScriptEnv();
+
+const yargs = require('yargs');
 
 const args = yargs.argv;
 
@@ -86,8 +86,22 @@ function setDocumentDevHost() {
         dev.is_dev = true;
 
         if(typeof args.dev === 'string') {
-            dev.host = args.dev;
+            if(args.dev.includes('http')) {
+                dev.host = args.dev;
+            } else {
+                dev.host = `http://${args.dev}`;
+            }
         }
+    }
+
+    console.log({
+        building: 'app: js/css'
+    });
+
+    try {
+        await require('app').build(null, args.min);
+    } catch(e) {
+
     }
 
     console.log({
