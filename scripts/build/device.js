@@ -1,4 +1,6 @@
-let {devPort, joinPaths, loadScriptEnv, readFile, repoRoot, writeFile, execCmd} = require('../helpers');
+let {devPort, joinPaths, loadScriptEnv, readFile, repoRoot, writeFile, execCmd, checkPathExists, listFilesDir, isDirF,
+    copyFile
+} = require('../helpers');
 
 loadScriptEnv();
 
@@ -68,6 +70,72 @@ function setDocumentDevHost() {
     });
 }
 
+function copyIconsIOS() {
+    return new Promise(async (resolve, reject) => {
+         let asset_dir = null;
+
+         let image_dir = null;
+
+         let ios_dir = joinPaths(repoRoot(), 'platforms', 'ios');
+
+         try {
+             let platform_exists = await checkPathExists(ios_dir);
+
+             if(platform_exists) {
+                 //level 1
+                 let level_1_files = await listFilesDir(ios_dir);
+
+                 for(let f of level_1_files) {
+                     let level_1_path = joinPaths(ios_dir, f);
+
+                     let is_dir = await isDirF(level_1_path);
+
+                     if(is_dir) {
+                         let level_2_files = await listFilesDir(level_1_path);
+
+                         for(let f of level_2_files) {
+                             if(f.includes('Assets.xcassets')) {
+                                 asset_dir = joinPaths(level_1_path, f);
+                             }
+
+                             if(f.includes('Images.xcassets')) {
+                                 image_dir = joinPaths(level_1_path, f);
+                             }
+
+                             if(asset_dir && image_dir) {
+                                 break;
+                             }
+                         }
+                     }
+
+                     if(asset_dir && image_dir) {
+                         break;
+                     }
+                 }
+
+                 if(asset_dir && image_dir) {
+                     let image_icon_dir = joinPaths(image_dir, 'AppIcon.appiconset');
+                     let asset_icon_dir = joinPaths(asset_dir, 'AppIcon.appiconset');
+
+                     let image_files = await listFilesDir(image_icon_dir);
+
+                     for(let f of image_files) {
+                        try {
+                            let from = joinPaths(image_icon_dir, f);
+                            let to = joinPaths(asset_icon_dir, f);
+                            await copyFile(from, to);
+                        } catch(e) {
+
+                        }
+                     }
+                 }
+             }
+         } catch(e) {
+             console.error(e);
+         }
+    });
+}
+
 (async function() {
     if(args.ios) {
         is_ios = true;
@@ -129,6 +197,7 @@ function setDocumentDevHost() {
     // ios
     if(is_ios) {
         try {
+            await copyIconsIOS();
             await execCmd(`cordova build ios`);
         } catch(e) {
             console.error(e);

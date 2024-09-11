@@ -16,28 +16,27 @@ git clone https://github.com/befriend-app/befriend-app
 cd befriend-app
 ```
 
-2. **Install Cordova**
+2. **Install packages**
 
-`npm install -g cordova`
+```
+npm install -g cordova
+npm install cordova-icon -g
+npm install
+```
 
-3. **Install Packages**
-
-`npm install`
-
-
-4. **Add platforms**
+3. **Add platforms**
 ```
 cordova platform add ios
 cordova platform add android
 ```
 
-5. **iOS**
+4. **iOS**
 
 ```
 node scripts/install/ios.js
 ```
 
-6. **Android**
+5. **Android**
 
     ##### Todo
 

@@ -18,6 +18,7 @@ function loadCSS() {
             };
 
             link.setAttribute("href", css_link);
+
             document.getElementsByTagName("head")[0].appendChild(link);
         } catch (e) {
             console.error(e);

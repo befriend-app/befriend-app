@@ -3,6 +3,28 @@ const fs = require('fs')
 module.exports = {
     isMac: process.platform === 'darwin',
     isWindows: process.platform.startsWith('win'),
+    checkPathExists: function(p) {
+        return new Promise((resolve, reject) => {
+            fs.exists(p, function (exists) {
+                let bool = exists ? true : false;
+
+                return resolve(bool);
+            });
+        });
+    },
+    copyFile: function(from, to) {
+        return new Promise(async (resolve, reject) => {
+            let fs = require('fs');
+
+            fs.copyFile(from, to, function (err) {
+                if (err) {
+                    return reject();
+                }
+
+                resolve();
+            })
+        });
+    },
     dateTimeStr: function () {
         let date = new Date();
 
@@ -27,6 +49,18 @@ module.exports = {
                         stdout: stdout
                     });
                 }
+            });
+        });
+    },
+    isDirF: function(p) {
+        return new Promise((resolve, reject) => {
+            fs.lstat(p, (err, stats) => {
+
+                if(err) {
+                    return reject(err);
+                }
+
+                return resolve(stats.isDirectory());
             });
         });
     },
@@ -59,6 +93,28 @@ module.exports = {
 
             return part.trim().replace(re, '');
         }).filter(x=>x.length).join(slash)
+    },
+    listFilesDir: function(dir) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let exists = await module.exports.checkPathExists(dir);
+
+                if(!exists) {
+                    return resolve([]);
+                }
+            } catch (e) {
+                return reject(e);
+            }
+
+            fs.readdir(dir, function (err, filesData) {
+                //handling error
+                if (err) {
+                    return reject(err);
+                }
+
+                resolve(filesData);
+            });
+        });
     },
     loadScriptEnv: function () {
         let repo_root = module.exports.repoRoot();
