@@ -10,15 +10,15 @@ window['befriend'] = {
             ]);
 
             cordova.plugins.notification.local.schedule({
-                title: 'Coffee',
-                text: '10:30 am',
+                title: 'Invite: Coffee with Eugene',
+                text: '10:30 am at Dolores Park',
                 actions: [
                     { id: 'yes', title: 'Yes' },
                     { id: 'no',  title: 'No' }
                 ],
                 foreground: true,
                 smallIcon: 'res://n_icon.png',
-                icon: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzfXKe6Yfjr6rCtR6cMPJB8CqMAYWECDtDqH-eMnerHHuXv9egrw'
+                // icon: ''
             });
 
             resolve();

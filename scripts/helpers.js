@@ -25,6 +25,51 @@ module.exports = {
             })
         });
     },
+    createDirectoryIfNotExistsRecursive: function(dirname) {
+        return new Promise(async (resolve, reject) => {
+            let slash = '/';
+
+            let directories_backwards = [dirname];
+            let minimize_dir = dirname;
+            let directories_needed = [];
+            let directories_forwards = [];
+
+            // backward slashes for windows
+            if(module.exports.isWindows) {
+                slash = '\\';
+            }
+
+            while (minimize_dir = minimize_dir.substring(0, minimize_dir.lastIndexOf(slash))) {
+                directories_backwards.push(minimize_dir);
+            }
+
+            //stop on first directory found
+            for(const d in directories_backwards) {
+                if(!(fs.existsSync(directories_backwards[d]))) {
+                    directories_needed.push(directories_backwards[d]);
+                } else {
+                    break;
+                }
+            }
+
+            //no directories missing
+            if(!directories_needed.length) {
+                return resolve();
+            }
+
+            // make all directories in ascending order
+            directories_forwards = directories_needed.reverse();
+
+            for(const d in directories_forwards) {
+                try {
+                    fs.mkdirSync(directories_forwards[d]);
+                } catch(e) {
+                }
+            }
+
+            return resolve();
+        });
+    },
     dateTimeStr: function () {
         let date = new Date();
 
@@ -183,6 +228,16 @@ module.exports = {
     },
     writeFile: function (file_path, data) {
         return new Promise(async (resolve, reject) => {
+            let dir_name = require('path').dirname(file_path);
+
+            try {
+                if(!(await module.exports.checkPathExists(dir_name))) {
+                    await module.exports.createDirectoryIfNotExistsRecursive(dir_name);
+                }
+            } catch(e) {
+
+            }
+
             fs.writeFile(file_path, data, (err) => {
                 if (err) {
                     console.error(err);
