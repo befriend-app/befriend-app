@@ -1,6 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-
-<widget id="app.befriend" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="app.befriend" version="1.0.0" xmlns:android="http://schemas.android.com/apk/res/android">
     <name>Befriend</name>
     <description>Befriend App</description>
     <author email="eugene@befriend.app">
@@ -9,4 +8,20 @@
     <content src="index.html" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
+
+    <platform name="android">
+        <config-file parent="/*" target="AndroidManifest.xml">
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+            <uses-permission android:name="android.permission.INTERNET" />
+        </config-file>
+        <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
+            <application android:usesCleartextTraffic="true" />
+        </edit-config>
+    </platform>
+
+    <preference name="android-minSdkVersion" value="21" />
+    <preference name="android-targetSdkVersion" value="33" />
+    <preference name="android-compileSdkVersion" value="33" />
+    <preference name="scheme" value="http" />
+    <preference name="Fullscreen" value="true" />
 </widget>

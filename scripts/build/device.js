@@ -1,19 +1,28 @@
-let {devPort, joinPaths, loadScriptEnv, readFile, repoRoot, writeFile, execCmd, checkPathExists, listFilesDir, isDirF,
+let {devPort, joinPaths, loadScriptEnv, makeDir, readFile, repoRoot, writeFile, execCmd, checkPathExists, listFilesDir, isDirF,
     copyFile
 } = require('../helpers');
 
 loadScriptEnv();
 
 const yargs = require('yargs');
+const gm = require("gm").subClass({ imageMagick: '7+' });
 
 const args = yargs.argv;
 
 let is_ios = false;
 let is_android = false;
 
+let no_icon = args.skip_icon;
+
 let dev = {
     is_dev: false,
     host: null
+};
+
+let icons = {
+    path: `resources/icon.png`,
+    foreground: `resources/android/foreground.png`,
+    background: `resources/android/background.png`
 };
 
 let dev_variable_str = `let dev_host =`;
@@ -136,6 +145,163 @@ function copyIconsIOS() {
     });
 }
 
+function setSplashAndroid() {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let splash_path = joinPaths(repoRoot(), `platforms/android/app/src/main/res/drawable`, `ic_cdv_splashscreen.xml`);
+
+            await writeFile(splash_path, `
+<vector xmlns:android="http://schemas.android.com/apk/res/android">
+</vector>`);
+        } catch(e) {
+
+        }
+
+        resolve();
+    });
+}
+
+function setAndroidUserAgent(ua) {
+    return new Promise(async (resolve, reject) => {
+        let android_dir = joinPaths(repoRoot(), 'platforms/android');
+        let config_loc = joinPaths(android_dir, 'app/src/main/res/xml/config.xml');
+        let config_data = require('fs').readFileSync(config_loc).toString();
+        let config_lines = config_data.split('\n');
+
+        let ua_str = `\t<preference name="OverrideUserAgent" value="${ua}" />`;
+
+        let lines = [];
+
+        for(let l of config_lines) {
+            if(!l.includes('OverrideUserAgent')) {
+                lines.push(l);
+            }
+        }
+
+        let new_str = lines.join('\n');
+        new_str = new_str.replace('</widget>', `${ua_str}
+</widget>`);
+
+        require('fs').writeFileSync(config_loc, new_str);
+
+        resolve();
+    });
+
+}
+
+function generateIconsAndroid() {
+    function createIcon(input, output, dim) {
+        return new Promise(async (resolve, reject) => {
+            await gm(input)
+                .resize(dim, dim)
+                .write(output, function (err) {
+                   if(err) {
+                       return reject(err);
+                   }
+
+                   resolve();
+                });
+        });
+    }
+
+    return new Promise(async (resolve, reject) => {
+        let source_file = joinPaths(repoRoot(), icons.path);
+
+        let foreground_source = joinPaths(repoRoot(), icons.foreground);
+        let background_source = joinPaths(repoRoot(), icons.background);
+
+        let output_root = joinPaths(repoRoot(), 'platforms/android/app/src/main/res');
+
+        let output_dirs = [
+            'mipmap',
+            'drawable'
+        ];
+
+        let output_name = 'ic_launcher.png';
+
+        //update icons
+        let icon_sizes = {
+            'hdpi': '100',
+            'mdpi': '50',
+            'ldpi': '30',
+            'xhdpi': '150',
+            'xxhdpi': '300',
+            'xxxhdpi': '600'
+        };
+
+        //without foreground
+        for(let i in icon_sizes) {
+            let dim = icon_sizes[i];
+
+            for(let od of output_dirs) {
+                let output_folder = require('path').join(output_root, `${od}-${i}`);
+
+                if(!(await checkPathExists(output_folder))) {
+                    try {
+                        await makeDir(output_folder);
+                    } catch(e) {
+
+                    }
+                }
+
+                let p_out = joinPaths(output_folder, output_name);
+
+                try {
+                    await createIcon(source_file, p_out, dim);
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+
+            //drawable
+            try {
+                await createIcon(source_file, joinPaths(output_root, 'drawable', output_name), dim);
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        //with foreground/background
+        let res_dirs = await listFilesDir(output_root);
+
+        for(let size in icon_sizes) {
+            let dim = icon_sizes[size];
+
+            for(let folder of res_dirs) {
+                if(folder.includes(`-${size}-v`)) {
+                    // foreground
+                    let foreground_out = joinPaths(output_root, folder, `ic_launcher_foreground.png`);
+
+                    try {
+                        await createIcon(foreground_source, foreground_out, dim);
+                    } catch (e) {
+                        console.error(e);
+                    }
+
+                    // background
+                    let background_out = joinPaths(output_root, folder, `ic_launcher_background.png`);
+
+                    try {
+                        await createIcon(background_source, background_out, dim);
+                    } catch (e) {
+                        console.error(e);
+                    }
+                }
+            }
+        }
+
+        //set splash screen
+        try {
+            await setSplashAndroid();
+        } catch(e) {
+
+        }
+
+        resolve();
+    });
+}
+
+
 (async function() {
     if(args.ios) {
         is_ios = true;
@@ -197,7 +363,11 @@ function copyIconsIOS() {
     // ios
     if(is_ios) {
         try {
-            await copyIconsIOS();
+            if(!no_icon) {
+                await execCmd(`cordova-icon --icon=${icons.path}`);
+                await copyIconsIOS();
+            }
+
             await execCmd(`cordova build ios`);
         } catch(e) {
             console.error(e);
@@ -207,7 +377,13 @@ function copyIconsIOS() {
     //android
     if(is_android) {
         try {
+            await setAndroidUserAgent("OS: Android")
+
             await execCmd(`cordova build android`);
+
+            if(!no_icon) {
+                await generateIconsAndroid();
+            }
         } catch(e) {
             console.error(e);
         }

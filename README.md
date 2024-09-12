@@ -5,6 +5,8 @@
 Ensure you have the following installed on your machine:
 
 - [Node.js](https://nodejs.org/)
+- [Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12)
+- [Android Studio](https://developer.android.com/studio)
 
 
 ### Installation
@@ -12,38 +14,40 @@ Ensure you have the following installed on your machine:
 1. **Clone repository**
 
 ```
-git clone https://github.com/befriend-app/befriend-app
-cd befriend-app
+    git clone https://github.com/befriend-app/befriend-app
+    cd befriend-app
 ```
 
 2. **Install packages**
 
 ```
-npm install -g cordova
-npm install cordova-icon -g
-npm install
+    npm install -g cordova
+    npm install cordova-icon -g
+    npm install
 ```
 
 3. **Add platforms**
 ```
-cordova platform add ios
-cordova platform add android
+    cordova platform add ios@7
+    cordova platform add android@12
 ```
 
 4. **iOS**
 
 ```
-node scripts/install/ios.js
+    node scripts/install/ios.js
 ```
 
 5. **Android**
 
-    ##### Todo
+```
+    node scripts/install/android.js
+```
 
 ### Plugins
 
 ```
-cordova plugin add cordova-plugin-local-notification
+    cordova plugin add https://github.com/katzer/cordova-plugin-local-notifications
 ```
 
 ## Building
@@ -70,7 +74,7 @@ node scripts/build/device.js --dev http://192.168.1.1:3001
 
 `node scripts/build/device.js --android`
 
-## Serve Development
+## Dev Server
 
 `node scripts/dev/serve.js`
 

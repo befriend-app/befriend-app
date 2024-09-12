@@ -18,6 +18,12 @@
         <meta name="color-scheme" content="light dark">
 
         <title>Befriend</title>
+
+        <style>
+            body {
+                background: white;
+            }
+        </style>
     </head>
 
     <body>
@@ -53,13 +59,12 @@
 
     function loadCordova() {
         return new Promise(async (resolve, reject) => {
-            if(!(window.location.href.startsWith(`file://`))) {
+            //check if app (cordova.js)
+
+            if(!is_app) {
                 return resolve();
             }
 
-            window.is_app = true;
-
-            //check if cordova.js exists (app / web)
             let file_name = 'cordova.js';
 
             let cordovaJS = document.createElement("script");
@@ -168,7 +173,7 @@
 <script>
     let js_name = 'app.js';
 
-    window.is_app = false;
+    window.is_app = true;
     window.is_ios = false;
     window.is_android = false;
 

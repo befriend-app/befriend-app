@@ -3,6 +3,16 @@ const {execCmd, isMac, isWindows} = require('../helpers');
 const fs = require('fs');
 const path = require('path');
 
+function getPlatformCmd(cmd) {
+    if(isMac) {
+        return cmd.mac;
+    }
+
+    if(isWindows) {
+        return cmd.windows;
+    }
+}
+
 function iosTargetVersion() {
     // https://github.com/apache/cordova-ios/issues/1379#issuecomment-2052414835
 
@@ -47,12 +57,18 @@ function iosTargetVersion() {
 
     let requirements = {
         "ios-deploy": {
-            error_string: "ios-deploy was not found",
-            install_cmd: "sudo npm install -g ios-deploy"
+            error_string: "ios-deploy: not installed",
+            install_cmd: {
+                mac: ["sudo npm install -g ios-deploy"],
+                windows: []
+            }
         },
         "cocoapods": {
-            error_string: "CocoaPods was not found",
-            install_cmd: "sudo gem install cocoapods"
+            error_string: "CocoaPods: not installed",
+            install_cmd: {
+                mac: ["sudo gem install cocoapods"],
+                windows: []
+            }
         },
     };
 
@@ -69,11 +85,16 @@ function iosTargetVersion() {
         //ios deploy
         let ios_deploy = requirements['ios-deploy'];
 
-        if(err.stderr && err.stderr.includes(ios_deploy.error_string)) {
+        if(err.stdout && err.stdout.includes(ios_deploy.error_string)) {
             console.log("Installing: ios-deploy");
 
             try {
-                 await execCmd(ios_deploy.install_cmd);
+                let cmds = getPlatformCmd(ios_deploy.install_cmd);
+
+                for(let cmd of cmds) {
+                    await execCmd(cmd);
+                }
+
                 console.log("ios-deploy: installed successfully");
             } catch(e) {
                 console.error(e);
@@ -83,11 +104,16 @@ function iosTargetVersion() {
         //cocoapods
         let cocoapods = requirements['cocoapods'];
 
-        if(err.stderr && err.stderr.includes(cocoapods.error_string)) {
+        if(err.stdout && err.stdout.includes(cocoapods.error_string)) {
             console.log("Installing: cocoapods");
 
             try {
-                await execCmd(cocoapods.install_cmd);
+                let cmds = getPlatformCmd(cocoapods.install_cmd);
+
+                for(let cmd of cmds) {
+                    await execCmd(cmd);
+                }
+
                 console.log("cocoapods: installed successfully");
             } catch(e) {
                 console.error(e);

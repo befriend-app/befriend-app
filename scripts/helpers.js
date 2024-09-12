@@ -125,6 +125,26 @@ module.exports = {
 
         require('dotenv').config();
     },
+    makeDir: function (dir) {
+        return new Promise(async (resolve, reject) => {
+            let exists = await module.exports.checkPathExists(dir);
+
+            if(exists) {
+                resolve();
+            } else {
+                try {
+                    fs.mkdir(dir, function(err) {
+                        if (err) {
+                            return reject();
+                        }
+
+                        return resolve();
+                    });
+                } catch(e) {
+                }
+            }
+        });
+    },
     readFile: function(p, json) {
         return new Promise((resolve, reject) => {
             fs.readFile(p, function (err, data) {
