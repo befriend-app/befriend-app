@@ -142,6 +142,8 @@ function copyIconsIOS() {
          } catch(e) {
              console.error(e);
          }
+
+         resolve();
     });
 }
 
@@ -362,6 +364,8 @@ function generateIconsAndroid() {
 
     // ios
     if(is_ios) {
+        console.log("Build iOS");
+
         try {
             if(!no_icon) {
                 await execCmd(`cordova-icon --icon=${icons.path}`);
@@ -376,6 +380,8 @@ function generateIconsAndroid() {
 
     //android
     if(is_android) {
+        console.log("Build Android");
+
         try {
             await setAndroidUserAgent("OS: Android")
 
