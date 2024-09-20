@@ -28,6 +28,7 @@ let outputs = {
 let js_files = {
     frontend: [
         'app.js', //app first
+        'html.js',
         'helpers.js',
         'init.js', //init last
     ]

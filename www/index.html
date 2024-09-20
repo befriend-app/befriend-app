@@ -9,7 +9,9 @@
             script-src * 'unsafe-inline' 'unsafe-eval';
             style-src 'self' 'unsafe-inline' http://*:* https://* file://*;
             media-src *;
-            img-src 'self' data: content:;"
+            img-src 'self' data: content:;
+            connect-src *;
+            "
         >
 
         <meta name="format-detection" content="telephone=no">
@@ -60,10 +62,11 @@
     function loadCordova() {
         return new Promise(async (resolve, reject) => {
             //check if app (cordova.js)
-
             if(!is_app) {
                 return resolve();
             }
+
+            console.log("load cordova");
 
             let file_name = 'cordova.js';
 
@@ -89,6 +92,8 @@
             if(!is_app) {
                 return resolve();
             }
+
+            console.log("wait device ready");
 
             if(typeof cordova === 'undefined') {
                 document.addEventListener("deviceready",  function () {
@@ -178,7 +183,8 @@
     window.is_android = false;
 
     //for development
-    let dev_host = 'http://172.20.0.112:3002';
+    let dev_host = 'https://befriend-dev.ngrok.io';
+    let dev_headers = {"ngrok-skip-browser-warning": "69420"};
 
     //for production
     let hosts = {

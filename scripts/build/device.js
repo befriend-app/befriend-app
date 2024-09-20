@@ -64,7 +64,6 @@ function setDocumentDevHost() {
                     } else {
                         lines[i] = `    ${dev_variable_str} null;`;
                     }
-
                 }
             }
 
