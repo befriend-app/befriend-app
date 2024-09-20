@@ -1,0 +1,143 @@
+#activities {
+    margin-left: 30px;
+
+    .slider {
+        position: relative;
+        width: 400px;
+        max-width: calc(100vw - 60px);
+
+        span {
+            position: absolute;
+            color: white;
+            background-color: $brand_color_a;
+            padding: 6px 12px;
+            top: -5px;
+            border-radius: 6px;
+            pointer-events: none;
+        }
+    }
+
+    .range {
+        -webkit-appearance: none;
+        vertical-align: middle;
+        outline: none;
+        border: none;
+        padding: 0;
+        background: none;
+        width: 100%;
+        margin: 0;
+
+        $thumb_dim: 30px;
+
+        &::-webkit-slider-runnable-track {
+            background-color: #d7dbdd;
+            height: 6px;
+            border-radius: 3px;
+            border: 1px solid transparent;
+        }
+
+        &::-moz-range-track {
+            background-color: #d7dbdd;
+            height: 6px;
+            border-radius: 3px;
+            border: none;
+        }
+
+        &::-ms-track {
+            color: transparent;
+            border: none;
+            background: none;
+            height: 6px;
+        }
+
+        &::-ms-fill-lower {
+            background-color: #d7dbdd;
+            border-radius: 3px;
+        }
+
+        &::-ms-fill-upper {
+            background-color: #d7dbdd;
+            border-radius: 3px;
+        }
+
+        &::-ms-tooltip {
+            display: none;
+        }
+
+        &::-moz-range-thumb {
+            border-radius: 20px;
+            height: $thumb_dim;
+            width: $thumb_dim;
+            border: none;
+            background: none;
+            background-color: #606670;
+        }
+
+        &:active::-moz-range-thumb {
+            outline: none;
+        }
+
+        &::-webkit-slider-thumb {
+            -webkit-appearance: none !important;
+            border-radius: 100%;
+            background-color: #606670;
+            height: $thumb_dim;
+            width: $thumb_dim;
+            margin-top: calc(-#{$thumb_dim * .46});
+            border: 1px solid darken(lightgray, 30%);
+        }
+
+        &:active::-webkit-slider-thumb {
+            outline: none;
+        }
+
+        &::-ms-thumb {
+            border-radius: 100%;
+            background-color: #606670;
+            height: $thumb_dim;
+            width: $thumb_dim;
+            border: none;
+        }
+
+        &:active::-ms-thumb {
+            border: none;
+        }
+
+        &::-moz-range-track {
+            background-color: #606670;
+            border: none;
+        }
+
+        &::-ms-fill-lower {
+            background-color: #606670;
+        }
+
+        &::-ms-fill-upper {
+            background-color: #606670;
+        }
+
+        &::-webkit-slider-thumb {
+            background-color: #aaa;
+        }
+
+        &::-moz-range-thumb {
+            background-color: #aaa;
+        }
+
+        &::-ms-thumb {
+            background-color: #aaa;
+        }
+    }
+
+    #activity-button {
+        margin-top: 25px;
+        background: $brand_color_b;
+        width: fit-content;
+        padding: 6px 8px;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 500;
+        text-transform: uppercase;
+        border: 1px solid gray;
+    }
+}

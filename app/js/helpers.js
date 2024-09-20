@@ -12,6 +12,10 @@ function addClassEl(name, el) {
     }
 }
 
+function isNumeric(obj) {
+    return !isNaN( parseFloat(obj) ) && isFinite( obj );
+}
+
 function removeClassEl(name, el) {
     if(typeof el !== 'object') {
         el = document.getElementById(el);

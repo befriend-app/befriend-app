@@ -27,7 +27,10 @@ let outputs = {
 
 let js_files = {
     frontend: [
+        'vendor/axios.js',
         'app.js', //app first
+        'activities.js',
+        'events.js',
         'html.js',
         'helpers.js',
         'init.js', //init last

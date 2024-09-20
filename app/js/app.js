@@ -1,4 +1,7 @@
 window['befriend'] = {
+    activities: null,
+    events: null,
+    html: null,
     init: function () {
         console.log("Befriend: [init]");
 
@@ -10,6 +13,12 @@ window['befriend'] = {
                 console.error(e);
             }
 
+            //events
+            try {
+                await befriend.events.addEvents();
+            } catch(e) {
+                console.error(e);
+            }
 
             // cordova.plugins.notification.local.addActions('activity-request', [
             //     { id: 'yes', title: 'Accept' },
@@ -32,5 +41,4 @@ window['befriend'] = {
             resolve();
         });
     },
-    html: {}
 };
