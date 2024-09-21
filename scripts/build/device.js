@@ -14,6 +14,8 @@ let is_android = false;
 
 let no_icon = args.skip_icon;
 
+let api_domain = process.env.API_DOMAIN || `https://api.befriend.app`;
+
 let dev = {
     is_dev: false,
     host: null
@@ -25,7 +27,10 @@ let icons = {
     background: `resources/android/background.png`
 };
 
+let api_domain_str = `let api_domain =`;
+
 let dev_variable_str = `let dev_host =`;
+
 
 function getIPAddress() {
     let interfaces = require('os').networkInterfaces();
@@ -57,6 +62,10 @@ function setDocumentDevHost() {
 
             for(let i = 0; i < lines.length; i++) {
                 let line = lines[i];
+
+                if(line.includes(api_domain_str)) {
+                    lines[i] = `    ${api_domain_str} '${api_domain}';`;
+                }
 
                 if(line.includes(dev_variable_str)) {
                     if(dev.host) {
@@ -315,6 +324,14 @@ function generateIconsAndroid() {
     if(!args.ios && !args.android) {
         is_ios = true;
         is_android = true;
+    }
+
+    if(args.api) {
+        if(args.api.toLocaleLowerCase().includes('http')) {
+            api_domain = args.api;
+        } else {
+            api_domain = `https://${args.api}`;
+        }
     }
 
     if(args.dev) {

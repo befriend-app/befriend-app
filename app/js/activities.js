@@ -66,14 +66,34 @@ befriend.activities = {
             //button
             let button_el = document.getElementById('activity-button');
 
-            button_el.addEventListener('click', function (e) {
+            button_el.addEventListener('click', async function (e) {
                 e.preventDefault();
                 e.stopPropagation();
 
                 console.log("Activity button");
+
+                try {
+                    await befriend.activities.createNewActivity(personsCount);
+                } catch(e) {
+                    console.error(e);
+                }
             });
             
             resolve();         
+        });
+    },
+    createNewActivity: function (persons_count) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let r = await axios.post(joinPaths(api_domain, 'activities'), {
+                    persons: persons_count,
+                    filters: {}
+                });
+            } catch(e) {
+                console.error(e);
+            }
+
+            resolve();
         });
     }
 };
