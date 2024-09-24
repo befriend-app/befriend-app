@@ -1,0 +1,31 @@
+footer {
+    #navigation {
+        display: flex;
+        width: 100vw;
+        position: fixed;
+        bottom: 0;
+        padding-top: 20px;
+        padding-bottom: var(--sab);
+        background: lighten($brand_color_a, 48%);
+
+        .navigation {
+            flex-basis: 33.333%;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            //align-items: center;
+            //justify-content: center;
+
+            .icon {
+                svg {
+                    height: 24px;
+                }
+            }
+
+            .name {
+                font-weight: 400;
+                font-size: 16px;
+            }
+        }
+    }
+}

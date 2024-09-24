@@ -1,5 +1,6 @@
 @import "base";
 @import "header";
+@import "footer";
 @import "activities";
 
 //for devices with notches
@@ -13,4 +14,9 @@
 html, body {
     margin: 0;
     padding: 0;
+}
+
+#app {
+    height: 100vh;
+    height: 100dvh;
 }
