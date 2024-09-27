@@ -30,7 +30,11 @@ for (let i = 0; i < dirs.length; i++) {
     let events = ['change', 'ready'];
 
     for(let e of events) {
-        watcher.on(e, function (check) {
+        watcher.on(e, function (trigger) {
+            if(trigger && trigger.includes('_variables')) {
+                return;
+            }
+
             try {
                 build()
             } catch (e) {

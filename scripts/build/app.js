@@ -1,6 +1,6 @@
 // https://github.com/egekhter/life-minute-photos/blob/main/scripts/build_frontend.js
 
-const { joinPaths, writeFile, repoRoot, loadScriptEnv} = require('../helpers');
+const { joinPaths, writeFile, repoRoot, loadScriptEnv, readFile} = require('../helpers');
 
 loadScriptEnv();
 
@@ -25,6 +25,8 @@ let outputs = {
     css: joinPaths(repoRoot(), 'www/css/styles.css')
 };
 
+let styles_variables_file_name = `_styles_variables.js`;
+
 let js_files = {
     frontend: [
         'vendor/axios.js',
@@ -33,12 +35,51 @@ let js_files = {
         'events.js',
         'html.js',
         'helpers.js',
+        styles_variables_file_name,
         'init.js', //init last
     ]
 };
 
 let build_ip = false;
 
+
+function addStyleVariables() {
+    return new Promise(async (resolve, reject) => {
+        let styles_organized = {};
+
+        let variables_str = await readFile(joinPaths(repoRoot(), 'app/scss/_variables.scss'));
+
+        let variables_lines = variables_str.split('\n');
+
+        for(let l of variables_lines) {
+            if(l[0] === '$') {
+                let l_split = l.split(':');
+
+                l_split[1] = l_split[1].trimStart();
+
+                styles_organized[l_split[0].replace('$', '')] = l_split[1].replace(';', '');
+            }
+        }
+
+        for(let k in styles_organized) {
+            if(styles_organized[k].includes('px')) {
+                styles_organized[k] = Number.parseInt(styles_organized[k].replace('px', ''));
+            }
+        }
+
+        let file_str = `
+            befriend.styles = ${JSON.stringify(styles_organized)};
+        `;
+
+        try {
+             await writeFile(joinPaths(inputs.js, styles_variables_file_name), file_str);
+        } catch(e) {
+            console.error(e);
+        }
+
+        resolve();
+    });
+}
 
 function loadFile(fp) {
     return new Promise(async (resolve, reject) => {
@@ -106,6 +147,13 @@ module.exports = {
                 }
 
                 await writeFile(outputs.css, css_code);
+            } catch(e) {
+                console.error(e);
+            }
+
+            //scss variables to js variables
+            try {
+                await addStyleVariables();
             } catch(e) {
                 console.error(e);
             }

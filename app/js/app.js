@@ -2,6 +2,7 @@ window['befriend'] = {
     activities: null,
     events: null,
     html: null,
+    styles: null,
     els: {},
     init: function () {
         console.log("Befriend: [init]");
