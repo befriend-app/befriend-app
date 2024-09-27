@@ -1,3 +1,4 @@
+@import "variables";
 @import "base";
 @import "header";
 @import "footer";
@@ -19,4 +20,8 @@ html, body {
 #app {
     height: 100vh;
     height: 100dvh;
+}
+
+.section__title {
+    font-size: 20px;
 }

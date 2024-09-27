@@ -1,5 +1,73 @@
 #activities {
-    margin-left: 30px;
+    margin: 0 $app_margin_lr;
+
+    margin-top: 15px;
+    //margin-left: 30px;
+
+    .section__title {
+        margin-bottom: 10px;
+    }
+
+    .activities {
+        display: flex;
+        justify-content: center;
+
+        .activity {
+            cursor: pointer;
+
+            .name {
+                $fs: 15px;
+                margin-top: 2px;
+                font-weight: 300;
+                font-size: $fs;
+                line-height: $fs;
+                text-align: center;
+            }
+        }
+
+        .level_1 {
+            $gap_lr: 10px;
+
+            $dim: 65px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px $gap_lr;
+            //justify-content: center;
+
+            .activity {
+                border: 1px solid lightgray;
+                box-sizing: border-box;
+                padding: 8px 0px;
+                border-radius: 6px;
+                flex-basis: calc(25% - #{$gap_lr});
+                display: flex;
+                justify-content: center;
+
+                .activity_wrapper {
+                    width: $dim;
+                }
+                //height: $dim;
+
+                .icon {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    margin: auto;
+
+                    svg {
+                        width: $dim * .6;
+                        height: $dim * .6;
+                    }
+                }
+            }
+        }
+
+        .level_2 {
+            height: 0;
+            background-color: #2d86c7;
+        }
+
+    }
 
     .slider {
         position: relative;

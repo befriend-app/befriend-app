@@ -2,6 +2,7 @@ window['befriend'] = {
     activities: null,
     events: null,
     html: null,
+    els: {},
     init: function () {
         console.log("Befriend: [init]");
 
@@ -9,6 +10,13 @@ window['befriend'] = {
             //html
             try {
                 await befriend.html.appInit();
+            } catch(e) {
+                console.error(e);
+            }
+
+            //activities
+            try {
+                await befriend.activities.setActivities();
             } catch(e) {
                 console.error(e);
             }

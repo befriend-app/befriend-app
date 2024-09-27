@@ -10,7 +10,10 @@ befriend.html = {
                 </header>
                 
                 <div id="activities">
-                    <h1>Choose Activity</h1>
+                    <div class="section__title">Activities</div>
+                    
+                    <div class="activities"></div>
+                    
                     <h3># Persons</h3>
                     <div class="slider">
                         <span>1</span>
@@ -50,6 +53,8 @@ befriend.html = {
         `;
 
             document.body.insertAdjacentHTML("beforeend", html);
+
+            befriend.els.activities = document.getElementById('activities');
 
             resolve();
         });

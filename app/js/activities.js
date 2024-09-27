@@ -1,4 +1,5 @@
 befriend.activities = {
+    data: null,
     events: function () {
         return new Promise(async (resolve, reject) => {
             //slider
@@ -80,6 +81,52 @@ befriend.activities = {
             });
             
             resolve();         
+        });
+    },
+    setActivities: function () {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let r = await axios.get(joinPaths(api_domain, 'activity-venues'));;
+
+                let activities = befriend.activities.data = r.data;
+
+                let html = ``;
+                let level_1_html = ``;
+
+                for(let level_1_id in activities) {
+                    let activity = activities[level_1_id];
+
+                    let icon_html = ``;
+
+                    if(activity.image) {
+                        icon_html += `<div class="image">
+                                        ${activity.image}
+                                    </div>`;
+                    } else {
+                        icon_html += `<div class="emoji">
+                                        ${activity.emoji}
+                                    </div>`;
+                    }
+
+                    level_1_html += `
+                        <div class="activity">
+                            <div class="activity_wrapper">
+                                <div class="icon">${icon_html}</div>
+                                <div class="name">${activity.name}</div>
+                            </div>
+                            <div class="level_2"></div>
+                        </div>
+                    `;
+                }
+
+                html = `
+                    <div class="level_1">${level_1_html}</div>
+                `;
+
+                befriend.els.activities.querySelector('.activities').innerHTML = html;
+            } catch(e) {
+                return reject();
+            }
         });
     },
     createNewActivity: function (persons_count) {
