@@ -28,6 +28,13 @@ befriend.html = {
                     </div>
                 </div>
                 
+                <div id="places">
+                    <div class="title">Suggested Places</div>
+                    <div class="places_container">
+                        
+                    </div>
+                </div>
+                
                 <footer>
                     <div id="navigation">
                         <div class="navigation">
@@ -58,14 +65,15 @@ befriend.html = {
             document.body.insertAdjacentHTML("beforeend", html);
 
             befriend.els.activities = document.getElementById('activities');
+            befriend.els.places = document.getElementById('places');
 
             resolve();
         });
     },
-    activities: function () {
+    activityTypes: function () {
         return new Promise(async (resolve, reject) => {
             try {
-                let r = await axios.get(joinPaths(api_domain, 'activity-venues'));
+                let r = await axios.get(joinPaths(api_domain, 'activity_types'));
 
                 let activities = befriend.activities.data = r.data;
 
@@ -78,6 +86,7 @@ befriend.html = {
                 for(let level_1_id in activities) {
                     if(activities_row.length === befriend.styles.activity_row_items) {
                         let row_html = activities_row.join('');
+
                         level_1_html += `<div class="level_1_row">
                                             ${row_html}
                                         </div>`;

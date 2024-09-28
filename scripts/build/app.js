@@ -33,6 +33,7 @@ let js_files = {
         'app.js', //app first
         'activities.js',
         'events.js',
+        'places.js',
         'html.js',
         'helpers.js',
         styles_variables_file_name,

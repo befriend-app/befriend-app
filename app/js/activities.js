@@ -20,7 +20,7 @@ befriend.activities = {
     setActivities: function () {
         return new Promise(async (resolve, reject) => {
             try {
-                await befriend.html.activities();
+                await befriend.html.activityTypes();
 
                 resolve();
             } catch(e) {
@@ -68,6 +68,8 @@ befriend.activities = {
                          befriend.activities.selected.level_2 =  null;
                          befriend.activities.selected.level_3 =  null;
 
+                         befriend.places.hidePlaces();
+
                          return;
                      } else { //remove active from any previously selected activity
                          removeElsClass(els, 'active');
@@ -75,6 +77,7 @@ befriend.activities = {
                          befriend.activities.selected.level_1 =  activity;
                          befriend.activities.selected.level_2 =  null;
                          befriend.activities.selected.level_3 =  null;
+                         befriend.places.displayPlaces(activity);
                      }
 
                      let prev_level_2 = befriend.els.activities.querySelector('.level_2.show');
@@ -210,12 +213,16 @@ befriend.activities = {
                         befriend.activities.selected.level_2 =  null;
                         befriend.activities.selected.level_3 =  null;
 
+                        befriend.places.displayPlaces(befriend.activities.selected.level_1);
+
                         return;
                     } else { //remove active from any previously selected activity
                         removeElsClass(level_2_activity_els, 'active');
                         addClassEl('active', this);
                         befriend.activities.selected.level_2 =  level_2_activity;
                         befriend.activities.selected.level_3 =  null;
+
+                        befriend.places.displayPlaces(befriend.activities.selected.level_2);
                     }
 
                     let prev_level_3 = befriend.els.activities.querySelector('.level_3.show');
@@ -346,10 +353,14 @@ befriend.activities = {
                         removeClassEl('active', this);
                         befriend.activities.selected.level_3 = null;
 
+                        befriend.places.displayPlaces(befriend.activities.selected.level_2);
+
                     } else { //remove active from any previously selected activity
                         removeElsClass(level_3_activity_els, 'active');
                         addClassEl('active', this);
                         befriend.activities.selected.level_3 =  level_3_activity;
+
+                        befriend.places.displayPlaces(befriend.activities.selected.level_3);
                     }
 
                 });
