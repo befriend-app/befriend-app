@@ -28,11 +28,6 @@ function getElHeightHidden(el) {
     test_el.style.width = `${width}px`;
     test_el.style.removeProperty('height');
 
-
-    // for(let cl of textarea_el.classList) {
-    //     addClassEl(cl, test_el);
-    // }
-
     el.parentNode.appendChild(test_el);
 
     let height = test_el.scrollHeight;
@@ -56,6 +51,11 @@ function elHasClass(el, cl) {
     }
 
     return el.classList.contains(cl);
+}
+
+function hideLevel(level_el) {
+    removeClassEl('show', level_el);
+    level_el.style.height = '0';
 }
 
 function lastArrItem(els) {
