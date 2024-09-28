@@ -133,7 +133,10 @@
                 height: $activity_level_2_height;
 
                 .name {
-                    font-size: 13px;
+                    $fs: 13px;
+                    font-size: $fs;
+                    line-height: $fs;
+                    margin-top: 8px;
                 }
 
                 &.active {
@@ -166,6 +169,12 @@
                     justify-content: center;
                     align-items: center;
                     margin: 0;
+
+                    .image, .emoji {
+                        display: flex;
+                        flex-direction: column;
+                        height: $dim * .5;
+                    }
 
                     svg {
                         //width: $dim * .6;
