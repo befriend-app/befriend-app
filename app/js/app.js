@@ -3,12 +3,9 @@ window['befriend'] = {
     events: null,
     html: null,
     styles: null,
-    els: {},
     timeouts: {},
-    location: {
-        current: null,
-        search: null
-    },
+    location: null,
+    els: {},
     init: function () {
         console.log("Befriend: [init]");
 
@@ -30,6 +27,12 @@ window['befriend'] = {
             //events
             try {
                 await befriend.events.addEvents();
+            } catch(e) {
+                console.error(e);
+            }
+
+            try {
+                await befriend.location.init();
             } catch(e) {
                 console.error(e);
             }

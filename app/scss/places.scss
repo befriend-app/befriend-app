@@ -1,0 +1,8 @@
+#places {
+    height: 0;
+    overflow-y: hidden;
+
+    &.active {
+        height: 250px;
+    }
+}

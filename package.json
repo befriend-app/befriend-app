@@ -27,6 +27,7 @@
     "cordova-ios": "^7.1.1",
     "cordova-plugin-badge": "^0.8.9",
     "cordova-plugin-device": "^3.0.0",
+    "cordova-plugin-geolocation": "^5.0.0",
     "cordova-plugin-local-notification": "github:katzer/cordova-plugin-local-notifications"
   },
   "cordova": {
@@ -37,6 +38,9 @@
     "plugins": {
       "cordova-plugin-local-notification": {
         "ANDROID_SUPPORT_V4_VERSION": "26.+"
+      },
+      "cordova-plugin-geolocation": {
+        "GPS_REQUIRED": "true"
       }
     }
   },

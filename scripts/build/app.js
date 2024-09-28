@@ -32,10 +32,11 @@ let js_files = {
         'vendor/axios.js',
         'app.js', //app first
         'activities.js',
-        'events.js',
         'places.js',
+        'location.js',
         'html.js',
         'helpers.js',
+        'events.js',
         styles_variables_file_name,
         'init.js', //init last
     ]
