@@ -153,6 +153,8 @@ befriend.activities = {
 
                      let level_2_height = getElHeightHidden(level_2_el);
 
+                     level_2_el.setAttribute('data-prev-height', `${level_2_height}px`);
+
                      level_2_el.style.height = `${level_2_height}px`;
 
                      befriend.activities.level2Events();
@@ -280,6 +282,19 @@ befriend.activities = {
                     let level_3_height = getElHeightHidden(level_3_el);
 
                     level_3_el.style.height = `${level_3_height}px`;
+
+                    let closest_level_2_el = this.closest('.level_2');
+                    let prev_height = closest_level_2_el.getAttribute('data-prev-height');
+
+                    let total_level_2_height = parseFloat(prev_height) + level_3_height;
+
+                    closest_level_2_el.style.height = `${total_level_2_height}px`;
+
+                    
+
+
+
+
                 });
             }
 
