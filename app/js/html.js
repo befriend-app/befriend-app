@@ -10,18 +10,21 @@ befriend.html = {
                 </header>
                 
                 <div id="activities">
-                    <div class="section__title">Activities</div>
+                    <div class="activities_container">
+                        <div class="section__title">Activities</div>
                     
-                    <div class="activities"></div>
-                    
-                    <h3># Persons</h3>
-                    <div class="slider">
-                        <span>1</span>
-                        <input id="range-num-persons" class="range" type="range" value="1" min="1" max="10" step="1">
-                    </div>
-                    
-                    <div id="activity-button">
-                        Submit
+                        <div class="activities"></div>
+                        
+                        <h3># Persons</h3>
+                        
+                        <div class="slider">
+                            <span>1</span>
+                            <input id="range-num-persons" class="range" type="range" value="1" min="1" max="10" step="1">
+                        </div>
+                        
+                        <div id="activity-button">
+                            Submit
+                        </div>
                     </div>
                 </div>
                 
@@ -57,6 +60,87 @@ befriend.html = {
             befriend.els.activities = document.getElementById('activities');
 
             resolve();
+        });
+    },
+    activities: function () {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let r = await axios.get(joinPaths(api_domain, 'activity-venues'));
+
+                let activities = befriend.activities.data = r.data;
+
+                let html = ``;
+                let level_1_html = ``;
+
+                //create rows and add hidden placeholder row below each row for multi-level select
+                let activities_row = [];
+
+                for(let level_1_id in activities) {
+                    if(activities_row.length === befriend.styles.activity_row_items) {
+                        let row_html = activities_row.join('');
+                        level_1_html += `<div class="level_1_row">
+                                            ${row_html}
+                                        </div>`;
+                        level_1_html += `<div class="level_2"></div>`;
+
+                        activities_row.length = [];
+                    }
+
+                    let activity = activities[level_1_id];
+
+                    let image_html = ``;
+
+                    if(activity.image) {
+                        image_html += `<div class="image">
+                                        ${activity.image}
+                                    </div>`;
+                    } else if(activity.emoji) {
+                        image_html += `<div class="emoji">
+                                        ${activity.emoji}
+                                    </div>`;
+                    }
+
+                    let icon_html = ``;
+
+                    if(image_html) {
+                        icon_html = `<div class="icon">${image_html}</div>`;
+                    }
+
+                    let center_class = icon_html ? '' : 'center';
+
+                    activities_row.push(`
+                        <div class="activity level_1_activity" data-id="${level_1_id}">
+                            <div class="activity_wrapper ${center_class}">
+                                ${icon_html}
+                                <div class="name">${activity.name}</div>
+                            </div>
+                        </div>
+                    `);
+                }
+
+                if(activities_row.length) {
+                    let row_html = activities_row.join('');
+                    level_1_html += `<div class="level_1_row">
+                                            ${row_html}
+                                        </div>`;
+                    level_1_html += `<div class="level_2"></div>`;
+                }
+
+                html = `
+                    <div class="level_1">${level_1_html}</div>
+                `;
+
+                befriend.els.activities.querySelector('.activities').innerHTML = html;
+
+                let last_row = lastArrItem(befriend.els.activities.getElementsByClassName('level_1_row'));
+
+                last_row.style.marginBottom = '0px';
+
+                resolve();
+            } catch(e) {
+                console.error(e);
+                return reject(e);
+            }
         });
     }
 }

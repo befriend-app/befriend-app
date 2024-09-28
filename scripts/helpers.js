@@ -109,6 +109,9 @@ module.exports = {
             });
         });
     },
+    isNumeric: function(obj) {
+        return !isNaN( parseFloat(obj) ) && isFinite( obj );
+    },
     joinPaths: function () {
         let args = [];
 

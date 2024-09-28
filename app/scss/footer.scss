@@ -1,12 +1,14 @@
 footer {
+    position: fixed;
+    bottom: 0;
+
     #navigation {
         display: flex;
         width: 100vw;
-        position: fixed;
-        bottom: 0;
-        padding-top: 20px;
+        padding-top: $footer_pt;
         padding-bottom: var(--sab);
         background: lighten($brand_color_a, 48%);
+        height: $footer_h;
 
         .navigation {
             flex-basis: 33.333%;

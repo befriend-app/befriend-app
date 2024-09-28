@@ -1,11 +1,17 @@
 header {
-    margin-top: var(--sat)
+    padding-top: var(--sat);
+    padding-bottom: $header_pb;
+    position: fixed;
+    top: 0;
+    background: white;
+    width: 100vw;
 }
 
 #logo {
     margin-left: $app_margin_lr;
+    display: flex;
 
     img {
-        height: 40px;
+        height: $logo_h;
     }
 }

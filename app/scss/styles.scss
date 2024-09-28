@@ -10,14 +10,30 @@
     --sar: env(safe-area-inset-right);
     --sab: env(safe-area-inset-bottom);
     --sal: env(safe-area-inset-left);
+    --header_h: calc(#{$logo_h + $header_pb} + var(--sat));
+    --footer_full_h: calc(#{$footer_h + $footer_pt} + var(--sab));
+}
+
+//removes highlight box on click
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+//hide scrollbars
+::-webkit-scrollbar {
+    display: none; // Safari and Chrome
 }
 
 html, body {
     margin: 0;
     padding: 0;
+    min-height: 100vh;
 }
 
 #app {
+    overflow-y: hidden;
+    //min-height: 100vh;
+    //min-height: 100dvh;
     height: 100vh;
     height: 100dvh;
 }

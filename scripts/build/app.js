@@ -1,6 +1,6 @@
 // https://github.com/egekhter/life-minute-photos/blob/main/scripts/build_frontend.js
 
-const { joinPaths, writeFile, repoRoot, loadScriptEnv, readFile} = require('../helpers');
+const { joinPaths, writeFile, repoRoot, loadScriptEnv, readFile, isNumeric} = require('../helpers');
 
 loadScriptEnv();
 
@@ -63,12 +63,18 @@ function addStyleVariables() {
 
         for(let k in styles_organized) {
             if(styles_organized[k].includes('px')) {
-                styles_organized[k] = Number.parseInt(styles_organized[k].replace('px', ''));
+                styles_organized[k] = parseFloat(styles_organized[k].replace('px', ''));
+            } else if(styles_organized[k].endsWith('ms')) {
+                styles_organized[k] = parseFloat(styles_organized[k].replace('ms', ''));
+            } else if(styles_organized[k].includes('%')) {
+                styles_organized[k] = styles_organized[k].replace('%', '');
+                styles_organized[k] = styles_organized[k] / 100;
+            } else if(isNumeric(styles_organized[k])) {
+                styles_organized[k] = parseFloat(styles_organized[k]);
             }
         }
 
-        let file_str = `
-            befriend.styles = ${JSON.stringify(styles_organized)};
+        let file_str = `befriend.styles = ${JSON.stringify(styles_organized)};
         `;
 
         try {

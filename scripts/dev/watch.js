@@ -31,7 +31,7 @@ for (let i = 0; i < dirs.length; i++) {
 
     for(let e of events) {
         watcher.on(e, function (trigger) {
-            if(trigger && trigger.includes('_variables')) {
+            if(trigger && trigger.includes('variables.js')) {
                 return;
             }
 

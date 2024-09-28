@@ -4,6 +4,7 @@ window['befriend'] = {
     html: null,
     styles: null,
     els: {},
+    timeouts: {},
     init: function () {
         console.log("Befriend: [init]");
 

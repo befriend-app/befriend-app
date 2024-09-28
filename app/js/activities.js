@@ -2,6 +2,171 @@ befriend.activities = {
     data: null,
     events: function () {
         return new Promise(async (resolve, reject) => {
+            try {
+                 await befriend.activities.level1Events();
+                 await befriend.activities.sliderEvents();
+            } catch(e) {
+                console.error(e);
+            }
+
+            resolve();
+        });
+    },
+    setActivities: function () {
+        return new Promise(async (resolve, reject) => {
+            try {
+                await befriend.html.activities();
+
+                resolve();
+            } catch(e) {
+                return reject();
+            }
+        });
+    },
+    createNewActivity: function (persons_count) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let r = await axios.post(joinPaths(api_domain, 'activities'), {
+                    persons: persons_count,
+                    filters: {}
+                });
+            } catch(e) {
+                console.error(e);
+            }
+
+            resolve();
+        });
+    },
+    level1Events: function () {
+        function hideLevel(level_el) {
+            removeClassEl('show', level_el);
+            level_el.style.height = '0';
+        }
+
+        return new Promise(async (resolve, reject) => {
+             let els = befriend.els.activities.getElementsByClassName('level_1_activity');
+
+             for(let i = 0; i < els.length; i++) {
+                 let el = els[i];
+
+                 el.addEventListener('click', function (e) {
+                     e.preventDefault();
+                     e.stopPropagation();
+
+                     let parent_id = this.getAttribute('data-id');
+                     let activity = befriend.activities.data[parent_id];
+
+                     let level_2_el = this.closest('.level_1_row').nextSibling;
+
+                     //remove activity selection and hide level 2 if same activity clicked
+                     if(elHasClass(this, 'active')) {
+                         removeClassEl('active', this);
+
+                         hideLevel(level_2_el);
+                         return;
+                     } else { //remove active from any previously selected activity
+                         removeElsClass(els, 'active');
+                         addClassEl('active', this);
+                     }
+
+                     let prev_level_2 = befriend.els.activities.querySelector('.level_2.show');
+
+                     //do not proceed if no sub categories
+                     if(!activity.sub || !Object.keys(activity.sub).length) {
+                         if(prev_level_2) {
+                             hideLevel(prev_level_2);
+                         }
+
+                         return;
+                     }
+
+                     //hide other level 2s if different from this one
+                     if(prev_level_2) {
+                         if(prev_level_2 !== level_2_el) {
+                             hideLevel(prev_level_2);
+                             addClassEl('show', level_2_el);
+                         }
+                     } else {
+                         addClassEl('show', level_2_el);
+                     }
+
+                     level_2_el.setAttribute('data-parent-id', parent_id);
+
+                     let level_2_html = ``;
+
+                     let activities_level_2 = [];
+
+                     for(let level_2_id in activity.sub) {
+                         if(activities_level_2.length === befriend.styles.activity_level_2_row_items) {
+                             let row_html = activities_level_2.join('');
+
+                             level_2_html += `<div class="level_2_row">
+                                            ${row_html}
+                                        </div>`;
+
+                             level_2_html += `<div class="level_3"></div>`;
+
+                             activities_level_2.length = [];
+                         }
+
+                         let activity = befriend.activities.data[parent_id].sub[level_2_id];
+
+                         let image_html = '';
+
+                         if(activity.image) {
+                             image_html += `<div class="image">
+                                        ${activity.image}
+                                    </div>`;
+                         } else if(activity.emoji) {
+                             image_html += `<div class="emoji">
+                                        ${activity.emoji}
+                                    </div>`;
+                         }
+
+                         let icon_html = ``;
+
+                         if(image_html) {
+                             icon_html = `<div class="icon">${image_html}</div>`;
+                         }
+
+                         let center_class = icon_html ? '' : 'center';
+
+                         activities_level_2.push(`
+                            <div class="activity level_2_activity" data-id="${level_2_id}">
+                                <div class="activity_wrapper ${center_class}">
+                                    ${icon_html}
+                                    <div class="name">${activity.name}</div>
+                                </div>
+                            </div>`);
+                     }
+
+                     if(activities_level_2.length) {
+                         let row_html = activities_level_2.join('');
+                         level_2_html += `<div class="level_2_row">
+                                            ${row_html}
+                                        </div>`;
+                         level_2_html += `<div class="level_3"></div>`;
+                     }
+
+                     level_2_el.innerHTML = `<div class="level_2_container">
+                                                ${level_2_html}
+                                            </div>`;
+
+                     let last_row = lastArrItem(level_2_el.getElementsByClassName('level_2_row'));
+
+                     last_row.style.marginBottom = '0px';
+
+                     let level_2_height = getElHeightHidden(level_2_el);
+
+                     level_2_el.style.height = `${level_2_height}px`;
+                 });
+             }
+
+             resolve();
+        });
+    },
+    sliderEvents: function () {
+        return new Promise(async (resolve, reject) => {
             //slider
             let personsCount = 1;
             let sliderRange = document.getElementById('range-num-persons');
@@ -79,66 +244,6 @@ befriend.activities = {
                     console.error(e);
                 }
             });
-            
-            resolve();         
-        });
-    },
-    setActivities: function () {
-        return new Promise(async (resolve, reject) => {
-            try {
-                let r = await axios.get(joinPaths(api_domain, 'activity-venues'));;
-
-                let activities = befriend.activities.data = r.data;
-
-                let html = ``;
-                let level_1_html = ``;
-
-                for(let level_1_id in activities) {
-                    let activity = activities[level_1_id];
-
-                    let icon_html = ``;
-
-                    if(activity.image) {
-                        icon_html += `<div class="image">
-                                        ${activity.image}
-                                    </div>`;
-                    } else {
-                        icon_html += `<div class="emoji">
-                                        ${activity.emoji}
-                                    </div>`;
-                    }
-
-                    level_1_html += `
-                        <div class="activity">
-                            <div class="activity_wrapper">
-                                <div class="icon">${icon_html}</div>
-                                <div class="name">${activity.name}</div>
-                            </div>
-                            <div class="level_2"></div>
-                        </div>
-                    `;
-                }
-
-                html = `
-                    <div class="level_1">${level_1_html}</div>
-                `;
-
-                befriend.els.activities.querySelector('.activities').innerHTML = html;
-            } catch(e) {
-                return reject();
-            }
-        });
-    },
-    createNewActivity: function (persons_count) {
-        return new Promise(async (resolve, reject) => {
-            try {
-                let r = await axios.post(joinPaths(api_domain, 'activities'), {
-                    persons: persons_count,
-                    filters: {}
-                });
-            } catch(e) {
-                console.error(e);
-            }
 
             resolve();
         });
