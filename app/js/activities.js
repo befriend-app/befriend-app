@@ -1,5 +1,10 @@
 befriend.activities = {
     data: null,
+    selected: {
+        level_1: null,
+        level_2: null,
+        level_3: null,
+    },
     events: function () {
         return new Promise(async (resolve, reject) => {
             try {
@@ -58,10 +63,18 @@ befriend.activities = {
                          removeClassEl('active', this);
 
                          hideLevel(level_2_el);
+
+                         befriend.activities.selected.level_1 =  null;
+                         befriend.activities.selected.level_2 =  null;
+                         befriend.activities.selected.level_3 =  null;
+
                          return;
                      } else { //remove active from any previously selected activity
                          removeElsClass(els, 'active');
                          addClassEl('active', this);
+                         befriend.activities.selected.level_1 =  activity;
+                         befriend.activities.selected.level_2 =  null;
+                         befriend.activities.selected.level_3 =  null;
                      }
 
                      let prev_level_2 = befriend.els.activities.querySelector('.level_2.show');
@@ -183,15 +196,26 @@ befriend.activities = {
 
                     let level_3_el = this.closest('.level_2_row').nextSibling;
 
+                    let closest_level_2_el = this.closest('.level_2');
+                    let prev_height_level_2 = closest_level_2_el.getAttribute('data-prev-height');
+
                     //remove activity selection and hide level 3 if same activity clicked
                     if(elHasClass(this, 'active')) {
                         removeClassEl('active', this);
 
                         hideLevel(level_3_el);
+
+                        closest_level_2_el.style.height = prev_height_level_2;
+
+                        befriend.activities.selected.level_2 =  null;
+                        befriend.activities.selected.level_3 =  null;
+
                         return;
                     } else { //remove active from any previously selected activity
                         removeElsClass(level_2_activity_els, 'active');
                         addClassEl('active', this);
+                        befriend.activities.selected.level_2 =  level_2_activity;
+                        befriend.activities.selected.level_3 =  null;
                     }
 
                     let prev_level_3 = befriend.els.activities.querySelector('.level_3.show');
@@ -201,6 +225,8 @@ befriend.activities = {
                         if(prev_level_3) {
                             hideLevel(prev_level_3);
                         }
+
+                        closest_level_2_el.style.height = prev_height_level_2;
 
                         return;
                     }
@@ -283,22 +309,53 @@ befriend.activities = {
 
                     level_3_el.style.height = `${level_3_height}px`;
 
-                    let closest_level_2_el = this.closest('.level_2');
-                    let prev_height = closest_level_2_el.getAttribute('data-prev-height');
-
-                    let total_level_2_height = parseFloat(prev_height) + level_3_height;
+                    let total_level_2_height = parseFloat(prev_height_level_2) + level_3_height;
 
                     closest_level_2_el.style.height = `${total_level_2_height}px`;
 
-                    
-
-
-
-
+                    befriend.activities.level3Events();
                 });
             }
 
              resolve();
+        });
+    },
+    level3Events: function () {
+        return new Promise(async (resolve, reject) => {
+            let level_3_activity_els = befriend.els.activities.getElementsByClassName('level_3_activity');
+
+            for(let i = 0; i < level_3_activity_els.length; i++) {
+                let el = level_3_activity_els[i];
+
+                el.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    let level_3_el = this.closest('.level_3');
+
+                    let parent_id = level_3_el.getAttribute('data-parent-id');
+
+                    let level_2_id = level_3_el.getAttribute('data-level-2-id');
+
+                    let level_3_id = this.getAttribute('data-id');
+
+                    let level_3_activity = befriend.activities.data[parent_id].sub[level_2_id].sub[level_3_id];
+
+                    //remove activity selection and hide level 3 if same activity clicked
+                    if(elHasClass(this, 'active')) {
+                        removeClassEl('active', this);
+                        befriend.activities.selected.level_3 = null;
+
+                    } else { //remove active from any previously selected activity
+                        removeElsClass(level_3_activity_els, 'active');
+                        addClassEl('active', this);
+                        befriend.activities.selected.level_3 =  level_3_activity;
+                    }
+
+                });
+            }
+
+            resolve();
         });
     },
     sliderEvents: function () {
