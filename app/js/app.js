@@ -5,6 +5,10 @@ window['befriend'] = {
     styles: null,
     els: {},
     timeouts: {},
+    location: {
+        current: null,
+        search: null
+    },
     init: function () {
         console.log("Befriend: [init]");
 
