@@ -19,9 +19,22 @@ befriend.activities = {
         level_2: null,
         level_3: null,
     },
+    colors: [
+        "#FFF7A1",  // Light Yellow
+        "#FFE0B2",  // Light Orange
+        "#FFCC80",  // Light Apricot
+        "#FFB74D",  // Medium Orange
+        "#FFA000",  // Dark Yellow
+        "#A2DFF7",  // Light Sky Blue
+        "#B3E5FC",  // Light Cyan
+        "#99CCFF",  // Light Blue
+        "#64B5F6",  // Soft Blue
+        "#FF6F20"   // Dark Orange
+    ],
     events: function () {
         return new Promise(async (resolve, reject) => {
             try {
+                await befriend.activities.whenEvents();
                  await befriend.activities.level1Events();
                  await befriend.activities.sliderEvents();
             } catch(e) {
@@ -39,19 +52,36 @@ befriend.activities = {
                 let option = befriend.activities.when.options[i];
 
                 let name_html = ``;
+                let tab_html = ``;
 
                 if(option.is_now || option.is_schedule) {
                     name_html = option.name;
                 } else {
-                    name_html = `<div class="value"><div class="plus">+</div>${option.value}</div>
+                    tab_html = `<div class="value">${option.value}</div>
                                     <div class="unit">${option.unit}</div>`;
                 }
 
-                let schedule_class = option.is_schedule ? 'schedule' : '';
+                let time_class = '';
 
-                html += `<div class="when-option ${schedule_class}" data-index="${i}">
-                            <div class="name">${name_html}</div>
-                            <div class="time"></div>
+                if(option.is_now) {
+                    time_class = 'now';
+                } else if(option.is_schedule) {
+                    time_class = 'schedule';
+                } else {
+                    time_class = 'time';
+                }
+
+                let bc = befriend.activities.colors[i];
+
+                let font_white_class = useWhiteOnBackground(bc) ? 'font_white' : '';
+
+                html += `<div class="when-option ${time_class}" data-index="${i}">
+                            <div class="tab ${font_white_class}" style="background-color: ${bc}">${tab_html}</div>
+
+                            <div class="when-container">
+                                <div class="name">${name_html}</div>
+                                <div class="time"></div>
+                            </div>
                          </div>`;
             }
 
@@ -78,13 +108,27 @@ befriend.activities = {
             let time_str = date.format(`h:mm a`);
 
             el.querySelector('.time').innerHTML = time_str;
-
-
-
-
-
-
         }
+    },
+    whenEvents: function () {
+        return new Promise(async (resolve, reject) => {
+            let when_els = befriend.els.when.getElementsByClassName('when-option');
+
+            for(let i = 0; i < when_els.length; i++) {
+                let el = when_els[i];
+
+                el.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    removeElsClass(when_els, 'active');
+
+                    addClassEl('active', el);
+                });
+            }
+
+            resolve();
+        });
     },
     setActivities: function () {
         return new Promise(async (resolve, reject) => {

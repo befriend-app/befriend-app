@@ -2,50 +2,91 @@
     .when-options {
         display: flex;
         flex-wrap: wrap;
-        gap: 4px 4px;
+        gap: 4px 8px;
 
         .when-option {
-            flex-basis: 40px;
+            $w: 60px;
+            //$h: 38px;
+            $br: 6px;
+            $pt: 4px;
+            flex-basis: $w;
+            justify-content: end;
+            display: flex;
+            flex-direction: column;
+            //height: $h;
+            border: 1px solid $color_lightgray;
+            padding: 0 0;
+            border-radius: $br;
+            overflow: hidden;
+            transition: all 300ms;
             @include flex-center-col;
-            border: 1px solid $brand_color_grey;
-            padding: 4px 8px;
-            border-radius: 6px;
 
-            &.schedule {
-                width: fit-content;
-
-                .name {
-                    word-break: unset;
-                }
-            }
-
-            .name {
+            .tab {
+                display: flex;
+                font-size: 12px;
+                //background: $brand_color_c;
+                padding: 1px 0;
+                margin-left: auto;
+                width: 100%;
+                //border-bottom: 1px solid lightgray;
+                font-weight: 300;
+                box-sizing: border-box;
                 @include flex-center;
 
-                font-size: 14px;
-
-                .plus {
-                    margin-right: 2px;
-                    font-size: 10px;
-                    @include flex-center-col;
-                    transform: translateY(.5px);
+                &.font_white {
+                    color: white;
                 }
 
                 .value {
-                    font-size: 15px;
-                    @include flex-center;
-                    //word-break: break-all;
+                    font-size: 14px;
+                    margin-right: 3px;
+                    transform: translateY(-.5px);
                 }
 
                 .unit {
                     font-size: 12px;
-                    margin-left: 4px;
+                    transform: translateY(-.5px);
                 }
+            }
+
+            .when-container {
+                width: 100%;
+                transition: all 300ms;
+            }
+
+            .name {
+                font-size: 12px;
+                text-align: center;
             }
 
             .time {
                 font-size: 11px;
                 font-weight: 500;
+                padding: 6px 0;
+                @include flex-center-col;
+            }
+
+            &.now, &.schedule {
+                .tab {
+                    display: none;
+                }
+
+                .time {
+                    padding: 0;
+                }
+            }
+
+            &.active {
+                border: 1px solid $color_gray;
+                background: $brand_color_a;
+
+                .tab {
+                    border-bottom-color: transparent;
+                }
+
+                .when-container {
+                    color: white;
+                }
             }
         }
     }
