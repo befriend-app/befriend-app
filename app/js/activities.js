@@ -1,5 +1,19 @@
 befriend.activities = {
     data: null,
+    when: {
+        options: [
+            {name: 'Now', is_now: true},
+            {value: '15', unit: 'mins', mins: 15},
+            {value: '30', unit: 'mins', mins: 30},
+            {value: '45', unit: 'mins', mins: 45},
+            {value: '1', unit: 'hr', mins: 60},
+            {value: '1.5', unit: 'hrs', mins: 90},
+            {value: '2', unit: 'hrs', mins: 120},
+            {value: '3', unit: 'hrs', mins: 180},
+            {value: '4', unit: 'hrs', mins: 240},
+            {name: 'Schedule', is_schedule: true},
+        ]
+    },
     selected: {
         level_1: null,
         level_2: null,
@@ -17,13 +31,68 @@ befriend.activities = {
             resolve();
         });
     },
+    setWhen: function () {
+        return new Promise(async (resolve, reject) => {
+            let html = '';
+
+            for(let i = 0; i < befriend.activities.when.options.length; i++) {
+                let option = befriend.activities.when.options[i];
+
+                let name_html = ``;
+
+                if(option.is_now || option.is_schedule) {
+                    name_html = option.name;
+                } else {
+                    name_html = `<div class="value"><div class="plus">+</div>${option.value}</div>
+                                    <div class="unit">${option.unit}</div>`;
+                }
+
+                let schedule_class = option.is_schedule ? 'schedule' : '';
+
+                html += `<div class="when-option ${schedule_class}" data-index="${i}">
+                            <div class="name">${name_html}</div>
+                            <div class="time"></div>
+                         </div>`;
+            }
+
+            befriend.els.when.querySelector('.when-options').innerHTML = html;
+
+            befriend.activities.setWhenTimes();
+            resolve();
+        });
+    },
+    setWhenTimes: function () {
+        let when_options_els =  befriend.els.when.getElementsByClassName('when-option');
+
+        for(let i = 0; i < when_options_els.length; i++) {
+            let el = when_options_els[i];
+            let index = el.getAttribute('data-index');
+            let data = befriend.activities.when.options[index];
+
+            if(data.is_now || data.is_schedule) {
+                continue;
+            }
+
+            let date = dayjs().add(data.mins, 'minutes');
+
+            let time_str = date.format(`h:mm a`);
+
+            el.querySelector('.time').innerHTML = time_str;
+
+
+
+
+
+
+        }
+    },
     setActivities: function () {
         return new Promise(async (resolve, reject) => {
             try {
                 await befriend.html.activityTypes();
 
                 resolve();
-            } catch(e) {
+            } catch (e) {
                 return reject();
             }
         });
@@ -406,7 +475,7 @@ befriend.activities = {
             });
 
             //set position of number for range
-            let rangeSpan = document.getElementById('activities').querySelector('.slider span');
+            let rangeSpan = befriend.els.num_persons.querySelector('.slider span');
 
             //load prev setting
             // let prevSetting = localStorage.getItem(settings_key);

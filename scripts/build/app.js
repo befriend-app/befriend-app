@@ -30,6 +30,7 @@ let styles_variables_file_name = `_styles_variables.js`;
 let js_files = {
     frontend: [
         'vendor/axios.js',
+        'vendor/dayjs.js',
         'app.js', //app first
         'activities.js',
         'places.js',

@@ -1,0 +1,52 @@
+#when {
+    .when-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 4px;
+
+        .when-option {
+            flex-basis: 40px;
+            @include flex-center-col;
+            border: 1px solid $brand_color_grey;
+            padding: 4px 8px;
+            border-radius: 6px;
+
+            &.schedule {
+                width: fit-content;
+
+                .name {
+                    word-break: unset;
+                }
+            }
+
+            .name {
+                @include flex-center;
+
+                font-size: 14px;
+
+                .plus {
+                    margin-right: 2px;
+                    font-size: 10px;
+                    @include flex-center-col;
+                    transform: translateY(.5px);
+                }
+
+                .value {
+                    font-size: 15px;
+                    @include flex-center;
+                    //word-break: break-all;
+                }
+
+                .unit {
+                    font-size: 12px;
+                    margin-left: 4px;
+                }
+            }
+
+            .time {
+                font-size: 11px;
+                font-weight: 500;
+            }
+        }
+    }
+}

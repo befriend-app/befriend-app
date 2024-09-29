@@ -1,16 +1,12 @@
 #activities {
-    .section__title {
-        margin-bottom: 10px;
-    }
-
     .activities_container {
         overflow-y: scroll;
-        height: calc(100vh - var(--footer_full_h) - var(--header_h) - 30px);
-        padding-bottom: 30px;
-        //height: 600px;
     }
 
     .activities {
+        max-height: 50vh;
+        overflow-y: scroll;
+
         display: flex;
         justify-content: center;
 
@@ -292,8 +288,23 @@
             }
         }
     }
+}
 
+#activity-button {
+    margin-top: 25px;
+    background: $brand_color_b;
+    width: fit-content;
+    padding: 6px 8px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    text-transform: uppercase;
+    border: 1px solid gray;
+}
+
+#num-persons {
     .slider {
+        margin-top: 15px;
         position: relative;
         width: 400px;
         max-width: calc(100vw - 60px);
@@ -421,15 +432,5 @@
         }
     }
 
-    #activity-button {
-        margin-top: 25px;
-        background: $brand_color_b;
-        width: fit-content;
-        padding: 6px 8px;
-        border-radius: 8px;
-        font-size: 15px;
-        font-weight: 500;
-        text-transform: uppercase;
-        border: 1px solid gray;
-    }
+
 }

@@ -1,4 +1,28 @@
 #views {
     margin: 0 $app_margin_lr;
     margin-top: var(--header_h);
+
+    height: calc(100vh - var(--footer_full_h) - var(--header_h) - 30px);
+
+    .view {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 20px 0;
+
+        .view-section {
+
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        &:first-of-type {
+            padding-top: 10px;
+        }
+    }
 }

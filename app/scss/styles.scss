@@ -4,6 +4,7 @@
 @import "header";
 @import "views";
 @import "footer";
+@import "when";
 @import "activities";
 @import "places";
 
@@ -39,8 +40,4 @@ html, body {
     //min-height: 100dvh;
     height: 100vh;
     height: 100dvh;
-}
-
-.section__title {
-    font-size: 20px;
 }
