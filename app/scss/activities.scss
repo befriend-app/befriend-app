@@ -1,3 +1,22 @@
+@mixin activity-base($width, $height) {
+    border: 1px solid lightgray;
+    box-sizing: border-box;
+    padding: 8px 0;
+    border-radius: 6px;
+    flex-basis: calc(#{$width} - #{$activity_gap_lr} * calc((#{$activity_row_items} - 1) / #{$activity_row_items}));
+    @include flex-center;
+    height: $height;
+}
+
+@mixin activity-icon {
+    @include flex-center;
+    margin: 0;
+
+    svg, .image, .emoji {
+        height: 50% * 0.5;
+    }
+}
+
 #activities {
     margin: 0 $app_margin_lr;
     margin-top: var(--header_h);
@@ -10,7 +29,6 @@
         overflow-y: scroll;
         height: calc(100vh - var(--footer_full_h) - var(--header_h) - 30px);
         padding-bottom: 30px;
-        //height: 600px;
     }
 
     .activities {
@@ -21,17 +39,16 @@
             cursor: pointer;
 
             .name {
-                $fs: 15px;
                 margin-top: 2px;
                 font-weight: 300;
-                font-size: $fs;
-                line-height: $fs;
+                font-size: 15px;
+                line-height: 15px;
                 text-align: center;
             }
         }
 
+        // Level 1 Activities
         .level_1 {
-            $dim: 65px;
             display: flex;
             flex-wrap: wrap;
 
@@ -42,260 +59,60 @@
                 width: calc(100vw - #{$app_margin_lr * 2});
                 margin-bottom: 8px;
             }
-            //justify-content: center;
 
             .activity {
-                border: 1px solid lightgray;
-                box-sizing: border-box;
-                padding: 8px 0;
-                border-radius: 6px;
-                flex-basis: calc(#{$activity_item_w} - #{$activity_gap_lr} * calc(($activity_row_items - 1) / $activity_row_items));
-                display: flex;
-                justify-content: center;
+                @include activity-base($activity_item_w, auto);
                 transition: background $activity_transition_ms;
                 background: white;
 
                 &.active {
                     background: $brand_color_a;
-
-                    svg {
-                        fill: white !important;
-                    }
-
-                    .name {
-                        color: white;
-                    }
+                    svg { fill: white !important; }
+                    .name { color: white; }
                 }
 
                 .activity_wrapper {
-                    width: $dim;
+                    width: 65px;
                 }
-                //height: $dim;
 
                 .icon {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    margin: auto;
-
-                    svg {
-                        //width: $dim * .6;
-                        height: $dim * .45;
-                        fill: black;
-                        transition: fill $activity_transition_ms;
-                    }
+                    @include activity-icon;
                 }
             }
         }
 
+        // Level 2 Activities
         .level_2 {
-            $dim: 55px;
-            height: 0;
-            //background-color: #2d86c7;
-            width: 100%;
-            transition: all $activity_transition_ms;
-            box-sizing: border-box;
-            border-width: 1px;
-            border-style: solid;
-            border-color: transparent;
-            display: flex;
-            flex-wrap: wrap;
-            overflow: hidden;
-            border-radius: 12px;
-
-            &.show {
-                border-color: $brand_color_a;
-                //border: $activity_level_2_border_w solid $brand_color_a;
-                margin-bottom: $activity_gap_tb;
-
-                &:last-of-type {
-                    margin-top: $activity_gap_tb;
-                }
-            }
-
-            .level_2_container {
-                padding: $activity_level_2_ptb $activity_level_2_plr;
-                width: calc(100vw - #{$app_margin_lr * 2} - #{$activity_level_2_plr * 2} - #{$activity_level_2_border_w * 2});
-            }
-
-            .level_2_row {
-                display: flex;
-                gap: $activity_gap_tb $activity_gap_lr;
-                flex-wrap: wrap;
-                width: 100%;
-                margin-bottom: 8px;
-            }
+            @include level-base($brand_color_a);
 
             .activity {
-                border: 1px solid lightgray;
-                box-sizing: border-box;
-                padding: 8px 0;
-                border-radius: 6px;
-                flex-basis: calc(#{$activity_level_2_item_w} - #{$activity_gap_lr} * calc(($activity_level_2_row_items - 1) / $activity_level_2_row_items));
-                display: flex;
-                justify-content: center;
-                height: $activity_level_2_height;
-
-                .name {
-                    $fs: 13px;
-                    font-size: $fs;
-                    line-height: $fs;
-                    margin-top: 8px;
-                }
+                @include activity-base($activity_level_2_item_w, $activity_level_2_height);
 
                 &.active {
                     background: $brand_color_b;
-
-                    svg {
-                        fill: black !important;
-                    }
-
-                    .name {
-                        color: black;
-                    }
-                }
-
-                .activity_wrapper {
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-
-                    &.no_icon {
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: center;
-
-                        .name {
-                            margin-top: 0 !important;
-                        }
-                    }
-                }
-                //height: $dim;
-
-                .icon {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    margin: 0;
-
-                    .image, .emoji {
-                        display: flex;
-                        flex-direction: column;
-                        height: $dim * .5;
-                    }
-
-                    svg {
-                        //width: $dim * .6;
-                        height: $dim * .5;
-                    }
+                    svg { fill: black !important; }
+                    .name { color: black; }
                 }
             }
         }
 
+        // Level 3 Activities
         .level_3 {
-            $dim: 50px;
-            height: 0;
-            width: 100%;
-            transition: all $activity_transition_ms;
-            box-sizing: border-box;
-            border-width: 1px;
-            border-style: solid;
-            border-color: transparent;
-            display: flex;
-            flex-wrap: wrap;
-            overflow: hidden;
-            border-radius: 12px;
-
-            &.show {
-                border-color: $brand_color_grey;
-                //border: $activity_level_2_border_w solid $brand_color_a;
-                margin-bottom: $activity_gap_tb;
-
-                &:last-of-type {
-                    margin-top: $activity_gap_tb;
-                }
-            }
-
-            .level_3_container {
-                padding: $activity_level_2_ptb $activity_level_2_plr;
-                width: calc(100vw - #{$app_margin_lr * 2} - #{$activity_level_2_plr * 2} - #{$activity_level_2_border_w * 2});
-            }
-
-            .level_3_row {
-                display: flex;
-                gap: $activity_gap_tb $activity_gap_lr;
-                flex-wrap: wrap;
-                width: 100%;
-                margin-bottom: 8px;
-            }
+            @include level-base($brand_color_grey);
 
             .activity {
-                border: 1px solid lightgray;
-                box-sizing: border-box;
-                padding: 8px 0;
-                border-radius: 6px;
-                flex-basis: calc(#{$activity_level_3_item_w} - #{$activity_gap_lr} * calc(($activity_level_2_row_items - 1) / $activity_level_2_row_items));
-                display: flex;
-                justify-content: center;
-                height: $activity_level_3_height;
-
-                .name {
-                    $fs: 13px;
-                    font-size: $fs;
-                    line-height: $fs;
-                    margin-top: 8px;
-                }
+                @include activity-base($activity_level_3_item_w, $activity_level_3_height);
 
                 &.active {
                     background: $brand_color_c;
-
-                    svg {
-                        fill: white !important;
-                    }
-
-                    .name {
-                        color: white;
-                    }
-                }
-
-                .activity_wrapper {
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    width: unset;
-
-                    &.no_icon {
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: center;
-
-                        .name {
-                            margin-top: 0 !important;
-                        }
-                    }
-                }
-
-                .icon {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    margin: 0;
-
-                    .image, .emoji {
-                        display: flex;
-                        flex-direction: column;
-                        height: $dim * .5;
-                    }
-
-                    svg {
-                        //width: $dim * .6;
-                        height: $dim * .5;
-                    }
+                    svg { fill: white !important; }
+                    .name { color: white; }
                 }
             }
         }
     }
 
+    // Slider styles
     .slider {
         position: relative;
         width: 400px;
@@ -313,115 +130,6 @@
     }
 
     .range {
-        -webkit-appearance: none;
-        vertical-align: middle;
-        outline: none;
-        border: none;
-        padding: 0;
-        background: none;
-        width: 100%;
-        margin: 0;
-
-        $thumb_dim: 30px;
-
-        &::-webkit-slider-runnable-track {
-            background-color: #d7dbdd;
-            height: 6px;
-            border-radius: 3px;
-            border: 1px solid transparent;
-        }
-
-        &::-moz-range-track {
-            background-color: #d7dbdd;
-            height: 6px;
-            border-radius: 3px;
-            border: none;
-        }
-
-        &::-ms-track {
-            color: transparent;
-            border: none;
-            background: none;
-            height: 6px;
-        }
-
-        &::-ms-fill-lower {
-            background-color: #d7dbdd;
-            border-radius: 3px;
-        }
-
-        &::-ms-fill-upper {
-            background-color: #d7dbdd;
-            border-radius: 3px;
-        }
-
-        &::-ms-tooltip {
-            display: none;
-        }
-
-        &::-moz-range-thumb {
-            border-radius: 20px;
-            height: $thumb_dim;
-            width: $thumb_dim;
-            border: none;
-            background: none;
-            background-color: #606670;
-        }
-
-        &:active::-moz-range-thumb {
-            outline: none;
-        }
-
-        &::-webkit-slider-thumb {
-            -webkit-appearance: none !important;
-            border-radius: 100%;
-            background-color: #606670;
-            height: $thumb_dim;
-            width: $thumb_dim;
-            margin-top: calc(-#{$thumb_dim * .46});
-            border: 1px solid darken(lightgray, 30%);
-        }
-
-        &:active::-webkit-slider-thumb {
-            outline: none;
-        }
-
-        &::-ms-thumb {
-            border-radius: 100%;
-            background-color: #606670;
-            height: $thumb_dim;
-            width: $thumb_dim;
-            border: none;
-        }
-
-        &:active::-ms-thumb {
-            border: none;
-        }
-
-        &::-moz-range-track {
-            background-color: #606670;
-            border: none;
-        }
-
-        &::-ms-fill-lower {
-            background-color: #606670;
-        }
-
-        &::-ms-fill-upper {
-            background-color: #606670;
-        }
-
-        &::-webkit-slider-thumb {
-            background-color: #aaa;
-        }
-
-        &::-moz-range-thumb {
-            background-color: #aaa;
-        }
-
-        &::-ms-thumb {
-            background-color: #aaa;
-        }
     }
 
     #activity-button {
@@ -434,5 +142,62 @@
         font-weight: 500;
         text-transform: uppercase;
         border: 1px solid gray;
+    }
+}
+
+// Mixins
+@mixin level-base($border-color) {
+    height: 0;
+    width: 100%;
+    transition: all $activity_transition_ms;
+    box-sizing: border-box;
+    border: 1px solid transparent;
+    display: flex;
+    flex-wrap: wrap;
+    overflow: hidden;
+    border-radius: 12px;
+
+    &.show {
+        border-color: $border-color;
+        margin-bottom: $activity_gap_tb;
+
+        &:last-of-type {
+            margin-top: $activity_gap_tb;
+        }
+    }
+
+    .level_2_container, .level_3_container {
+        padding: $activity_level_2_ptb $activity_level_2_plr;
+        width: calc(100vw - #{$app_margin_lr * 2} - #{$activity_level_2_plr * 2} - #{$activity_level_2_border_w * 2});
+    }
+
+    .level_2_row, .level_3_row {
+        display: flex;
+        gap: $activity_gap_tb $activity_gap_lr;
+        flex-wrap: wrap;
+        width: 100%;
+        margin-bottom: 8px;
+    }
+
+    .activity {
+        .name {
+            font-size: 13px;
+            line-height: 13px;
+            margin-top: 8px;
+        }
+
+        .activity_wrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            &.no_icon .name {
+                margin-top: 0 !important;
+            }
+        }
+
+        .icon {
+            @include activity-icon;
+        }
     }
 }
