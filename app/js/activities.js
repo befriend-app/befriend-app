@@ -92,23 +92,61 @@ befriend.activities = {
         });
     },
     setWhenTimes: function () {
-        let when_options_els =  befriend.els.when.getElementsByClassName('when-option');
+        function updateTimes() {
+            function roundTimeMinutes(time, minutes) {
+                var timeToReturn = new Date(time);
 
-        for(let i = 0; i < when_options_els.length; i++) {
-            let el = when_options_els[i];
-            let index = el.getAttribute('data-index');
-            let data = befriend.activities.when.options[index];
-
-            if(data.is_now || data.is_schedule) {
-                continue;
+                timeToReturn.setMilliseconds(Math.round(timeToReturn.getMilliseconds() / 1000) * 1000);
+                timeToReturn.setSeconds(Math.round(timeToReturn.getSeconds() / 60) * 60);
+                timeToReturn.setMinutes(Math.round(timeToReturn.getMinutes() / minutes) * minutes);
+                return timeToReturn;
             }
 
-            let date = dayjs().add(data.mins, 'minutes');
+            let when_options_els =  befriend.els.when.getElementsByClassName('when-option');
 
-            let time_str = date.format(`h:mm a`);
+            let date_now = dayjs();
 
-            el.querySelector('.time').innerHTML = time_str;
+            for(let i = 0; i < when_options_els.length; i++) {
+                let el = when_options_els[i];
+                let index = el.getAttribute('data-index');
+                let data = befriend.activities.when.options[index];
+
+                if(data.is_now || data.is_schedule) {
+                    continue;
+                }
+
+                let date = date_now.add(data.mins, 'minutes');
+
+                let round_minutes = 5;
+
+                //make time round
+                let js_date = roundTimeMinutes(date, round_minutes);
+                date = dayjs(js_date);
+
+                //add more time if activity starts in less than an hour
+                let minutes_diff = date.diff(date_now, 'minutes') - data.mins;
+
+                if(minutes_diff < 0) {
+                    let add_mins = Math.ceil(Math.abs(minutes_diff) / 5) * 5;
+
+                    date = date.add(add_mins, 'minutes');
+                }
+
+                console.log({
+                    minutes_diff,
+                    mins: data.mins
+                })
+
+                let time_str = date.format(`h:mm a`);
+
+                el.querySelector('.time').innerHTML = time_str;
+            }
         }
+
+        updateTimes();
+
+        //update every minute
+        setInterval(updateTimes, 60 * 1000);
     },
     whenEvents: function () {
         return new Promise(async (resolve, reject) => {
