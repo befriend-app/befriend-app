@@ -140,11 +140,11 @@ befriend.activities = {
                              icon_html = `<div class="icon">${image_html}</div>`;
                          }
 
-                         let center_class = icon_html ? '' : 'center';
+                         let no_icon_class = icon_html ? '' : 'no_icon';
 
                          activities_level_2.push(`
                             <div class="activity level_2_activity" data-id="${level_2_id}">
-                                <div class="activity_wrapper ${center_class}">
+                                <div class="activity_wrapper ${no_icon_class}">
                                     ${icon_html}
                                     <div class="name">${activity.name}</div>
                                 </div>
@@ -286,11 +286,11 @@ befriend.activities = {
                             icon_html = `<div class="icon">${image_html}</div>`;
                         }
 
-                        let center_class = icon_html ? '' : 'center';
+                        let no_icon_class = icon_html ? '' : 'no_icon';
 
                         activities_level_3.push(`
                             <div class="activity level_3_activity" data-id="${level_3_id}">
-                                <div class="activity_wrapper ${center_class}">
+                                <div class="activity_wrapper ${no_icon_class}">
                                     ${icon_html}
                                     <div class="name">${activity.name}</div>
                                 </div>

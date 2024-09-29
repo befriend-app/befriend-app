@@ -12,7 +12,7 @@ befriend.places = {
                     location: location,
                 });
 
-                debugger;
+                // debugger;
             } catch(e) { // throw if not 200 status code
                 console.error(e);
             }

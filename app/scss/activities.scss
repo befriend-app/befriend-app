@@ -160,10 +160,14 @@
                     flex-direction: column;
                     justify-content: center;
 
-                    &.center {
+                    &.no_icon {
                         display: flex;
                         flex-direction: column;
                         justify-content: center;
+
+                        .name {
+                            margin-top: 0 !important;
+                        }
                     }
                 }
                 //height: $dim;
@@ -246,11 +250,11 @@
                     background: $brand_color_c;
 
                     svg {
-                        fill: black !important;
+                        fill: white !important;
                     }
 
                     .name {
-                        color: black;
+                        color: white;
                     }
                 }
 
@@ -260,10 +264,14 @@
                     justify-content: center;
                     width: unset;
 
-                    &.center {
+                    &.no_icon {
                         display: flex;
                         flex-direction: column;
                         justify-content: center;
+
+                        .name {
+                            margin-top: 0 !important;
+                        }
                     }
                 }
 
