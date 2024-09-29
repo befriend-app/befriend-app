@@ -9,31 +9,41 @@ befriend.html = {
                     </div>
                 </header>
                 
-                <div id="activities">
-                    <div class="activities_container">
-                        <div class="section__title">Activities</div>
-                    
-                        <div class="activities"></div>
-                        
-                        <h3># Persons</h3>
-                        
-                        <div class="slider">
-                            <span>1</span>
-                            <input id="range-num-persons" class="range" type="range" value="1" min="1" max="10" step="1">
+                <div id="views">
+                    <div class="view view-activities">
+                        <div id="when">
+                            <div class="section__title">When</div>
                         </div>
                         
-                        <div id="activity-button">
-                            Submit
+                        <div id="activities">
+                            <div class="activities_container">
+                                <div class="section__title">Activities</div>
+                            
+                                <div class="activities"></div>
+                                
+                                <h3># Persons</h3>
+                                
+                                <div class="slider">
+                                    <span>1</span>
+                                    <input id="range-num-persons" class="range" type="range" value="1" min="1" max="10" step="1">
+                                </div>
+                                
+                                <div id="activity-button">
+                                    Submit
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="places">
+                            <div class="title">Suggested Places</div>
+                            <div class="places_container">
+                                
+                            </div>
                         </div>
                     </div>
                 </div>
                 
-                <div id="places">
-                    <div class="title">Suggested Places</div>
-                    <div class="places_container">
-                        
-                    </div>
-                </div>
+                
                 
                 <footer>
                     <div id="navigation">
