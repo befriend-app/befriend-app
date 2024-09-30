@@ -1,5 +1,25 @@
 befriend.activities = {
-    data: null,
+    types: {
+        data: null,
+        colors: [
+            "#FF5733",  // Bold Red-Orange
+            "#C70039",  // Bold Crimson
+            "#FFC300",  // Bright Yellow
+            "#FFB142",  // Bold Apricot
+            "#33FF57",  // Bright Green
+            "#28B463",  // Bold Green
+            "#3498DB",  // Bold Sky Blue
+            "#2980B9",  // Bold Blue
+            "#8E44AD",  // Bold Purple
+            "#9B59B6",  // Bold Lavender
+            "#E74C3C",  // Bright Red
+            "#F39C12",  // Bold Orange
+            "#2ECC71",  // Bright Emerald
+            "#16A085",  // Bold Teal
+            "#F1C40F",  // Bold Yellow-Green
+            "#D35400"   // Bold Carrot Orange
+        ],
+    },
     when: {
         options: [
             {name: 'Now', is_now: true},
@@ -231,7 +251,7 @@ befriend.activities = {
                      e.stopPropagation();
 
                      let parent_id = this.getAttribute('data-id');
-                     let activity = befriend.activities.data[parent_id];
+                     let activity = befriend.activities.types.data[parent_id];
 
                      let level_2_el = this.closest('.level_1_row').nextSibling;
 
@@ -297,7 +317,7 @@ befriend.activities = {
                              activities_level_2.length = [];
                          }
 
-                         let activity = befriend.activities.data[parent_id].sub[level_2_id];
+                         let activity = befriend.activities.types.data[parent_id].sub[level_2_id];
 
                          let image_html = '';
 
@@ -372,7 +392,7 @@ befriend.activities = {
 
                     let level_2_id = this.getAttribute('data-id');
 
-                    let level_2_activity = befriend.activities.data[parent_id].sub[level_2_id];
+                    let level_2_activity = befriend.activities.types.data[parent_id].sub[level_2_id];
 
                     let level_3_el = this.closest('.level_2_row').nextSibling;
 
@@ -443,7 +463,7 @@ befriend.activities = {
                             activities_level_3.length = [];
                         }
 
-                        let activity = befriend.activities.data[parent_id].sub[level_2_id].sub[level_3_id];
+                        let activity = befriend.activities.types.data[parent_id].sub[level_2_id].sub[level_3_id];
 
                         let image_html = '';
 
@@ -523,7 +543,7 @@ befriend.activities = {
 
                     let level_3_id = this.getAttribute('data-id');
 
-                    let level_3_activity = befriend.activities.data[parent_id].sub[level_2_id].sub[level_3_id];
+                    let level_3_activity = befriend.activities.types.data[parent_id].sub[level_2_id].sub[level_3_id];
 
                     //remove activity selection and hide level 3 if same activity clicked
                     if(elHasClass(this, 'active')) {

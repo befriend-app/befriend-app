@@ -4,7 +4,7 @@
     }
 
     .activities {
-        max-height: 50vh;
+        //max-height: 50vh;
         overflow-y: scroll;
 
         display: flex;
@@ -50,15 +50,19 @@
                 background: white;
 
                 &.active {
-                    background: $brand_color_a;
+                    &.font_white {
+                        svg {
+                            fill: white !important;
+                        }
 
-                    svg {
-                        fill: white !important;
+                        .name {
+                            color: white;
+                        }
                     }
+                }
 
-                    .name {
-                        color: white;
-                    }
+                &:not(.active) {
+                    background-color: white !important;
                 }
 
                 .activity_wrapper {
@@ -212,7 +216,7 @@
 
             .level_3_container {
                 padding: $activity_level_2_ptb $activity_level_2_plr;
-                width: calc(100vw - #{$app_margin_lr * 2} - #{$activity_level_2_plr * 2} - #{$activity_level_2_border_w * 2});
+                width: calc(100%);
             }
 
             .level_3_row {

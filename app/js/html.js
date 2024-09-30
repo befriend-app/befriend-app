@@ -103,7 +103,7 @@ befriend.html = {
             try {
                 let r = await axios.get(joinPaths(api_domain, 'activity_types'));
 
-                let activities = befriend.activities.data = r.data;
+                let activities = befriend.activities.types.data = r.data;
 
                 let html = ``;
                 let level_1_html = ``;
@@ -111,7 +111,11 @@ befriend.html = {
                 //create rows and add hidden placeholder row below each row for multi-level select
                 let activities_row = [];
 
-                for(let level_1_id in activities) {
+                let level_1_ids = Object.keys(activities);
+
+                for(let i = 0; i < level_1_ids.length; i++) {
+                    let level_1_id = level_1_ids[i];
+
                     if(activities_row.length === befriend.styles.activity_row_items) {
                         let row_html = activities_row.join('');
 
@@ -145,8 +149,12 @@ befriend.html = {
 
                     let center_class = icon_html ? '' : 'center';
 
+                    let bc = befriend.activities.types.colors[i];
+
+                    let font_white_class = useWhiteOnBackground(bc) ? 'font_white' : '';
+
                     activities_row.push(`
-                        <div class="activity level_1_activity" data-id="${level_1_id}">
+                        <div class="activity level_1_activity ${font_white_class}" data-id="${level_1_id}" style="background-color: ${bc}">
                             <div class="activity_wrapper ${center_class}">
                                 ${icon_html}
                                 <div class="name">${activity.name}</div>
