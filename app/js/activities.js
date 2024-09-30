@@ -145,7 +145,6 @@ befriend.activities = {
 
                 let round_minutes = 5;
 
-
                 //make time round
                 let js_date = roundTimeMinutes(date, round_minutes);
                 date = dayjs(js_date);
@@ -214,7 +213,7 @@ befriend.activities = {
             resolve();
         });
     },
-    setActivities: function () {
+    settActivityTypes: function () {
         return new Promise(async (resolve, reject) => {
             try {
                 await befriend.html.activityTypes();

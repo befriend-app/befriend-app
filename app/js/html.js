@@ -18,7 +18,7 @@ befriend.html = {
                             </div>
                         </div>
                         
-                                                <div id="who" class="view-section">
+                        <div id="who" class="view-section">
                             <div class="section-title">Friends</div>
                             
                             <div class="friend-options">

@@ -20,7 +20,7 @@ window['befriend'] = {
             //activities
             try {
                 await befriend.activities.setWhen();
-                await befriend.activities.setActivities();
+                await befriend.activities.settActivityTypes();
             } catch(e) {
                 console.error(e);
             }
