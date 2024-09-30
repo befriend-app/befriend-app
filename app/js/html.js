@@ -18,24 +18,36 @@ befriend.html = {
                             </div>
                         </div>
                         
+                                                <div id="who" class="view-section">
+                            <div class="section-title">Friends</div>
+                            
+                            <div class="friend-options">
+                                <div class="friend-option active">
+                                    <div class="name">New</div>
+                                </div>
+                                <div class="friend-option">
+                                    <div class="name">Existing</div>
+                                </div>
+                                <div class="friend-option">
+                                    <div class="name">Both</div>
+                                </div>
+                            </div>
+                            
+                            <div id="num-persons">
+                                <div class="sub-section-title"># Persons</div>
+                                    
+                                <div class="slider">
+                                    <span>1</span>
+                                    <input id="range-num-persons" class="range" type="range" value="1" min="1" max="10" step="1">
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div id="activities" class="view-section">
                             <div class="activities_container">
                                 <div class="section-title">Activities</div>
                             
                                 <div class="activities"></div>
-                            </div>
-                        </div>
-                        
-                        <div id="num-persons">
-                            <div class="section-title"># Persons</div>
-                                
-                            <div class="slider">
-                                <span>1</span>
-                                <input id="range-num-persons" class="range" type="range" value="1" min="1" max="10" step="1">
-                            </div>
-                                
-                            <div id="activity-button">
-                                Submit
                             </div>
                         </div>
                     </div>
@@ -81,7 +93,7 @@ befriend.html = {
             befriend.els.num_persons = document.getElementById('num-persons');
             befriend.els.places = document.getElementById('places');
             befriend.els.when = document.getElementById('when');
-
+            befriend.els.who = document.getElementById('who');
 
             resolve();
         });

@@ -1,0 +1,25 @@
+#who {
+    padding-bottom: 20px !important;
+
+    .friend-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0 10px;
+
+        .friend-option {
+            border-radius: 8px;
+            border: 1px solid $color_lightgray;
+            padding: 4px 16px;
+            transition: all 300ms;
+
+            &.active {
+                background: lighten($brand_color_a, 0%);
+                color: white;
+            }
+
+            .name {
+                font-size: 13px;
+            }
+        }
+    }
+}

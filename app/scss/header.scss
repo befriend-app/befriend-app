@@ -3,8 +3,10 @@ header {
     padding-bottom: $header_pb;
     position: fixed;
     top: 0;
-    background: white;
+    background: $app_background;
     width: 100vw;
+    z-index: 999;
+    display: none;
 }
 
 #logo {

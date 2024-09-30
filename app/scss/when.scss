@@ -2,7 +2,7 @@
     .when-options {
         display: flex;
         flex-wrap: wrap;
-        gap: 6px 8px;
+        gap: 6px 6px;
 
         .when-option {
             $w: 60px;
@@ -93,6 +93,9 @@
 
                 .tab {
                     border-bottom-color: transparent;
+
+                    background-color: $brand_color_b !important;
+                    color: black;
                 }
 
                 .when-container {

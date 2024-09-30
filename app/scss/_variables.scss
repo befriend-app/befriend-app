@@ -1,4 +1,10 @@
-$app_margin_lr: 20px;
+@import "_colors";
+
+$app_background: lighten($color_lightgray, 10%);
+$app_margin_lr: 10px;
+
+$view_gap_tb: 15px;
+$view_padding_lr: 15px;
 
 $logo_h: 40px;
 
@@ -19,7 +25,6 @@ $activity_level_2_border_w: 1px;
 $activity_level_3_item_w: 33.333%;
 $activity_level_3_height: 60px;
 $activity_level_3_row_items: 3;
-
 
 $activity_transition_ms: 300ms;
 

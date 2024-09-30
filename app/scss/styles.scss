@@ -1,11 +1,11 @@
 @import "_variables";
-@import "base";
 @import "fonts";
 @import "_mixins";
 @import "header";
 @import "views";
 @import "footer";
 @import "when";
+@import "who";
 @import "activities";
 @import "places";
 
@@ -15,7 +15,8 @@
     --sar: env(safe-area-inset-right);
     --sab: env(safe-area-inset-bottom);
     --sal: env(safe-area-inset-left);
-    --header_h: calc(#{$logo_h + $header_pb} + var(--sat));
+    //--header_h: calc(#{$logo_h + $header_pb} + var(--sat));
+    --header_h: var(--sat);
     --footer_full_h: calc(#{$footer_h + $footer_pt} + var(--sab));
 }
 
@@ -24,21 +25,30 @@
     -webkit-tap-highlight-color: transparent;
 }
 
+//prevents selection of text
+* {
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 //hide scrollbars
-::-webkit-scrollbar {
+* ::-webkit-scrollbar {
     display: none;
+    background-color: transparent;
 }
 
 html, body {
     margin: 0;
     padding: 0;
     min-height: 100vh;
+    background: $app_background;
 }
 
 #app {
     overflow-y: hidden;
-    //min-height: 100vh;
-    //min-height: 100dvh;
-    height: 100vh;
-    height: 100dvh;
+    min-height: 100vh;
+    min-height: 100dvh;
+
+    //background: lighten($color_lightgray, 10%);
 }

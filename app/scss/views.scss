@@ -2,16 +2,19 @@
     margin: 0 $app_margin_lr;
     margin-top: var(--header_h);
 
-    height: calc(100vh - var(--footer_full_h) - var(--header_h) - 30px);
+    //height: calc(100vh - var(--footer_full_h) - var(--header_h) - 30px);
 
     .view {
-        height: 100%;
+        //height: 100%;
         display: flex;
         flex-direction: column;
-        gap: 20px 0;
+        gap: $view_gap_tb 0;
+        padding-bottom: calc(var(--footer_full_h) + 40px);
 
         .view-section {
-
+            background: white;
+            padding: 10px $view_padding_lr;
+            border-radius: 16px;
         }
 
         .section-title {
@@ -21,8 +24,13 @@
             margin-bottom: 8px;
         }
 
+        .sub-section-title {
+            font-size: 11px;
+            font-weight: 400;
+        }
+
         &:first-of-type {
-            padding-top: 10px;
+            padding-top: 0;
         }
     }
 }

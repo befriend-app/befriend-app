@@ -12,29 +12,30 @@ befriend.activities = {
             {value: '3', unit: 'hrs', mins: 180},
             {value: '4', unit: 'hrs', mins: 240},
             {name: 'Schedule', is_schedule: true},
-        ]
+        ],
+        colors: [
+            "#FFF7A1",  // Light Yellow
+            "#FFE0B2",  // Light Orange
+            "#FFCC80",  // Light Apricot
+            "#FFB74D",  // Medium Orange
+            "#FFA000",  // Dark Yellow
+            "#A2DFF7",  // Light Sky Blue
+            "#B3E5FC",  // Light Cyan
+            "#99CCFF",  // Light Blue
+            "#64B5F6",  // Soft Blue
+            "#FF6F20"   // Dark Orange
+        ],
     },
     selected: {
         level_1: null,
         level_2: null,
         level_3: null,
     },
-    colors: [
-        "#FFF7A1",  // Light Yellow
-        "#FFE0B2",  // Light Orange
-        "#FFCC80",  // Light Apricot
-        "#FFB74D",  // Medium Orange
-        "#FFA000",  // Dark Yellow
-        "#A2DFF7",  // Light Sky Blue
-        "#B3E5FC",  // Light Cyan
-        "#99CCFF",  // Light Blue
-        "#64B5F6",  // Soft Blue
-        "#FF6F20"   // Dark Orange
-    ],
     events: function () {
         return new Promise(async (resolve, reject) => {
             try {
-                await befriend.activities.whenEvents();
+                 await befriend.activities.whenEvents();
+                 await befriend.activities.friendEvents();
                  await befriend.activities.level1Events();
                  await befriend.activities.sliderEvents();
             } catch(e) {
@@ -74,7 +75,7 @@ befriend.activities = {
                     time_class = 'time';
                 }
 
-                let bc = befriend.activities.colors[i];
+                let bc = befriend.activities.when.colors[i];
 
                 let font_white_class = useWhiteOnBackground(bc) ? 'font_white' : '';
 
@@ -167,6 +168,25 @@ befriend.activities = {
 
                     removeElsClass(when_els, 'active');
 
+                    addClassEl('active', el);
+                });
+            }
+
+            resolve();
+        });
+    },
+    friendEvents: function () {
+        return new Promise(async (resolve, reject) => {
+            let friend_els = befriend.els.who.getElementsByClassName('friend-option');
+
+            for(let i = 0; i < friend_els.length; i++) {
+                let el = friend_els[i];
+
+                el.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    removeElsClass(friend_els, 'active');
                     addClassEl('active', el);
                 });
             }
@@ -590,21 +610,21 @@ befriend.activities = {
 
             updatePosition();
 
-            //button
-            let button_el = document.getElementById('activity-button');
-
-            button_el.addEventListener('click', async function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-
-                console.log("Activity button");
-
-                try {
-                    await befriend.activities.createNewActivity(personsCount);
-                } catch(e) {
-                    console.error(e);
-                }
-            });
+            // //button
+            // let button_el = document.getElementById('activity-button');
+            //
+            // button_el.addEventListener('click', async function (e) {
+            //     e.preventDefault();
+            //     e.stopPropagation();
+            //
+            //     console.log("Activity button");
+            //
+            //     try {
+            //         await befriend.activities.createNewActivity(personsCount);
+            //     } catch(e) {
+            //         console.error(e);
+            //     }
+            // });
 
             resolve();
         });

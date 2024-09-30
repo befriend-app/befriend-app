@@ -27,12 +27,13 @@
             $dim: 65px;
             display: flex;
             flex-wrap: wrap;
+            overflow-x: hidden;
 
             .level_1_row {
                 display: flex;
                 gap: $activity_gap_tb $activity_gap_lr;
                 flex-wrap: wrap;
-                width: calc(100vw - #{$app_margin_lr * 2});
+                width: calc(100vw - #{($app_margin_lr + $view_padding_lr) * 2});
                 margin-bottom: 8px;
             }
             //justify-content: center;
@@ -303,11 +304,15 @@
 }
 
 #num-persons {
+    .sub-section-title {
+        margin-top: 10px;
+    }
+
     .slider {
         margin-top: 15px;
         position: relative;
         width: 400px;
-        max-width: calc(100vw - 60px);
+        max-width: calc(100%);
 
         span {
             position: absolute;
