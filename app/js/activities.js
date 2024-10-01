@@ -158,11 +158,6 @@ befriend.activities = {
                     date = date.add(add_mins, 'minutes');
                 }
 
-                console.log({
-                    minutes_diff,
-                    mins: data.mins
-                })
-
                 let time_str = date.format(`h:mm a`);
 
                 el.querySelector('.time').innerHTML = time_str;
@@ -273,7 +268,6 @@ befriend.activities = {
                          befriend.activities.selected.level_1 =  activity;
                          befriend.activities.selected.level_2 =  null;
                          befriend.activities.selected.level_3 =  null;
-                         befriend.places.displayPlaces(activity);
                      }
 
                      let prev_level_2 = befriend.els.activities.querySelector('.level_2.show');
