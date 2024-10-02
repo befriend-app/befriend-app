@@ -1,5 +1,6 @@
 window['befriend'] = {
     activities: null,
+    places: null,
     events: null,
     html: null,
     styles: null,
@@ -20,7 +21,7 @@ window['befriend'] = {
             //activities
             try {
                 await befriend.activities.setWhen();
-                await befriend.activities.settActivityTypes();
+                await befriend.activities.setActivityTypes();
             } catch(e) {
                 console.error(e);
             }

@@ -52,3 +52,23 @@ html, body {
 
     //background: lighten($color_lightgray, 10%);
 }
+
+#overlay {
+    height: 100vh;
+    width: 100vw;
+    z-index: 4;
+    background-color: black;
+    position: absolute;
+    opacity: 0;
+    visibility: hidden;
+    display: block;
+    transition: opacity .5s;
+    top: 0;
+}
+
+html.display-places {
+    #overlay {
+        opacity: .18;
+        visibility: visible;
+    }
+}

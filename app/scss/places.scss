@@ -1,8 +1,99 @@
+html.display-places {
+    overflow: hidden;
+
+    body {
+        overflow: hidden;
+    }
+
+    #places {
+        transform: translateY(0);
+    }
+}
+
 #places {
-    height: 0;
     overflow-y: hidden;
+    background-color: #FFF;
+    width: 100vw;
+    height: 70vh;
+    max-height: 700px;
+    position: fixed;
+    bottom: 0;
+    z-index: 99;
+    border-radius: 30px 30px 0 0;
+    transform: translateY(120%);
+    transition: transform $places_transition_ms;
+
+    &.no-places-found {
+        .no-places {
+            display: flex;
+        }
+
+        .places-container {
+            display: none;
+        }
+    }
+
+    .back {
+        position: absolute;
+        top: 15px;
+        left: 20px;
+        height: 18px;
+        z-index: 2;
+    }
+
+    .no-places {
+        display: none;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .places-container {
+        position: relative;
+        height: 100%;
+
+        .title {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 85%;
+        }
+    }
+
+    .places {
+
+    }
+
+    .spinner {
+        width: $places_spinner_dim;
+        height: $places_spinner_dim;
+        border: 5px solid #FFF;
+        border-bottom-color: transparent;
+        border-radius: 50%;
+        display: none;
+        box-sizing: border-box;
+        animation: rotation 1s linear infinite;
+
+        position: absolute;
+        left: calc(50% - #{$places_spinner_dim / 2});
+        top: calc(50% - #{$places_spinner_dim / 2} - #{$places_header_h});
+
+        &.show {
+            display: inline-block;
+        }
+
+    }
+
+    @keyframes rotation {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
 
     &.active {
-        height: 250px;
+        //height: 250px;
     }
+
 }

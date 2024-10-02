@@ -208,7 +208,7 @@ befriend.activities = {
             resolve();
         });
     },
-    settActivityTypes: function () {
+    setActivityTypes: function () {
         return new Promise(async (resolve, reject) => {
             try {
                 await befriend.html.activityTypes();
