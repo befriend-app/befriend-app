@@ -60,7 +60,16 @@ html.display-places {
     }
 
     .places {
+        overflow-y: scroll;
+        height: calc(100% - var(--sab) - calc($places_padding_t + $places_padding_b));
+        padding-top: $places_padding_t;
+        padding-bottom: $places_padding_b;
+        display: flex;
+        flex-direction: column;
 
+        .place {
+
+        }
     }
 
     .spinner {

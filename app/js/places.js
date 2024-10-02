@@ -27,9 +27,10 @@ befriend.places = {
                 let html = '';
 
                 for (let place of r.data.places) {
-                    let name_html = place.name;
+                    debugger;
+                    let place_html = `<div class=""></div>`;
 
-                    html += `<div class="place">${name_html}</div>`;
+                    html += `<div class="place">${place_html}</div>`;
                 }
 
                 befriend.els.places.querySelector('.places').innerHTML = html;
