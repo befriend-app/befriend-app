@@ -1,7 +1,4 @@
 befriend.places = {
-    classes: {
-        shown: 'display-places',
-    },
     displayPlaces: function (activity_type) {
         return new Promise(async (resolve, reject) => {
             let location = befriend.location.search || befriend.location.current;
@@ -10,7 +7,7 @@ befriend.places = {
                 return reject("No location");
             }
 
-            addClassEl(befriend.places.classes.shown, document.documentElement);
+            addClassEl(befriend.classes.placesShown, document.documentElement);
 
 
             let spinnerEl = befriend.els.places.querySelector('.spinner');
@@ -59,20 +56,20 @@ befriend.places = {
             back.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                removeClassEl(befriend.places.classes.shown, document.documentElement);
+                removeClassEl(befriend.classes.placesShown, document.documentElement);
             });
 
            resolve();
         });
     },
     placesDisplayShown: function () {
-        return elHasClass(document.documentElement, befriend.places.classes.shown)
+        return elHasClass(document.documentElement, befriend.classes.placesShown)
     },
     toggleDisplayPlaces: function (show) {
         if(show) {
-            addClassEl(befriend.places.classes.shown, document.documentElement);
+            addClassEl(befriend.classes.placesShown, document.documentElement);
         } else {
-            removeClassEl(befriend.places.classes.shown, document.documentElement);
+            removeClassEl(befriend.classes.placesShown, document.documentElement);
         }
     }
 }

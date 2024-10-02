@@ -403,7 +403,7 @@ befriend.activities = {
                         befriend.activities.selected.level_2 =  null;
                         befriend.activities.selected.level_3 =  null;
 
-                        befriend.places.displayPlaces(befriend.activities.selected.level_1);
+                        // befriend.places.displayPlaces(befriend.activities.selected.level_1);
 
                         return;
                     } else { //remove active from any previously selected activity

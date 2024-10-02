@@ -64,16 +64,16 @@ html.display-places {
     }
 
     .spinner {
+        position: absolute;
         width: $places_spinner_dim;
         height: $places_spinner_dim;
-        border: 5px solid #FFF;
+        border: 5px solid $brand_color_a;
         border-bottom-color: transparent;
         border-radius: 50%;
         display: none;
         box-sizing: border-box;
         animation: rotation 1s linear infinite;
 
-        position: absolute;
         left: calc(50% - #{$places_spinner_dim / 2});
         top: calc(50% - #{$places_spinner_dim / 2} - #{$places_header_h});
 

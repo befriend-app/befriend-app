@@ -2,9 +2,10 @@ befriend.events = {
     addEvents: function () {
         return new Promise(async (resolve, reject) => {
             try {
+                befriend.events.bodyClickHandler();
+
                 await befriend.activities.events();
                 await befriend.places.events();
-                befriend.events.bodyClickHandler();
             } catch(e) {
                 console.error(e);
             }
@@ -17,12 +18,10 @@ befriend.events = {
             e = e || window.event;
 
            if(befriend.places.placesDisplayShown()) {
-               if(!e.target.closest('#places')) {
+               if(!(e.target.closest('#places'))) {
                    befriend.places.toggleDisplayPlaces(false);
                }
            }
-
-
         });
     }
 }
