@@ -145,9 +145,10 @@ befriend.places = {
 
                     //closed
 
-                    place_html.full = `
-                                    <div class="info">
+                    place_html.full =
+                                    `<div class="info">
                                         <div class="name">${place.name}</div>
+                                        
                                          <div class="rating-price">
                                              ${place_html.rating} ${place_html.price}  
                                          </div>
@@ -162,9 +163,7 @@ befriend.places = {
                                     
                                     <div class="use-place">
                                         <div class="button" data-place-id="${place.id}">Select</div>
-                                    </div>
-                                    
-                                    `;
+                                    </div>`;
 
                     html += `<div class="place">${place_html.full}</div>`;
                 }
