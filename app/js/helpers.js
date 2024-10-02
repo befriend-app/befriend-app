@@ -70,6 +70,35 @@ function isNumeric(obj) {
     return !isNaN( parseFloat(obj) ) && isFinite( obj );
 }
 
+function isZIPFormat(str) {
+    if (!str) return false;
+
+    // Convert to string if it's a number
+    const input = str.toString();
+
+    // Patterns to match ZIP codes within text
+    const zipPatterns = [
+        /.*?(\d{5}-\d{4}).*/, // ZIP+4 with hyphen
+        /.*?(\d{5})(?:-(?:\d{4})?)?.*/, // Basic 5-digit ZIP, optionally followed by hyphen and 4 digits
+        /.*?(\d{9}).*/ // ZIP+4 without hyphen
+    ];
+
+    // Try to find a ZIP code in the string
+    for (const pattern of zipPatterns) {
+        const match = input.match(pattern);
+
+        if (match) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function metersToFeet(meters, decimals = 0) {
+    return Number((meters * 3.28084).toFixed(decimals));
+}
+
 function removeClassEl(name, el) {
     if(typeof el !== 'object') {
         el = document.getElementById(el);
@@ -136,6 +165,34 @@ function colorDeltaE (rgbA, rgbB) {
     let deltaHkhsh = deltaH / (sh);
     let i = deltaLKlsl * deltaLKlsl + deltaCkcsc * deltaCkcsc + deltaHkhsh * deltaHkhsh;
     return i < 0 ? 0 : Math.sqrt(i);
+}
+
+function stringSimilarity(str1, str2, substringLength, caseSensitive) {
+    // https://github.com/stephenjjbrown/string-similarity-js
+
+    if (substringLength === void 0) { substringLength = 2; }
+    if (caseSensitive === void 0) { caseSensitive = false; }
+    if (!caseSensitive) {
+        str1 = str1.toLowerCase();
+        str2 = str2.toLowerCase();
+    }
+    if (str1.length < substringLength || str2.length < substringLength)
+        return 0;
+    let map = new Map();
+    for (let i = 0; i < str1.length - (substringLength - 1); i++) {
+        let substr1 = str1.substr(i, substringLength);
+        map.set(substr1, map.has(substr1) ? map.get(substr1) + 1 : 1);
+    }
+    let match = 0;
+    for (let j = 0; j < str2.length - (substringLength - 1); j++) {
+        let substr2 = str2.substr(j, substringLength);
+        let count = map.has(substr2) ? map.get(substr2) : 0;
+        if (count > 0) {
+            map.set(substr2, count - 1);
+            match++;
+        }
+    }
+    return (match * 2) / (str1.length + str2.length - ((substringLength - 1) * 2));
 }
 
 function useWhiteOnBackground(hexColor) {

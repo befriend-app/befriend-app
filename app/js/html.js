@@ -60,7 +60,9 @@ befriend.html = {
                      <div class="no-places">No places found</div>
                      
                     <div class="places-container">
-                        <div class="title">Choose Place</div>
+                        <div class="header">
+                            <div class="title">Choose Place</div>
+                        </div>
                         
                         <span class="spinner"></span>
                         

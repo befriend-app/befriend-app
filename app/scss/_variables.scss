@@ -1,4 +1,13 @@
-@import "_colors";
+//colors
+$brand_color_a: #2d86c7;
+$brand_color_b: #e0f3fd;
+$brand_color_c: #08c151;
+$brand_color_d: #F5C8A2;
+
+$color_lightgray: lightgray;
+$color_gray: #00000079;
+
+//app variables
 
 $app_background: lighten($color_lightgray, 10%);
 $app_margin_lr: 10px;
@@ -35,5 +44,7 @@ $places_spinner_dim: 48px;
 $places_header_h: 40px;
 $places_transition_ms: 700ms;
 
-$places_padding_t: 20px;
+$places_padding_lr: 20px;
+
+$places_padding_t: 0px;
 $places_padding_b: 30px;

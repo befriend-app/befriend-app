@@ -35,9 +35,9 @@ html.display-places {
 
     .back {
         position: absolute;
-        top: 15px;
-        left: 20px;
-        height: 18px;
+        top: 13px;
+        left: $places_padding_lr;
+        height: 17px;
         z-index: 2;
     }
 
@@ -52,10 +52,13 @@ html.display-places {
         position: relative;
         height: 100%;
 
-        .title {
-            margin-top: 20px;
-            text-align: center;
-            font-size: 85%;
+        .header {
+            border-bottom: .5px solid $color_gray;
+            .title {
+                padding: 10px 0;
+                text-align: center;
+                font-size: 14px;
+            }
         }
     }
 
@@ -68,7 +71,121 @@ html.display-places {
         flex-direction: column;
 
         .place {
+            position: relative;
+            padding: 5px $places_padding_lr;
+            border-bottom: 1px solid $color_lightgray;
 
+            display: flex;
+
+            .info {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .rating-price {
+                display: flex;
+                gap: 0 10px;
+                align-items: center;
+            }
+
+            .use-place {
+                margin-left: auto;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+
+                .button {
+                    padding: 4px 8px;
+                    border-radius: 6px;
+                    background-color: $brand_color_b;
+                    height: fit-content;
+                    font-size: 12px;
+                    text-transform: uppercase;
+                }
+            }
+
+            .name {
+                font-weight: 500;
+                font-size: 15px;
+                max-width: 220px;
+                line-height: 140%;
+                margin-bottom: 3px;
+            }
+
+            .location {
+                display: flex;
+                align-items: center;
+                margin-top: 3px;
+
+                .distance {
+                    font-size: 12px;
+                    font-weight: 500;
+                    margin-right: 10px;
+                }
+
+                .location-address {
+                    display: flex;
+                    gap: 0 6px;
+                    align-items: center;
+                    font-weight: 400;
+                }
+
+                .address {
+                    font-size: 13px;
+                }
+
+                .address_2 {
+                    font-size: 12px;
+                    transform: translateY(.4px);
+                }
+
+                .locality {
+                    font-size: 11px;
+                    transform: translateY(.3px);
+                }
+            }
+
+            .price {
+                font-weight: 300;
+                font-size: 13px;
+                @include flex-center-col;
+                transform: translateY(-.5px);
+            }
+
+            .rating {
+                display: flex;
+                gap: 0 5px;
+                align-items: center;
+
+                .stars {
+                    display: flex;
+                    gap: 0 2px;
+
+                    .circle-container {
+                        $dim: 12px;
+                        width: $dim;
+                        height: $dim;
+                        position: relative;
+                        overflow: hidden;
+                        border-radius: 50%;
+                        background-color: white;
+                        border: 1px solid darken($color_lightgray, 20%);
+
+                        .fill {
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                        }
+                    }
+                }
+
+                .num {
+                    font-size: 12px;
+                }
+            }
         }
     }
 
@@ -84,7 +201,7 @@ html.display-places {
         animation: rotation 1s linear infinite;
 
         left: calc(50% - calc($places_spinner_dim / 2));
-        top: calc(50% - calc($places_spinner_dim / 2 + $places_header_h));
+        top: calc(50% - calc($places_spinner_dim / 2 + $places_header_h / 2));
 
         &.show {
             display: inline-block;
