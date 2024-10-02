@@ -18,7 +18,7 @@ befriend.events = {
         document.querySelector('body').addEventListener('click', function (e) {
             e = e || window.event;
 
-           if(befriend.places.placesDisplayShown()) {
+           if(befriend.places.isPlacesShown()) {
                //hide places to bottom
                if(!(e.target.closest('#places'))) {
                    //do not hide on double click if activity type just clicked

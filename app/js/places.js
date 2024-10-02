@@ -1,4 +1,8 @@
 befriend.places = {
+    data: {
+        items: [],
+        obj: {}
+    },
     displayPlaces: function (activity_type) {
         return new Promise(async (resolve, reject) => {
             let location = befriend.location.search || befriend.location.current;
@@ -9,181 +13,41 @@ befriend.places = {
 
             befriend.timing.showPlaces = timeNow();
 
-            addClassEl(befriend.classes.placesShown, document.documentElement);
+            befriend.places.toggleDisplayPlaces(true);
 
-            let spinnerEl = befriend.els.places.querySelector('.spinner');
-
-            addClassEl('show', spinnerEl)
+            befriend.places.toggleSpinner(true);
 
             try {
                 let r = await axios.put(joinPaths(api_domain, 'activity_type', activity_type.token, 'places'), {
                     location: location,
                 });
 
+                befriend.places.setData(r.data.places);
+
                 if(!r.data.places.length) {
-                    addClassEl('no-places-found', befriend.els.places);
+                    befriend.places.toggleNoPlaces(true);
+                } else {
+                    await befriend.html.setPlaces();
                 }
-
-                let html = '';
-
-                for (let place of r.data.places) {
-                    let place_html = {
-                        distance: ``,
-                        location: ``,
-                        price: ``,
-                        rating: ``,
-                        hours: ``,
-                        full: ``
-                    };
-
-                    //location
-                    if(place.location_address) {
-                        place_html.location += `<div class="address">${place.location_address}</div>`;
-                    }
-
-                    if(place.location_address_2) {
-                        //do not show if zip code in address_2
-
-                        let is_postcode = place.location_address_2.includes(place.location_postcode) || isZIPFormat(place.location_address_2);
-
-                        if(!is_postcode) {
-                            //do not show if address and address_2 are too similar
-                            let str_similarity = stringSimilarity(place.location_address, place.location_address_2);
-
-                            if(str_similarity < .5) {
-                                place_html.location += `<div class="address_2">${place.location_address_2}</div>`;
-                            }
-                        }
-                    }
-
-                    place_html.location += `<div class="locality">${place.location_locality}, ${place.location_region}</div>`;
-
-                    //distance
-                    place_html.distance = place.distance.miles_km.toFixed(1);
-
-
-                    if(place.distance.miles_km < 1) { //hide trailing zero if less than 1 m/km
-                        place_html.distance = parseFloat(place.distance.miles_km.toFixed(1));
-                    }
-
-
-                    if(place_html.distance % 1 === 0) { //add decimal if rounded exactly to integer
-                        place_html.distance = place_html.distance.toFixed(1);
-                    }
-
-                    if(place.distance.use_km) { //km
-                        if(place.distance.miles_km < .1) { //meters
-                            place_html.distance = place.distance.meters;
-                            place_html.distance += ' meters';
-                        } else {
-                            place_html.distance += ' km';
-                        }
-                    } else { //miles
-                        if(place.distance.miles_km < .1) { //feet
-                            place_html.distance = metersToFeet(place.distance.meters);
-                            place_html.distance += ' ft';
-                        } else {
-                            place_html.distance += ' m';
-                        }
-                    }
-
-                    //price
-                    if(place.price) {
-                        let price_str = '';
-
-                        for(let i = 0; i < place.price; i++) {
-                            price_str += '$';
-                        }
-
-                        place_html.price += `<div class="price">${price_str}</div>`;
-                    }
-
-                    //rating
-                    if(isNumeric(place.rating)) {
-                        let rating_str = place.rating.toFixed(1);
-                        let rating = parseFloat(rating_str);
-
-                        let stars_html = ``;
-
-                        let color = befriend.styles.brand_color_a;
-
-                        for(let i = 1; i <= 5; i++) {
-                            let percent;
-
-                            if(rating > i) {
-                                percent = 100;
-                            } else {
-                                let diff = i - rating;
-
-                                if(diff > 1) {
-                                    percent = 0;
-                                } else {
-                                    percent = (1 - diff) * 100;
-                                }
-                            }
-
-                            let percent_str = percent + '%';
-
-                            let star_html = `<div class="circle-container">
-                                                <div class="fill" style="background: linear-gradient(to right, ${color} ${percent_str}, transparent ${percent_str});"></div>
-                                            </div>`;
-
-                            stars_html += star_html;
-                        }
-
-                        place_html.rating += `<div class="rating">
-                                                <div class="stars">${stars_html}</div>
-                                                <div class="num">${rating_str}</div>
-                                             </div>`;
-                    }
-
-                    //hours
-                    console.log({
-                        name: place.name,
-                        hours: JSON.stringify(place.hours)
-                    });
-
-
-                    //todo
-                    //reality
-                    let real_html = ``;
-
-                    //closed
-
-                    place_html.full =
-                                    `<div class="left-col">
-                                        <div class="name">${place.name}</div>
-                                        
-                                         <div class="rating-price">
-                                             ${place_html.rating} ${place_html.price}  
-                                         </div>
-
-                                         <div class="location">
-                                             <div class="distance">${place_html.distance}</div>
-                                             <div class="location-address">
-                                                ${place_html.location}
-                                             </div>
-                                         </div>
-                                    </div>
-                                    
-                                    <div class="right-col">
-                                        ${place_html.hours}
-                                        <div class="button" data-place-id="${place.id}">Select</div>
-                                    </div>`;
-
-                    html += `<div class="place">${place_html.full}</div>`;
-                }
-
-                befriend.els.places.querySelector('.places').innerHTML = html;
-
             } catch(e) { // throw if not 200 status code
                 console.error(e);
             }
 
-            removeClassEl('show', spinnerEl);
+            befriend.places.toggleSpinner(false);
 
             resolve();
         });
+    },
+    setData: function (places) {
+        //reset data
+
+        befriend.places.data.items = [];
+        befriend.places.data.obj = {};
+
+        for(let place of places) {
+            befriend.places.data.items.push(place);
+            befriend.places.data.obj[place.id] = place;
+        }
     },
     hidePlaces: function () {
         return new Promise(async (resolve, reject) => {
@@ -205,7 +69,7 @@ befriend.places = {
            resolve();
         });
     },
-    placesDisplayShown: function () {
+    isPlacesShown: function () {
         return elHasClass(document.documentElement, befriend.classes.placesShown)
     },
     toggleDisplayPlaces: function (show) {
@@ -214,5 +78,21 @@ befriend.places = {
         } else {
             removeClassEl(befriend.classes.placesShown, document.documentElement);
         }
-    }
+    },
+    toggleNoPlaces: function (show) {
+        if(show) {
+            addClassEl('no-places-found', befriend.els.places);
+        } else {
+            removeClassEl('no-places-found', befriend.els.places);
+        }
+    },
+    toggleSpinner: function (show) {
+        let spinnerEl = befriend.els.places.querySelector('.spinner');
+
+        if(show) {
+            addClassEl('show', spinnerEl);
+        } else {
+            removeClassEl('show', spinnerEl);
+        }
+    },
 }

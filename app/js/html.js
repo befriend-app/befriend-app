@@ -256,4 +256,245 @@ befriend.html = {
             }
         });
     },
+    setPlaces: function () {
+        return new Promise(async (resolve, reject) => {
+            let html = '';
+
+            for (let place of befriend.places.data.items) {
+                let place_html = {
+                    distance: ``,
+                    location: ``,
+                    price: ``,
+                    rating: ``,
+                    hours: ``,
+                    full: ``
+                };
+
+                //location
+                if(place.location_address) {
+                    place_html.location += `<div class="address">${place.location_address}</div>`;
+                }
+
+                if(place.location_address_2) {
+                    //do not show if zip code in address_2
+
+                    let is_postcode = place.location_address_2.includes(place.location_postcode) || isZIPFormat(place.location_address_2);
+
+                    if(!is_postcode) {
+                        //do not show if address and address_2 are too similar
+                        let str_similarity = stringSimilarity(place.location_address, place.location_address_2);
+
+                        if(str_similarity < .5) {
+                            place_html.location += `<div class="address_2">${place.location_address_2}</div>`;
+                        }
+                    }
+                }
+
+                place_html.location += `<div class="locality">${place.location_locality}, ${place.location_region}</div>`;
+
+                //distance
+                place_html.distance = place.distance.miles_km.toFixed(1);
+
+                if(place.distance.miles_km < 1) { //hide trailing zero if less than 1 m/km
+                    place_html.distance = parseFloat(place.distance.miles_km.toFixed(1));
+                }
+
+                if(parseFloat(place_html.distance) % 1 === 0) { //add decimal if rounded exactly to integer
+                    place_html.distance = parseFloat(place_html.distance).toFixed(1);
+                }
+
+                if(place.distance.use_km) { //km
+                    if(place.distance.miles_km < .1) { //meters
+                        place_html.distance = place.distance.meters;
+                        place_html.distance += ' meters';
+                    } else {
+                        place_html.distance += ' km';
+                    }
+                } else { //miles
+                    if(place.distance.miles_km < .1) { //feet
+                        place_html.distance = metersToFeet(place.distance.meters);
+                        place_html.distance += ' ft';
+                    } else {
+                        place_html.distance += ' m';
+                    }
+                }
+
+                //price
+                if(place.price) {
+                    let price_str = '';
+
+                    for(let i = 0; i < place.price; i++) {
+                        price_str += '$';
+                    }
+
+                    place_html.price += `<div class="price">${price_str}</div>`;
+                }
+
+                //rating
+                if(isNumeric(place.rating)) {
+                    let rating_str = place.rating.toFixed(1);
+                    let rating = parseFloat(rating_str);
+
+                    let stars_html = ``;
+
+                    let color = befriend.styles.brand_color_a;
+
+                    for(let i = 1; i <= 5; i++) {
+                        let percent;
+
+                        if(rating > i) {
+                            percent = 100;
+                        } else {
+                            let diff = i - rating;
+
+                            if(diff > 1) {
+                                percent = 0;
+                            } else {
+                                percent = (1 - diff) * 100;
+                            }
+                        }
+
+                        let percent_str = percent + '%';
+
+                        let star_html = `<div class="circle-container">
+                                                <div class="fill" style="background: linear-gradient(to right, ${color} ${percent_str}, transparent ${percent_str});"></div>
+                                            </div>`;
+
+                        stars_html += star_html;
+                    }
+
+                    place_html.rating += `<div class="rating">
+                                                <div class="stars">${stars_html}</div>
+                                                <div class="num">${rating_str}</div>
+                                             </div>`;
+                }
+
+                //todo
+                //reality
+                let reality_html = ``;
+
+                //closed
+
+                place_html.full =
+                    `<div class="left-col">
+                        <div class="name">${place.name}</div>
+                        
+                         <div class="rating-price">
+                             ${place_html.rating} ${place_html.price}  
+                         </div>
+    
+                         <div class="location">
+                             <div class="distance">${place_html.distance}</div>
+                             <div class="location-address">
+                                ${place_html.location}
+                             </div>
+                         </div>
+                    </div>
+                                    
+                    <div class="right-col">
+                        <div class="hours"></div>
+                        <div class="button">Select</div>
+                    </div>`;
+
+                html += `<div class="place" data-place-id="${place.id}">${place_html.full}</div>`;
+            }
+
+            befriend.els.places.querySelector('.places').innerHTML = html;
+
+            befriend.html.setPlacesHours();
+
+            resolve();
+        });
+    },
+    setPlacesHours: function () {
+        let activity_time = null;
+
+        let when_selected = befriend.when.selected;
+
+        if(when_selected) {
+            if(when_selected.is_now) {
+                activity_time = dayjs();
+            } else if(when_selected.is_schedule) {
+                //todo
+            } else {
+                try {
+                    activity_time = befriend.when.getOptionDateTime(when_selected);
+                } catch(e) {
+                    console.error(e);
+                    return false;
+                }
+            }
+        } else {
+            return false;
+        }
+
+        let day_of_week_int = activity_time.day();
+
+        let places_els = befriend.els.places.getElementsByClassName('place');
+
+        for(let i = 0; i < places_els.length; i++) {
+            let el = places_els[i];
+
+            let hours_el = el.querySelector('.hours');
+
+            removeClassEl('show', hours_el);
+            removeClassEl('open', hours_el);
+            removeClassEl('closed', hours_el);
+
+            let id = el.getAttribute('data-place-id');
+
+            let place_data = befriend.places.data.obj[id];
+
+            if(!place_data) {
+                console.error("No place data");
+                continue;
+            }
+
+            if(!place_data.hours || !place_data.hours.length) {
+                continue;
+            }
+
+            let place_hours;
+
+            for(let hours of place_data.hours) {
+                //match dayjs
+                if(hours.day === 7) {
+                    hours.day = 0;
+                }
+
+                if(hours.day === day_of_week_int) {
+                    place_hours = hours;
+                    break;
+                }
+            }
+
+            if(!place_hours) {
+                continue;
+            }
+
+            let openHour = parseInt(place_hours.open.substring(0, 2));
+            let closeHour = parseInt(place_hours.close.substring(0, 2));
+
+            let open_time_date = activity_time.startOf('date').hour(openHour).minute(parseFloat(place_hours.open.substring(2, 4)));
+            let close_time_date = activity_time.startOf('date').hour(closeHour).minute(parseFloat(place_hours.close.substring(2, 4)));
+
+            console.log({
+                activity_time: activity_time.valueOf(),
+                open_time_date: open_time_date.valueOf(),
+                close_time_date: close_time_date.valueOf()
+            });
+
+            addClassEl('show', hours_el);
+
+            if(activity_time.valueOf() > open_time_date.valueOf() && activity_time.valueOf() < close_time_date.valueOf()) {
+                hours_el.innerHTML = `<div class="status">Open</div>`;
+
+                addClassEl('open', hours_el);
+            } else {
+                hours_el.innerHTML = `<div class="status">Closed</div>`;
+
+                addClassEl('closed', hours_el);
+            }
+        }
+    },
 }

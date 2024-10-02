@@ -52,18 +52,7 @@ befriend.when = {
     },
     setWhenTimes: function () {
         function updateTimes() {
-            function roundTimeMinutes(time, minutes) {
-                var timeToReturn = new Date(time);
-
-                timeToReturn.setMilliseconds(Math.round(timeToReturn.getMilliseconds() / 1000) * 1000);
-                timeToReturn.setSeconds(Math.round(timeToReturn.getSeconds() / 60) * 60);
-                timeToReturn.setMinutes(Math.round(timeToReturn.getMinutes() / minutes) * minutes);
-                return timeToReturn;
-            }
-
             let when_options_els =  befriend.els.when.getElementsByClassName('when-option');
-
-            let date_now = dayjs();
 
             for(let i = 0; i < when_options_els.length; i++) {
                 let el = when_options_els[i];
@@ -74,26 +63,13 @@ befriend.when = {
                     continue;
                 }
 
-                let date = date_now.add(data.mins, 'minutes');
+                let date = befriend.when.getOptionDateTime(data);
 
-                let round_minutes = 5;
-
-                //make time round
-                let js_date = roundTimeMinutes(date, round_minutes);
-                date = dayjs(js_date);
-
-                //add more time if activity starts in less than an hour
-                let minutes_diff = date.diff(date_now, 'minutes') - data.mins;
-
-                if(minutes_diff < 0) {
-                    let add_mins = Math.ceil(Math.abs(minutes_diff) / 5) * 5;
-
-                    date = date.add(add_mins, 'minutes');
+                el.querySelector('.time').innerHTML = date.format(`h:mm a`);
+                
+                if(befriend.places.isPlacesShown()) {
+                    // befriend.html.setPlacesHours();
                 }
-
-                let time_str = date.format(`h:mm a`);
-
-                el.querySelector('.time').innerHTML = time_str;
             }
         }
 
@@ -112,6 +88,32 @@ befriend.when = {
 
             resolve();
         });
+    },
+    getOptionDateTime: function (option) {
+        if(!option) {
+            throw new Error("No option provided");
+        }
+
+        let date_now = dayjs();
+        
+        let date = date_now.add(option.mins, 'minutes');
+
+        let round_minutes = 5;
+
+        //make time round
+        let js_date = roundTimeMinutes(date, round_minutes);
+        date = dayjs(js_date);
+
+        //add more time if activity starts in less than an hour
+        let minutes_diff = date.diff(date_now, 'minutes') - option.mins;
+
+        if(minutes_diff < 0) {
+            let add_mins = Math.ceil(Math.abs(minutes_diff) / 5) * 5;
+
+            date = date.add(add_mins, 'minutes');
+        }
+
+        return date;
     }
 }
 

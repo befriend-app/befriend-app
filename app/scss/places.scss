@@ -93,10 +93,10 @@ html.display-places {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                justify-content: end;
                 z-index: 2;
 
                 .button {
+                    margin-top: auto;
                     padding: 4px 10px;
                     border-radius: 6px;
                     background-color: $brand_color_b;
@@ -185,6 +185,41 @@ html.display-places {
 
                 .num {
                     font-size: 12px;
+                }
+            }
+
+            .hours {
+                display: none;
+                gap: 0 0;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+
+                &.show {
+                    display: flex;
+                }
+
+                .status {
+                    font-size: 10px;
+                    font-weight: 600;
+                    text-align: center;
+                    text-transform: uppercase;
+                }
+
+                .at {
+                    font-size: 9px;
+                }
+
+                &.open {
+                    .status {
+                        color: $color_green;
+                    }
+                }
+
+                &.closed {
+                    .status {
+                        color: black;
+                    }
                 }
             }
         }
