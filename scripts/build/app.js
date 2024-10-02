@@ -32,6 +32,7 @@ let js_files = {
         'vendor/axios.js',
         'vendor/dayjs.js',
         'app.js', //app first
+        'when.js',
         'activities.js',
         'places.js',
         'location.js',

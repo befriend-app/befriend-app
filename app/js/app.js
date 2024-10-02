@@ -5,6 +5,7 @@ window['befriend'] = {
     timing: {
         showPlaces: null
     },
+    when: null,
     activities: null,
     places: null,
     events: null,
@@ -24,9 +25,15 @@ window['befriend'] = {
                 console.error(e);
             }
 
+            //when
+            try {
+                await befriend.when.setWhen();
+            } catch(e) {
+
+            }
+
             //activities
             try {
-                await befriend.activities.setWhen();
                 await befriend.activities.setActivityTypes();
             } catch(e) {
                 console.error(e);

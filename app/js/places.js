@@ -32,11 +32,11 @@ befriend.places = {
                         location: ``,
                         price: ``,
                         rating: ``,
+                        hours: ``,
                         full: ``
                     };
 
                     //location
-
                     if(place.location_address) {
                         place_html.location += `<div class="address">${place.location_address}</div>`;
                     }
@@ -61,19 +61,18 @@ befriend.places = {
                     //distance
                     place_html.distance = place.distance.miles_km.toFixed(1);
 
-                    //hide trailing zero if less than 1 m/km
-                    if(place.distance.miles_km < 1) {
+
+                    if(place.distance.miles_km < 1) { //hide trailing zero if less than 1 m/km
                         place_html.distance = parseFloat(place.distance.miles_km.toFixed(1));
                     }
 
-                    //add decimal if rounded exactly to integer
-                    if(place_html.distance % 1 === 0) {
+
+                    if(place_html.distance % 1 === 0) { //add decimal if rounded exactly to integer
                         place_html.distance = place_html.distance.toFixed(1);
                     }
 
                     if(place.distance.use_km) { //km
-                        //meters
-                        if(place.distance.miles_km < .1) {
+                        if(place.distance.miles_km < .1) { //meters
                             place_html.distance = place.distance.meters;
                             place_html.distance += ' meters';
                         } else {
@@ -89,7 +88,6 @@ befriend.places = {
                     }
 
                     //price
-
                     if(place.price) {
                         let price_str = '';
 
@@ -139,6 +137,13 @@ befriend.places = {
                                              </div>`;
                     }
 
+                    //hours
+                    console.log({
+                        name: place.name,
+                        hours: JSON.stringify(place.hours)
+                    });
+
+
                     //todo
                     //reality
                     let real_html = ``;
@@ -146,7 +151,7 @@ befriend.places = {
                     //closed
 
                     place_html.full =
-                                    `<div class="info">
+                                    `<div class="left-col">
                                         <div class="name">${place.name}</div>
                                         
                                          <div class="rating-price">
@@ -161,7 +166,8 @@ befriend.places = {
                                          </div>
                                     </div>
                                     
-                                    <div class="use-place">
+                                    <div class="right-col">
+                                        ${place_html.hours}
                                         <div class="button" data-place-id="${place.id}">Select</div>
                                     </div>`;
 

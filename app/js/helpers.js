@@ -53,6 +53,28 @@ function elHasClass(el, cl) {
     return el.classList.contains(cl);
 }
 
+function fireClick(node){
+    if(typeof node === 'string') {
+        node = document.getElementById(node);
+    }
+
+    if(!node) {
+        return;
+    }
+
+    if(node.nodeName.toLowerCase() === 'input' && node.getAttribute('type') === 'checkbox' && (is_ios || is_android)) {
+        node.click();
+    } else if (document.createEvent) {
+        var evt = document.createEvent('MouseEvents');
+        evt.initEvent('click', true, false);
+        node.dispatchEvent(evt);
+    } else if (document.createEventObject) {
+        node.fireEvent(`on${'click'}`) ;
+    } else if (typeof node[`on${'click'}`] == 'function') {
+        node[`on${'click'}`]();
+    }
+}
+
 function hideLevel(level_el) {
     removeClassEl('show', level_el);
     level_el.style.height = '0';

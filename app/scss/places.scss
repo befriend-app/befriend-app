@@ -77,7 +77,7 @@ html.display-places {
 
             display: flex;
 
-            .info {
+            .left-col {
                 display: flex;
                 flex-direction: column;
             }
@@ -88,7 +88,7 @@ html.display-places {
                 align-items: center;
             }
 
-            .use-place {
+            .right-col {
                 margin-left: auto;
                 display: flex;
                 flex-direction: column;
