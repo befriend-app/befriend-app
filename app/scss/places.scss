@@ -74,8 +74,8 @@ html.display-places {
         box-sizing: border-box;
         animation: rotation 1s linear infinite;
 
-        left: calc(50% - #{$places_spinner_dim / 2});
-        top: calc(50% - #{$places_spinner_dim / 2} - #{$places_header_h});
+        left: calc(50% - calc($places_spinner_dim / 2));
+        top: calc(50% - calc($places_spinner_dim / 2 + $places_header_h));
 
         &.show {
             display: inline-block;

@@ -2,6 +2,9 @@ window['befriend'] = {
     classes: {
         placesShown: 'display-places'
     },
+    timing: {
+        showPlaces: null
+    },
     activities: null,
     places: null,
     events: null,

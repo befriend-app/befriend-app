@@ -134,12 +134,12 @@
         }).filter(x=>x.length).join(slash);
     }
 
-    function timeNow(ms) {
-        if(ms) {
-            return Date.now();
+    function timeNow(sec) {
+        if(sec) {
+            return Number.parseInt(Date.now() / 1000);
         }
 
-        return Number.parseInt(Date.now() / 1000);
+        return Date.now();
     }
 
     function loadJS() {

@@ -74,7 +74,6 @@ befriend.html = {
                 
                 <div id="overlay"></div>
                 
-                
                 <footer>
                     <div id="navigation">
                         <div class="navigation">

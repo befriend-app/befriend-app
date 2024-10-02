@@ -381,6 +381,8 @@ befriend.activities = {
                     e.preventDefault();
                     e.stopPropagation();
 
+                    console.log("level 2 clicked");
+
                     let parent_id = this.closest('.level_2').getAttribute('data-parent-id');
 
                     let level_2_id = this.getAttribute('data-id');

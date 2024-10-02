@@ -7,8 +7,9 @@ befriend.places = {
                 return reject("No location");
             }
 
-            addClassEl(befriend.classes.placesShown, document.documentElement);
+            befriend.timing.showPlaces = timeNow();
 
+            addClassEl(befriend.classes.placesShown, document.documentElement);
 
             let spinnerEl = befriend.els.places.querySelector('.spinner');
 
