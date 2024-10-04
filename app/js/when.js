@@ -68,7 +68,7 @@ befriend.when = {
                 el.querySelector('.time').innerHTML = date.format(`h:mm a`);
                 
                 if(befriend.places.isPlacesShown()) {
-                    // befriend.html.setPlacesHours();
+                    befriend.html.setPlacesHours();
                 }
             }
         }
@@ -114,6 +114,30 @@ befriend.when = {
         }
 
         return date;
+    },
+    getCurrentlySelectedDateTime() {
+        let activity_time = null;
+
+        let when_selected = befriend.when.selected;
+
+        if(when_selected) {
+            if(when_selected.is_now) {
+                activity_time = dayjs();
+            } else if(when_selected.is_schedule) {
+                //todo
+            } else {
+                try {
+                    activity_time = befriend.when.getOptionDateTime(when_selected);
+                } catch(e) {
+                    console.error(e);
+                    return null;
+                }
+            }
+        } else {
+            return null;
+        }
+
+        return activity_time;
     }
 }
 

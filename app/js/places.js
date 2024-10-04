@@ -13,9 +13,15 @@ befriend.places = {
 
             befriend.timing.showPlaces = timeNow();
 
-            befriend.places.toggleDisplayPlaces(true);
+            //set custom title and time
+            befriend.places.setPlacesTitle(activity_type.title);
+            befriend.places.setPlacesTime();
 
             befriend.places.toggleSpinner(true);
+
+            befriend.places.toggleNoPlaces(false);
+
+            befriend.places.toggleDisplayPlaces(true);
 
             try {
                 let r = await axios.put(joinPaths(api_domain, 'activity_type', activity_type.token, 'places'), {
@@ -95,4 +101,25 @@ befriend.places = {
             removeClassEl('show', spinnerEl);
         }
     },
+    setPlacesTitle: function (title) {
+        document.getElementById('places-title').innerHTML = title;
+    },
+    setPlacesTime: function () {
+        let places_time_str = '';
+
+        let selected = befriend.when.selected;
+
+        if(selected.is_now) {
+            places_time_str = `<div class="value now">Now</div>`;
+        } else if(selected.is_schedule) {
+            places_time_str = `<div class="value schedule">Schedule</div>`;
+        } else {
+            let date_time = befriend.when.getCurrentlySelectedDateTime();
+
+            places_time_str = `<div class="value mins">${date_time.format(`h:mm a`)}</div>`;
+        }
+
+
+        document.getElementById('places-time').innerHTML = places_time_str;
+    }
 }

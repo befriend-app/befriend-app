@@ -59,9 +59,10 @@ befriend.html = {
                     
                      <div class="no-places">No places found</div>
                      
-                    <div class="places-container">
+                    <div class="places-wrapper">
                         <div class="header">
-                            <div class="title">Choose Place</div>
+                            <div id="places-title"></div>
+                            <div id="places-time"></div>
                         </div>
                         
                         <span class="spinner"></span>
@@ -70,8 +71,6 @@ befriend.html = {
                             
                         </div>
                     </div>
-                    
-                   
                 </div>
                 
                 <div id="overlay"></div>
@@ -366,7 +365,11 @@ befriend.html = {
                     place_html.rating += `<div class="rating">
                                                 <div class="stars">${stars_html}</div>
                                                 <div class="num">${rating_str}</div>
-                                             </div>`;
+                                          </div>`;
+                } else {
+                    place_html.rating += `<div class="rating">
+                                                <div class="no-rating">No Rating</div>
+                                          </div>`;
                 }
 
                 //todo
@@ -377,14 +380,21 @@ befriend.html = {
 
                 place_html.full =
                     `<div class="left-col">
-                        <div class="name">${place.name}</div>
+                        <div class="distance-price">
+                            <div class="distance">${place_html.distance}</div>
+                            ${place_html.price}
+                        </div>
+                            
+                        <div class="name-price">
+                            <div class="name">${place.name}</div>
+                        </div>
                         
                          <div class="rating-price">
-                             ${place_html.rating} ${place_html.price}  
+                             ${place_html.rating}
                          </div>
     
                          <div class="location">
-                             <div class="distance">${place_html.distance}</div>
+                             
                              <div class="location-address">
                                 ${place_html.location}
                              </div>
@@ -407,26 +417,11 @@ befriend.html = {
         });
     },
     setPlacesHours: function () {
-        let activity_time = null;
+        //header
+        befriend.places.setPlacesTime();
 
-        let when_selected = befriend.when.selected;
-
-        if(when_selected) {
-            if(when_selected.is_now) {
-                activity_time = dayjs();
-            } else if(when_selected.is_schedule) {
-                //todo
-            } else {
-                try {
-                    activity_time = befriend.when.getOptionDateTime(when_selected);
-                } catch(e) {
-                    console.error(e);
-                    return false;
-                }
-            }
-        } else {
-            return false;
-        }
+        //show open/closed for each place
+        let activity_time = befriend.when.getCurrentlySelectedDateTime();
 
         let day_of_week_int = activity_time.day();
 
@@ -477,12 +472,6 @@ befriend.html = {
 
             let open_time_date = activity_time.startOf('date').hour(openHour).minute(parseFloat(place_hours.open.substring(2, 4)));
             let close_time_date = activity_time.startOf('date').hour(closeHour).minute(parseFloat(place_hours.close.substring(2, 4)));
-
-            console.log({
-                activity_time: activity_time.valueOf(),
-                open_time_date: open_time_date.valueOf(),
-                close_time_date: close_time_date.valueOf()
-            });
 
             addClassEl('show', hours_el);
 
