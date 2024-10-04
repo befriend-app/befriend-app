@@ -241,6 +241,7 @@ befriend.activities = {
                     let level_3_el = this.closest('.level_2_row').nextSibling;
 
                     let closest_level_2_el = this.closest('.level_2');
+
                     let prev_height_level_2 = closest_level_2_el.getAttribute('data-prev-height');
 
                     //remove activity selection and hide level 3 if same activity clicked
@@ -265,7 +266,6 @@ befriend.activities = {
                         if(!level_2_activity.sub || !(Object.keys(level_2_activity.sub).length)) {
                             befriend.places.displayPlaces(befriend.activities.selected.level_2);
                         }
-
                     }
 
                     let prev_level_3 = befriend.els.activities.querySelector('.level_3.show');
@@ -381,6 +381,8 @@ befriend.activities = {
                     e.preventDefault();
                     e.stopPropagation();
 
+                    console.log("level 3 clicked");
+
                     let level_3_el = this.closest('.level_3');
 
                     let parent_id = level_3_el.getAttribute('data-parent-id');
@@ -395,9 +397,7 @@ befriend.activities = {
                     if(elHasClass(this, 'active')) {
                         removeClassEl('active', this);
                         befriend.activities.selected.level_3 = null;
-
-                        befriend.places.displayPlaces(befriend.activities.selected.level_2);
-
+                        // befriend.places.displayPlaces(befriend.activities.selected.level_2);
                     } else { //remove active from any previously selected activity
                         removeElsClass(level_3_activity_els, 'active');
                         addClassEl('active', this);
@@ -405,7 +405,6 @@ befriend.activities = {
 
                         befriend.places.displayPlaces(befriend.activities.selected.level_3);
                     }
-
                 });
             }
 
