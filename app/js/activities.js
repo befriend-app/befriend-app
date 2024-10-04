@@ -254,8 +254,6 @@ befriend.activities = {
                         befriend.activities.selected.level_2 =  null;
                         befriend.activities.selected.level_3 =  null;
 
-                        // befriend.places.displayPlaces(befriend.activities.selected.level_1);
-
                         return;
                     } else { //remove active from any previously selected activity
                         removeElsClass(level_2_activity_els, 'active');
@@ -263,13 +261,17 @@ befriend.activities = {
                         befriend.activities.selected.level_2 =  level_2_activity;
                         befriend.activities.selected.level_3 =  null;
 
-                        befriend.places.displayPlaces(befriend.activities.selected.level_2);
+                        // only show places when there are no level 3 categories
+                        if(!level_2_activity.sub || !(Object.keys(level_2_activity.sub).length)) {
+                            befriend.places.displayPlaces(befriend.activities.selected.level_2);
+                        }
+
                     }
 
                     let prev_level_3 = befriend.els.activities.querySelector('.level_3.show');
 
                     //do not proceed if no sub categories
-                    if(!level_2_activity.sub || !Object.keys(level_2_activity.sub).length) {
+                    if(!level_2_activity.sub || !(Object.keys(level_2_activity.sub).length)) {
                         if(prev_level_3) {
                             hideLevel(prev_level_3);
                         }
