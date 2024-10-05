@@ -7,11 +7,7 @@ loadScriptEnv();
 const Terser = require("terser");
 const csso = require('csso');
 
-const path = require('path');
 const sass = require('sass');
-const yargs = require('yargs');
-
-const args = yargs.argv;
 
 let appPackage = require('../../package.json');
 
@@ -33,6 +29,7 @@ let js_files = {
         'vendor/dayjs.js',
         'app.js', //app first
         'when.js',
+        'friends.js',
         'activities.js',
         'places.js',
         'location.js',
@@ -198,6 +195,6 @@ module.exports = {
     }
 };
 
-if(!module.parent) {
+if(require.main === module) {
     module.exports.build(null, false);
 }

@@ -68,7 +68,7 @@ befriend.when = {
                 el.querySelector('.time').innerHTML = date.format(`h:mm a`);
                 
                 if(befriend.places.isPlacesShown()) {
-                    befriend.html.setPlacesHours();
+                    befriend.places.updatePlacesOpen();
                 }
             }
         }

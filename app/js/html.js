@@ -168,9 +168,7 @@ befriend.html = {
     activityTypes: function () {
         return new Promise(async (resolve, reject) => {
             try {
-                let r = await axios.get(joinPaths(api_domain, 'activity_types'));
-
-                let activities = befriend.activities.types.data = r.data;
+                let activities = befriend.activities.types.data;
 
                 let html = ``;
                 let level_1_html = ``;
@@ -419,11 +417,6 @@ befriend.html = {
         //header
         befriend.places.setPlacesTime();
 
-        //show open/closed for each place
-        let activity_time = befriend.when.getCurrentlySelectedDateTime();
-
-        let day_of_week_int = activity_time.day();
-
         let places_els = befriend.els.places.getElementsByClassName('place');
 
         for(let i = 0; i < places_els.length; i++) {
@@ -444,37 +437,13 @@ befriend.html = {
                 continue;
             }
 
-            if(!place_data.hours || !place_data.hours.length) {
+            if(place_data.is_open === null) {
                 continue;
             }
-
-            let place_hours;
-
-            for(let hours of place_data.hours) {
-                //match dayjs
-                if(hours.day === 7) {
-                    hours.day = 0;
-                }
-
-                if(hours.day === day_of_week_int) {
-                    place_hours = hours;
-                    break;
-                }
-            }
-
-            if(!place_hours) {
-                continue;
-            }
-
-            let openHour = parseInt(place_hours.open.substring(0, 2));
-            let closeHour = parseInt(place_hours.close.substring(0, 2));
-
-            let open_time_date = activity_time.startOf('date').hour(openHour).minute(parseFloat(place_hours.open.substring(2, 4)));
-            let close_time_date = activity_time.startOf('date').hour(closeHour).minute(parseFloat(place_hours.close.substring(2, 4)));
 
             addClassEl('show', hours_el);
 
-            if(activity_time.valueOf() > open_time_date.valueOf() && activity_time.valueOf() < close_time_date.valueOf()) {
+            if(place_data.is_open) {
                 hours_el.innerHTML = `<div class="status">Open</div>`;
 
                 addClassEl('open', hours_el);

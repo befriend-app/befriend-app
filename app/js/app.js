@@ -6,6 +6,7 @@ window['befriend'] = {
         showPlaces: null
     },
     when: null,
+    friends: null,
     activities: null,
     places: null,
     events: null,

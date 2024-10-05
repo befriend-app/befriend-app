@@ -5,6 +5,7 @@ befriend.events = {
                 befriend.events.bodyClickHandler();
 
                 await befriend.when.events();
+                await befriend.friends.events();
                 await befriend.activities.events();
                 await befriend.places.events();
             } catch(e) {
