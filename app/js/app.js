@@ -29,7 +29,7 @@ window['befriend'] = {
             try {
                 await befriend.when.setWhen();
             } catch(e) {
-
+                console.error(e);
             }
 
             //activities
