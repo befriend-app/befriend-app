@@ -394,7 +394,6 @@ befriend.html = {
                          </div>
     
                          <div class="location">
-                             
                              <div class="location-address">
                                 ${place_html.location}
                              </div>
