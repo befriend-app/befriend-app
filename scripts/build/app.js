@@ -27,6 +27,7 @@ let js_files = {
     frontend: [
         'vendor/axios.js',
         'vendor/dayjs.js',
+        'vendor/mapbox.js',
         'app.js', //app first
         'when.js',
         'friends.js',

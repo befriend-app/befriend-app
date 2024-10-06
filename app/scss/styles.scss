@@ -9,6 +9,9 @@
 @import "activities";
 @import "places";
 
+@import "vendor/mapbox";
+
+
 //for devices with notches
 :root {
     --sat: env(safe-area-inset-top);
