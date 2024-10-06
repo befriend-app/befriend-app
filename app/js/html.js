@@ -46,12 +46,21 @@ befriend.html = {
                         <div id="activities" class="view-section">
                             <div class="activities_container">
                                 <div class="section-title">Place</div>
+
+                                <div class="map-wrapper">
+                                    <div id="activities-map"></div>
+                                    
+                                    <div class="auto-complete-container">
+                                        <div class="search">
+                                            <input type="text" class="activity-address-search" placeholder="Search by place">
+                                        </div>
+                                    </div>
+                                </div>
                             
                                 <div class="activities"></div>
                             </div>
                         </div>
                     </div>
-                    
                 </div>
                 
                 <div id="places">

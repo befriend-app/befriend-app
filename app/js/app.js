@@ -26,9 +26,23 @@ window['befriend'] = {
                 console.error(e);
             }
 
+            //location
+            try {
+                await befriend.location.init();
+            } catch(e) {
+                console.error(e);
+            }
+
             //when
             try {
                 await befriend.when.setWhen();
+            } catch(e) {
+                console.error(e);
+            }
+
+            //map
+            try {
+                await befriend.map.loadActivityMap();
             } catch(e) {
                 console.error(e);
             }
@@ -43,12 +57,6 @@ window['befriend'] = {
             //events
             try {
                 await befriend.events.addEvents();
-            } catch(e) {
-                console.error(e);
-            }
-
-            try {
-                await befriend.location.init();
             } catch(e) {
                 console.error(e);
             }

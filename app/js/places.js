@@ -5,7 +5,7 @@ befriend.places = {
     },
     displayPlaces: function (activity_type) {
         return new Promise(async (resolve, reject) => {
-            let location = befriend.location.search || befriend.location.current;
+            let location = befriend.location.getLocation();
 
             if(!location) {
                 return reject("No location");

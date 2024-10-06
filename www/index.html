@@ -5,12 +5,14 @@
         <meta charset="utf-8">
 
         <meta http-equiv="Content-Security-Policy" content="
-            default-src 'self' data: https://ssl.gstatic.com 'unsafe-eval';
+            default-src 'self' blob: data: https://ssl.gstatic.com 'unsafe-eval';
             script-src * 'unsafe-inline' 'unsafe-eval';
             style-src 'self' 'unsafe-inline' http://*:* https://* file://*;
             media-src *;
             font-src *;
             img-src 'self' data: content:;
+            child-src blob:;
+            worker-src blob:;
             connect-src *;
             "
         >

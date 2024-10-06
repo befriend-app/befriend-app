@@ -34,5 +34,8 @@ befriend.location = {
                 getLocation();
             }, 60000);
         });
+    },
+    getLocation: function () {
+        return befriend.location.search || befriend.location.current;
     }
 }
