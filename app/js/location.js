@@ -5,12 +5,12 @@ befriend.location = {
         return new Promise(async (resolve, reject) => {
             function geoLocationSuccess(position) {
                 console.log({
-                    coords: position.coords
+                    coords: position.coords,
                 });
 
                 befriend.location.current = {
                     lat: position.coords.latitude,
-                    lon: position.coords.longitude
+                    lon: position.coords.longitude,
                 };
 
                 resolve();
@@ -25,10 +25,10 @@ befriend.location = {
 
             try {
                 navigator.geolocation.getCurrentPosition(geoLocationSuccess, geoLocationError, geoLocationOptions);
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
                 return reject(e);
             }
         });
-    }
-}
+    },
+};

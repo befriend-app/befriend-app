@@ -38,7 +38,8 @@
     background-color: transparent;
 }
 
-html, body {
+html,
+body {
     margin: 0;
     padding: 0;
     min-height: 100vh;
@@ -62,13 +63,13 @@ html, body {
     opacity: 0;
     visibility: hidden;
     display: block;
-    transition: opacity .5s;
+    transition: opacity 0.5s;
     top: 0;
 }
 
 html.display-places {
     #overlay {
-        opacity: .18;
+        opacity: 0.18;
         visibility: visible;
     }
 }

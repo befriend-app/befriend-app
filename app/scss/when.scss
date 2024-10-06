@@ -9,7 +9,7 @@
             //$h: 38px;
             $br: 6px;
             $pt: 4px;
-            $bw: .5px;
+            $bw: 0.5px;
             flex-basis: $w;
             justify-content: end;
             display: flex;
@@ -41,12 +41,12 @@
                 .value {
                     font-size: 14px;
                     margin-right: 3px;
-                    transform: translateY(-.5px);
+                    transform: translateY(-0.5px);
                 }
 
                 .unit {
                     font-size: 12px;
-                    transform: translateY(-.5px);
+                    transform: translateY(-0.5px);
                 }
             }
 
@@ -67,7 +67,8 @@
                 @include flex-center-col;
             }
 
-            &.now, &.schedule {
+            &.now,
+            &.schedule {
                 .tab {
                     display: none;
                 }

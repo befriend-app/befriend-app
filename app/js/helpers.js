@@ -1,13 +1,13 @@
 function addClassEl(name, el) {
-    if(typeof el !== 'object') {
+    if (typeof el !== "object") {
         el = document.getElementById(el);
     }
 
-    if(!el) {
+    if (!el) {
         return;
     }
 
-    if(!el.classList.contains(name)) {
+    if (!el.classList.contains(name)) {
         el.classList.add(name);
     }
 }
@@ -23,10 +23,10 @@ function getElHeightHidden(el) {
 
     let test_el = el.cloneNode(true);
 
-    test_el.style.visibility = 'hidden';
-    test_el.style.position = 'absolute';
+    test_el.style.visibility = "hidden";
+    test_el.style.position = "absolute";
     test_el.style.width = `${width}px`;
-    test_el.style.removeProperty('height');
+    test_el.style.removeProperty("height");
 
     el.parentNode.appendChild(test_el);
 
@@ -38,15 +38,15 @@ function getElHeightHidden(el) {
 }
 
 function elHasClass(el, cl) {
-    if(!el) {
+    if (!el) {
         return false;
     }
 
-    if(typeof el === 'string') {
+    if (typeof el === "string") {
         el = document.getElementById(el);
     }
 
-    if(!el) {
+    if (!el) {
         return false;
     }
 
@@ -54,12 +54,12 @@ function elHasClass(el, cl) {
 }
 
 function hideLevel(level_el) {
-    removeClassEl('show', level_el);
-    level_el.style.height = '0';
+    removeClassEl("show", level_el);
+    level_el.style.height = "0";
 }
 
 function lastArrItem(els) {
-    if(!els) {
+    if (!els) {
         return null;
     }
 
@@ -67,29 +67,29 @@ function lastArrItem(els) {
 }
 
 function isNumeric(obj) {
-    return !isNaN( parseFloat(obj) ) && isFinite( obj );
+    return !isNaN(parseFloat(obj)) && isFinite(obj);
 }
 
 function removeClassEl(name, el) {
-    if(typeof el !== 'object') {
+    if (typeof el !== "object") {
         el = document.getElementById(el);
     }
 
-    if(!el) {
+    if (!el) {
         return;
     }
 
-    if(el.classList.contains(name)) {
+    if (el.classList.contains(name)) {
         el.classList.remove(name);
     }
 }
 
 function removeElsClass(els, cls) {
-    if(els && els.length) {
-        for(let i = 0; i < els.length; i++) {
+    if (els && els.length) {
+        for (let i = 0; i < els.length; i++) {
             let el = els[i];
 
-            if(el.classList.contains(cls)) {
+            if (el.classList.contains(cls)) {
                 el.classList.remove(cls);
             }
         }
@@ -97,7 +97,7 @@ function removeElsClass(els, cls) {
 }
 
 function toggleElClass(el, css_class) {
-    if(!el.classList.contains(css_class)) {
+    if (!el.classList.contains(css_class)) {
         el.classList.add(css_class);
     } else {
         el.classList.remove(css_class);
@@ -105,11 +105,11 @@ function toggleElClass(el, css_class) {
 }
 
 function queueTimeouts(name, fun, ms) {
-    if(!(name in befriend.timeouts)) {
+    if (!(name in befriend.timeouts)) {
         befriend.timeouts[name] = [];
     }
 
-    for(let t of befriend.timeouts[name]) {
+    for (let t of befriend.timeouts[name]) {
         clearTimeout(t);
     }
 
@@ -118,7 +118,7 @@ function queueTimeouts(name, fun, ms) {
     befriend.timeouts[name].push(t);
 }
 
-function colorDeltaE (rgbA, rgbB) {
+function colorDeltaE(rgbA, rgbB) {
     let labA = colorRgb2Lab(rgbA);
     let labB = colorRgb2Lab(rgbB);
     let deltaL = labA[0] - labB[0];
@@ -131,16 +131,16 @@ function colorDeltaE (rgbA, rgbB) {
     deltaH = deltaH < 0 ? 0 : Math.sqrt(deltaH);
     let sc = 1.0 + 0.045 * c1;
     let sh = 1.0 + 0.015 * c1;
-    let deltaLKlsl = deltaL / (1.0);
-    let deltaCkcsc = deltaC / (sc);
-    let deltaHkhsh = deltaH / (sh);
+    let deltaLKlsl = deltaL / 1.0;
+    let deltaCkcsc = deltaC / sc;
+    let deltaHkhsh = deltaH / sh;
     let i = deltaLKlsl * deltaLKlsl + deltaCkcsc * deltaCkcsc + deltaHkhsh * deltaHkhsh;
     return i < 0 ? 0 : Math.sqrt(i);
 }
 
 function useWhiteOnBackground(hexColor) {
     // Remove the # if it's there
-    hexColor = hexColor.replace('#', '');
+    hexColor = hexColor.replace("#", "");
 
     // Convert hex to RGB
     const r = parseInt(hexColor.substr(0, 2), 16);

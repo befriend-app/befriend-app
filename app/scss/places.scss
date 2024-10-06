@@ -12,7 +12,7 @@ html.display-places {
 
 #places {
     overflow-y: hidden;
-    background-color: #FFF;
+    background-color: #fff;
     width: 100vw;
     height: 70vh;
     max-height: 700px;
@@ -60,7 +60,6 @@ html.display-places {
     }
 
     .places {
-
     }
 
     .spinner {
@@ -80,7 +79,6 @@ html.display-places {
         &.show {
             display: inline-block;
         }
-
     }
 
     @keyframes rotation {
@@ -95,5 +93,4 @@ html.display-places {
     &.active {
         //height: 250px;
     }
-
 }

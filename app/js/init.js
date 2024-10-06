@@ -1,20 +1,20 @@
 function loadCSS() {
     return new Promise(async (resolve, reject) => {
         try {
-            let css_link = 'css/styles.css';
+            let css_link = "css/styles.css";
 
-            if(dev_host) {
+            if (dev_host) {
                 css_link = joinPaths(dev_host, css_link);
-            } else if(hosts.latest) {
+            } else if (hosts.latest) {
                 css_link = joinPaths(hosts.latest, css_link);
             }
 
-            let link = document.createElement('link');
+            let link = document.createElement("link");
             link.setAttribute("rel", "stylesheet");
             link.setAttribute("type", "text/css");
 
-            link.onload = function() {
-                resolve()
+            link.onload = function () {
+                resolve();
             };
 
             link.setAttribute("href", css_link);
@@ -27,21 +27,20 @@ function loadCSS() {
     });
 }
 
-
-(async function() {
-    addClassEl('loading', document.body);
+(async function () {
+    addClassEl("loading", document.body);
 
     try {
         await loadCSS();
-    } catch(e) {
+    } catch (e) {
         console.error(e);
     }
 
     try {
         await befriend.init();
-    } catch(e) {
+    } catch (e) {
         console.error(e);
     }
 
-    removeClassEl('loading', document.body);
+    removeClassEl("loading", document.body);
 })();

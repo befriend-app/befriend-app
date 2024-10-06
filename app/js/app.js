@@ -1,6 +1,6 @@
-window['befriend'] = {
+window["befriend"] = {
     classes: {
-        placesShown: 'display-places'
+        placesShown: "display-places",
     },
     activities: null,
     places: null,
@@ -17,7 +17,7 @@ window['befriend'] = {
             //html
             try {
                 await befriend.html.appInit();
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
 
@@ -25,20 +25,20 @@ window['befriend'] = {
             try {
                 await befriend.activities.setWhen();
                 await befriend.activities.setActivityTypes();
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
 
             //events
             try {
                 await befriend.events.addEvents();
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
 
             try {
                 await befriend.location.init();
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
 

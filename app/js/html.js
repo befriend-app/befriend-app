@@ -104,11 +104,11 @@ befriend.html = {
 
             document.body.insertAdjacentHTML("beforeend", html);
 
-            befriend.els.activities = document.getElementById('activities');
-            befriend.els.num_persons = document.getElementById('num-persons');
-            befriend.els.places = document.getElementById('places');
-            befriend.els.when = document.getElementById('when');
-            befriend.els.who = document.getElementById('who');
+            befriend.els.activities = document.getElementById("activities");
+            befriend.els.num_persons = document.getElementById("num-persons");
+            befriend.els.places = document.getElementById("places");
+            befriend.els.when = document.getElementById("when");
+            befriend.els.who = document.getElementById("who");
 
             resolve();
         });
@@ -116,9 +116,9 @@ befriend.html = {
     activityTypes: function () {
         return new Promise(async (resolve, reject) => {
             try {
-                let r = await axios.get(joinPaths(api_domain, 'activity_types'));
+                let r = await axios.get(joinPaths(api_domain, "activity_types"));
 
-                let activities = befriend.activities.types.data = r.data;
+                let activities = (befriend.activities.types.data = r.data);
 
                 let html = ``;
                 let level_1_html = ``;
@@ -128,11 +128,11 @@ befriend.html = {
 
                 let level_1_ids = Object.keys(activities);
 
-                for(let i = 0; i < level_1_ids.length; i++) {
+                for (let i = 0; i < level_1_ids.length; i++) {
                     let level_1_id = level_1_ids[i];
 
-                    if(activities_row.length === befriend.styles.activity_row_items) {
-                        let row_html = activities_row.join('');
+                    if (activities_row.length === befriend.styles.activity_row_items) {
+                        let row_html = activities_row.join("");
 
                         level_1_html += `<div class="level_1_row">
                                             ${row_html}
@@ -146,11 +146,11 @@ befriend.html = {
 
                     let image_html = ``;
 
-                    if(activity.image) {
+                    if (activity.image) {
                         image_html += `<div class="image">
                                         ${activity.image}
                                     </div>`;
-                    } else if(activity.emoji) {
+                    } else if (activity.emoji) {
                         image_html += `<div class="emoji">
                                         ${activity.emoji}
                                     </div>`;
@@ -158,15 +158,15 @@ befriend.html = {
 
                     let icon_html = ``;
 
-                    if(image_html) {
+                    if (image_html) {
                         icon_html = `<div class="icon">${image_html}</div>`;
                     }
 
-                    let center_class = icon_html ? '' : 'center';
+                    let center_class = icon_html ? "" : "center";
 
                     let bc = befriend.activities.types.colors[i];
 
-                    let font_white_class = useWhiteOnBackground(bc) ? 'font_white' : '';
+                    let font_white_class = useWhiteOnBackground(bc) ? "font_white" : "";
 
                     activities_row.push(`
                         <div class="activity level_1_activity ${font_white_class}" data-id="${level_1_id}" style="background-color: ${bc}">
@@ -178,8 +178,8 @@ befriend.html = {
                     `);
                 }
 
-                if(activities_row.length) {
-                    let row_html = activities_row.join('');
+                if (activities_row.length) {
+                    let row_html = activities_row.join("");
                     level_1_html += `<div class="level_1_row">
                                             ${row_html}
                                         </div>`;
@@ -190,17 +190,17 @@ befriend.html = {
                     <div class="level_1">${level_1_html}</div>
                 `;
 
-                befriend.els.activities.querySelector('.activities').innerHTML = html;
+                befriend.els.activities.querySelector(".activities").innerHTML = html;
 
-                let last_row = lastArrItem(befriend.els.activities.getElementsByClassName('level_1_row'));
+                let last_row = lastArrItem(befriend.els.activities.getElementsByClassName("level_1_row"));
 
-                last_row.style.marginBottom = '0px';
+                last_row.style.marginBottom = "0px";
 
                 resolve();
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
                 return reject(e);
             }
         });
-    }
-}
+    },
+};
