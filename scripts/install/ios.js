@@ -1,21 +1,20 @@
-const {execCmd, isMac, isWindows} = require('../helpers');
+const { execCmd, isMac, isWindows } = require("../helpers");
 
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 function getPlatformCmd(cmd) {
-    if(isMac) {
+    if (isMac) {
         return cmd.mac;
     }
 
-    if(isWindows) {
+    if (isWindows) {
         return cmd.windows;
     }
 }
 
 function iosTargetVersion() {
     // https://github.com/apache/cordova-ios/issues/1379#issuecomment-2052414835
-
 
     function findFilePathsByFilename(directory, filename) {
         const files = fs.readdirSync(directory);
@@ -37,22 +36,22 @@ function iosTargetVersion() {
         return filePaths;
     }
 
-    const paths1 = findFilePathsByFilename('../', 'project.pbxproj');
-    const paths2 = findFilePathsByFilename('../', 'Pods.xcodeproj');
-    const paths = paths1.concat(paths2)
+    const paths1 = findFilePathsByFilename("../", "project.pbxproj");
+    const paths2 = findFilePathsByFilename("../", "Pods.xcodeproj");
+    const paths = paths1.concat(paths2);
 
     // console.log('Apply patch to', paths);
 
     for (let path of paths) {
-        let content = fs.readFileSync(path, { encoding: 'utf-8' });
-        content = content.replace(/IPHONEOS_DEPLOYMENT_TARGET = [0-9]+.0;/g, 'IPHONEOS_DEPLOYMENT_TARGET = 12.0;');
+        let content = fs.readFileSync(path, { encoding: "utf-8" });
+        content = content.replace(/IPHONEOS_DEPLOYMENT_TARGET = [0-9]+.0;/g, "IPHONEOS_DEPLOYMENT_TARGET = 12.0;");
         fs.writeFileSync(path, content);
     }
 
-    console.log('Done setting IPHONEOS_DEPLOYMENT_TARGET');
+    console.log("Done setting IPHONEOS_DEPLOYMENT_TARGET");
 }
 
-(async function() {
+(async function () {
     //install requirements
 
     let requirements = {
@@ -60,15 +59,15 @@ function iosTargetVersion() {
             error_string: "ios-deploy: not installed",
             install_cmd: {
                 mac: ["sudo npm install -g ios-deploy"],
-                windows: []
-            }
+                windows: [],
+            },
         },
-        "cocoapods": {
+        cocoapods: {
             error_string: "CocoaPods: not installed",
             install_cmd: {
                 mac: ["sudo gem install cocoapods"],
-                windows: []
-            }
+                windows: [],
+            },
         },
     };
 
@@ -79,43 +78,43 @@ function iosTargetVersion() {
         let o = await execCmd(cordova_check_cmd);
 
         console.log(o.stdout);
-    } catch(err) {
+    } catch (err) {
         console.log(err);
 
         //ios deploy
-        let ios_deploy = requirements['ios-deploy'];
+        let ios_deploy = requirements["ios-deploy"];
 
-        if(err.stdout && err.stdout.includes(ios_deploy.error_string)) {
+        if (err.stdout && err.stdout.includes(ios_deploy.error_string)) {
             console.log("Installing: ios-deploy");
 
             try {
                 let cmds = getPlatformCmd(ios_deploy.install_cmd);
 
-                for(let cmd of cmds) {
+                for (let cmd of cmds) {
                     await execCmd(cmd);
                 }
 
                 console.log("ios-deploy: installed successfully");
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
         }
 
         //cocoapods
-        let cocoapods = requirements['cocoapods'];
+        let cocoapods = requirements["cocoapods"];
 
-        if(err.stdout && err.stdout.includes(cocoapods.error_string)) {
+        if (err.stdout && err.stdout.includes(cocoapods.error_string)) {
             console.log("Installing: cocoapods");
 
             try {
                 let cmds = getPlatformCmd(cocoapods.install_cmd);
 
-                for(let cmd of cmds) {
+                for (let cmd of cmds) {
                     await execCmd(cmd);
                 }
 
                 console.log("cocoapods: installed successfully");
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
         }
@@ -139,7 +138,7 @@ function iosTargetVersion() {
     // c. windows install
 
     //set ios target version to 12.0
-    iosTargetVersion();;
+    iosTargetVersion();
 
     process.exit();
 })();
