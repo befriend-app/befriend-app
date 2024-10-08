@@ -39,7 +39,7 @@ befriend.maps = {
                     container: 'activities-map',
                     style: 'mapbox://styles/mapbox/light-v10',
                     center: [location.lon, location.lat],
-                    zoom: 13,m
+                    zoom: 13,
                     attributionControl: false
                 });
 
