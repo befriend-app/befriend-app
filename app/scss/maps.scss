@@ -107,7 +107,7 @@
                 background-color: #606670;
                 height: $range_radius_dim;
                 width: $range_radius_dim;
-                margin-top: calc(-#{$range_radius_dim * .46});
+                margin-top: calc(-#{$range_radius_dim * 0.46});
                 border: 1px solid darken(lightgray, 30%);
                 opacity: 0; //hides knob below circle
             }
@@ -166,7 +166,7 @@
     width: 100%;
     height: 100px;
     border-radius: 8px;
-    border: .5px solid $color_lightgray;
+    border: 0.5px solid $color_lightgray;
 }
 
 .mapboxgl-ctrl-logo {

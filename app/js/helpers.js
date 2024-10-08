@@ -53,25 +53,25 @@ function elHasClass(el, cl) {
     return el.classList.contains(cl);
 }
 
-function fireClick(node){
-    if(typeof node === 'string') {
+function fireClick(node) {
+    if (typeof node === "string") {
         node = document.getElementById(node);
     }
 
-    if(!node) {
+    if (!node) {
         return;
     }
 
-    if(node.nodeName.toLowerCase() === 'input' && node.getAttribute('type') === 'checkbox' && (is_ios || is_android)) {
+    if (node.nodeName.toLowerCase() === "input" && node.getAttribute("type") === "checkbox" && (is_ios || is_android)) {
         node.click();
     } else if (document.createEvent) {
-        var evt = document.createEvent('MouseEvents');
-        evt.initEvent('click', true, false);
+        var evt = document.createEvent("MouseEvents");
+        evt.initEvent("click", true, false);
         node.dispatchEvent(evt);
     } else if (document.createEventObject) {
-        node.fireEvent(`on${'click'}`) ;
-    } else if (typeof node[`on${'click'}`] == 'function') {
-        node[`on${'click'}`]();
+        node.fireEvent(`on${"click"}`);
+    } else if (typeof node[`on${"click"}`] == "function") {
+        node[`on${"click"}`]();
     }
 }
 
@@ -102,7 +102,7 @@ function isZIPFormat(str) {
     const zipPatterns = [
         /.*?(\d{5}-\d{4}).*/, // ZIP+4 with hyphen
         /.*?(\d{5})(?:-(?:\d{4})?)?.*/, // Basic 5-digit ZIP, optionally followed by hyphen and 4 digits
-        /.*?(\d{9}).*/ // ZIP+4 without hyphen
+        /.*?(\d{9}).*/, // ZIP+4 without hyphen
     ];
 
     // Try to find a ZIP code in the string
@@ -201,14 +201,17 @@ function colorDeltaE(rgbA, rgbB) {
 function stringSimilarity(str1, str2, substringLength, caseSensitive) {
     // https://github.com/stephenjjbrown/string-similarity-js
 
-    if (substringLength === void 0) { substringLength = 2; }
-    if (caseSensitive === void 0) { caseSensitive = false; }
+    if (substringLength === void 0) {
+        substringLength = 2;
+    }
+    if (caseSensitive === void 0) {
+        caseSensitive = false;
+    }
     if (!caseSensitive) {
         str1 = str1.toLowerCase();
         str2 = str2.toLowerCase();
     }
-    if (str1.length < substringLength || str2.length < substringLength)
-        return 0;
+    if (str1.length < substringLength || str2.length < substringLength) return 0;
     let map = new Map();
     for (let i = 0; i < str1.length - (substringLength - 1); i++) {
         let substr1 = str1.substr(i, substringLength);
@@ -223,7 +226,7 @@ function stringSimilarity(str1, str2, substringLength, caseSensitive) {
             match++;
         }
     }
-    return (match * 2) / (str1.length + str2.length - ((substringLength - 1) * 2));
+    return (match * 2) / (str1.length + str2.length - (substringLength - 1) * 2);
 }
 
 function useWhiteOnBackground(hexColor) {

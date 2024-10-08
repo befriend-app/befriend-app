@@ -8,7 +8,7 @@ befriend.location = {
 
                 try {
                     navigator.geolocation.getCurrentPosition(geoLocationSuccess, geoLocationError, geoLocationOptions);
-                } catch(e) {
+                } catch (e) {
                     console.error(e);
                     return reject(e);
                 }
@@ -17,7 +17,7 @@ befriend.location = {
             function geoLocationSuccess(position) {
                 befriend.location.current = {
                     lat: position.coords.latitude,
-                    lon: position.coords.longitude
+                    lon: position.coords.longitude,
                 };
 
                 resolve();
@@ -37,5 +37,5 @@ befriend.location = {
     },
     getLocation: function () {
         return befriend.location.search || befriend.location.current;
-    }
-}
+    },
+};

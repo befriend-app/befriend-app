@@ -134,55 +134,55 @@ befriend.html = {
         `;
 
             document.body.insertAdjacentHTML("beforeend", html);
-            
+
             befriend.html.setEls();
 
             resolve();
         });
     },
     setEls: function () {
-        befriend.els.activities = document.getElementById('activities');
-        befriend.els.map_radius_activities = document.getElementById('map-radius-activities');
-        befriend.els.num_persons = document.getElementById('num-persons');
-        befriend.els.places = document.getElementById('places');
-        befriend.els.when = document.getElementById('when');
-        befriend.els.who = document.getElementById('who');
+        befriend.els.activities = document.getElementById("activities");
+        befriend.els.map_radius_activities = document.getElementById("map-radius-activities");
+        befriend.els.num_persons = document.getElementById("num-persons");
+        befriend.els.places = document.getElementById("places");
+        befriend.els.when = document.getElementById("when");
+        befriend.els.who = document.getElementById("who");
     },
     setWhen: function () {
         return new Promise(async (resolve, reject) => {
-            let html = '';
+            let html = "";
 
-            for(let i = 0; i < befriend.when.options.length; i++) {
+            for (let i = 0; i < befriend.when.options.length; i++) {
                 let option = befriend.when.options[i];
 
                 let name_html = ``;
                 let tab_html = ``;
 
-                if(option.is_now || option.is_schedule) {
+                if (option.is_now || option.is_schedule) {
                     name_html = option.name;
                 } else {
                     tab_html = `<div class="value">${option.value}</div>
                                     <div class="unit">${option.unit}</div>`;
                 }
 
-                let time_class = '';
+                let time_class = "";
 
-                let schedule_icon = '';
+                let schedule_icon = "";
 
-                if(option.is_now) {
-                    time_class = 'now';
-                } else if(option.is_schedule) {
-                    time_class = 'schedule';
+                if (option.is_now) {
+                    time_class = "now";
+                } else if (option.is_schedule) {
+                    time_class = "schedule";
                     schedule_icon = `<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 508 423.5801"><path d="M402.059,194.052V51.192c0-11.728-9.542-21.27-21.27-21.27h-16.23v-13.244c0-9.196-7.481-16.678-16.678-16.678h-16.076c-9.197,0-16.68,7.481-16.68,16.678v13.244h-43.109v-13.244C272.016,7.482,264.536,0,255.34,0h-16.078C230.066,0,222.584,7.481,222.584,16.678v13.244h-43.109v-13.244C179.475,7.482,171.994,0,162.797,0h-16.076C137.525,0,130.043,7.481,130.043,16.678v13.244h-43.109v-13.244C86.934,7.482,79.453,0,70.256,0h-16.076C44.983,0,37.5,7.481,37.5,16.678v13.244h-16.23C9.542,29.922,0,39.464,0,51.192v303.018c0,11.728,9.542,21.269,21.27,21.269h278.336c20.874,29.103,54.985,48.101,93.453,48.101,63.379,0,114.941-51.561,114.941-114.939,0-60.35-46.753-109.983-105.941-114.589h0ZM333.125,18h13.434v41.846h-13.434V18ZM240.584,18h13.432v41.846h-13.432V18ZM148.043,18h13.432v41.846h-13.432V18ZM55.5,18h13.434v41.846h-13.434V18ZM21.27,47.922h16.23v13.244c0,9.197,7.482,16.68,16.68,16.68h16.076c9.196,0,16.678-7.482,16.678-16.68v-13.244h43.109v13.244c0,9.197,7.481,16.68,16.678,16.68h16.076c9.196,0,16.678-7.482,16.678-16.68v-13.244h43.109v13.244c0,9.197,7.481,16.68,16.678,16.68h16.078c9.195,0,16.676-7.482,16.676-16.68v-13.244h43.109v13.244c0,9.197,7.482,16.68,16.68,16.68h16.076c9.196,0,16.678-7.482,16.678-16.68v-13.244h16.23c1.772,0,3.27,1.497,3.27,3.27v41.919H18v-41.919c0-1.773,1.497-3.27,3.27-3.27h0ZM21.27,357.479c-1.772,0-3.27-1.497-3.27-3.269V111.11h366.059v82.941c-59.188,4.606-105.939,54.24-105.939,114.589,0,17.454,3.918,34.007,10.908,48.838H21.27v.001ZM393.059,405.58c-53.453,0-96.939-43.486-96.939-96.938s43.486-96.94,96.939-96.94,96.941,43.487,96.941,96.94-43.487,96.938-96.941,96.938h0ZM96.723,278.202h-45.336c-4.971,0-9,4.03-9,9v46.244c0,4.97,4.029,9,9,9h45.336c4.971,0,9-4.03,9-9v-46.244c0-4.971-4.03-9-9-9ZM87.723,324.446h-27.336v-28.244h27.336v28.244ZM305.336,190.389h45.338c4.971,0,9-4.03,9-9v-46.244c0-4.97-4.029-9-9-9h-45.338c-4.971,0-9,4.03-9,9v46.244c0,4.97,4.029,9,9,9ZM314.336,144.145h27.338v28.244h-27.338v-28.244ZM266.023,202.173h-45.338c-4.971,0-9,4.029-9,9v46.243c0,4.97,4.029,9,9,9h45.338c4.971,0,9-4.03,9-9v-46.243c0-4.97-4.029-9-9-9h0ZM257.023,248.416h-27.338v-28.243h27.338v28.243ZM181.373,126.145h-45.338c-4.971,0-9,4.03-9,9v46.244c0,4.97,4.029,9,9,9h45.338c4.971,0,9-4.03,9-9v-46.244c0-4.97-4.029-9-9-9ZM172.373,172.389h-27.338v-28.244h27.338v28.244ZM266.023,278.202h-45.338c-4.971,0-9,4.03-9,9v46.244c0,4.97,4.029,9,9,9h45.338c4.971,0,9-4.03,9-9v-46.244c0-4.971-4.029-9-9-9ZM257.023,324.446h-27.338v-28.244h27.338v28.244ZM266.023,126.145h-45.338c-4.971,0-9,4.03-9,9v46.244c0,4.97,4.029,9,9,9h45.338c4.971,0,9-4.03,9-9v-46.244c0-4.97-4.029-9-9-9ZM257.023,172.389h-27.338v-28.244h27.338v28.244ZM181.373,202.173h-45.338c-4.971,0-9,4.029-9,9v46.243c0,4.97,4.029,9,9,9h45.338c4.971,0,9-4.03,9-9v-46.243c0-4.97-4.029-9-9-9ZM172.373,248.416h-27.338v-28.243h27.338v28.243ZM96.723,202.173h-45.336c-4.971,0-9,4.029-9,9v46.243c0,4.97,4.029,9,9,9h45.336c4.971,0,9-4.03,9-9v-46.243c0-4.97-4.03-9-9-9ZM87.723,248.416h-27.336v-28.243h27.336v28.243ZM96.723,126.145h-45.336c-4.971,0-9,4.03-9,9v46.244c0,4.97,4.029,9,9,9h45.336c4.971,0,9-4.03,9-9v-46.244c0-4.97-4.03-9-9-9ZM87.723,172.389h-27.336v-28.244h27.336v28.244ZM181.373,278.202h-45.338c-4.971,0-9,4.03-9,9v46.244c0,4.97,4.029,9,9,9h45.338c4.971,0,9-4.03,9-9v-46.244c0-4.971-4.029-9-9-9ZM172.373,324.446h-27.338v-28.244h27.338v28.244ZM410.478,298.585c2.485,4.305,1.011,9.809-3.294,12.294l-5.125,2.959v5.917c0,4.971-4.029,9-9,9-3.554,0-6.617-2.065-8.08-5.055l-34.99,20.202c-1.417.818-2.965,1.208-4.491,1.208-3.111,0-6.136-1.614-7.803-4.501-2.485-4.305-1.011-9.809,3.294-12.294l43.07-24.868v-72.763c0-4.971,4.029-9,9-9s9,4.029,9,9v63.433c3.322-.231,6.642,1.39,8.419,4.468h0Z"/></svg>`;
                 } else {
-                    time_class = 'time';
+                    time_class = "time";
                 }
 
                 let bc = befriend.when.colors[i];
 
-                let font_white_class = useWhiteOnBackground(bc) ? 'font_white' : '';
+                let font_white_class = useWhiteOnBackground(bc) ? "font_white" : "";
 
-                let active_class = i === 0 ? 'active' : '';
+                let active_class = i === 0 ? "active" : "";
 
                 html += `<div class="when-option ${time_class} ${active_class}" data-index="${i}">
                             <div class="tab ${font_white_class}" style="background-color: ${bc}">${tab_html}</div>
@@ -194,7 +194,7 @@ befriend.html = {
                          </div>`;
             }
 
-            befriend.els.when.querySelector('.when-options').innerHTML = html;
+            befriend.els.when.querySelector(".when-options").innerHTML = html;
 
             befriend.when.setWhenTimes();
             resolve();
@@ -213,11 +213,11 @@ befriend.html = {
 
                 let level_1_ids = Object.keys(activities);
 
-                for(let i = 0; i < level_1_ids.length; i++) {
+                for (let i = 0; i < level_1_ids.length; i++) {
                     let level_1_id = level_1_ids[i];
 
-                    if(activities_row.length === befriend.styles.activity_row_items) {
-                        let row_html = activities_row.join('');
+                    if (activities_row.length === befriend.styles.activity_row_items) {
+                        let row_html = activities_row.join("");
 
                         level_1_html += `<div class="level_1_row">
                                             ${row_html}
@@ -231,11 +231,11 @@ befriend.html = {
 
                     let image_html = ``;
 
-                    if(activity.image) {
+                    if (activity.image) {
                         image_html += `<div class="image">
                                         ${activity.image}
                                     </div>`;
-                    } else if(activity.emoji) {
+                    } else if (activity.emoji) {
                         image_html += `<div class="emoji">
                                         ${activity.emoji}
                                     </div>`;
@@ -243,15 +243,15 @@ befriend.html = {
 
                     let icon_html = ``;
 
-                    if(image_html) {
+                    if (image_html) {
                         icon_html = `<div class="icon">${image_html}</div>`;
                     }
 
-                    let center_class = icon_html ? '' : 'center';
+                    let center_class = icon_html ? "" : "center";
 
                     let bc = befriend.activities.types.colors[i];
 
-                    let font_white_class = useWhiteOnBackground(bc) ? 'font_white' : '';
+                    let font_white_class = useWhiteOnBackground(bc) ? "font_white" : "";
 
                     activities_row.push(`
                         <div class="activity level_1_activity ${font_white_class}" data-id="${level_1_id}" style="background-color: ${bc}">
@@ -263,8 +263,8 @@ befriend.html = {
                     `);
                 }
 
-                if(activities_row.length) {
-                    let row_html = activities_row.join('');
+                if (activities_row.length) {
+                    let row_html = activities_row.join("");
                     level_1_html += `<div class="level_1_row">
                                             ${row_html}
                                         </div>`;
@@ -275,14 +275,14 @@ befriend.html = {
                     <div class="level_1">${level_1_html}</div>
                 `;
 
-                befriend.els.activities.querySelector('.activities').innerHTML = html;
+                befriend.els.activities.querySelector(".activities").innerHTML = html;
 
-                let last_row = lastArrItem(befriend.els.activities.getElementsByClassName('level_1_row'));
+                let last_row = lastArrItem(befriend.els.activities.getElementsByClassName("level_1_row"));
 
-                last_row.style.marginBottom = '0px';
+                last_row.style.marginBottom = "0px";
 
                 resolve();
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
                 return reject(e);
             }
@@ -290,7 +290,7 @@ befriend.html = {
     },
     setPlaces: function () {
         return new Promise(async (resolve, reject) => {
-            let html = '';
+            let html = "";
 
             for (let place of befriend.places.data.items) {
                 let place_html = {
@@ -299,24 +299,26 @@ befriend.html = {
                     price: ``,
                     rating: ``,
                     hours: ``,
-                    full: ``
+                    full: ``,
                 };
 
                 //location
-                if(place.location_address) {
+                if (place.location_address) {
                     place_html.location += `<div class="address">${place.location_address}</div>`;
                 }
 
-                if(place.location_address_2) {
+                if (place.location_address_2) {
                     //do not show if zip code in address_2
 
-                    let is_postcode = place.location_address_2.includes(place.location_postcode) || isZIPFormat(place.location_address_2);
+                    let is_postcode =
+                        place.location_address_2.includes(place.location_postcode) ||
+                        isZIPFormat(place.location_address_2);
 
-                    if(!is_postcode) {
+                    if (!is_postcode) {
                         //do not show if address and address_2 are too similar
                         let str_similarity = stringSimilarity(place.location_address, place.location_address_2);
 
-                        if(str_similarity < .5) {
+                        if (str_similarity < 0.5) {
                             place_html.location += `<div class="address_2">${place.location_address_2}</div>`;
                         }
                     }
@@ -327,43 +329,49 @@ befriend.html = {
                 //distance
                 place_html.distance = place.distance.miles_km.toFixed(1);
 
-                if(place.distance.miles_km < 1) { //hide trailing zero if less than 1 m/km
+                if (place.distance.miles_km < 1) {
+                    //hide trailing zero if less than 1 m/km
                     place_html.distance = parseFloat(place.distance.miles_km.toFixed(1));
                 }
 
-                if(parseFloat(place_html.distance) % 1 === 0) { //add decimal if rounded exactly to integer
+                if (parseFloat(place_html.distance) % 1 === 0) {
+                    //add decimal if rounded exactly to integer
                     place_html.distance = parseFloat(place_html.distance).toFixed(1);
                 }
 
-                if(place.distance.use_km) { //km
-                    if(place.distance.miles_km < .1) { //meters
+                if (place.distance.use_km) {
+                    //km
+                    if (place.distance.miles_km < 0.1) {
+                        //meters
                         place_html.distance = place.distance.meters;
-                        place_html.distance += ' meters';
+                        place_html.distance += " meters";
                     } else {
-                        place_html.distance += ' km';
+                        place_html.distance += " km";
                     }
-                } else { //miles
-                    if(place.distance.miles_km < .1) { //feet
+                } else {
+                    //miles
+                    if (place.distance.miles_km < 0.1) {
+                        //feet
                         place_html.distance = metersToFeet(place.distance.meters);
-                        place_html.distance += ' ft';
+                        place_html.distance += " ft";
                     } else {
-                        place_html.distance += ' m';
+                        place_html.distance += " m";
                     }
                 }
 
                 //price
-                if(place.price) {
-                    let price_str = '';
+                if (place.price) {
+                    let price_str = "";
 
-                    for(let i = 0; i < place.price; i++) {
-                        price_str += '$';
+                    for (let i = 0; i < place.price; i++) {
+                        price_str += "$";
                     }
 
                     place_html.price += `<div class="price">${price_str}</div>`;
                 }
 
                 //rating
-                if(isNumeric(place.rating)) {
+                if (isNumeric(place.rating)) {
                     let rating_str = place.rating.toFixed(1);
                     let rating = parseFloat(rating_str);
 
@@ -371,22 +379,22 @@ befriend.html = {
 
                     let color = befriend.styles.brand_color_a;
 
-                    for(let i = 1; i <= 5; i++) {
+                    for (let i = 1; i <= 5; i++) {
                         let percent;
 
-                        if(rating > i) {
+                        if (rating > i) {
                             percent = 100;
                         } else {
                             let diff = i - rating;
 
-                            if(diff > 1) {
+                            if (diff > 1) {
                                 percent = 0;
                             } else {
                                 percent = (1 - diff) * 100;
                             }
                         }
 
-                        let percent_str = percent + '%';
+                        let percent_str = percent + "%";
 
                         let star_html = `<div class="circle-container">
                                                 <div class="fill" style="background: linear-gradient(to right, ${color} ${percent_str}, transparent ${percent_str});"></div>
@@ -411,8 +419,7 @@ befriend.html = {
 
                 //closed
 
-                place_html.full =
-                    `<div class="left-col">
+                place_html.full = `<div class="left-col">
                         <div class="distance-price">
                             <div class="distance">${place_html.distance}</div>
                             ${place_html.price}
@@ -441,7 +448,7 @@ befriend.html = {
                 html += `<div class="place" data-place-id="${place.id}">${place_html.full}</div>`;
             }
 
-            befriend.els.places.querySelector('.places').innerHTML = html;
+            befriend.els.places.querySelector(".places").innerHTML = html;
 
             befriend.html.setPlacesHours();
 
@@ -452,41 +459,41 @@ befriend.html = {
         //header
         befriend.places.setPlacesTime();
 
-        let places_els = befriend.els.places.getElementsByClassName('place');
+        let places_els = befriend.els.places.getElementsByClassName("place");
 
-        for(let i = 0; i < places_els.length; i++) {
+        for (let i = 0; i < places_els.length; i++) {
             let el = places_els[i];
 
-            let hours_el = el.querySelector('.hours');
+            let hours_el = el.querySelector(".hours");
 
-            removeClassEl('show', hours_el);
-            removeClassEl('open', hours_el);
-            removeClassEl('closed', hours_el);
+            removeClassEl("show", hours_el);
+            removeClassEl("open", hours_el);
+            removeClassEl("closed", hours_el);
 
-            let id = el.getAttribute('data-place-id');
+            let id = el.getAttribute("data-place-id");
 
             let place_data = befriend.places.data.obj[id];
 
-            if(!place_data) {
+            if (!place_data) {
                 console.error("No place data");
                 continue;
             }
 
-            if(place_data.is_open === null) {
+            if (place_data.is_open === null) {
                 continue;
             }
 
-            addClassEl('show', hours_el);
+            addClassEl("show", hours_el);
 
-            if(place_data.is_open) {
+            if (place_data.is_open) {
                 hours_el.innerHTML = `<div class="status">Open</div>`;
 
-                addClassEl('open', hours_el);
+                addClassEl("open", hours_el);
             } else {
                 hours_el.innerHTML = `<div class="status">Closed</div>`;
 
-                addClassEl('closed', hours_el);
+                addClassEl("closed", hours_el);
             }
         }
     },
-}
+};

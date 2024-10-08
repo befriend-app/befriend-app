@@ -44,7 +44,9 @@
                 box-sizing: border-box;
                 padding: 8px 0;
                 border-radius: 6px;
-                flex-basis: calc(#{$activity_item_w} - #{$activity_gap_lr} * calc(($activity_row_items - 1) / $activity_row_items));
+                flex-basis: calc(
+                    #{$activity_item_w} - #{$activity_gap_lr} * calc(($activity_row_items - 1) / $activity_row_items)
+                );
                 display: flex;
                 justify-content: center;
                 transition: background $activity_transition_ms;
@@ -79,7 +81,7 @@
 
                     svg {
                         //width: $dim * .6;
-                        height: $dim * .45;
+                        height: $dim * 0.45;
                         fill: black;
                         transition: fill $activity_transition_ms;
                     }
@@ -114,7 +116,9 @@
 
             .level_2_container {
                 padding: $activity_level_2_ptb $activity_level_2_plr;
-                width: calc(100vw - #{$app_margin_lr * 2} - #{$activity_level_2_plr * 2} - #{$activity_level_2_border_w * 2});
+                width: calc(
+                    100vw - #{$app_margin_lr * 2} - #{$activity_level_2_plr * 2} - #{$activity_level_2_border_w * 2}
+                );
             }
 
             .level_2_row {
@@ -130,7 +134,10 @@
                 box-sizing: border-box;
                 padding: 8px 0;
                 border-radius: 6px;
-                flex-basis: calc(#{$activity_level_2_item_w} - #{$activity_gap_lr} * calc(($activity_level_2_row_items - 1) / $activity_level_2_row_items));
+                flex-basis: calc(
+                    #{$activity_level_2_item_w} - #{$activity_gap_lr} *
+                        calc(($activity_level_2_row_items - 1) / $activity_level_2_row_items)
+                );
                 display: flex;
                 justify-content: center;
                 height: $activity_level_2_height;
@@ -177,15 +184,16 @@
                     align-items: center;
                     margin: 0;
 
-                    .image, .emoji {
+                    .image,
+                    .emoji {
                         display: flex;
                         flex-direction: column;
-                        height: $dim * .5;
+                        height: $dim * 0.5;
                     }
 
                     svg {
                         //width: $dim * .6;
-                        height: $dim * .5;
+                        height: $dim * 0.5;
                     }
                 }
             }
@@ -233,7 +241,10 @@
                 box-sizing: border-box;
                 padding: 8px 0;
                 border-radius: 6px;
-                flex-basis: calc(#{$activity_level_3_item_w} - #{$activity_gap_lr} * calc(($activity_level_2_row_items - 1) / $activity_level_2_row_items));
+                flex-basis: calc(
+                    #{$activity_level_3_item_w} - #{$activity_gap_lr} *
+                        calc(($activity_level_2_row_items - 1) / $activity_level_2_row_items)
+                );
                 display: flex;
                 justify-content: center;
                 height: $activity_level_3_height;
@@ -280,15 +291,16 @@
                     align-items: center;
                     margin: 0;
 
-                    .image, .emoji {
+                    .image,
+                    .emoji {
                         display: flex;
                         flex-direction: column;
-                        height: $dim * .5;
+                        height: $dim * 0.5;
                     }
 
                     svg {
                         //width: $dim * .6;
-                        height: $dim * .5;
+                        height: $dim * 0.5;
                     }
                 }
             }
@@ -395,7 +407,7 @@
             background-color: #606670;
             height: $range_persons_dim;
             width: $range_persons_dim;
-            margin-top: calc(-#{$range_persons_dim * .46});
+            margin-top: calc(-#{$range_persons_dim * 0.46});
             border: 1px solid darken(lightgray, 30%);
             opacity: 0;
         }
