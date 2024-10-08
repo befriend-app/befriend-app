@@ -14,6 +14,7 @@ window['befriend'] = {
     styles: null,
     timeouts: {},
     location: null,
+    maps: null,
     els: {},
     init: function () {
         console.log("Befriend: [init]");
@@ -42,7 +43,7 @@ window['befriend'] = {
 
             //map
             try {
-                await befriend.map.loadActivityMap();
+                await befriend.maps.init();
             } catch(e) {
                 console.error(e);
             }

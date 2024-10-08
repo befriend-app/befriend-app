@@ -6,6 +6,7 @@
 @import "footer";
 @import "when";
 @import "who";
+@import "maps";
 @import "activities";
 @import "places";
 
@@ -46,6 +47,10 @@ html, body {
     padding: 0;
     min-height: 100vh;
     background: $app_background;
+}
+
+body.loading {
+    visibility: hidden;
 }
 
 #app {

@@ -1,0 +1,178 @@
+#activities-map-wrapper {
+    margin-bottom: 10px;
+
+    .map-context-details {
+        display: none;
+
+        .within {
+            font-size: 10px;
+            margin-bottom: 5px;
+        }
+
+        .slider-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slider {
+            position: relative;
+            width: 400px;
+            max-width: calc(100% - 2px);
+            padding-right: 2px; //prevents circle from being cut off
+
+            div {
+                position: absolute;
+                color: black;
+                background-color: $brand_color_b;
+                width: $range_radius_dim;
+                height: $range_radius_dim;
+                top: -2px;
+                border-radius: 50%;
+                pointer-events: none;
+                font-size: 9px;
+                border: 1px solid $color_lightgray;
+
+                @include flex-center;
+
+                span {
+                    margin-left: 2px;
+                    font-size: 7px;
+                    font-weight: 600;
+                }
+            }
+        }
+
+        .range {
+            -webkit-appearance: none;
+            vertical-align: middle;
+            outline: none;
+            border: none;
+            padding: 0;
+            background: none;
+            width: 100%;
+            margin: 0;
+
+            &::-webkit-slider-runnable-track {
+                background-color: #d7dbdd;
+                height: 6px;
+                border-radius: 3px;
+                border: 1px solid transparent;
+            }
+
+            &::-moz-range-track {
+                background-color: #d7dbdd;
+                height: 6px;
+                border-radius: 3px;
+                border: none;
+            }
+
+            &::-ms-track {
+                color: transparent;
+                border: none;
+                background: none;
+                height: 6px;
+            }
+
+            &::-ms-fill-lower {
+                background-color: #d7dbdd;
+                border-radius: 3px;
+            }
+
+            &::-ms-fill-upper {
+                background-color: #d7dbdd;
+                border-radius: 3px;
+            }
+
+            &::-ms-tooltip {
+                display: none;
+            }
+
+            &::-moz-range-thumb {
+                border-radius: 20px;
+                height: $range_radius_dim;
+                width: $range_radius_dim;
+                border: none;
+                background: none;
+                background-color: #606670;
+                opacity: 0; //hides knob below circle
+            }
+
+            &:active::-moz-range-thumb {
+                outline: none;
+            }
+
+            &::-webkit-slider-thumb {
+                -webkit-appearance: none !important;
+                border-radius: 100%;
+                background-color: #606670;
+                height: $range_radius_dim;
+                width: $range_radius_dim;
+                margin-top: calc(-#{$range_radius_dim * .46});
+                border: 1px solid darken(lightgray, 30%);
+                opacity: 0; //hides knob below circle
+            }
+
+            &:active::-webkit-slider-thumb {
+                outline: none;
+            }
+
+            &::-ms-thumb {
+                border-radius: 100%;
+                background-color: #606670;
+                height: $range_radius_dim;
+                width: $range_radius_dim;
+                border: none;
+                opacity: 0;
+            }
+
+            &:active::-ms-thumb {
+                border: none;
+            }
+
+            &::-moz-range-track {
+                background-color: #606670;
+                border: none;
+            }
+
+            &::-ms-fill-lower {
+                background-color: #606670;
+            }
+
+            &::-ms-fill-upper {
+                background-color: #606670;
+            }
+
+            &::-webkit-slider-thumb {
+                background-color: #aaa;
+            }
+
+            &::-moz-range-thumb {
+                background-color: #aaa;
+            }
+
+            &::-ms-thumb {
+                background-color: #aaa;
+            }
+        }
+
+        .city {
+            margin-top: 10px;
+            font-size: 12px;
+        }
+    }
+}
+
+#activities-map {
+    width: 100%;
+    height: 100px;
+    border-radius: 8px;
+    border: .5px solid $color_lightgray;
+}
+
+.mapboxgl-ctrl-logo {
+    display: none !important;
+}
+
+//.mapboxgl-ctrl-zoom-in, .mapboxgl-ctrl-zoom-out, .mapboxgl-ctrl-compass {
+//    display: none !important;
+//}

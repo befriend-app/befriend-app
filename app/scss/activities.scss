@@ -1,5 +1,6 @@
 #activities {
     .activities_container {
+        position: relative;
         overflow-y: scroll;
     }
 
@@ -339,8 +340,6 @@
         width: 100%;
         margin: 0;
 
-        $thumb_dim: 30px;
-
         &::-webkit-slider-runnable-track {
             background-color: #d7dbdd;
             height: 6px;
@@ -378,11 +377,12 @@
 
         &::-moz-range-thumb {
             border-radius: 20px;
-            height: $thumb_dim;
-            width: $thumb_dim;
+            height: $range_persons_dim;
+            width: $range_persons_dim;
             border: none;
             background: none;
             background-color: #606670;
+            opacity: 0;
         }
 
         &:active::-moz-range-thumb {
@@ -393,10 +393,11 @@
             -webkit-appearance: none !important;
             border-radius: 100%;
             background-color: #606670;
-            height: $thumb_dim;
-            width: $thumb_dim;
-            margin-top: calc(-#{$thumb_dim * .46});
+            height: $range_persons_dim;
+            width: $range_persons_dim;
+            margin-top: calc(-#{$range_persons_dim * .46});
             border: 1px solid darken(lightgray, 30%);
+            opacity: 0;
         }
 
         &:active::-webkit-slider-thumb {
@@ -406,9 +407,10 @@
         &::-ms-thumb {
             border-radius: 100%;
             background-color: #606670;
-            height: $thumb_dim;
-            width: $thumb_dim;
+            height: $range_persons_dim;
+            width: $range_persons_dim;
             border: none;
+            opacity: 0;
         }
 
         &:active::-ms-thumb {
@@ -440,6 +442,4 @@
             background-color: #aaa;
         }
     }
-
-
 }

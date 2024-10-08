@@ -31,7 +31,7 @@ let js_files = {
         'app.js', //app first
         'when.js',
         'friends.js',
-        'map.js',
+        'maps.js',
         'activities.js',
         'places.js',
         'location.js',

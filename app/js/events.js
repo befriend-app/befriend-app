@@ -6,6 +6,7 @@ befriend.events = {
 
                 await befriend.when.events();
                 await befriend.friends.events();
+                await befriend.maps.events();
                 await befriend.activities.events();
                 await befriend.places.events();
             } catch(e) {

@@ -46,16 +46,38 @@ befriend.html = {
                         <div id="activities" class="view-section">
                             <div class="activities_container">
                                 <div class="section-title">Place</div>
-
-                                <div class="map-wrapper">
-                                    <div id="activities-map"></div>
-                                    
-                                    <div class="auto-complete-container">
-                                        <div class="search">
-                                            <input type="text" class="activity-address-search" placeholder="Search by place">
-                                        </div>
-                                    </div>
+                                
+                                <div id="place-search-location">
+                                    <div class="near">Near <span class="near-text">Me</span></div>
+                                    <div class="change">Change Location</div>
                                 </div>
+                                
+                                <div id="activities-map-wrapper">
+                                    <div class="map-context-details">
+                                        <div class="slider-wrapper">
+                                             <div class="within">Within</div>
+                                             
+                                             <div id="map-radius-activities" class="slider">
+                                                <div>3 <span class="unit">mi</span></div>
+                                                <input id="range-radius-activities" class="range" type="range" value="3" min="1" max="30" step="1">
+                                            </div>
+                                        </div>
+                                         
+                                        <div class="city">Chicago, IL</div>
+                                        
+                                        <div id="change-city">Change Location</div>
+
+                                    </div>
+                                   
+                                    <div id="activities-map"></div>
+                                </div>
+                                
+                                <div class="place-search">
+                                    <div class="search">
+                                        <div class="sub-section-title"></div>
+                                        <input type="text" class="activity-address-search" placeholder="Search for place">
+                                    </div>
+                                </div>  
                             
                                 <div class="activities"></div>
                             </div>
@@ -112,15 +134,19 @@ befriend.html = {
         `;
 
             document.body.insertAdjacentHTML("beforeend", html);
-
-            befriend.els.activities = document.getElementById('activities');
-            befriend.els.num_persons = document.getElementById('num-persons');
-            befriend.els.places = document.getElementById('places');
-            befriend.els.when = document.getElementById('when');
-            befriend.els.who = document.getElementById('who');
+            
+            befriend.html.setEls();
 
             resolve();
         });
+    },
+    setEls: function () {
+        befriend.els.activities = document.getElementById('activities');
+        befriend.els.map_radius_activities = document.getElementById('map-radius-activities');
+        befriend.els.num_persons = document.getElementById('num-persons');
+        befriend.els.places = document.getElementById('places');
+        befriend.els.when = document.getElementById('when');
+        befriend.els.who = document.getElementById('who');
     },
     setWhen: function () {
         return new Promise(async (resolve, reject) => {
