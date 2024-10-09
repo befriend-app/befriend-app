@@ -30,6 +30,15 @@ befriend.events = {
 
                     befriend.places.toggleDisplayPlaces(false);
                 }
+            } else if (befriend.places.isChangeLocationShown()) {
+                if (!e.target.closest("#change-location")) {
+                    //do not hide on double click
+                    if (timeNow() - befriend.timing.showChangeLocation < befriend.styles.places_transition_ms) {
+                        return false;
+                    }
+
+                    befriend.places.toggleChangeLocation(false);
+                }
             }
         });
     },

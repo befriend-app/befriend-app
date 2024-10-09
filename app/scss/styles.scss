@@ -74,7 +74,8 @@ body.loading {
     top: 0;
 }
 
-html.display-places {
+html.#{$class_places_shown},
+html.#{$class_change_location} {
     #overlay {
         opacity: 0.18;
         visibility: visible;

@@ -1,4 +1,4 @@
-html.display-places {
+html.#{$class_places_shown} {
     overflow: hidden;
 
     body {
@@ -6,6 +6,18 @@ html.display-places {
     }
 
     #places {
+        transform: translateY(0);
+    }
+}
+
+html.#{$class_change_location} {
+    overflow: hidden;
+
+    body {
+        overflow: hidden;
+    }
+
+    #change-location {
         transform: translateY(0);
     }
 }
@@ -121,7 +133,7 @@ html.display-places {
             border-bottom: 0.5px solid $color_gray;
             @include flex-center-col;
 
-            #places-title {
+            .title {
                 text-align: center;
                 font-size: 13px;
             }
@@ -346,5 +358,108 @@ html.display-places {
 
     &.active {
         //height: 250px;
+    }
+}
+
+#change-location {
+    overflow-y: hidden;
+    background-color: #fff;
+    width: 100vw;
+    height: 70vh;
+    max-height: 700px;
+    position: fixed;
+    bottom: 0;
+    z-index: 99;
+    border-radius: 30px 30px 0 0;
+    transform: translateY(120%);
+    transition: transform $places_transition_ms;
+
+    .back {
+        $h: 17px;
+        position: absolute;
+        top: calc(calc($places_header_h/2 - $h / 2));
+        left: $places_padding_lr;
+        height: $h;
+        z-index: 2;
+    }
+
+    .wrapper {
+        position: relative;
+        height: 100%;
+
+        .header {
+            height: $places_header_h;
+            border-bottom: 0.5px solid $color_gray;
+            @include flex-center-col;
+
+            .title {
+                text-align: center;
+                font-size: 13px;
+            }
+        }
+    }
+
+    .locations {
+        overflow-y: scroll;
+        height: calc(100% - var(--sab) - calc($places_padding_t + $places_padding_b));
+        padding-top: $places_padding_t;
+        padding-bottom: $places_padding_b;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .spinner {
+        position: absolute;
+        width: $places_spinner_dim;
+        height: $places_spinner_dim;
+        border: 5px solid $brand_color_a;
+        border-bottom-color: transparent;
+        border-radius: 50%;
+        display: none;
+        box-sizing: border-box;
+        animation: rotation 1s linear infinite;
+
+        left: calc(50% - calc($places_spinner_dim / 2));
+        top: calc(50% - calc($places_spinner_dim / 2 + $places_header_h / 2));
+
+        &.show {
+            display: inline-block;
+        }
+    }
+
+    @keyframes rotation {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    &.active {
+        //height: 250px;
+    }
+
+    .change-location-input {
+        $p_lr: 20px;
+
+        width: calc(100%);
+        padding: 6px $p_lr;
+        border: 1px solid lightgrey;
+        -webkit-appearance: none;
+        appearance: none;
+        background-color: rgba(255, 255, 255, 0.5);
+        font-size: 14px;
+        resize: none;
+        box-sizing: border-box;
+        font-family: inherit;
+        transition: border 200ms;
+        border-radius: 0;
+
+        &:focus,
+        &:focus-visible {
+            outline: none;
+            border: 1px solid $brand_color_a;
+        }
     }
 }

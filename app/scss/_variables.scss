@@ -10,8 +10,11 @@ $color_red: #ff4444;
 $color_lightgray: lightgray;
 $color_gray: #00000079;
 
-//app variables
+//classes
+$class_places_shown: display-places;
+$class_change_location: display-change-location;
 
+//app variables
 $app_background: lighten($color_lightgray, 10%);
 $app_margin_lr: 10px;
 
