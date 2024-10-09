@@ -127,19 +127,6 @@ befriend.places = {
             resolve();
         });
     },
-    events: function () {
-        return new Promise(async (resolve, reject) => {
-            let back = befriend.els.places.querySelector(".back");
-
-            back.addEventListener("click", (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                removeClassEl(befriend.classes.placesShown, document.documentElement);
-            });
-
-            resolve();
-        });
-    },
     isPlacesShown: function () {
         return elHasClass(document.documentElement, befriend.classes.placesShown);
     },
@@ -189,5 +176,20 @@ befriend.places = {
     updatePlacesOpen: function () {
         befriend.places.setIsOpen();
         befriend.html.setPlacesHours();
+    },
+    events: {
+        init: function () {
+            return new Promise(async (resolve, reject) => {
+                let back = befriend.els.places.querySelector(".back");
+
+                back.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    removeClassEl(befriend.classes.placesShown, document.documentElement);
+                });
+
+                resolve();
+            });
+        }
     },
 };

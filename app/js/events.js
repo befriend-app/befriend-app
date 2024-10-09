@@ -1,14 +1,14 @@
 befriend.events = {
-    addEvents: function () {
+    init: function () {
         return new Promise(async (resolve, reject) => {
             try {
                 befriend.events.bodyClickHandler();
 
-                await befriend.when.events();
-                await befriend.friends.events();
-                await befriend.maps.events();
-                await befriend.activities.events();
-                await befriend.places.events();
+                await befriend.when.events.init();
+                await befriend.friends.events.init();
+                await befriend.maps.events.init();
+                await befriend.activities.events.init();
+                await befriend.places.events.init();
             } catch (e) {
                 console.error(e);
             }

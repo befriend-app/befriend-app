@@ -200,7 +200,7 @@ befriend.html = {
             resolve();
         });
     },
-    activityTypes: function () {
+    setActivityTypes: function () {
         return new Promise(async (resolve, reject) => {
             try {
                 let activities = befriend.activities.types.data;

@@ -36,7 +36,7 @@ window["befriend"] = {
 
             //when
             try {
-                await befriend.when.setWhen();
+                await befriend.when.init();
             } catch (e) {
                 console.error(e);
             }
@@ -50,14 +50,14 @@ window["befriend"] = {
 
             //activities
             try {
-                await befriend.activities.setActivityTypes();
+                await befriend.activities.init();
             } catch (e) {
                 console.error(e);
             }
 
             //events
             try {
-                await befriend.events.addEvents();
+                await befriend.events.init();
             } catch (e) {
                 console.error(e);
             }
