@@ -87,6 +87,8 @@ befriend.maps = {
                 };
 
                 localStorage.setItem(befriend.maps.token.key, JSON.stringify(token));
+
+                mapboxgl.accessToken = token.token;
             } catch (e) {
                 console.error(e);
                 return reject();
