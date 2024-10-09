@@ -190,6 +190,6 @@ befriend.places = {
 
                 resolve();
             });
-        }
+        },
     },
 };

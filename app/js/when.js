@@ -118,14 +118,14 @@ befriend.when = {
             return new Promise(async (resolve, reject) => {
                 try {
                     await befriend.when.events.whenOptions();
-                } catch(e) {
+                } catch (e) {
                     console.error(e);
                 }
 
                 resolve();
             });
         },
-        whenOptions : function () {
+        whenOptions: function () {
             return new Promise(async (resolve, reject) => {
                 let when_els = befriend.els.when.getElementsByClassName("when-option");
 
@@ -150,7 +150,6 @@ befriend.when = {
 
                 resolve();
             });
-        }
-
+        },
     },
 };

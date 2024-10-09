@@ -130,8 +130,8 @@ befriend.maps = {
         new mapboxgl.Marker({
             color: befriend.styles.brand_color_a,
         })
-        .setLngLat([lng, lat])
-        .addTo(map);
+            .setLngLat([lng, lat])
+            .addTo(map);
     },
     events: {
         init: function () {

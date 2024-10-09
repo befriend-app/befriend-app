@@ -28,8 +28,8 @@ befriend.activities = {
     init: function () {
         return new Promise(async (resolve, reject) => {
             try {
-                 await befriend.activities.setActivityTypes();
-            } catch(e) {
+                await befriend.activities.setActivityTypes();
+            } catch (e) {
                 console.error(e);
             }
 
@@ -399,7 +399,8 @@ befriend.activities = {
 
                         let level_3_id = this.getAttribute("data-id");
 
-                        let level_3_activity = befriend.activities.types.data[parent_id].sub[level_2_id].sub[level_3_id];
+                        let level_3_activity =
+                            befriend.activities.types.data[parent_id].sub[level_2_id].sub[level_3_id];
 
                         //remove activity selection and hide level 3 if same activity clicked
                         if (elHasClass(this, "active")) {

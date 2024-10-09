@@ -113,6 +113,6 @@ befriend.friends = {
 
                 resolve();
             });
-        }
+        },
     },
 };
