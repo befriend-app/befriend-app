@@ -28,7 +28,8 @@
     "cordova-plugin-badge": "^0.8.9",
     "cordova-plugin-device": "^3.0.0",
     "cordova-plugin-geolocation": "^5.0.0",
-    "cordova-plugin-local-notification": "github:katzer/cordova-plugin-local-notifications"
+    "cordova-plugin-local-notification": "github:katzer/cordova-plugin-local-notifications",
+    "cordova-plugin-statusbar": "^4.0.0"
   },
   "cordova": {
     "platforms": [
@@ -41,7 +42,8 @@
       },
       "cordova-plugin-geolocation": {
         "GPS_REQUIRED": "true"
-      }
+      },
+      "cordova-plugin-statusbar": {}
     }
   },
   "dependencies": {
