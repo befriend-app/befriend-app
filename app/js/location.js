@@ -3,14 +3,21 @@ befriend.location = {
     search: null,
     init: function () {
         return new Promise(async (resolve, reject) => {
-            function geoLocationSuccess(position) {
-                console.log({
-                    coords: position.coords
-                });
+            function getLocation() {
+                const geoLocationOptions = {};
 
+                try {
+                    navigator.geolocation.getCurrentPosition(geoLocationSuccess, geoLocationError, geoLocationOptions);
+                } catch (e) {
+                    console.error(e);
+                    return reject(e);
+                }
+            }
+
+            function geoLocationSuccess(position) {
                 befriend.location.current = {
                     lat: position.coords.latitude,
-                    lon: position.coords.longitude
+                    lon: position.coords.longitude,
                 };
 
                 resolve();
@@ -21,14 +28,14 @@ befriend.location = {
                 return reject(err);
             }
 
-            const geoLocationOptions = {};
+            getLocation();
 
-            try {
-                navigator.geolocation.getCurrentPosition(geoLocationSuccess, geoLocationError, geoLocationOptions);
-            } catch(e) {
-                console.error(e);
-                return reject(e);
-            }
+            setInterval(function () {
+                getLocation();
+            }, 60000);
         });
-    }
-}
+    },
+    getLocation: function () {
+        return befriend.location.search || befriend.location.current;
+    },
+};

@@ -1,24 +1,28 @@
-<!DOCTYPE html>
+<!doctype html>
 
 <html>
     <head>
-        <meta charset="utf-8">
+        <meta charset="utf-8" />
 
-        <meta http-equiv="Content-Security-Policy" content="
-            default-src 'self' data: https://ssl.gstatic.com 'unsafe-eval';
+        <meta
+            http-equiv="Content-Security-Policy"
+            content="
+            default-src 'self' blob: data: https://ssl.gstatic.com 'unsafe-eval';
             script-src * 'unsafe-inline' 'unsafe-eval';
             style-src 'self' 'unsafe-inline' http://*:* https://* file://*;
             media-src *;
             font-src *;
             img-src 'self' data: content:;
+            child-src blob:;
+            worker-src blob:;
             connect-src *;
             "
-        >
+        />
 
-        <meta name="format-detection" content="telephone=no">
-        <meta name="msapplication-tap-highlight" content="no">
-        <meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1.0, viewport-fit=cover">
-        <meta name="color-scheme" content="light dark">
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="msapplication-tap-highlight" content="no" />
+        <meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1.0, viewport-fit=cover" />
+        <meta name="color-scheme" content="light dark" />
 
         <title>Befriend</title>
 
@@ -29,9 +33,7 @@
         </style>
     </head>
 
-    <body>
-
-    </body>
+    <body></body>
 </html>
 
 <script>
@@ -39,165 +41,177 @@
         let userAgent = navigator.platform;
 
         let platforms_def = {
-            'ios': ['iPhone', 'iPad', 'iPod'],
-            'android': ['Android']
+            ios: ["iPhone", "iPad", "iPod"],
+            android: ["Android"],
         };
 
-        for(let p in platforms_def) {
-            for(let i = 0; i < platforms_def[p].length; i++) {
+        for (let p in platforms_def) {
+            for (let i = 0; i < platforms_def[p].length; i++) {
                 let r = new RegExp(platforms_def[p][i], "i");
 
-                if(r.test(userAgent)) {
-                    window['is_' + p] = true;
+                if (r.test(userAgent)) {
+                    window["is_" + p] = true;
                 }
             }
         }
 
-        if(navigator.userAgent.toLowerCase().includes('ios') || navigator.appVersion.toLowerCase().includes('ipad') || (!/android/i.test(navigator.appVersion) && 'PointerEvent' in window && navigator.appVersion.toLowerCase().includes('safari'))) {
-            window['is_ios'] = true;
-        } else if(navigator.userAgent.toLowerCase().includes('android') || /android/i.test(navigator.appVersion)) {
-            window['is_android'] = true;
+        if (
+            navigator.userAgent.toLowerCase().includes("ios") ||
+            navigator.appVersion.toLowerCase().includes("ipad") ||
+            (!/android/i.test(navigator.appVersion) &&
+                "PointerEvent" in window &&
+                navigator.appVersion.toLowerCase().includes("safari"))
+        ) {
+            window["is_ios"] = true;
+        } else if (navigator.userAgent.toLowerCase().includes("android") || /android/i.test(navigator.appVersion)) {
+            window["is_android"] = true;
         }
     }
 
     function loadCordova() {
         return new Promise(async (resolve, reject) => {
             //check if app (cordova.js)
-            if(!is_app) {
+            if (!is_app) {
                 return resolve();
             }
 
             console.log("load cordova");
 
-            let file_name = 'cordova.js';
+            let file_name = "cordova.js";
 
             let cordovaJS = document.createElement("script");
 
-            cordovaJS.onload = function() {
+            cordovaJS.onload = function () {
                 resolve();
             };
 
             cordovaJS.onerror = function () {
                 reject();
-            }
+            };
 
             cordovaJS.type = "text/javascript";
             cordovaJS.src = file_name;
 
-            document.getElementsByTagName('body')[0].appendChild(cordovaJS);
+            document.getElementsByTagName("body")[0].appendChild(cordovaJS);
         });
     }
 
     function waitDeviceReady() {
         return new Promise(async (resolve, reject) => {
-            if(!is_app) {
+            if (!is_app) {
                 return resolve();
             }
 
             console.log("wait device ready");
 
-            if(typeof cordova === 'undefined') {
-                document.addEventListener("deviceready",  function () {
-                    resolve();
-                }, false);
+            if (typeof cordova === "undefined") {
+                document.addEventListener(
+                    "deviceready",
+                    function () {
+                        resolve();
+                    },
+                    false,
+                );
             } else {
                 resolve();
             }
         });
     }
 
-    function joinPaths () {
-        let slash = '/';
+    function joinPaths() {
+        let slash = "/";
 
         let args = [];
 
         for (let i = 0; i < arguments.length; i++) {
-            let arg = arguments[i] + '';
+            let arg = arguments[i] + "";
 
-            if(!arg) {
+            if (!arg) {
                 continue;
             }
 
             args.push(arg);
         }
 
-        return args.map((part, i) => {
-            let re;
+        return args
+            .map((part, i) => {
+                let re;
 
-            if (i === 0) {
-                re = new RegExp(`[\\${slash}]*$`, 'g');
-            } else {
-                re = new RegExp(`(^[\\${slash}]*|[\\/]*$)`, 'g');
-            }
+                if (i === 0) {
+                    re = new RegExp(`[\\${slash}]*$`, "g");
+                } else {
+                    re = new RegExp(`(^[\\${slash}]*|[\\/]*$)`, "g");
+                }
 
-            return part.trim().replace(re, '');
-        }).filter(x=>x.length).join(slash);
+                return part.trim().replace(re, "");
+            })
+            .filter((x) => x.length)
+            .join(slash);
     }
 
-    function timeNow(ms) {
-        if(ms) {
-            return Date.now();
+    function timeNow(sec) {
+        if (sec) {
+            return Number.parseInt(Date.now() / 1000);
         }
 
-        return Number.parseInt(Date.now() / 1000);
+        return Date.now();
     }
 
     function loadJS() {
         return new Promise(async (resolve, reject) => {
             //default
-            let js_url = joinPaths('js', js_name);
+            let js_url = joinPaths("js", js_name);
 
             //latest
-            if(hosts.latest) {
-                js_url = joinPaths(hosts.latest, 'js', js_name);
+            if (hosts.latest) {
+                js_url = joinPaths(hosts.latest, "js", js_name);
             }
 
             //dev
-            if(dev_host) {
-                js_url = joinPaths(dev_host, 'js', js_name);
+            if (dev_host) {
+                js_url = joinPaths(dev_host, "js", js_name);
             }
 
-            let appJS = document.createElement('script');
+            let appJS = document.createElement("script");
 
             appJS.onload = function () {
                 resolve();
-            }
+            };
 
             appJS.onerror = function () {
                 reject();
-            }
+            };
 
-            appJS.type = 'text/javascript';
+            appJS.type = "text/javascript";
 
             appJS.src = `${js_url}?${timeNow()}`;
 
-            document.getElementsByTagName('body')[0].appendChild(appJS);
+            document.getElementsByTagName("body")[0].appendChild(appJS);
         });
     }
 </script>
 
 <script>
-    let js_name = 'app.js';
+    let js_name = "app.js";
 
     window.is_app = true;
     window.is_ios = false;
     window.is_android = false;
 
-
     //for development
-    let dev_host = 'http://localhost:3002';
-    let dev_headers = {"ngrok-skip-browser-warning": "69420"};
+    let dev_host = "http://localhost:3002";
+    let dev_headers = { "ngrok-skip-browser-warning": "69420" };
 
     //for production
     let hosts = {
         original: `.`,
-        latest: null // for updated versions
+        latest: null, // for updated versions
     };
 
     //api
-    let api_domain = 'http://localhost:4000';
+    let api_domain = "http://localhost:4000";
 
-    (async function() {
+    (async function () {
         // set platform variables
         definePlatform();
 

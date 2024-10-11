@@ -1,17 +1,17 @@
-let {devPort, joinPaths, loadScriptEnv, repoRoot} = require('../helpers');
+let { devPort, joinPaths, loadScriptEnv, repoRoot } = require("../helpers");
 
-(async function() {
+(async function () {
     //load env variables
     loadScriptEnv();
 
     //start server
-    let express = require('express');
+    let express = require("express");
     let app = express();
 
-    app.use(express.static(joinPaths(repoRoot(), 'www')));
+    app.use(express.static(joinPaths(repoRoot(), "www")));
 
     let server = app.listen(devPort());
 
     //watch for file changes
-    require('../dev/watch');
+    require("../dev/watch");
 })();

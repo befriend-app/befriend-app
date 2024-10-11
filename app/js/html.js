@@ -8,6 +8,8 @@ befriend.html = {
                         <img src="/img/logo.png">
                     </div>
                 </header>
+
+                <div id="spacer"></div>
                 
                 <div id="views">
                     <div class="view view-activities">
@@ -45,13 +47,44 @@ befriend.html = {
                         
                         <div id="activities" class="view-section">
                             <div class="activities_container">
-                                <div class="section-title">Activities</div>
+                                <div class="section-title">Place</div>
+                                
+                                <div id="place-search-location">
+                                    <div class="near">Near <span class="near-text">Me</span></div>
+                                    <div class="change">Change Location</div>
+                                </div>
+                                
+                                <div id="activities-map-wrapper">
+                                    <div class="map-context-details">
+                                        <div class="slider-wrapper">
+                                             <div class="within">Within</div>
+                                             
+                                             <div id="map-radius-activities" class="slider">
+                                                <div>3 <span class="unit">mi</span></div>
+                                                <input id="range-radius-activities" class="range" type="range" value="3" min="1" max="30" step="1">
+                                            </div>
+                                        </div>
+                                         
+                                        <div class="city">Chicago, IL</div>
+                                        
+                                        <div id="change-city">Change Location</div>
+
+                                    </div>
+                                   
+                                    <div id="activities-map"></div>
+                                </div>
+                                
+                                <div class="place-search">
+                                    <div class="search">
+                                        <div class="sub-section-title"></div>
+                                        <input type="text" class="activity-address-search" placeholder="Search for place">
+                                    </div>
+                                </div>  
                             
                                 <div class="activities"></div>
                             </div>
                         </div>
                     </div>
-                    
                 </div>
                 
                 <div id="places">
@@ -59,8 +92,11 @@ befriend.html = {
                     
                      <div class="no-places">No places found</div>
                      
-                    <div class="places-container">
-                        <div class="title">Choose Place</div>
+                    <div class="places-wrapper">
+                        <div class="header">
+                            <div id="places-title"></div>
+                            <div id="places-time"></div>
+                        </div>
                         
                         <span class="spinner"></span>
                         
@@ -68,12 +104,9 @@ befriend.html = {
                             
                         </div>
                     </div>
-                    
-                   
                 </div>
                 
                 <div id="overlay"></div>
-                
                 
                 <footer>
                     <div id="navigation">
@@ -81,7 +114,7 @@ befriend.html = {
                             <div class="icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 224.1426 223.9168"><path d="M188.7505,67.8789c4.3057,0,9.0435.2249,13.7531-.0439,12.1212-.6919,22.0174,8.9796,21.6278,22.0336-.923,30.9298-23.8655,58.4054-54.3506,64.6021-1.1925.2424-2.5444,1.2148-3.2213,2.2427-6.2804,9.5367-13.7216,17.8024-24.1594,22.9439-5.7042,2.8098-11.7427,4.1536-18.0889,4.1555-12.8329.0038-25.6677-.1375-38.4982.0382-14.9345.2045-26.9764-5.6775-36.6198-16.8097-9.6746-11.1683-15.5226-24.3757-19.8247-38.3105-6.3024-20.414-9.7204-41.2811-9.4233-62.7146.0752-5.4216,2.5401-9.1432,6.9781-11.8531,5.8517-3.5731,12.3417-5.4968,18.9834-6.636,9.4279-1.617,18.9423-2.7317,28.4229-4.0388,1.8781-.2589,3.6877-.1733,4.9266,1.6053,1.8935,2.7185.0616,5.9211-3.5573,6.3437-6.8621.8015-13.8051,1.2355-20.5509,2.6193-7.5434,1.5475-14.9412,3.8621-22.3187,6.1169-1.6813.5139-3.0186,2.153-4.5143,3.2743,1.5158,1.1961,2.8716,2.7342,4.5743,3.5305,8.6212,4.032,17.933,5.5283,27.238,6.9033,22.3506,3.3027,44.7984,3.8279,67.3032,1.9939,14.2811-1.1638,28.5344-2.598,42.3859-6.5203,2.6187-.7416,5.2085-1.7969,7.5917-3.1074,3.2929-1.8107,3.3857-3.5077.0164-4.9261-5.4129-2.2786-11.0029-4.2481-16.6734-5.7691-4.8813-1.3093-9.9751-1.8372-14.9835-2.6584-3.3784-.5539-5.1714-3.0845-3.9321-5.749.7877-1.6934,2.2073-2.5544,4.0525-2.2832,11.0344,1.6222,22.1109,3.1267,32.4416,7.6794,3.4671,1.528,6.8087,3.5165,8.3681,7.1433,1.0496,2.4412,1.3373,5.2099,2.0527,8.1943ZM28.3121,74.2143c-.0195.4233-.0892.9818-.0645,1.536.7424,16.6954,3.1009,33.1419,7.8871,49.1795,3.5899,12.0292,8.3826,23.5128,16.2685,33.4653,8.3941,10.594,19.0304,17.1336,32.8317,17.3506,12.909.203,25.8242.1074,38.7358.0216,9.5692-.0636,17.8852-3.3963,24.8173-10.0628,8.9966-8.652,15.1331-19.1579,19.708-30.6367,5.9953-15.043,8.9957-30.7838,10.5423-46.8325.4527-4.6973.6551-9.4186.99-14.393-.8012.247-1.2532.391-1.708.526-6.8437,2.0309-13.5827,4.577-20.5513,5.9938-20.923,4.2538-42.1481,4.7395-63.4216,4.2126-17.1792-.4255-34.2734-1.6551-51.0308-5.6958-5.0497-1.2176-9.9457-3.0725-15.0043-4.6645ZM187.9632,75.9938c-1.0462,23.8766-4.8085,47.098-14.659,69.1954,3.7245-1.2678,7.3564-2.4989,10.6485-4.3384,20.5115-11.461,31.2011-29.0388,32.0634-52.5011.2329-6.3373-4.1555-11.8093-10.1206-12.2595-5.8613-.4424-11.7821-.0965-17.9323-.0965Z"/><path d="M101.2014,215.9811c25.0654.0354,47.1349-2.0247,68.5955-8.6022,8.6226-2.6427,16.995-5.9119,24.022-11.8268,1.202-1.0117,2.3162-2.1685,3.2933-3.3994,3.8324-4.8276,4.2557-10.1247.3704-14.8859-2.7399-3.3575-6.3629-6.0174-9.7175-8.839-1.3846-1.1646-3.1512-1.8623-4.6497-2.9076-1.7475-1.2191-2.1001-3.0147-1.2802-4.8724.8452-1.9149,2.7155-2.9882,4.5221-2.1259,9.5852,4.5757,18.3491,10.1906,21.1972,21.3747,1.7544,6.889-.3774,13.0054-4.9445,18.2956-5.1948,6.0173-11.9642,9.7415-19.1403,12.7932-13.2829,5.6487-27.2783,8.5437-41.5046,10.4331-20.7198,2.7518-41.5171,3.2295-62.3324,1.4376-19.3794-1.6683-38.5116-4.657-56.5202-12.5492-5.6674-2.4838-10.9919-5.565-15.4885-9.9075-9.9615-9.6203-10.1931-22.1341-.5066-32.0259,5.8277-5.9512,13.0872-9.6591,20.7088-12.7074,2.1537-.8614,4.4062.2391,5.1579,2.2281.7747,2.0498-.0865,4.011-2.2545,5.1828-4.2398,2.2916-8.6111,4.3789-12.6616,6.9678-2.5544,1.6327-4.8849,3.8-6.8609,6.1156-4.4755,5.2446-4.3176,11.0334.1169,16.3095,3.336,3.9691,7.6368,6.661,12.1974,8.9584,12.0234,6.0567,24.9486,9.1797,38.1105,11.39,13.9922,2.3497,28.1054,3.3575,39.5695,3.163Z"/><path d="M36.3072,180.2241c3.8371,2.1449,6.9738,4.1738,10.3316,5.7237,10.2228,4.7186,21.1157,7.0377,32.2159,8.4612,15.3498,1.9684,30.7352,2.0853,46.1207.5073,13.0551-1.339,25.8485-3.858,37.7999-9.5459,2.9478-1.4029,5.6621-3.2966,8.9366-5.2323-1.9003-1.3936-3.2229-2.3603-4.5419-3.3317-2.1838-1.6082-2.6703-3.8876-1.2508-5.8441,1.3245-1.8255,3.6481-2.1906,5.7503-.706,2.1028,1.485,4.2391,2.9849,6.0746,4.7722,3.0406,2.9607,3.0888,6.0609.284,9.2695-4.5818,5.2415-10.6987,8.1519-17.0087,10.5785-18.4642,7.1007-37.7744,9.0872-57.3757,9.0912-19.7929.004-39.2155-2.436-57.7919-9.5987-4.2994-1.6577-8.287-4.1892-12.271-6.5652-1.4428-.8605-2.6178-2.3242-3.6312-3.7189-2.211-3.0428-2.1728-6.449.4601-9.1045,2.0171-2.0344,4.4737-3.7003,6.9324-5.2077,1.8702-1.1466,4.1817-.3013,5.1736,1.5199,1.0715,1.9673.6501,3.737-1.0449,5.1247-1.4047,1.1501-2.9208,2.1641-5.1636,3.8068Z"/><path d="M87.8834,39.6694c.1954-3.8144.0296-7.6894.6579-11.431,1.5172-9.0345,9.2675-15.6906,18.3731-16.2256,3.0094-.1768,5.0316,1.3215,5.1449,3.8121.1087,2.3908-1.5159,3.8877-4.5403,4.1832-6.8908.6733-11.3777,5.534-11.4287,12.4459-.0398,5.4089.0897,10.8212-.0502,16.2269-.2697,10.4277-9.0021,19.1297-19.1841,19.2701-2.8049.0387-4.5765-1.3212-4.7591-3.6529-.1875-2.3947,1.5403-4.1004,4.4054-4.3492,7.0471-.6119,11.5049-5.4358,11.5608-12.5313.0203-2.5796.0033-5.1596.0033-7.7394-.061-.0029-.122-.0058-.183-.0088Z"/><path d="M116.8606,55.9521c-2.7804.0353-4.5685-1.3613-4.7341-3.6976-.1608-2.2686,1.57-4.028,4.2264-4.2965,7.4491-.7529,11.6871-5.4135,11.7107-12.906.0155-4.9139-.0277-9.8281.0105-14.7418.0834-10.7449,7.6209-19.0939,18.2439-20.2541,3.2089-.3504,5.3458.9561,5.7127,3.4444.2924,1.9831-1.4643,4.4318-4.7001,4.6165-6.7454.385-11.1926,5.5022-11.2413,12.2928-.0388,5.4134.0875,10.8299-.0506,16.2401-.2668,10.4498-9.002,19.173-19.1781,19.3021Z"/></svg>
                             </div>
-                            <div class="name">Activities</div>
+                            <div class="name">Home</div>
                         </div>
                         
                         <div class="navigation">
@@ -104,21 +137,75 @@ befriend.html = {
 
             document.body.insertAdjacentHTML("beforeend", html);
 
-            befriend.els.activities = document.getElementById('activities');
-            befriend.els.num_persons = document.getElementById('num-persons');
-            befriend.els.places = document.getElementById('places');
-            befriend.els.when = document.getElementById('when');
-            befriend.els.who = document.getElementById('who');
+            befriend.html.setEls();
 
+            resolve();
+        });
+    },
+    setEls: function () {
+        befriend.els.activities = document.getElementById("activities");
+        befriend.els.map_radius_activities = document.getElementById("map-radius-activities");
+        befriend.els.num_persons = document.getElementById("num-persons");
+        befriend.els.places = document.getElementById("places");
+        befriend.els.when = document.getElementById("when");
+        befriend.els.who = document.getElementById("who");
+    },
+    setWhen: function () {
+        return new Promise(async (resolve, reject) => {
+            let html = "";
+
+            for (let i = 0; i < befriend.when.options.length; i++) {
+                let option = befriend.when.options[i];
+
+                let name_html = ``;
+                let tab_html = ``;
+
+                if (option.is_now || option.is_schedule) {
+                    name_html = option.name;
+                } else {
+                    tab_html = `<div class="value">${option.value}</div>
+                                    <div class="unit">${option.unit}</div>`;
+                }
+
+                let time_class = "";
+
+                let schedule_icon = "";
+
+                if (option.is_now) {
+                    time_class = "now";
+                } else if (option.is_schedule) {
+                    time_class = "schedule";
+                    schedule_icon = `<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 508 423.5801"><path d="M402.059,194.052V51.192c0-11.728-9.542-21.27-21.27-21.27h-16.23v-13.244c0-9.196-7.481-16.678-16.678-16.678h-16.076c-9.197,0-16.68,7.481-16.68,16.678v13.244h-43.109v-13.244C272.016,7.482,264.536,0,255.34,0h-16.078C230.066,0,222.584,7.481,222.584,16.678v13.244h-43.109v-13.244C179.475,7.482,171.994,0,162.797,0h-16.076C137.525,0,130.043,7.481,130.043,16.678v13.244h-43.109v-13.244C86.934,7.482,79.453,0,70.256,0h-16.076C44.983,0,37.5,7.481,37.5,16.678v13.244h-16.23C9.542,29.922,0,39.464,0,51.192v303.018c0,11.728,9.542,21.269,21.27,21.269h278.336c20.874,29.103,54.985,48.101,93.453,48.101,63.379,0,114.941-51.561,114.941-114.939,0-60.35-46.753-109.983-105.941-114.589h0ZM333.125,18h13.434v41.846h-13.434V18ZM240.584,18h13.432v41.846h-13.432V18ZM148.043,18h13.432v41.846h-13.432V18ZM55.5,18h13.434v41.846h-13.434V18ZM21.27,47.922h16.23v13.244c0,9.197,7.482,16.68,16.68,16.68h16.076c9.196,0,16.678-7.482,16.678-16.68v-13.244h43.109v13.244c0,9.197,7.481,16.68,16.678,16.68h16.076c9.196,0,16.678-7.482,16.678-16.68v-13.244h43.109v13.244c0,9.197,7.481,16.68,16.678,16.68h16.078c9.195,0,16.676-7.482,16.676-16.68v-13.244h43.109v13.244c0,9.197,7.482,16.68,16.68,16.68h16.076c9.196,0,16.678-7.482,16.678-16.68v-13.244h16.23c1.772,0,3.27,1.497,3.27,3.27v41.919H18v-41.919c0-1.773,1.497-3.27,3.27-3.27h0ZM21.27,357.479c-1.772,0-3.27-1.497-3.27-3.269V111.11h366.059v82.941c-59.188,4.606-105.939,54.24-105.939,114.589,0,17.454,3.918,34.007,10.908,48.838H21.27v.001ZM393.059,405.58c-53.453,0-96.939-43.486-96.939-96.938s43.486-96.94,96.939-96.94,96.941,43.487,96.941,96.94-43.487,96.938-96.941,96.938h0ZM96.723,278.202h-45.336c-4.971,0-9,4.03-9,9v46.244c0,4.97,4.029,9,9,9h45.336c4.971,0,9-4.03,9-9v-46.244c0-4.971-4.03-9-9-9ZM87.723,324.446h-27.336v-28.244h27.336v28.244ZM305.336,190.389h45.338c4.971,0,9-4.03,9-9v-46.244c0-4.97-4.029-9-9-9h-45.338c-4.971,0-9,4.03-9,9v46.244c0,4.97,4.029,9,9,9ZM314.336,144.145h27.338v28.244h-27.338v-28.244ZM266.023,202.173h-45.338c-4.971,0-9,4.029-9,9v46.243c0,4.97,4.029,9,9,9h45.338c4.971,0,9-4.03,9-9v-46.243c0-4.97-4.029-9-9-9h0ZM257.023,248.416h-27.338v-28.243h27.338v28.243ZM181.373,126.145h-45.338c-4.971,0-9,4.03-9,9v46.244c0,4.97,4.029,9,9,9h45.338c4.971,0,9-4.03,9-9v-46.244c0-4.97-4.029-9-9-9ZM172.373,172.389h-27.338v-28.244h27.338v28.244ZM266.023,278.202h-45.338c-4.971,0-9,4.03-9,9v46.244c0,4.97,4.029,9,9,9h45.338c4.971,0,9-4.03,9-9v-46.244c0-4.971-4.029-9-9-9ZM257.023,324.446h-27.338v-28.244h27.338v28.244ZM266.023,126.145h-45.338c-4.971,0-9,4.03-9,9v46.244c0,4.97,4.029,9,9,9h45.338c4.971,0,9-4.03,9-9v-46.244c0-4.97-4.029-9-9-9ZM257.023,172.389h-27.338v-28.244h27.338v28.244ZM181.373,202.173h-45.338c-4.971,0-9,4.029-9,9v46.243c0,4.97,4.029,9,9,9h45.338c4.971,0,9-4.03,9-9v-46.243c0-4.97-4.029-9-9-9ZM172.373,248.416h-27.338v-28.243h27.338v28.243ZM96.723,202.173h-45.336c-4.971,0-9,4.029-9,9v46.243c0,4.97,4.029,9,9,9h45.336c4.971,0,9-4.03,9-9v-46.243c0-4.97-4.03-9-9-9ZM87.723,248.416h-27.336v-28.243h27.336v28.243ZM96.723,126.145h-45.336c-4.971,0-9,4.03-9,9v46.244c0,4.97,4.029,9,9,9h45.336c4.971,0,9-4.03,9-9v-46.244c0-4.97-4.03-9-9-9ZM87.723,172.389h-27.336v-28.244h27.336v28.244ZM181.373,278.202h-45.338c-4.971,0-9,4.03-9,9v46.244c0,4.97,4.029,9,9,9h45.338c4.971,0,9-4.03,9-9v-46.244c0-4.971-4.029-9-9-9ZM172.373,324.446h-27.338v-28.244h27.338v28.244ZM410.478,298.585c2.485,4.305,1.011,9.809-3.294,12.294l-5.125,2.959v5.917c0,4.971-4.029,9-9,9-3.554,0-6.617-2.065-8.08-5.055l-34.99,20.202c-1.417.818-2.965,1.208-4.491,1.208-3.111,0-6.136-1.614-7.803-4.501-2.485-4.305-1.011-9.809,3.294-12.294l43.07-24.868v-72.763c0-4.971,4.029-9,9-9s9,4.029,9,9v63.433c3.322-.231,6.642,1.39,8.419,4.468h0Z"/></svg>`;
+                } else {
+                    time_class = "time";
+                }
+
+                let bc = befriend.when.colors[i];
+
+                let font_white_class = useWhiteOnBackground(bc) ? "font_white" : "";
+
+                let active_class = i === 0 ? "active" : "";
+
+                html += `<div class="when-option ${time_class} ${active_class}" data-index="${i}">
+                            <div class="tab ${font_white_class}" style="background-color: ${bc}">${tab_html}</div>
+
+                            <div class="when-container">
+                                <div class="name">${schedule_icon}${name_html}</div>
+                                <div class="time"></div>
+                            </div>
+                         </div>`;
+            }
+
+            befriend.els.when.querySelector(".when-options").innerHTML = html;
+
+            befriend.when.setWhenTimes();
             resolve();
         });
     },
     activityTypes: function () {
         return new Promise(async (resolve, reject) => {
             try {
-                let r = await axios.get(joinPaths(api_domain, 'activity_types'));
-
-                let activities = befriend.activities.types.data = r.data;
+                let activities = befriend.activities.types.data;
 
                 let html = ``;
                 let level_1_html = ``;
@@ -128,11 +215,11 @@ befriend.html = {
 
                 let level_1_ids = Object.keys(activities);
 
-                for(let i = 0; i < level_1_ids.length; i++) {
+                for (let i = 0; i < level_1_ids.length; i++) {
                     let level_1_id = level_1_ids[i];
 
-                    if(activities_row.length === befriend.styles.activity_row_items) {
-                        let row_html = activities_row.join('');
+                    if (activities_row.length === befriend.styles.activity_row_items) {
+                        let row_html = activities_row.join("");
 
                         level_1_html += `<div class="level_1_row">
                                             ${row_html}
@@ -146,11 +233,11 @@ befriend.html = {
 
                     let image_html = ``;
 
-                    if(activity.image) {
+                    if (activity.image) {
                         image_html += `<div class="image">
                                         ${activity.image}
                                     </div>`;
-                    } else if(activity.emoji) {
+                    } else if (activity.emoji) {
                         image_html += `<div class="emoji">
                                         ${activity.emoji}
                                     </div>`;
@@ -158,15 +245,15 @@ befriend.html = {
 
                     let icon_html = ``;
 
-                    if(image_html) {
+                    if (image_html) {
                         icon_html = `<div class="icon">${image_html}</div>`;
                     }
 
-                    let center_class = icon_html ? '' : 'center';
+                    let center_class = icon_html ? "" : "center";
 
                     let bc = befriend.activities.types.colors[i];
 
-                    let font_white_class = useWhiteOnBackground(bc) ? 'font_white' : '';
+                    let font_white_class = useWhiteOnBackground(bc) ? "font_white" : "";
 
                     activities_row.push(`
                         <div class="activity level_1_activity ${font_white_class}" data-id="${level_1_id}" style="background-color: ${bc}">
@@ -178,8 +265,8 @@ befriend.html = {
                     `);
                 }
 
-                if(activities_row.length) {
-                    let row_html = activities_row.join('');
+                if (activities_row.length) {
+                    let row_html = activities_row.join("");
                     level_1_html += `<div class="level_1_row">
                                             ${row_html}
                                         </div>`;
@@ -190,17 +277,225 @@ befriend.html = {
                     <div class="level_1">${level_1_html}</div>
                 `;
 
-                befriend.els.activities.querySelector('.activities').innerHTML = html;
+                befriend.els.activities.querySelector(".activities").innerHTML = html;
 
-                let last_row = lastArrItem(befriend.els.activities.getElementsByClassName('level_1_row'));
+                let last_row = lastArrItem(befriend.els.activities.getElementsByClassName("level_1_row"));
 
-                last_row.style.marginBottom = '0px';
+                last_row.style.marginBottom = "0px";
 
                 resolve();
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
                 return reject(e);
             }
         });
-    }
-}
+    },
+    setPlaces: function () {
+        return new Promise(async (resolve, reject) => {
+            let html = "";
+
+            for (let place of befriend.places.data.items) {
+                let place_html = {
+                    distance: ``,
+                    location: ``,
+                    price: ``,
+                    rating: ``,
+                    hours: ``,
+                    full: ``,
+                };
+
+                //location
+                if (place.location_address) {
+                    place_html.location += `<div class="address">${place.location_address}</div>`;
+                }
+
+                if (place.location_address_2) {
+                    //do not show if zip code in address_2
+
+                    let is_postcode =
+                        place.location_address_2.includes(place.location_postcode) ||
+                        isZIPFormat(place.location_address_2);
+
+                    if (!is_postcode) {
+                        //do not show if address and address_2 are too similar
+                        let str_similarity = stringSimilarity(place.location_address, place.location_address_2);
+
+                        if (str_similarity < 0.5) {
+                            place_html.location += `<div class="address_2">${place.location_address_2}</div>`;
+                        }
+                    }
+                }
+
+                place_html.location += `<div class="locality">${place.location_locality}, ${place.location_region}</div>`;
+
+                //distance
+                place_html.distance = place.distance.miles_km.toFixed(1);
+
+                if (place.distance.miles_km < 1) {
+                    //hide trailing zero if less than 1 m/km
+                    place_html.distance = parseFloat(place.distance.miles_km.toFixed(1));
+                }
+
+                if (parseFloat(place_html.distance) % 1 === 0) {
+                    //add decimal if rounded exactly to integer
+                    place_html.distance = parseFloat(place_html.distance).toFixed(1);
+                }
+
+                if (place.distance.use_km) {
+                    //km
+                    if (place.distance.miles_km < 0.1) {
+                        //meters
+                        place_html.distance = place.distance.meters;
+                        place_html.distance += " meters";
+                    } else {
+                        place_html.distance += " km";
+                    }
+                } else {
+                    //miles
+                    if (place.distance.miles_km < 0.1) {
+                        //feet
+                        place_html.distance = metersToFeet(place.distance.meters);
+                        place_html.distance += " ft";
+                    } else {
+                        place_html.distance += " m";
+                    }
+                }
+
+                //price
+                if (place.price) {
+                    let price_str = "";
+
+                    for (let i = 0; i < place.price; i++) {
+                        price_str += "$";
+                    }
+
+                    place_html.price += `<div class="price">${price_str}</div>`;
+                }
+
+                //rating
+                if (isNumeric(place.rating)) {
+                    let rating_str = place.rating.toFixed(1);
+                    let rating = parseFloat(rating_str);
+
+                    let stars_html = ``;
+
+                    let color = befriend.styles.brand_color_a;
+
+                    for (let i = 1; i <= 5; i++) {
+                        let percent;
+
+                        if (rating > i) {
+                            percent = 100;
+                        } else {
+                            let diff = i - rating;
+
+                            if (diff > 1) {
+                                percent = 0;
+                            } else {
+                                percent = (1 - diff) * 100;
+                            }
+                        }
+
+                        let percent_str = percent + "%";
+
+                        let star_html = `<div class="circle-container">
+                                                <div class="fill" style="background: linear-gradient(to right, ${color} ${percent_str}, transparent ${percent_str});"></div>
+                                            </div>`;
+
+                        stars_html += star_html;
+                    }
+
+                    place_html.rating += `<div class="rating">
+                                                <div class="stars">${stars_html}</div>
+                                                <div class="num">${rating_str}</div>
+                                          </div>`;
+                } else {
+                    place_html.rating += `<div class="rating">
+                                                <div class="no-rating">No Rating</div>
+                                          </div>`;
+                }
+
+                //todo
+                //reality
+                let reality_html = ``;
+
+                //closed
+
+                place_html.full = `<div class="left-col">
+                        <div class="distance-price">
+                            <div class="distance">${place_html.distance}</div>
+                            ${place_html.price}
+                        </div>
+                            
+                        <div class="name-price">
+                            <div class="name">${place.name}</div>
+                        </div>
+                        
+                         <div class="rating-price">
+                             ${place_html.rating}
+                         </div>
+    
+                         <div class="location">
+                             <div class="location-address">
+                                ${place_html.location}
+                             </div>
+                         </div>
+                    </div>
+                                    
+                    <div class="right-col">
+                        <div class="hours"></div>
+                        <div class="button">Select</div>
+                    </div>`;
+
+                html += `<div class="place" data-place-id="${place.id}">${place_html.full}</div>`;
+            }
+
+            befriend.els.places.querySelector(".places").innerHTML = html;
+
+            befriend.html.setPlacesHours();
+
+            resolve();
+        });
+    },
+    setPlacesHours: function () {
+        //header
+        befriend.places.setPlacesTime();
+
+        let places_els = befriend.els.places.getElementsByClassName("place");
+
+        for (let i = 0; i < places_els.length; i++) {
+            let el = places_els[i];
+
+            let hours_el = el.querySelector(".hours");
+
+            removeClassEl("show", hours_el);
+            removeClassEl("open", hours_el);
+            removeClassEl("closed", hours_el);
+
+            let id = el.getAttribute("data-place-id");
+
+            let place_data = befriend.places.data.obj[id];
+
+            if (!place_data) {
+                console.error("No place data");
+                continue;
+            }
+
+            if (place_data.is_open === null) {
+                continue;
+            }
+
+            addClassEl("show", hours_el);
+
+            if (place_data.is_open) {
+                hours_el.innerHTML = `<div class="status">Open</div>`;
+
+                addClassEl("open", hours_el);
+            } else {
+                hours_el.innerHTML = `<div class="status">Closed</div>`;
+
+                addClassEl("closed", hours_el);
+            }
+        }
+    },
+};

@@ -1,9 +1,9 @@
-const fs = require('fs')
+const fs = require("fs");
 
 module.exports = {
-    isMac: process.platform === 'darwin',
-    isWindows: process.platform.startsWith('win'),
-    checkPathExists: function(p) {
+    isMac: process.platform === "darwin",
+    isWindows: process.platform.startsWith("win"),
+    checkPathExists: function (p) {
         return new Promise((resolve, reject) => {
             fs.exists(p, function (exists) {
                 let bool = exists ? true : false;
@@ -12,9 +12,9 @@ module.exports = {
             });
         });
     },
-    copyFile: function(from, to) {
+    copyFile: function (from, to) {
         return new Promise(async (resolve, reject) => {
-            let fs = require('fs');
+            let fs = require("fs");
 
             fs.copyFile(from, to, function (err) {
                 if (err) {
@@ -22,12 +22,12 @@ module.exports = {
                 }
 
                 resolve();
-            })
+            });
         });
     },
-    createDirectoryIfNotExistsRecursive: function(dirname) {
+    createDirectoryIfNotExistsRecursive: function (dirname) {
         return new Promise(async (resolve, reject) => {
-            let slash = '/';
+            let slash = "/";
 
             let directories_backwards = [dirname];
             let minimize_dir = dirname;
@@ -35,17 +35,17 @@ module.exports = {
             let directories_forwards = [];
 
             // backward slashes for windows
-            if(module.exports.isWindows) {
-                slash = '\\';
+            if (module.exports.isWindows) {
+                slash = "\\";
             }
 
-            while (minimize_dir = minimize_dir.substring(0, minimize_dir.lastIndexOf(slash))) {
+            while ((minimize_dir = minimize_dir.substring(0, minimize_dir.lastIndexOf(slash)))) {
                 directories_backwards.push(minimize_dir);
             }
 
             //stop on first directory found
-            for(const d in directories_backwards) {
-                if(!(fs.existsSync(directories_backwards[d]))) {
+            for (const d in directories_backwards) {
+                if (!fs.existsSync(directories_backwards[d])) {
                     directories_needed.push(directories_backwards[d]);
                 } else {
                     break;
@@ -53,18 +53,17 @@ module.exports = {
             }
 
             //no directories missing
-            if(!directories_needed.length) {
+            if (!directories_needed.length) {
                 return resolve();
             }
 
             // make all directories in ascending order
             directories_forwards = directories_needed.reverse();
 
-            for(const d in directories_forwards) {
+            for (const d in directories_forwards) {
                 try {
                     fs.mkdirSync(directories_forwards[d]);
-                } catch(e) {
-                }
+                } catch (e) {}
             }
 
             return resolve();
@@ -73,35 +72,34 @@ module.exports = {
     dateTimeStr: function () {
         let date = new Date();
 
-        return date.toISOString().slice(0, 10) + ' ' + date.toISOString().substring(11, 19);
+        return date.toISOString().slice(0, 10) + " " + date.toISOString().substring(11, 19);
     },
     devPort: function () {
         return parseInt(process.env.DEV_PORT || 3001);
     },
-    execCmd: function(cmd) {
-        return new Promise(async (resolve, reject) =>  {
-            const { exec } = require('child_process');
+    execCmd: function (cmd) {
+        return new Promise(async (resolve, reject) => {
+            const { exec } = require("child_process");
 
             exec(cmd, (err, stdout, stderr) => {
                 if (err) {
                     reject({
                         error: err,
                         stdout: stdout,
-                        stderr: stderr
+                        stderr: stderr,
                     });
                 } else {
                     resolve({
-                        stdout: stdout
+                        stdout: stdout,
                     });
                 }
             });
         });
     },
-    isDirF: function(p) {
+    isDirF: function (p) {
         return new Promise((resolve, reject) => {
             fs.lstat(p, (err, stats) => {
-
-                if(err) {
+                if (err) {
                     return reject(err);
                 }
 
@@ -109,45 +107,48 @@ module.exports = {
             });
         });
     },
-    isNumeric: function(obj) {
-        return !isNaN( parseFloat(obj) ) && isFinite( obj );
+    isNumeric: function (obj) {
+        return !isNaN(parseFloat(obj)) && isFinite(obj);
     },
     joinPaths: function () {
         let args = [];
 
         for (let i = 0; i < arguments.length; i++) {
-            let arg = arguments[i] + '';
+            let arg = arguments[i] + "";
 
-            if(!arg) {
+            if (!arg) {
                 continue;
             }
             args.push(arg);
         }
 
-        let slash = '/';
+        let slash = "/";
 
-        if(require('os').platform().startsWith('win')) {
-            slash = '\\';
+        if (require("os").platform().startsWith("win")) {
+            slash = "\\";
         }
 
-        return args.map((part, i) => {
-            let re;
+        return args
+            .map((part, i) => {
+                let re;
 
-            if (i === 0) {
-                re = new RegExp(`[\\${slash}]*$`, 'g');
-            } else {
-                re = new RegExp(`(^[\\${slash}]*|[\\/]*$)`, 'g');
-            }
+                if (i === 0) {
+                    re = new RegExp(`[\\${slash}]*$`, "g");
+                } else {
+                    re = new RegExp(`(^[\\${slash}]*|[\\/]*$)`, "g");
+                }
 
-            return part.trim().replace(re, '');
-        }).filter(x=>x.length).join(slash)
+                return part.trim().replace(re, "");
+            })
+            .filter((x) => x.length)
+            .join(slash);
     },
-    listFilesDir: function(dir) {
+    listFilesDir: function (dir) {
         return new Promise(async (resolve, reject) => {
             try {
                 let exists = await module.exports.checkPathExists(dir);
 
-                if(!exists) {
+                if (!exists) {
                     return resolve([]);
                 }
             } catch (e) {
@@ -167,44 +168,43 @@ module.exports = {
     loadScriptEnv: function () {
         let repo_root = module.exports.repoRoot();
 
-        const process = require('process');
+        const process = require("process");
 
         process.chdir(repo_root);
 
-        require('dotenv').config();
+        require("dotenv").config();
     },
     makeDir: function (dir) {
         return new Promise(async (resolve, reject) => {
             let exists = await module.exports.checkPathExists(dir);
 
-            if(exists) {
+            if (exists) {
                 resolve();
             } else {
                 try {
-                    fs.mkdir(dir, function(err) {
+                    fs.mkdir(dir, function (err) {
                         if (err) {
                             return reject();
                         }
 
                         return resolve();
                     });
-                } catch(e) {
-                }
+                } catch (e) {}
             }
         });
     },
-    readFile: function(p, json) {
+    readFile: function (p, json) {
         return new Promise((resolve, reject) => {
             fs.readFile(p, function (err, data) {
-                if(err) {
+                if (err) {
                     return reject(err);
                 }
 
-                if(data) {
+                if (data) {
                     data = data.toString();
                 }
 
-                if(json) {
+                if (json) {
                     try {
                         data = JSON.parse(data);
                     } catch (e) {
@@ -214,12 +214,12 @@ module.exports = {
 
                 return resolve(data);
             });
-        })
+        });
     },
     repoRoot: function () {
         let slash = `/`;
 
-        if(process.platform.startsWith('win')) {
+        if (process.platform.startsWith("win")) {
             slash = `\\`;
         }
 
@@ -231,15 +231,13 @@ module.exports = {
     },
     writeFile: function (file_path, data) {
         return new Promise(async (resolve, reject) => {
-            let dir_name = require('path').dirname(file_path);
+            let dir_name = require("path").dirname(file_path);
 
             try {
-                if(!(await module.exports.checkPathExists(dir_name))) {
+                if (!(await module.exports.checkPathExists(dir_name))) {
                     await module.exports.createDirectoryIfNotExistsRecursive(dir_name);
                 }
-            } catch(e) {
-
-            }
+            } catch (e) {}
 
             fs.writeFile(file_path, data, (err) => {
                 if (err) {
@@ -250,5 +248,5 @@ module.exports = {
                 }
             });
         });
-    }
+    },
 };

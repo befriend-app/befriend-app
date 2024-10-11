@@ -10,9 +10,71 @@ html.display-places {
     }
 }
 
+#place-search-location {
+    margin-top: -8px;
+
+    .near {
+        font-size: 10px;
+        font-weight: 500;
+        margin-bottom: 6px;
+
+        .near-text {
+            font-weight: 500;
+        }
+    }
+
+    .change {
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-size: 10px;
+        color: black;
+        border-radius: 6px;
+        background-color: $brand_color_b;
+        width: fit-content;
+        padding: 4px 8px;
+        margin-top: 5px;
+        margin-bottom: 7px;
+        border: 0.4px solid $brand_color_a;
+    }
+}
+
+.place-search {
+    margin-bottom: 10px;
+    //display: none;
+
+    input {
+        $p_lr: 10px;
+
+        width: calc(100%);
+        padding: 6px $p_lr;
+        border: 1px solid lightgrey;
+        -webkit-appearance: none;
+        appearance: none;
+        background-color: rgba(255, 255, 255, 0.5);
+        font-size: 14px;
+        resize: none;
+        box-sizing: border-box;
+        font-family: inherit;
+        transition: border 200ms;
+
+        &:focus,
+        &:focus-visible {
+            outline: none;
+            border: 1px solid $brand_color_a;
+        }
+    }
+}
+
+#change-city {
+    font-size: 11px;
+    font-weight: 500;
+    color: $brand_color_a;
+}
+
 #places {
     overflow-y: hidden;
-    background-color: #FFF;
+    background-color: #fff;
     width: 100vw;
     height: 70vh;
     max-height: 700px;
@@ -25,19 +87,21 @@ html.display-places {
 
     &.no-places-found {
         .no-places {
-            display: flex;
+            @include flex-center-col;
+            height: 100%;
         }
 
-        .places-container {
+        .places-wrapper {
             display: none;
         }
     }
 
     .back {
+        $h: 17px;
         position: absolute;
-        top: 15px;
-        left: 20px;
-        height: 18px;
+        top: calc(calc($places_header_h/2 - $h / 2));
+        left: $places_padding_lr;
+        height: $h;
         z-index: 2;
     }
 
@@ -48,19 +112,208 @@ html.display-places {
         flex-direction: column;
     }
 
-    .places-container {
+    .places-wrapper {
         position: relative;
         height: 100%;
 
-        .title {
-            margin-top: 20px;
-            text-align: center;
-            font-size: 85%;
+        .header {
+            height: $places_header_h;
+            border-bottom: 0.5px solid $color_gray;
+            @include flex-center-col;
+
+            #places-title {
+                text-align: center;
+                font-size: 13px;
+            }
+
+            #places-time {
+                font-size: 11px;
+                font-weight: 600;
+            }
         }
     }
 
     .places {
+        overflow-y: scroll;
+        height: calc(100% - var(--sab) - calc($places_padding_t + $places_padding_b));
+        padding-top: $places_padding_t;
+        padding-bottom: $places_padding_b;
+        display: flex;
+        flex-direction: column;
 
+        .place {
+            position: relative;
+            padding: 5px $places_padding_lr;
+            border-bottom: 1px solid $color_lightgray;
+            display: flex;
+
+            .left-col {
+                display: flex;
+                flex-direction: column;
+                margin-right: 20px;
+            }
+
+            .rating-price {
+                display: flex;
+                gap: 0 10px;
+                align-items: center;
+            }
+
+            .distance-price {
+                display: flex;
+                align-items: center;
+                margin-bottom: 5px;
+
+                .distance {
+                    font-size: 12px;
+                    font-weight: 600;
+                    margin-right: 10px;
+                }
+            }
+
+            .right-col {
+                margin-left: auto;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                z-index: 2;
+
+                .button {
+                    margin-top: auto;
+                    padding: 4px 14px;
+                    border-radius: 6px;
+                    background-color: $brand_color_b;
+                    height: fit-content;
+                    font-size: 13px;
+                    //text-transform: uppercase;
+                    margin-bottom: $places_right_col_tb;
+                    border: 0.5px solid $color_gray;
+                }
+            }
+
+            .name-price {
+                display: flex;
+            }
+
+            .name {
+                font-weight: 500;
+                font-size: 14px;
+                max-width: calc(100vw - calc($places_padding_lr * 2 + $places_right_col));
+                line-height: 140%;
+                margin-bottom: 5px;
+            }
+
+            .location {
+                display: flex;
+                align-items: center;
+                margin-top: 3px;
+
+                .location-address {
+                    display: flex;
+                    gap: 0 6px;
+                    align-items: center;
+                    font-weight: 400;
+                }
+
+                .address {
+                    font-size: 13px;
+                }
+
+                .address_2 {
+                    font-size: 12px;
+                    transform: translateY(0.4px);
+                }
+
+                .locality {
+                    font-size: 10px;
+                    transform: translateY(0.3px);
+                }
+            }
+
+            .price {
+                font-weight: 300;
+                font-size: 13px;
+                transform: translateY(-0.5px);
+                width: 20px;
+            }
+
+            .rating {
+                display: flex;
+                gap: 0 5px;
+                align-items: center;
+
+                .stars {
+                    display: flex;
+                    gap: 0 2px;
+
+                    .circle-container {
+                        $dim: 12px;
+                        width: $dim;
+                        height: $dim;
+                        position: relative;
+                        overflow: hidden;
+                        border-radius: 50%;
+                        background-color: white;
+                        border: 1px solid darken($color_lightgray, 20%);
+
+                        .fill {
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                        }
+                    }
+                }
+
+                .no-rating {
+                    margin-top: -3px;
+                    font-size: 11px;
+                    //font-style: italic;
+                    font-weight: 300;
+                }
+
+                .num {
+                    font-size: 12px;
+                }
+            }
+
+            .hours {
+                display: none;
+                gap: 0 0;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+
+                &.show {
+                    display: flex;
+                }
+
+                .status {
+                    font-size: 10px;
+                    font-weight: 600;
+                    text-align: center;
+                    text-transform: uppercase;
+                    margin-top: $places_right_col_tb;
+                }
+
+                .at {
+                    font-size: 9px;
+                }
+
+                &.open {
+                    .status {
+                        color: $color_green;
+                    }
+                }
+
+                &.closed {
+                    .status {
+                        color: black;
+                    }
+                }
+            }
+        }
     }
 
     .spinner {
@@ -74,13 +327,12 @@ html.display-places {
         box-sizing: border-box;
         animation: rotation 1s linear infinite;
 
-        left: calc(50% - #{$places_spinner_dim / 2});
-        top: calc(50% - #{$places_spinner_dim / 2} - #{$places_header_h});
+        left: calc(50% - calc($places_spinner_dim / 2));
+        top: calc(50% - calc($places_spinner_dim / 2 + $places_header_h / 2));
 
         &.show {
             display: inline-block;
         }
-
     }
 
     @keyframes rotation {
@@ -95,5 +347,4 @@ html.display-places {
     &.active {
         //height: 250px;
     }
-
 }
