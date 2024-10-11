@@ -80,3 +80,12 @@ html.display-places {
         visibility: visible;
     }
 }
+
+#spacer {
+    width: 100vw;
+    height: var(--sat);
+    background-color: #fff;
+    z-index: 100;
+    position: fixed;
+    top: 0;
+}
