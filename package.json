@@ -1,63 +1,63 @@
 {
-    "name": "app.befriend",
-    "displayName": "Befriend",
-    "version": "1.0.0",
-    "description": "A sample Apache Cordova application that responds to the deviceready event.",
-    "main": "index.js",
-    "contributors": [
-        {
-            "name": "Eugene Gekhter",
-            "email": "eugene@befriend.app"
-        },
-        {
-            "name": "Logan Phillips",
-            "email": "logan@befriend.app"
-        }
-    ],
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "format": "npx prettier . --write",
-        "lint": "npx eslint ."
-    },
-    "keywords": [
-        "ecosystem:cordova"
-    ],
-    "author": "Apache Cordova Team",
-    "license": "Apache-2.0",
-    "devDependencies": {
-        "@eslint/js": "^9.12.0",
-        "cordova-android": "^12.0.1",
-        "cordova-ios": "^7.1.1",
-        "cordova-plugin-badge": "^0.8.9",
-        "cordova-plugin-device": "^3.0.0",
-        "cordova-plugin-geolocation": "^5.0.0",
-        "cordova-plugin-local-notification": "github:katzer/cordova-plugin-local-notifications",
-        "eslint": "^9.12.0",
-        "globals": "^15.10.0"
-    },
-    "cordova": {
-        "platforms": [
-            "android",
-            "ios"
-        ],
-        "plugins": {
-            "cordova-plugin-local-notification": {
-                "ANDROID_SUPPORT_V4_VERSION": "26.+"
-            },
-            "cordova-plugin-geolocation": {
-                "GPS_REQUIRED": "true"
-            }
-        }
-    },
-    "dependencies": {
-        "axios": "^1.7.7",
-        "chokidar": "^3.6.0",
-        "csso": "^5.0.5",
-        "dotenv": "^16.4.5",
-        "express": "^4.20.0",
-        "gm": "^1.25.0",
-        "sass": "^1.78.0",
-        "terser": "^5.32.0",
-        "yargs": "^17.7.2"
-    }
+  "name": "app.befriend",
+  "displayName": "Befriend",
+  "version": "1.0.0",
+  "description": "A sample Apache Cordova application that responds to the deviceready event.",
+  "main": "index.js",
+  "contributors": [
+      {
+          "name": "Eugene Gekhter",
+          "email": "eugene@befriend.app"
+      },
+      {
+          "name": "Logan Phillips",
+          "email": "logan@befriend.app"
+      }
+  ],
+  "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "format": "npx prettier . --write",
+      "lint": "npx eslint ."
+  },
+  "keywords": [
+      "ecosystem:cordova"
+  ],
+  "author": "Apache Cordova Team",
+  "license": "Apache-2.0",
+  "devDependencies": {
+      "@eslint/js": "^9.12.0",
+      "cordova-android": "^12.0.1",
+      "cordova-ios": "^7.1.1",
+      "cordova-plugin-badge": "^0.8.9",
+      "cordova-plugin-device": "^3.0.0",
+      "cordova-plugin-geolocation": "^5.0.0",
+      "cordova-plugin-local-notification": "github:katzer/cordova-plugin-local-notifications",
+      "eslint": "^9.12.0",
+      "globals": "^15.10.0"
+  },
+  "cordova": {
+      "platforms": [
+          "android",
+          "ios"
+      ],
+      "plugins": {
+          "cordova-plugin-local-notification": {
+              "ANDROID_SUPPORT_V4_VERSION": "26.+"
+          },
+          "cordova-plugin-geolocation": {
+              "GPS_REQUIRED": "true"
+          }
+      }
+  },
+  "dependencies": {
+      "axios": "^1.7.7",
+      "chokidar": "^3.6.0",
+      "csso": "^5.0.5",
+      "dotenv": "^16.4.5",
+      "express": "^4.20.0",
+      "gm": "^1.25.0",
+      "sass": "^1.78.0",
+      "terser": "^5.32.0",
+      "yargs": "^17.7.2"
+  }
 }
