@@ -21,15 +21,6 @@
         <string>Your location is used to find places and match you with people nearby.</string>
     </edit-config>
 
-    <!-- Make the status bar overlay the WebView -->
-    <preference name="StatusBarOverlaysWebView" value="false" />
-    
-    <!-- Set the status bar background color (iOS) -->
-    <preference name="StatusBarBackgroundColor" value="#000000" />
-    
-    <!-- Set the status bar style (iOS) -->
-    <preference name="StatusBarStyle" value="lightcontent" />
-
     <platform name="android">
         <config-file parent="/*" target="AndroidManifest.xml">
             <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
