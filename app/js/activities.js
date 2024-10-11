@@ -2,11 +2,11 @@ befriend.activities = {
     types: {
         data: null,
         colors: [
-            "#FF5733",  // Bold Red-Orange
+            "#339DFF",  // Bold Bold
             "#C70039",  // Bold Crimson
             "#FFC300",  // Bright Yellow
             "#FFB142",  // Bold Apricot
-            "#33FF57",  // Bright Green
+            "#79A881",  // Bold Green
             "#28B463",  // Bold Green
             "#3498DB",  // Bold Sky Blue
             "#2980B9",  // Bold Blue
@@ -14,7 +14,7 @@ befriend.activities = {
             "#9B59B6",  // Bold Lavender
             "#E74C3C",  // Bright Red
             "#F39C12",  // Bold Orange
-            "#2ECC71",  // Bright Emerald
+            "#7f9aa1",  // Light Grey
             "#16A085",  // Bold Teal
             "#F1C40F",  // Bold Yellow-Green
             "#D35400"   // Bold Carrot Orange
