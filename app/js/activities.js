@@ -2,21 +2,22 @@ befriend.activities = {
     types: {
         data: null,
         colors: [
-            "#339DFF", // Bold Blue
-            "#C70039", // Bold Crimson
-            "#FFC300", // Bright Yellow
-            "#31a663", // Bold Leaf Green
-            "#79A881", // Bold Green
-            "#D35400", // Bold Carrot Orange
-            "#3498DB", // Bold Sky Blue
-            "#2980B9", // Bold Blue
-            "#cc6b6b", // Bold Fruit
-            "#9B59B6", // Bold Lavender
-            "#E74C3C", // Bright Red
-            "#F39C12", // Bold Orange
-            "#33b1d1", // Light Teal
-            "#16A085", // Bold Teal
-            "#F1C40F", // Bold Yellow-Green
+            "#339DFF",  // Bold Bold
+            "#C70039",  // Bold Crimson
+            "#FFC300",  // Bright Yellow
+            "#FFB142",  // Bold Apricot
+            "#79A881",  // Bold Green
+            "#28B463",  // Bold Green
+            "#3498DB",  // Bold Sky Blue
+            "#2980B9",  // Bold Blue
+            "#8E44AD",  // Bold Purple
+            "#9B59B6",  // Bold Lavender
+            "#E74C3C",  // Bright Red
+            "#F39C12",  // Bold Orange
+            "#7f9aa1",  // Light Grey
+            "#16A085",  // Bold Teal
+            "#F1C40F",  // Bold Yellow-Green
+            "#D35400"   // Bold Carrot Orange
         ],
     },
     selected: {
