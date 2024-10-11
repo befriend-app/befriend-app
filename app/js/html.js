@@ -8,6 +8,8 @@ befriend.html = {
                         <img src="/img/logo.png">
                     </div>
                 </header>
+
+                <div id="spacer"></div>
                 
                 <div id="views">
                     <div class="view view-activities">
