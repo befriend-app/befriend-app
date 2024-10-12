@@ -128,18 +128,6 @@ befriend.places = {
     isPlacesShown: function () {
         return elHasClass(document.documentElement, befriend.classes.placesShown);
     },
-    isChangeLocationShown: function () {
-        return elHasClass(document.documentElement, befriend.classes.changeLocationShown);
-    },
-    toggleChangeLocation: function (show) {
-        if (show) {
-            befriend.timing.showChangeLocation = timeNow();
-
-            addClassEl(befriend.classes.changeLocationShown, document.documentElement);
-        } else {
-            removeClassEl(befriend.classes.changeLocationShown, document.documentElement);
-        }
-    },
     toggleDisplayPlaces: function (show) {
         if (show) {
             befriend.timing.showPlaces = timeNow();
@@ -192,25 +180,9 @@ befriend.places = {
     events: {
         init: function () {
             return new Promise(async (resolve, reject) => {
-                befriend.places.events.onChangeLocation();
                 befriend.places.events.onPlaces();
 
                 resolve();
-            });
-        },
-        onChangeLocation: function () {
-            befriend.els.change_location_btn.addEventListener("click", function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-
-                befriend.places.toggleChangeLocation(true);
-            });
-
-            befriend.els.change_location.querySelector(".back").addEventListener("click", function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-
-                befriend.places.toggleChangeLocation(false);
             });
         },
         onPlaces: function () {

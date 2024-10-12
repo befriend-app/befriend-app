@@ -8,6 +8,7 @@ befriend.events = {
                 await befriend.friends.events.init();
                 await befriend.maps.events.init();
                 await befriend.activities.events.init();
+                await befriend.location.events.init();
                 await befriend.places.events.init();
             } catch (e) {
                 console.error(e);
@@ -30,14 +31,14 @@ befriend.events = {
 
                     befriend.places.toggleDisplayPlaces(false);
                 }
-            } else if (befriend.places.isChangeLocationShown()) {
+            } else if (befriend.location.isChangeLocationShown()) {
                 if (!e.target.closest("#change-location")) {
                     //do not hide on double click
                     if (timeNow() - befriend.timing.showChangeLocation < befriend.styles.places_transition_ms) {
                         return false;
                     }
 
-                    befriend.places.toggleChangeLocation(false);
+                    befriend.location.toggleChangeLocation(false);
                 }
             }
         });
