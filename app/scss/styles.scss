@@ -9,6 +9,7 @@
 @import "maps";
 @import "activities";
 @import "places";
+@import "location";
 
 @import "vendor/mapbox";
 
@@ -57,8 +58,6 @@ body.loading {
     overflow-y: hidden;
     min-height: 100vh;
     min-height: 100dvh;
-
-    //background: lighten($color_lightgray, 10%);
 }
 
 #overlay {
@@ -70,22 +69,19 @@ body.loading {
     opacity: 0;
     visibility: hidden;
     display: block;
-    transition: opacity 0.5s;
+    transition:
+        opacity $overlay_transition_ms,
+        visibility 0ms $overlay_transition_ms;
     top: 0;
 }
 
-html.display-places {
+html.#{$class_places_shown},
+html.#{$class_change_location} {
     #overlay {
         opacity: 0.18;
         visibility: visible;
+        transition:
+            opacity $overlay_transition_ms,
+            visibility 0ms;
     }
-}
-
-#spacer {
-    width: 100vw;
-    height: var(--sat);
-    background-color: #fff;
-    z-index: 100;
-    position: fixed;
-    top: 0;
 }

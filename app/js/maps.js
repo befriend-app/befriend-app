@@ -87,6 +87,8 @@ befriend.maps = {
                 };
 
                 localStorage.setItem(befriend.maps.token.key, JSON.stringify(token));
+
+                mapboxgl.accessToken = token.token;
             } catch (e) {
                 console.error(e);
                 return reject();
@@ -126,82 +128,21 @@ befriend.maps = {
     },
     addMarker: function (map, lat, lng) {
         new mapboxgl.Marker({
-            color: befriend.styles.brand_color_a,
+            color: befriend.variables.brand_color_a,
         })
             .setLngLat([lng, lat])
             .addTo(map);
     },
-    events: function () {
-        return new Promise(async (resolve, reject) => {
-            try {
-                await befriend.maps.activityRadiusEvents();
-            } catch (e) {
-                console.error(e);
-            }
-
-            resolve();
-        });
-    },
-    activityRadiusEvents: function () {
-        return new Promise(async (resolve, reject) => {
-            //slider
-            let radiusValue = 3;
-            let sliderRange = document.getElementById("range-radius-activities");
-
-            function updatePosition() {
-                const val = sliderRange.valueAsNumber;
-                const min = parseFloat(sliderRange.min);
-                const max = parseFloat(sliderRange.max);
-                const newVal = Number(((val - min) * max) / (max - min));
-
-                const sliderRect = sliderRange.getBoundingClientRect();
-
-                let thumb_w = befriend.styles.range_radius_dim;
-
-                const thumbPosition = (newVal * (sliderRect.width - thumb_w)) / max;
-
-                //todo conditional km
-                rangeDiv.innerHTML = `${radiusValue} <span class="unit">mi</span>`;
-                rangeDiv.style.left = `${thumbPosition}px`;
-            }
-
-            window.addEventListener("resize", function (e) {
-                updatePosition();
-            });
-
-            window.addEventListener("orientationchange", function (e) {
-                updatePosition();
-            });
-
-            //set position of number for range
-            let rangeDiv = befriend.els.map_radius_activities.querySelector(".slider div");
-
-            //load prev setting
-            // let prevSetting = localStorage.getItem(settings_key);
-            //
-            // if(prevSetting) {
-            //     radiusValue = parseInt(prevSetting);
-            // }
-
-            sliderRange.setAttribute("value", radiusValue);
-
-            sliderRange.addEventListener("input", function (e) {
-                let val = this.value;
-
-                if (!isNumeric(val)) {
-                    return;
+    events: {
+        init: function () {
+            return new Promise(async (resolve, reject) => {
+                try {
+                } catch (e) {
+                    console.error(e);
                 }
 
-                radiusValue = parseInt(val);
-
-                // localStorage.setItem(settings_key, radiusValue);
-
-                updatePosition();
+                resolve();
             });
-
-            updatePosition();
-
-            resolve();
-        });
+        },
     },
 };

@@ -1,10 +1,14 @@
 window["befriend"] = {
     classes: {
         placesShown: "display-places",
+        changeLocationShown: "display-change-location",
     },
     timing: {
         showPlaces: null,
+        showChangeLocation: null,
     },
+    els: {},
+    variables: null,
     when: null,
     friends: null,
     activities: null,
@@ -15,7 +19,6 @@ window["befriend"] = {
     timeouts: {},
     location: null,
     maps: null,
-    els: {},
     init: function () {
         console.log("Befriend: [init]");
 
@@ -23,6 +26,12 @@ window["befriend"] = {
             //html
             try {
                 await befriend.html.appInit();
+            } catch (e) {
+                console.error(e);
+            }
+
+            try {
+                await befriend.styles.init();
             } catch (e) {
                 console.error(e);
             }
@@ -36,7 +45,7 @@ window["befriend"] = {
 
             //when
             try {
-                await befriend.when.setWhen();
+                await befriend.when.init();
             } catch (e) {
                 console.error(e);
             }
@@ -50,14 +59,14 @@ window["befriend"] = {
 
             //activities
             try {
-                await befriend.activities.setActivityTypes();
+                await befriend.activities.init();
             } catch (e) {
                 console.error(e);
             }
 
             //events
             try {
-                await befriend.events.addEvents();
+                await befriend.events.init();
             } catch (e) {
                 console.error(e);
             }

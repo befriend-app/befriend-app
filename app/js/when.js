@@ -24,27 +24,12 @@ befriend.when = {
         "#64B5F6", // Soft Blue
         "#3BA4F4", // Blue
     ],
-    events: function () {
+    init: function () {
         return new Promise(async (resolve, reject) => {
-            let when_els = befriend.els.when.getElementsByClassName("when-option");
-
-            for (let i = 0; i < when_els.length; i++) {
-                let el = when_els[i];
-
-                el.addEventListener("click", (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    removeElsClass(when_els, "active");
-                    addClassEl("active", el);
-
-                    befriend.when.selected = befriend.when.options[i];
-                });
-            }
-
-            //select first option by default
-            if (when_els.length) {
-                fireClick(when_els[0]);
+            try {
+                await befriend.html.setWhen();
+            } catch (e) {
+                console.error(e);
             }
 
             resolve();
@@ -77,17 +62,6 @@ befriend.when = {
 
         //update every minute
         setInterval(updateTimes, 60 * 1000);
-    },
-    setWhen: function () {
-        return new Promise(async (resolve, reject) => {
-            try {
-                await befriend.html.setWhen();
-            } catch (e) {
-                console.error(e);
-            }
-
-            resolve();
-        });
     },
     getOptionDateTime: function (option) {
         if (!option) {
@@ -138,5 +112,44 @@ befriend.when = {
         }
 
         return activity_time;
+    },
+    events: {
+        init: function () {
+            return new Promise(async (resolve, reject) => {
+                try {
+                    await befriend.when.events.whenOptions();
+                } catch (e) {
+                    console.error(e);
+                }
+
+                resolve();
+            });
+        },
+        whenOptions: function () {
+            return new Promise(async (resolve, reject) => {
+                let when_els = befriend.els.when.getElementsByClassName("when-option");
+
+                for (let i = 0; i < when_els.length; i++) {
+                    let el = when_els[i];
+
+                    el.addEventListener("click", (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        removeElsClass(when_els, "active");
+                        addClassEl("active", el);
+
+                        befriend.when.selected = befriend.when.options[i];
+                    });
+                }
+
+                //select first option by default
+                if (when_els.length) {
+                    fireClick(when_els[0]);
+                }
+
+                resolve();
+            });
+        },
     },
 };

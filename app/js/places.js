@@ -11,8 +11,6 @@ befriend.places = {
                 return reject("No location");
             }
 
-            befriend.timing.showPlaces = timeNow();
-
             //set custom title and time
             befriend.places.setPlacesTitle(activity_type.title);
             befriend.places.setPlacesTime();
@@ -127,24 +125,13 @@ befriend.places = {
             resolve();
         });
     },
-    events: function () {
-        return new Promise(async (resolve, reject) => {
-            let back = befriend.els.places.querySelector(".back");
-
-            back.addEventListener("click", (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                removeClassEl(befriend.classes.placesShown, document.documentElement);
-            });
-
-            resolve();
-        });
-    },
     isPlacesShown: function () {
         return elHasClass(document.documentElement, befriend.classes.placesShown);
     },
     toggleDisplayPlaces: function (show) {
         if (show) {
+            befriend.timing.showPlaces = timeNow();
+
             addClassEl(befriend.classes.placesShown, document.documentElement);
         } else {
             removeClassEl(befriend.classes.placesShown, document.documentElement);
@@ -189,5 +176,33 @@ befriend.places = {
     updatePlacesOpen: function () {
         befriend.places.setIsOpen();
         befriend.html.setPlacesHours();
+    },
+    events: {
+        init: function () {
+            return new Promise(async (resolve, reject) => {
+                befriend.places.events.onPlaces();
+                befriend.places.events.searchPlace();
+
+                resolve();
+            });
+        },
+        searchPlace: function () {
+            let input_el = befriend.els.activities.querySelector(".input-search-place");
+
+            //todo
+        },
+        onPlaces: function () {
+            befriend.places.events.onBackPlaces();
+        },
+        onBackPlaces: function () {
+            let back = befriend.els.places.querySelector(".back");
+
+            back.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                befriend.places.toggleDisplayPlaces(false);
+            });
+        },
     },
 };

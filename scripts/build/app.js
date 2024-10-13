@@ -21,7 +21,7 @@ let outputs = {
     css: joinPaths(repoRoot(), "www/css/styles.css"),
 };
 
-let styles_variables_file_name = `_styles_variables.js`;
+let styles_variables_file_name = `_variables_styles.js`;
 
 let js_files = {
     frontend: [
@@ -36,6 +36,7 @@ let js_files = {
         "places.js",
         "location.js",
         "html.js",
+        "styles.js",
         "helpers.js",
         "events.js",
         styles_variables_file_name,
@@ -76,7 +77,7 @@ function addStyleVariables() {
             }
         }
 
-        let file_str = `befriend.styles = ${JSON.stringify(styles_organized)};
+        let file_str = `befriend.variables = ${JSON.stringify(styles_organized)};
         `;
 
         try {
