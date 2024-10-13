@@ -84,6 +84,32 @@ html.#{$class_change_location} {
         padding-bottom: $places_padding_b;
         display: flex;
         flex-direction: column;
+
+        .suggestion-item {
+            border-bottom: 1px solid $color_lightgray;
+
+            padding: 8px 30px;
+
+            .suggestion-name {
+                display: flex;
+                font-size: 13px;
+                align-items: center;
+
+                .city {
+
+                }
+
+                .state {
+
+                }
+
+                .country {
+                    margin-left: 6px;
+                    font-weight: 300;
+                    font-size: 12px;
+                }
+            }
+        }
     }
 
     .spinner {
