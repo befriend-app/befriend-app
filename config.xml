@@ -21,6 +21,21 @@
         <string>Your location is used to find places and match you with people nearby.</string>
     </edit-config>
 
+    <preference name="DisallowOverscroll" value="true" />
+
+    <preference name="StatusBarHidden" value="true" />
+    <preference name="StatusBarOverlaysWebView" value="false" />
+    <preference name="StatusBarDefaultScrollToTop" value="true" />
+
+    <!--    <preference name="ViewControllerBasedStatusBarAppearance" value="false" />-->
+
+
+<!--    <preference name="StatusBarBackgroundColor" value="default" />-->
+    <preference name="StatusBarStyle" value="#000" />
+
+    <platform name="ios">
+    </platform>
+
     <platform name="android">
         <config-file parent="/*" target="AndroidManifest.xml">
             <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />

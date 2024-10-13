@@ -181,9 +181,15 @@ befriend.places = {
         init: function () {
             return new Promise(async (resolve, reject) => {
                 befriend.places.events.onPlaces();
+                befriend.places.events.searchPlace();
 
                 resolve();
             });
+        },
+        searchPlace: function () {
+            let input_el = befriend.els.activities.querySelector(".input-search-place");
+
+            //todo
         },
         onPlaces: function () {
             befriend.places.events.onBackPlaces();

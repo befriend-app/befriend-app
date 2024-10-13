@@ -1,3 +1,28 @@
+function addStatusBarBorder() {
+    return new Promise(async (resolve, reject) => {
+        //add border to status bar
+
+        try {
+            if (befriend.styles.app_background) {
+                StatusBar.addBorder(
+                    befriend.styles.app_background, //color
+                    1, //height
+                    function () {
+                        resolve();
+                    },
+                    function (error) {
+                        console.error("Error adding border: " + error);
+                        resolve();
+                    },
+                );
+            }
+        } catch (e) {
+            console.error(e);
+            resolve();
+        }
+    });
+}
+
 function loadCSS() {
     return new Promise(async (resolve, reject) => {
         try {
@@ -29,6 +54,12 @@ function loadCSS() {
 
 (async function () {
     addClassEl("loading", document.body);
+
+    try {
+        await addStatusBarBorder();
+    } catch (e) {
+        console.error(e);
+    }
 
     try {
         await loadCSS();
