@@ -1,4 +1,14 @@
 befriend.html = {
+    setEls: function () {
+        befriend.els.views = document.getElementById("views");
+        befriend.els.activities = document.getElementById("activities");
+        befriend.els.change_location = document.getElementById("change-location");
+        befriend.els.change_location_btn = document.getElementById("change-location-btn");
+        befriend.els.num_persons = document.getElementById("num-persons");
+        befriend.els.places = document.getElementById("places");
+        befriend.els.when = document.getElementById("when");
+        befriend.els.who = document.getElementById("who");
+    },
     appInit: function () {
         return new Promise(async (resolve, reject) => {
             let html = `
@@ -138,17 +148,6 @@ befriend.html = {
 
             resolve();
         });
-    },
-    setEls: function () {
-        befriend.els.activities = document.getElementById("activities");
-        befriend.els.change_location = document.getElementById("change-location");
-        befriend.els.change_location_btn = document.getElementById("change-location-btn");
-        befriend.els.num_persons = document.getElementById("num-persons");
-        befriend.els.places = document.getElementById("places");
-        befriend.els.when = document.getElementById("when");
-        befriend.els.who = document.getElementById("who");
-
-        befriend.els.spacer = document.getElementById("spacer");
     },
     setWhen: function () {
         return new Promise(async (resolve, reject) => {

@@ -7,6 +7,8 @@ window["befriend"] = {
         showPlaces: null,
         showChangeLocation: null,
     },
+    els: {},
+    variables: null,
     when: null,
     friends: null,
     activities: null,
@@ -17,7 +19,6 @@ window["befriend"] = {
     timeouts: {},
     location: null,
     maps: null,
-    els: {},
     init: function () {
         console.log("Befriend: [init]");
 
@@ -25,6 +26,12 @@ window["befriend"] = {
             //html
             try {
                 await befriend.html.appInit();
+            } catch (e) {
+                console.error(e);
+            }
+
+            try {
+                await befriend.styles.init();
             } catch (e) {
                 console.error(e);
             }
