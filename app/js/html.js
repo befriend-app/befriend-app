@@ -218,7 +218,7 @@ befriend.html = {
                 for (let i = 0; i < level_1_ids.length; i++) {
                     let level_1_id = level_1_ids[i];
 
-                    if (activities_row.length === befriend.styles.activity_row_items) {
+                    if (activities_row.length === befriend.variables.activity_row_items) {
                         let row_html = activities_row.join("");
 
                         level_1_html += `<div class="level_1_row">
@@ -379,7 +379,7 @@ befriend.html = {
 
                     let stars_html = ``;
 
-                    let color = befriend.styles.brand_color_a;
+                    let color = befriend.variables.brand_color_a;
 
                     for (let i = 1; i <= 5; i++) {
                         let percent;

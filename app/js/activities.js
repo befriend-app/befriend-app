@@ -153,7 +153,7 @@ befriend.activities = {
                         let activities_level_2 = [];
 
                         for (let level_2_id in activity.sub) {
-                            if (activities_level_2.length === befriend.styles.activity_level_2_row_items) {
+                            if (activities_level_2.length === befriend.variables.activity_level_2_row_items) {
                                 let row_html = activities_level_2.join("");
 
                                 level_2_html += `<div class="level_2_row">
@@ -306,7 +306,7 @@ befriend.activities = {
                         let activities_level_3 = [];
 
                         for (let level_3_id in level_2_activity.sub) {
-                            if (activities_level_3.length === befriend.styles.activity_level_3_row_items) {
+                            if (activities_level_3.length === befriend.variables.activity_level_3_row_items) {
                                 let row_html = activities_level_3.join("");
 
                                 level_3_html += `<div class="level_3_row">

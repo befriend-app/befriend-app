@@ -25,7 +25,7 @@ befriend.events = {
                 //hide places to bottom
                 if (!e.target.closest("#places")) {
                     //do not hide on double click if activity type just clicked
-                    if (timeNow() - befriend.timing.showPlaces < befriend.styles.places_transition_ms) {
+                    if (timeNow() - befriend.timing.showPlaces < befriend.variables.places_transition_ms) {
                         return false;
                     }
 
@@ -34,7 +34,7 @@ befriend.events = {
             } else if (befriend.location.isChangeLocationShown()) {
                 if (!e.target.closest("#change-location")) {
                     //do not hide on double click
-                    if (timeNow() - befriend.timing.showChangeLocation < befriend.styles.places_transition_ms) {
+                    if (timeNow() - befriend.timing.showChangeLocation < befriend.variables.places_transition_ms) {
                         return false;
                     }
 

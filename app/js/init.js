@@ -3,9 +3,9 @@ function addStatusBarBorder() {
         //add border to status bar
 
         try {
-            if (befriend.styles.app_background) {
+            if (befriend.variables.app_background) {
                 StatusBar.addBorder(
-                    befriend.styles.app_background, //color
+                    befriend.variables.app_background, //color
                     1, //height
                     function () {
                         resolve();

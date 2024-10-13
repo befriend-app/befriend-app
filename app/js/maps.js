@@ -128,7 +128,7 @@ befriend.maps = {
     },
     addMarker: function (map, lat, lng) {
         new mapboxgl.Marker({
-            color: befriend.styles.brand_color_a,
+            color: befriend.variables.brand_color_a,
         })
             .setLngLat([lng, lat])
             .addTo(map);
