@@ -141,10 +141,12 @@ befriend.maps = {
 
                 // create custom marker
                 const el = document.createElement("div");
+
                 el.className = "marker";
                 el.style.backgroundImage = `url(${image_location})`;
                 el.style.width = `${image_ratio * befriend.variables.map_marker_height}px`;
                 el.style.height = `${befriend.variables.map_marker_height}px`;
+                el.style.marginTop = `${befriend.variables.map_marker_height / -2}px`;
 
                 let marker = new mapboxgl.Marker(el).setLngLat([lng, lat]).addTo(map);
 
