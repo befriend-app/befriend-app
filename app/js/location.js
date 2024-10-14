@@ -82,6 +82,25 @@ befriend.location = {
         autoComplete: function () {
             function selectCity(city) {
                 console.log(city);
+                befriend.location.current = city;
+                befriend.location.search = city;
+                befriend.location.toggleChangeLocation(false);
+                befriend.els.activities.querySelector(".near-text").innerHTML = befriend.location.current.name;
+
+                befriend.maps.removeMarker(befriend.maps.markers.currentMarker);
+
+                befriend.maps.addMarker(
+                    befriend.maps.maps.activities,
+                    befriend.location.search.lat,
+                    befriend.location.search.lon,
+                );
+
+                befriend.maps.setMapCenter(
+                    befriend.maps.maps.activities,
+                    befriend.location.search.lat,
+                    befriend.location.search.lon,
+                    true,
+                );
             }
 
             function clearSuggestions() {
@@ -108,7 +127,7 @@ befriend.location = {
 
                     el.innerHTML = `
         <div class="suggestion-name">${location_arr.join("")}</div>
-      `;
+    `;
 
                     el.addEventListener("click", () => {
                         selectCity(city);

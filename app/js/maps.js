@@ -6,6 +6,10 @@ befriend.maps = {
     maps: {
         activities: null,
     },
+    markers: {
+        currentMarker: null,
+    },
+    defaultZoom: 13,
     init: function () {
         return new Promise(async (resolve, reject) => {
             try {
@@ -39,7 +43,7 @@ befriend.maps = {
                     container: "activities-map",
                     style: "mapbox://styles/mapbox/light-v10",
                     center: [location.lon, location.lat],
-                    zoom: 13,
+                    zoom: befriend.maps.defaultZoom,
                     attributionControl: false,
                 });
 
@@ -127,11 +131,25 @@ befriend.maps = {
         }, update_in);
     },
     addMarker: function (map, lat, lng) {
-        new mapboxgl.Marker({
+        let marker = new mapboxgl.Marker({
             color: befriend.variables.brand_color_a,
         })
             .setLngLat([lng, lat])
             .addTo(map);
+
+        befriend.maps.markers.currentMarker = marker;
+
+        return marker;
+    },
+    removeMarker: function (marker) {
+        marker.remove();
+    },
+    setMapCenter: function (map, lat, lng, set_zoom) {
+        if (set_zoom) {
+            map.setCenter([lng, lat]).setZoom(befriend.maps.defaultZoom);
+        } else {
+            map.setCenter([lng, lat]);
+        }
     },
     events: {
         init: function () {
