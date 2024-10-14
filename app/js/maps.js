@@ -131,15 +131,31 @@ befriend.maps = {
         }, update_in);
     },
     addMarker: function (map, lat, lng) {
-        let marker = new mapboxgl.Marker({
-            color: befriend.variables.brand_color_a,
-        })
-            .setLngLat([lng, lat])
-            .addTo(map);
+        return new Promise(async (resolve, reject) => {
+            try {
+                const image_location = "/img/marker.png";
 
-        befriend.maps.markers.currentMarker = marker;
+                const image_dimensions = await getImgDimensions(image_location);
 
-        return marker;
+                const image_ratio = image_dimensions.width / image_dimensions.height;
+
+                // create custom marker
+                const el = document.createElement("div");
+                el.className = "marker";
+                el.style.backgroundImage = `url(${image_location})`;
+                el.style.width = `${image_ratio * befriend.variables.map_marker_height}px`;
+                el.style.height = `${befriend.variables.map_marker_height}px`;
+
+                let marker = new mapboxgl.Marker(el).setLngLat([lng, lat]).addTo(map);
+
+                befriend.maps.markers.currentMarker = marker;
+
+                resolve(marker);
+            } catch (error) {
+                console.error(error);
+                reject(error);
+            }
+        });
     },
     removeMarker: function (marker) {
         marker.remove();

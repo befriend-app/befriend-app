@@ -248,3 +248,21 @@ function useWhiteOnBackground(hexColor) {
 
     return luminance < 0.6 ? true : false;
 }
+
+function getImgDimensions(url) {
+    return new Promise(async (resolve, reject) => {
+        const img = new Image();
+
+        img.onload = function () {
+            resolve({
+                width: img.width,
+                height: img.height,
+            });
+        };
+
+        img.onerror = function () {
+            return reject("image not found");
+        };
+        img.src = url;
+    });
+}
