@@ -1,4 +1,18 @@
 befriend.friends = {
+    activity_friends_num: 1,
+    type: {
+        is_new: true,
+        is_existing: false,
+        is_both: false
+    },
+    setType: function (type) {
+        befriend.friends.type.is_new = type === 'new';
+        befriend.friends.type.is_existing = type === 'existing';
+        befriend.friends.type.is_both = type === 'both';
+    },
+    setActivityFriendNum: function (num) {
+        befriend.friends.activity_friends_num = num;
+    },
     events: {
         init: function () {
             return new Promise(async (resolve, reject) => {
@@ -25,6 +39,8 @@ befriend.friends = {
 
                         removeElsClass(friend_els, "active");
                         addClassEl("active", el);
+
+                        befriend.friends.setType(el.getAttribute('data-type'));
                     });
                 }
 
@@ -88,28 +104,14 @@ befriend.friends = {
 
                     personsCount = parseInt(val);
 
+                    befriend.friends.setActivityFriendNum(personsCount);
+
                     // localStorage.setItem(settings_key, personsCount);
 
                     updatePosition();
                 });
 
                 updatePosition();
-
-                // //button
-                // let button_el = document.getElementById('activity-button');
-                //
-                // button_el.addEventListener('click', async function (e) {
-                //     e.preventDefault();
-                //     e.stopPropagation();
-                //
-                //     console.log("Activity button");
-                //
-                //     try {
-                //         await befriend.activities.createNewActivity(personsCount);
-                //     } catch(e) {
-                //         console.error(e);
-                //     }
-                // });
 
                 resolve();
             });

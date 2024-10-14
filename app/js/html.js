@@ -28,13 +28,13 @@ befriend.html = {
                                 <div class="section-title">Friends</div>
                                 
                                 <div class="friend-options">
-                                    <div class="friend-option active">
+                                    <div class="friend-option active" data-type="new">
                                         <div class="name">New</div>
                                     </div>
-                                    <div class="friend-option">
+                                    <div class="friend-option" data-type="existing">
                                         <div class="name">Existing</div>
                                     </div>
-                                    <div class="friend-option">
+                                    <div class="friend-option" data-type="both">
                                         <div class="name">Both</div>
                                     </div>
                                 </div>
