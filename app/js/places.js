@@ -11,6 +11,19 @@ befriend.places = {
                 return reject("No location");
             }
 
+            let lat = location.lat;
+            let lon = location.lon;
+
+            try {
+                // use lat/lon of map center
+                let map_center = befriend.maps.maps.activities.getCenter();
+
+                lat = map_center.lat;
+                lon = map_center.lng;
+            } catch(e) {
+                console.error(e);
+            }
+
             //set custom title and time
             befriend.places.setPlacesTitle(activity_type.title);
             befriend.places.setPlacesTime();
@@ -23,7 +36,10 @@ befriend.places = {
 
             try {
                 let r = await axios.put(joinPaths(api_domain, "activity_type", activity_type.token, "places"), {
-                    location: location,
+                    location: {
+                        lat: lat,
+                        lon: lon
+                    },
                 });
 
                 befriend.places.setData(r.data.places);
@@ -187,9 +203,68 @@ befriend.places = {
             });
         },
         searchPlace: function () {
-            let input_el = befriend.els.activities.querySelector(".input-search-place");
+            function clearSuggestions() {
+                suggestions_el.innerHTML = "";
+            }
 
-            //todo
+            function displaySuggestions(places) {
+                clearSuggestions();
+
+                for (let place of places) {
+                    const el = document.createElement("div");
+
+                    el.className = "suggestion-item";
+
+                    el.innerHTML = `
+        <div class="suggestion-name"></div>
+    `;
+
+                    el.addEventListener("click", () => {
+                        befriend.location.setCustomLocation();
+                    });
+
+                    suggestions_el.appendChild(el);
+                }
+            }
+
+            let input_el = befriend.els.activities.querySelector(".input-search-place");
+            let suggestions_el = befriend.els.change_location.querySelector(".suggestions");
+
+            let debounceTimer = null;
+
+            let minChars = 3;
+
+            input_el.addEventListener("input", function () {
+                clearTimeout(debounceTimer);
+
+                debounceTimer = setTimeout(async function () {
+                    const value = input_el.value.trim();
+
+                    if (value.length < minChars) {
+                        clearSuggestions();
+                        return;
+                    }
+
+                    try {
+                        let map = befriend.maps.maps.activities;
+
+                        let map_center = map.getCenter();
+
+                        let params = {
+                            search: value,
+                            lat: map_center.lat,
+                            lon: map_center.lng,
+                            ...befriend.friends.type
+                        };
+
+                        // const r = await axios.post(joinPaths(api_domain, `autocomplete/places`), params);
+                        //
+                        // displaySuggestions(r.data.cities);
+                    } catch (error) {
+                        console.error("Search error:", error);
+                    }
+                }, 100);
+            });
         },
         onPlaces: function () {
             befriend.places.events.onBackPlaces();
