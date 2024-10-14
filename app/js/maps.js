@@ -47,7 +47,7 @@ befriend.maps = {
                     attributionControl: false,
                 });
 
-                map.addControl(new mapboxgl.GeolocateControl());
+                // map.addControl(new mapboxgl.GeolocateControl());
                 // map.addControl(new mapboxgl.NavigationControl());
 
                 befriend.maps.maps.activities = map;
@@ -162,17 +162,31 @@ befriend.maps = {
     removeMarker: function (marker) {
         marker.remove();
     },
-    setMapCenter: function (map, lat, lng, set_zoom) {
-        if (set_zoom) {
-            map.setCenter([lng, lat]).setZoom(befriend.maps.defaultZoom);
+    setMapCenter: function (map, lat, lng, zoom_level, fly_to) {
+        if(fly_to) {
+            let options = {
+                center: [lng, lat],
+                essential: true
+            };
+
+            if(zoom_level) {
+                options.zoom = zoom_level;
+            }
+
+            map.flyTo(options);
         } else {
-            map.setCenter([lng, lat]);
+            if (zoom_level) {
+                map.setCenter([lng, lat]).setZoom(zoom_level);
+            } else {
+                map.setCenter([lng, lat]);
+            }
         }
     },
     events: {
         init: function () {
             return new Promise(async (resolve, reject) => {
                 try {
+                    befriend.maps.events.onResetToMarker();
                 } catch (e) {
                     console.error(e);
                 }
@@ -180,5 +194,18 @@ befriend.maps = {
                 resolve();
             });
         },
+        onResetToMarker: function () {
+            let reset_marker_btn = befriend.els.activities.querySelector('.reset-to-marker');
+
+            reset_marker_btn.addEventListener("click", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                let lat = befriend.location.current.lat;
+                let lon  = befriend.location.current.lon;
+
+                befriend.maps.setMapCenter(befriend.maps.maps.activities, lat, lon, 14, true);
+            });
+        }
     },
 };

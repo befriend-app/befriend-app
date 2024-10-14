@@ -73,7 +73,7 @@ befriend.location = {
             befriend.maps.maps.activities,
             befriend.location.search.lat,
             befriend.location.search.lon,
-            true,
+            befriend.maps.defaultZoom,
         );
 
         befriend.location.toggleResetLocationButton(true);
@@ -204,7 +204,7 @@ befriend.location = {
                     befriend.maps.maps.activities,
                     befriend.location.current.lat,
                     befriend.location.current.lon,
-                    true,
+                    befriend.maps.defaultZoom,
                 );
 
                 befriend.location.toggleResetLocationButton(false);
