@@ -55,11 +55,43 @@ befriend.location = {
     isChangeLocationShown: function () {
         return elHasClass(document.documentElement, befriend.classes.changeLocationShown);
     },
+    setCustomLocation: function (city) {
+        befriend.location.current = city;
+        befriend.location.search = city;
+        befriend.location.toggleChangeLocation(false);
+        befriend.els.activities.querySelector(".near-text").innerHTML = befriend.location.current.name;
+
+        befriend.maps.removeMarker(befriend.maps.markers.currentMarker);
+
+        befriend.maps.addMarker(
+            befriend.maps.maps.activities,
+            befriend.location.search.lat,
+            befriend.location.search.lon,
+        );
+
+        befriend.maps.setMapCenter(
+            befriend.maps.maps.activities,
+            befriend.location.search.lat,
+            befriend.location.search.lon,
+            true,
+        );
+
+        befriend.location.toggleResetLocationButton(true);
+    },
+    toggleResetLocationButton: function (toggle) {
+        if (toggle) {
+            addClassEl("custom-location", befriend.els.activities);
+        } else {
+            removeClassEl("custom-location", befriend.els.activities);
+        }
+    },
+
     events: {
         init: function () {
             return new Promise(async (resolve, reject) => {
                 befriend.location.events.onChangeLocation();
                 befriend.location.events.autoComplete();
+                befriend.location.events.resetToDeviceLocation();
 
                 resolve();
             });
@@ -80,29 +112,6 @@ befriend.location = {
             });
         },
         autoComplete: function () {
-            function selectCity(city) {
-                console.log(city);
-                befriend.location.current = city;
-                befriend.location.search = city;
-                befriend.location.toggleChangeLocation(false);
-                befriend.els.activities.querySelector(".near-text").innerHTML = befriend.location.current.name;
-
-                befriend.maps.removeMarker(befriend.maps.markers.currentMarker);
-
-                befriend.maps.addMarker(
-                    befriend.maps.maps.activities,
-                    befriend.location.search.lat,
-                    befriend.location.search.lon,
-                );
-
-                befriend.maps.setMapCenter(
-                    befriend.maps.maps.activities,
-                    befriend.location.search.lat,
-                    befriend.location.search.lon,
-                    true,
-                );
-            }
-
             function clearSuggestions() {
                 suggestions_el.innerHTML = "";
             }
@@ -130,7 +139,7 @@ befriend.location = {
     `;
 
                     el.addEventListener("click", () => {
-                        selectCity(city);
+                        befriend.location.setCustomLocation(city);
                     });
 
                     suggestions_el.appendChild(el);
@@ -172,6 +181,33 @@ befriend.location = {
                         console.error("Search error:", error);
                     }
                 }, 100);
+            });
+        },
+        resetToDeviceLocation: function () {
+            befriend.els.activities.querySelector(".reset-location").addEventListener("click", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                befriend.location.current = befriend.location.device;
+
+                befriend.els.activities.querySelector(".near-text").innerHTML = "Me";
+
+                befriend.maps.removeMarker(befriend.maps.markers.currentMarker);
+
+                befriend.maps.addMarker(
+                    befriend.maps.maps.activities,
+                    befriend.location.current.lat,
+                    befriend.location.current.lon,
+                );
+
+                befriend.maps.setMapCenter(
+                    befriend.maps.maps.activities,
+                    befriend.location.current.lat,
+                    befriend.location.current.lon,
+                    true,
+                );
+
+                befriend.location.toggleResetLocationButton(false);
             });
         },
     },

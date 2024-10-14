@@ -18,6 +18,11 @@ html.#{$class_change_location} {
         font-weight: 500;
         margin-bottom: 6px;
 
+        .near-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+
         .near-text {
             font-weight: 500;
         }
@@ -138,10 +143,6 @@ html.#{$class_change_location} {
         100% {
             transform: rotate(360deg);
         }
-    }
-
-    &.active {
-        //height: 250px;
     }
 
     .change-location-input {

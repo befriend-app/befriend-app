@@ -1,4 +1,12 @@
 #activities {
+
+    &.custom-location {
+        .reset-location {
+            height: 25px !important;
+            border: 1px solid $color_gray;
+        }
+    }
+
     .activities_container {
         position: relative;
         overflow-y: scroll;
@@ -305,6 +313,23 @@
                 }
             }
         }
+    }
+
+    .reset-location {
+        position: absolute;
+        @include flex-center-col;
+        border: 1px transparent;
+        border-radius: 6px;
+        background-color: lighten($color_lightgray, 10%);
+        padding: 0px 10px;
+        height: 0;
+        transition: height 300ms ease-in-out;
+        overflow-y: hidden;
+        width: fit-content;
+        z-index: 10;
+        top: 8px;
+        left: 8px;
+        font-size: 10px;
     }
 }
 

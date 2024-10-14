@@ -8,6 +8,7 @@ befriend.html = {
         befriend.els.places = document.getElementById("places");
         befriend.els.when = document.getElementById("when");
         befriend.els.who = document.getElementById("who");
+        befriend.els.place_search_location = document.getElementById("place-search-location");
     },
     appInit: function () {
         return new Promise(async (resolve, reject) => {
@@ -53,11 +54,16 @@ befriend.html = {
                                     <div class="section-title">Place</div>
                                     
                                     <div id="place-search-location">
-                                        <div class="near">Near <span class="near-text">Me</span></div>
+                                        <div class="near">
+                                            <div class="near-wrapper">
+                                                <div class="near-location">Near <span class="near-text">Me</span></div>
+                                               
+                                            </div>
+                                        </div>
                                         <div id="change-location-btn" class="change">Change Location</div>
                                     </div>
                                     
-                                                                    <div class="place-search">
+                                    <div class="place-search">
                                         <div class="search">
                                             <div class="sub-section-title"></div>
                                             <input type="text" class="input-search-place" placeholder="Search for place">
@@ -66,6 +72,7 @@ befriend.html = {
     
                                     
                                     <div id="activities-map-wrapper">
+                                        <div class="reset-location">Reset</div>
                                         <div id="activities-map"></div>
                                     </div>
                                     
@@ -78,8 +85,8 @@ befriend.html = {
                     <div id="places">
                         <svg class="back" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 416.001 351.9995"><path id="Left_Arrow" d="M400.001,159.9995H54.625L187.313,27.3115c6.252-6.252,6.252-16.376,0-22.624s-16.376-6.252-22.624,0L4.689,164.6875c-6.252,6.252-6.252,16.376,0,22.624l160,160c3.124,3.124,7.22,4.688,11.312,4.688s8.188-1.564,11.312-4.688c6.252-6.252,6.252-16.376,0-22.624L54.625,191.9995h345.376c8.836,0,16-7.164,16-16s-7.164-16-16-16Z"/></svg>
                         
-                         <div class="no-places">No places found</div>
-                         
+                        <div class="no-places">No places found</div>
+                        
                         <div class="places-wrapper">
                             <div class="header">
                                 <div id="places-title" class="title"></div>
