@@ -111,7 +111,7 @@ befriend.html = {
                                 <div class="title">Change Location</div>
                             </div>
                             
-                            <input type="text" class="input-text change-location-input" placeholder="Search location">
+                            <input type="text" class="input-text change-location-input" placeholder="City">
                             
                             <div class="suggestions">
                                 

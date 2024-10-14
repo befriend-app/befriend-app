@@ -2,7 +2,6 @@ befriend.activities = {
     types: {
         data: null,
         colors: [
-            "#339DFF", // Bold Blue
             "#C70039", // Bold Crimson
             "#FFC300", // Bright Yellow
             "#31a663", // Bold Leaf Green
@@ -26,6 +25,9 @@ befriend.activities = {
     },
     init: function () {
         return new Promise(async (resolve, reject) => {
+            //add brand color to top of activity colors
+            befriend.activities.types.colors.unshift(befriend.variables.brand_color_a);
+
             try {
                 await befriend.activities.setActivityTypes();
             } catch (e) {
