@@ -66,8 +66,14 @@ html.#{$class_places_shown} {
             border-bottom: 1px solid $color_lightgray;
             display: flex;
 
+            &.is_address {
+                .location {
+                    height: 100%;
+                }
+            }
+
             &:last-of-type {
-                border-bottom: 0;
+                //border-bottom: 0;
             }
 
             .left-col {

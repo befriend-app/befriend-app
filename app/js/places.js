@@ -325,8 +325,6 @@ befriend.places = {
                         place_html.distance = `<div class="distance">${distance_html}</div>`;
                     }
 
-                    let distance_col_html = "";
-
                     place_html.full = `
                     <div class="left-col">
                           ${place_html.distance}
@@ -345,7 +343,9 @@ befriend.places = {
 
                     let id = place.fsq_place_id || place.fsq_address_id || "";
 
-                    html += `<div class="place" data-place-id="${id}">${place_html.full}</div>`;
+                    let is_address = place.fsq_address_id ? 'is_address' : '';
+
+                    html += `<div class="place ${is_address}" data-place-id="${id}">${place_html.full}</div>`;
                 }
 
                 suggestions_el.innerHTML = html;
