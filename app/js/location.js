@@ -43,6 +43,9 @@ befriend.location = {
     getLocation: function () {
         return befriend.location.current;
     },
+    isDevice: function () {
+        return befriend.location.device === befriend.location.current;
+    },
     toggleChangeLocation: function (show) {
         if (show) {
             befriend.timing.showChangeLocation = timeNow();

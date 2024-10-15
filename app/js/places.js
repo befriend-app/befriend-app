@@ -382,14 +382,25 @@ befriend.places = {
 
                         let map_center = map.getCenter();
 
+                        let device = null;
+
+                        if(befriend.location.isDevice()) {
+                            device = befriend.location.device;
+                        }
+
                         let params = {
                             session_token: session_token,
                             search: value,
-                            lat: map_center.lat,
-                            lon: map_center.lng,
-                            friends: {
-                                type: befriend.friends.type,
+                            location: {
+                                map: {
+                                    lat: map_center.lat,
+                                    lon: map_center.lng,
+                                },
+                                device: device,
                             },
+                            friends: {
+                                type: befriend.friends.type
+                            }
                         };
 
                         const r = await axios.post(joinPaths(api_domain, `autocomplete/places`), params);
