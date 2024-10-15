@@ -88,7 +88,33 @@ befriend.location = {
             removeClassEl("custom-location", befriend.els.activities);
         }
     },
+    getMarkerCoords: function () {
+        let location = befriend.location.getLocation();
 
+        let lat = location.lat;
+        let lon = location.lon;
+
+        try {
+            // use lat/lon of map center
+            let map_center = befriend.maps.maps.activities.getCenter();
+
+            lat = map_center.lat;
+            lon = map_center.lng;
+        } catch (e) {
+            console.error(e);
+        }
+
+        return {
+            lat, lon
+        }
+    },
+    getDeviceCoordsIfCurrent: function () {
+        if(befriend.location.isDevice()) {
+            return befriend.location.device || null;
+        }
+
+        return null;
+    },
     events: {
         init: function () {
             return new Promise(async (resolve, reject) => {

@@ -10,25 +10,6 @@ befriend.places = {
     },
     displayPlaces: function (activity_type) {
         return new Promise(async (resolve, reject) => {
-            let location = befriend.location.getLocation();
-
-            if (!location) {
-                return reject("No location");
-            }
-
-            let lat = location.lat;
-            let lon = location.lon;
-
-            try {
-                // use lat/lon of map center
-                let map_center = befriend.maps.maps.activities.getCenter();
-
-                lat = map_center.lat;
-                lon = map_center.lng;
-            } catch (e) {
-                console.error(e);
-            }
-
             //set custom title and time
             befriend.places.setPlacesTitle(activity_type.title);
 
@@ -43,8 +24,8 @@ befriend.places = {
             try {
                 let r = await axios.put(joinPaths(api_domain, "activity_type", activity_type.token, "places"), {
                     location: {
-                        lat: lat,
-                        lon: lon,
+                        map: befriend.location.getMarkerCoords(),
+                        device: befriend.location.getDeviceCoordsIfCurrent()
                     },
                 });
 
@@ -356,6 +337,7 @@ befriend.places = {
             }
 
             let input_el = befriend.els.activities.querySelector(".input-search-place");
+
             let suggestions_el = befriend.els.activities
                 .querySelector(".place-search-suggestions")
                 .querySelector(".container");
@@ -378,25 +360,12 @@ befriend.places = {
                     try {
                         let session_token = befriend.places.getAutocompleteSessionToken();
 
-                        let map = befriend.maps.maps.activities;
-
-                        let map_center = map.getCenter();
-
-                        let device = null;
-
-                        if(befriend.location.isDevice()) {
-                            device = befriend.location.device;
-                        }
-
                         let params = {
                             session_token: session_token,
                             search: value,
                             location: {
-                                map: {
-                                    lat: map_center.lat,
-                                    lon: map_center.lng,
-                                },
-                                device: device,
+                                map: befriend.location.getMarkerCoords(),
+                                device: befriend.location.getDeviceCoordsIfCurrent(),
                             },
                             friends: {
                                 type: befriend.friends.type
