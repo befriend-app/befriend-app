@@ -3,12 +3,12 @@ befriend.friends = {
     type: {
         is_new: true,
         is_existing: false,
-        is_both: false
+        is_both: false,
     },
     setType: function (type) {
-        befriend.friends.type.is_new = type === 'new';
-        befriend.friends.type.is_existing = type === 'existing';
-        befriend.friends.type.is_both = type === 'both';
+        befriend.friends.type.is_new = type === "new";
+        befriend.friends.type.is_existing = type === "existing";
+        befriend.friends.type.is_both = type === "both";
     },
     setActivityFriendNum: function (num) {
         befriend.friends.activity_friends_num = num;
@@ -40,7 +40,7 @@ befriend.friends = {
                         removeElsClass(friend_els, "active");
                         addClassEl("active", el);
 
-                        befriend.friends.setType(el.getAttribute('data-type'));
+                        befriend.friends.setType(el.getAttribute("data-type"));
                     });
                 }
 

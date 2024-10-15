@@ -10,11 +10,14 @@ html.#{$class_places_shown} {
     }
 }
 
-.place-search {
+#place-search {
     margin-bottom: 10px;
     //display: none;
 
-    input {
+    $input_focus_color: $brand_color_a;
+    $br: 8px;
+
+    .input-search-place {
         $p_lr: 10px;
 
         width: calc(100%);
@@ -28,11 +31,124 @@ html.#{$class_places_shown} {
         box-sizing: border-box;
         font-family: inherit;
         transition: border 200ms;
+        border-radius: $br;
 
         &:focus,
         &:focus-visible {
             outline: none;
-            border: 1px solid $brand_color_a;
+            border: 1px solid $input_focus_color;
+        }
+    }
+
+    .place-search-suggestions {
+        position: absolute;
+        overflow-y: hidden;
+        background-color: #fff;
+        width: 100%;
+        height: 0;
+        z-index: 10;
+        transition: all 300ms;
+        border: 1px transparent;
+        border-radius: $br;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+        box-sizing: border-box;
+
+        .container {
+            overflow-y: scroll;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .place {
+            position: relative;
+            padding: 5px 10px;
+            border-bottom: 1px solid $color_lightgray;
+            display: flex;
+
+            &:last-of-type {
+                border-bottom: 0;
+            }
+
+            .left-col {
+                display: flex;
+                flex-direction: column;
+                margin-right: 20px;
+                position: relative;
+            }
+
+            .distance {
+                font-size: 9px;
+                font-weight: 600;
+                margin-bottom: 2px;
+                //transform: translateY(-2px);
+            }
+
+            .right-col {
+                margin-left: auto;
+                z-index: 2;
+                @include flex-center-col;
+
+                .button {
+                    padding: 4px 14px;
+                    border-radius: 6px;
+                    background-color: $brand_color_b;
+                    height: fit-content;
+                    font-size: 13px;
+                    //text-transform: uppercase;
+                    border: 0.5px solid $color_gray;
+                }
+            }
+
+            .name {
+                font-weight: 500;
+                font-size: 14px;
+                max-width: calc(100vw - calc($places_padding_lr * 2 + $places_right_col));
+                margin-top: 0px
+            }
+
+            .location {
+                display: flex;
+                align-items: center;
+                margin-top: 0;
+
+                .location-address {
+                    display: flex;
+                    gap: 0 6px;
+                    align-items: center;
+                    font-weight: 400;
+                }
+
+                .address {
+                    font-size: 13px;
+                }
+
+                .address_2 {
+                    font-size: 12px;
+                    transform: translateY(0.4px);
+                }
+
+                .locality {
+                    font-size: 10px;
+                    transform: translateY(0.3px);
+                }
+            }
+        }
+    }
+
+    &.#{$class_places_suggest_shown} {
+        $border_color: darken($color_lightgray, 15%);
+        .input-search-place {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            //border-bottom-color: $border_color;
+        }
+
+        .place-search-suggestions {
+            height: 220px;
+            overflow-y: scroll;
+            border: 1px solid $border_color;
+            border-top: 1px transparent;
         }
     }
 }

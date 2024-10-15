@@ -78,8 +78,8 @@ befriend.location = {
 
         befriend.location.toggleResetLocationButton(true);
     },
-    toggleResetLocationButton: function (toggle) {
-        if (toggle) {
+    toggleResetLocationButton: function (show) {
+        if (show) {
             addClassEl("custom-location", befriend.els.activities);
         } else {
             removeClassEl("custom-location", befriend.els.activities);

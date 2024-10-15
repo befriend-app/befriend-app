@@ -2,6 +2,7 @@ window["befriend"] = {
     classes: {
         placesShown: "display-places",
         changeLocationShown: "display-change-location",
+        placesSuggestShown: "show-suggestions",
     },
     timing: {
         showPlaces: null,

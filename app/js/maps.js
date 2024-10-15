@@ -163,13 +163,13 @@ befriend.maps = {
         marker.remove();
     },
     setMapCenter: function (map, lat, lng, zoom_level, fly_to) {
-        if(fly_to) {
+        if (fly_to) {
             let options = {
                 center: [lng, lat],
-                essential: true
+                essential: true,
             };
 
-            if(zoom_level) {
+            if (zoom_level) {
                 options.zoom = zoom_level;
             }
 
@@ -195,17 +195,17 @@ befriend.maps = {
             });
         },
         onResetToMarker: function () {
-            let reset_marker_btn = befriend.els.activities.querySelector('.reset-to-marker');
+            let reset_marker_btn = befriend.els.activities.querySelector(".reset-to-marker");
 
             reset_marker_btn.addEventListener("click", function (e) {
                 e.preventDefault();
                 e.stopPropagation();
 
                 let lat = befriend.location.current.lat;
-                let lon  = befriend.location.current.lon;
+                let lon = befriend.location.current.lon;
 
                 befriend.maps.setMapCenter(befriend.maps.maps.activities, lat, lon, 14, true);
             });
-        }
+        },
     },
 };

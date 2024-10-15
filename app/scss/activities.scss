@@ -1,5 +1,4 @@
 #activities {
-
     &.custom-location {
         .reset-location {
             height: 25px !important;
@@ -342,7 +341,7 @@
         overflow-y: hidden;
         width: 27px;
         height: 27px;
-        z-index: 10;
+        z-index: 3;
         top: $icon_pos_x_y;
         right: $icon_pos_x_y;
         background: white;
