@@ -143,9 +143,9 @@ befriend.location = {
         <div class="suggestion-name">${location_arr.join("")}</div>
     `;
 
-                    let input_el = befriend.els.change_location.querySelector(".change-location-input");
                     el.addEventListener("click", () => {
                         befriend.location.setCustomLocation(city);
+                        let input_el = befriend.els.change_location.querySelector(".change-location-input");
                         input_el.value = `${city.name}, ${city.state.short}`;
                     });
 
