@@ -8,6 +8,7 @@ befriend.html = {
         befriend.els.places = document.getElementById("places");
         befriend.els.when = document.getElementById("when");
         befriend.els.who = document.getElementById("who");
+        befriend.els.place_search = document.getElementById("place-search");
         befriend.els.place_search_location = document.getElementById("place-search-location");
     },
     appInit: function () {
@@ -62,10 +63,13 @@ befriend.html = {
                                         <div id="change-location-btn" class="change">Change Location</div>
                                     </div>
                                     
-                                    <div class="place-search">
+                                    <div id="place-search" class="place-search">
                                         <div class="search">
                                             <div class="sub-section-title"></div>
                                             <input type="text" class="input-search-place" placeholder="Search for place">
+                                        </div>
+                                        <div class="place-search-suggestions">
+                                            <div class="container"></div>
                                         </div>
                                     </div>  
     

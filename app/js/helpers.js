@@ -75,6 +75,23 @@ function fireClick(node) {
     }
 }
 
+function generateToken(length) {
+    if (!length) {
+        length = 32;
+    }
+
+    //edit the token allowed characters
+    let a = "abcdefghijklmnopqrstuvwxyz1234567890".split("");
+    let b = [];
+
+    for (let i = 0; i < length; i++) {
+        let j = (Math.random() * (a.length - 1)).toFixed(0);
+        b[i] = a[j];
+    }
+
+    return b.join("");
+}
+
 function hideLevel(level_el) {
     removeClassEl("show", level_el);
     level_el.style.height = "0";

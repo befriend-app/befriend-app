@@ -43,6 +43,9 @@ befriend.location = {
     getLocation: function () {
         return befriend.location.current;
     },
+    isDevice: function () {
+        return befriend.location.device === befriend.location.current;
+    },
     toggleChangeLocation: function (show) {
         if (show) {
             befriend.timing.showChangeLocation = timeNow();
@@ -83,14 +86,40 @@ befriend.location = {
             hideLevel(level_2_el);
         }
     },
-    toggleResetLocationButton: function (toggle) {
-        if (toggle) {
+    toggleResetLocationButton: function (show) {
+        if (show) {
             addClassEl("custom-location", befriend.els.activities);
         } else {
             removeClassEl("custom-location", befriend.els.activities);
         }
     },
+    getMarkerCoords: function () {
+        let location = befriend.location.getLocation();
 
+        let lat = location.lat;
+        let lon = location.lon;
+
+        try {
+            // use lat/lon of map center
+            let map_center = befriend.maps.maps.activities.getCenter();
+
+            lat = map_center.lat;
+            lon = map_center.lng;
+        } catch (e) {
+            console.error(e);
+        }
+
+        return {
+            lat, lon
+        }
+    },
+    getDeviceCoordsIfCurrent: function () {
+        if(befriend.location.isDevice()) {
+            return befriend.location.device || null;
+        }
+
+        return null;
+    },
     events: {
         init: function () {
             return new Promise(async (resolve, reject) => {

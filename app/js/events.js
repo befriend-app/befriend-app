@@ -40,6 +40,10 @@ befriend.events = {
 
                     befriend.location.toggleChangeLocation(false);
                 }
+            } else if (befriend.places.isAutoCompleteShown()) {
+                if (!e.target.closest("#place-search")) {
+                    befriend.places.toggleAutoComplete(false);
+                }
             }
         });
     },
