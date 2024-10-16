@@ -77,6 +77,11 @@ befriend.location = {
         );
 
         befriend.location.toggleResetLocationButton(true);
+
+        if (befriend.activities.selected.level_2) {
+            let level_2_el = befriend.els.activities.querySelector(".level_2.show");
+            hideLevel(level_2_el);
+        }
     },
     toggleResetLocationButton: function (toggle) {
         if (toggle) {
