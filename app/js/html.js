@@ -57,7 +57,6 @@ befriend.html = {
                                         <div class="near">
                                             <div class="near-wrapper">
                                                 <div class="near-location">Near <span class="near-text">Me</span></div>
-                                               
                                             </div>
                                         </div>
                                         <div id="change-location-btn" class="change">Change Location</div>
@@ -113,9 +112,7 @@ befriend.html = {
                             
                             <input type="text" class="input-text change-location-input" placeholder="City">
                             
-                            <div class="suggestions">
-                                
-                            </div>
+                            <div class="suggestions"></div>
                             
                             <span class="spinner"></span>
                         </div>
