@@ -1,21 +1,21 @@
 #when {
     .when-options {
+        $row_items: 5;
+        $gap_tb: 6px;
+        $gap_lr: 6px;
         display: flex;
         flex-wrap: wrap;
-        gap: 6px 6px;
+        gap: $gap_tb $gap_lr;
 
         .when-option {
-            $w: 60px;
-            //$h: 38px;
             $br: 6px;
-            $pt: 4px;
             $bw: 0.5px;
-            flex-basis: $w;
+            flex-basis: calc(calc((100% - ($row_items - 1) * $gap_lr) / $row_items));
             justify-content: end;
             display: flex;
             flex-direction: column;
-            //height: $h;
             border: $bw solid $color_lightgray;
+            box-sizing: border-box;
             padding: 0 0;
             border-radius: $br;
             overflow: hidden;
@@ -85,6 +85,7 @@
                     transition: all 300ms;
                 }
                 .name {
+                    @include flex-center-col;
                     font-size: 10px !important;
                 }
             }
