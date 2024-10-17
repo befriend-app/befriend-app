@@ -105,11 +105,12 @@ befriend.location = {
         }
 
         return {
-            lat, lon
-        }
+            lat,
+            lon,
+        };
     },
     getDeviceCoordsIfCurrent: function () {
-        if(befriend.location.isDevice()) {
+        if (befriend.location.isDevice()) {
             return befriend.location.device || null;
         }
 
@@ -155,7 +156,7 @@ befriend.location = {
 
                     let location_arr = [`<div class="city">${city.name}</div>`];
 
-                    if (city.state && city.state.short ) {
+                    if (city.state) {
                         location_arr.push(`<div class="state">, ${city.state.short}</div>`);
                     }
 
@@ -169,6 +170,8 @@ befriend.location = {
 
                     el.addEventListener("click", () => {
                         befriend.location.setCustomLocation(city);
+                        input_el.value = "";
+                        clearSuggestions();
                     });
 
                     suggestions_el.appendChild(el);
