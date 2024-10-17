@@ -2,10 +2,6 @@ function addStatusBarBorder() {
     return new Promise(async (resolve, reject) => {
         try {
             if (befriend.variables.app_background) {
-                if(!StatusBar) {
-                    await timeoutAwait(200);
-                }
-
                 StatusBar.addBorder(
                     befriend.variables.app_background, //color
                     1, //height
