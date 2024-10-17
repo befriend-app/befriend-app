@@ -266,6 +266,14 @@ function useWhiteOnBackground(hexColor) {
     return luminance < 0.6 ? true : false;
 }
 
+function timeoutAwait(t) {
+    return new Promise(async (resolve, reject) => {
+        setTimeout(function () {
+            resolve();
+        }, t);
+    });
+}
+
 function getImgDimensions(url) {
     return new Promise(async (resolve, reject) => {
         const img = new Image();
