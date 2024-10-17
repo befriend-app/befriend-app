@@ -82,19 +82,7 @@ befriend.location = {
         befriend.location.toggleResetLocationButton(true);
 
         //re-use previous autocomplete search for new city
-        let search_input_el = befriend.els.activities.querySelector(".input-search-place");
-
-        let search_value = search_input_el.value;
-
-        if(search_value < befriend.places.autoComplete.minChars) {
-            befriend.places.setAutoComplete([]);
-        } else {
-            try {
-                befriend.places.sendSearchPlace(search_value);
-            } catch(e) {
-
-            }
-        }
+        befriend.places.setPreviousAutoComplete();
     },
     toggleResetLocationButton: function (show) {
         if (show) {
@@ -120,11 +108,12 @@ befriend.location = {
         }
 
         return {
-            lat, lon
-        }
+            lat,
+            lon,
+        };
     },
     getDeviceCoordsIfCurrent: function () {
-        if(befriend.location.isDevice()) {
+        if (befriend.location.isDevice()) {
             return befriend.location.device || null;
         }
 
@@ -170,7 +159,7 @@ befriend.location = {
 
                     let location_arr = [`<div class="city">${city.name}</div>`];
 
-                    if (city.state && city.state.short ) {
+                    if (city.state && city.state.short) {
                         location_arr.push(`<div class="state">, ${city.state.short}</div>`);
                     }
 
@@ -252,6 +241,9 @@ befriend.location = {
                 );
 
                 befriend.location.toggleResetLocationButton(false);
+
+                //re-use previous autocomplete search for device location
+                befriend.places.setPreviousAutoComplete();
             });
         },
     },

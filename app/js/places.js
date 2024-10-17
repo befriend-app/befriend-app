@@ -26,7 +26,7 @@ befriend.places = {
                 let r = await axios.put(joinPaths(api_domain, "activity_type", activity_type.token, "places"), {
                     location: {
                         map: befriend.location.getMarkerCoords(),
-                        device: befriend.location.getDeviceCoordsIfCurrent()
+                        device: befriend.location.getDeviceCoordsIfCurrent(),
                     },
                 });
 
@@ -100,85 +100,84 @@ befriend.places = {
             .querySelector(".place-search-suggestions")
             .querySelector(".container");
 
-    let html = "";
+        let html = "";
 
-    for (let place of places) {
-        let place_html = {
-            name: ``,
-            distance: ``,
-            location: ``,
-            full: ``,
-        };
+        for (let place of places) {
+            let place_html = {
+                name: ``,
+                distance: ``,
+                location: ``,
+                full: ``,
+            };
 
-        //name
-        if (place.name) {
-            place_html.name = `<div class="name">${place.name}</div>`;
-        }
+            //name
+            if (place.name) {
+                place_html.name = `<div class="name">${place.name}</div>`;
+            }
 
-        //location
-        if (place.location_address) {
-            place_html.location += `<div class="address">${place.location_address}</div>`;
-        }
+            //location
+            if (place.location_address) {
+                place_html.location += `<div class="address">${place.location_address}</div>`;
+            }
 
-        if (place.location_address_2) {
-            //do not show if zip code in address_2
+            if (place.location_address_2) {
+                //do not show if zip code in address_2
 
-            let is_postcode =
-                place.location_address_2.includes(place.location_postcode) ||
-                isZIPFormat(place.location_address_2);
+                let is_postcode =
+                    place.location_address_2.includes(place.location_postcode) || isZIPFormat(place.location_address_2);
 
-            if (!is_postcode) {
-                //do not show if address and address_2 are too similar
-                let str_similarity = stringSimilarity(place.location_address, place.location_address_2);
+                if (!is_postcode) {
+                    //do not show if address and address_2 are too similar
+                    let str_similarity = stringSimilarity(place.location_address, place.location_address_2);
 
-                if (str_similarity < 0.5) {
-                    place_html.location += `<div class="address_2">${place.location_address_2}</div>`;
+                    if (str_similarity < 0.5) {
+                        place_html.location += `<div class="address_2">${place.location_address_2}</div>`;
+                    }
                 }
             }
-        }
 
-        place_html.location += `<div class="locality">${place.location_locality}, ${place.location_region}</div>`;
+            place_html.location += `<div class="locality">${place.location_locality}, ${place.location_region}</div>`;
 
-        //distance
-        let distance_html = "";
+            //distance
+            let distance_html = "";
 
-        if (place.distance) {
-            distance_html = place.distance.miles_km.toFixed(1);
+            if (place.distance) {
+                distance_html = place.distance.miles_km.toFixed(1);
 
-            if (place.distance.miles_km < 1) {
-                //hide trailing zero if less than 1 m/km
-                distance_html = parseFloat(place.distance.miles_km.toFixed(1));
-            }
+                if (place.distance.miles_km < 1) {
+                    //hide trailing zero if less than 1 m/km
+                    distance_html = parseFloat(place.distance.miles_km.toFixed(1));
+                }
 
-            if (parseFloat(distance_html) % 1 === 0) {
-                //add decimal if rounded exactly to integer
-                distance_html = parseFloat(distance_html).toFixed(1);
-            }
+                if (parseFloat(distance_html) % 1 === 0) {
+                    //add decimal if rounded exactly to integer
+                    distance_html = parseFloat(distance_html).toFixed(1);
+                }
 
-            if (place.distance.use_km) {
-                //km
-                if (place.distance.miles_km < 0.1) {
-                    //meters
-                    distance_html = place.distance.meters;
-                    distance_html += " meters";
+                if (place.distance.use_km) {
+                    //km
+                    if (place.distance.miles_km < 0.1) {
+                        //meters
+                        distance_html = place.distance.meters;
+                        distance_html += " meters";
+                    } else {
+                        distance_html += " km";
+                    }
                 } else {
-                    distance_html += " km";
+                    //miles
+                    if (place.distance.miles_km < 0.1) {
+                        //feet
+                        distance_html = metersToFeet(place.distance.meters);
+                        distance_html += " ft";
+                    } else {
+                        distance_html += " m";
+                    }
                 }
-            } else {
-                //miles
-                if (place.distance.miles_km < 0.1) {
-                    //feet
-                    distance_html = metersToFeet(place.distance.meters);
-                    distance_html += " ft";
-                } else {
-                    distance_html += " m";
-                }
+
+                place_html.distance = `<div class="distance">${distance_html}</div>`;
             }
 
-            place_html.distance = `<div class="distance">${distance_html}</div>`;
-        }
-
-        place_html.full = `
+            place_html.full = `
                     <div class="left-col">
                           ${place_html.distance}
                           ${place_html.name}
@@ -194,19 +193,32 @@ befriend.places = {
                         <div class="button">Select</div>
                     </div>`;
 
-        let id = place.fsq_place_id || place.fsq_address_id || "";
+            let id = place.fsq_place_id || place.fsq_address_id || "";
 
-        let is_address = place.fsq_address_id ? 'is_address' : '';
+            let is_address = place.fsq_address_id ? "is_address" : "";
 
-        html += `<div class="place ${is_address}" data-place-id="${id}">${place_html.full}</div>`;
-    }
+            html += `<div class="place ${is_address}" data-place-id="${id}">${place_html.full}</div>`;
+        }
 
-    suggestions_el.innerHTML = html;
+        suggestions_el.innerHTML = html;
 
-    befriend.places.toggleAutoComplete(true);
+        befriend.places.toggleAutoComplete(true);
 
-    befriend.places.events.onSearchPlaceSelect();
-},
+        befriend.places.events.onSearchPlaceSelect();
+    },
+    setPreviousAutoComplete: function (place) {
+        let search_input_el = befriend.els.activities.querySelector(".input-search-place");
+
+        let search_value = search_input_el.value;
+
+        if (search_value < befriend.places.autoComplete.minChars) {
+            befriend.places.setAutoComplete([]);
+        } else {
+            try {
+                befriend.places.sendSearchPlace(search_value);
+            } catch (e) {}
+        }
+    },
     setIsOpen: function () {
         let activity_time = befriend.when.getCurrentlySelectedDateTime();
 
@@ -336,7 +348,7 @@ befriend.places = {
     },
     sendSearchPlace: function (search_str) {
         return new Promise(async (resolve, reject) => {
-            if(!search_str) {
+            if (!search_str) {
                 return resolve();
             }
 
@@ -358,8 +370,8 @@ befriend.places = {
                         device: befriend.location.getDeviceCoordsIfCurrent(),
                     },
                     friends: {
-                        type: befriend.friends.type
-                    }
+                        type: befriend.friends.type,
+                    },
                 };
 
                 const r = await axios.post(joinPaths(api_domain, `autocomplete/places`), params);
@@ -394,7 +406,7 @@ befriend.places = {
 
                     try {
                         befriend.places.sendSearchPlace(value);
-                    } catch(e) {
+                    } catch (e) {
                         console.error(e);
                     }
                 }, 100);
