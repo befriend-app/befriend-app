@@ -75,9 +75,10 @@ befriend.places = {
             return 1; // display not open last
         });
     },
-    setAutoComplete: function (places) {
+    setAutoComplete: function (places, skip_dropdown) {
         befriend.places.setAutoCompleteData(places);
-        befriend.places.displaySuggestions(places);
+
+        befriend.places.displaySuggestions(places, skip_dropdown);
     },
     setAutoCompleteData: function (places) {
         if (!places) {
@@ -95,7 +96,7 @@ befriend.places = {
             befriend.places.autoComplete.obj[id] = place;
         }
     },
-    displaySuggestions: function (places) {
+    displaySuggestions: function (places, skip_dropdown) {
         let suggestions_el = befriend.els.activities
             .querySelector(".place-search-suggestions")
             .querySelector(".container");
@@ -202,7 +203,9 @@ befriend.places = {
 
         suggestions_el.innerHTML = html;
 
-        befriend.places.toggleAutoComplete(true);
+        if(!skip_dropdown) {
+            befriend.places.toggleAutoComplete(true);
+        }
 
         befriend.places.events.onSearchPlaceSelect();
     },
@@ -215,7 +218,7 @@ befriend.places = {
             befriend.places.setAutoComplete([]);
         } else {
             try {
-                befriend.places.sendSearchPlace(search_value);
+                befriend.places.searchPlace(search_value, true);
             } catch (e) {}
         }
     },
@@ -346,7 +349,7 @@ befriend.places = {
 
         return token;
     },
-    sendSearchPlace: function (search_str) {
+    searchPlace: function (search_str, skip_dropdown) {
         return new Promise(async (resolve, reject) => {
             if (!search_str) {
                 return resolve();
@@ -376,7 +379,7 @@ befriend.places = {
 
                 const r = await axios.post(joinPaths(api_domain, `autocomplete/places`), params);
 
-                befriend.places.setAutoComplete(r.data.places);
+                befriend.places.setAutoComplete(r.data.places, skip_dropdown);
             } catch (error) {
                 console.error("Search error:", error);
             }
@@ -405,7 +408,7 @@ befriend.places = {
                     const value = input_el.value;
 
                     try {
-                        befriend.places.sendSearchPlace(value);
+                        befriend.places.searchPlace(value);
                     } catch (e) {
                         console.error(e);
                     }
