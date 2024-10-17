@@ -8,6 +8,7 @@
 
     .activities_container {
         position: relative;
+        overflow-x: hidden;
         overflow-y: scroll;
     }
 
