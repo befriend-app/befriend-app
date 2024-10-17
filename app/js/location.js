@@ -80,6 +80,21 @@ befriend.location = {
         );
 
         befriend.location.toggleResetLocationButton(true);
+
+        //re-use previous autocomplete search for new city
+        let search_input_el = befriend.els.activities.querySelector(".input-search-place");
+
+        let search_value = search_input_el.value;
+
+        if(search_value < befriend.places.autoComplete.minChars) {
+            befriend.places.setAutoComplete([]);
+        } else {
+            try {
+                befriend.places.sendSearchPlace(search_value);
+            } catch(e) {
+
+            }
+        }
     },
     toggleResetLocationButton: function (show) {
         if (show) {
