@@ -155,7 +155,7 @@ befriend.location = {
 
                     let location_arr = [`<div class="city">${city.name}</div>`];
 
-                    if (city.state) {
+                    if (city.state && city.state.short ) {
                         location_arr.push(`<div class="state">, ${city.state.short}</div>`);
                     }
 
