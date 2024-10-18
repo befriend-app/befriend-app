@@ -10,7 +10,6 @@ befriend.html = {
         befriend.els.when = document.getElementById("when");
         befriend.els.who = document.getElementById("who");
         befriend.els.place_search = document.getElementById("place-search");
-        befriend.els.place_search_location = document.getElementById("place-search-location");
     },
     appInit: function () {
         return new Promise(async (resolve, reject) => {
@@ -53,15 +52,18 @@ befriend.html = {
                             
                             <div id="activities" class="view-section">
                                 <div class="activities_container">
-                                    <div class="section-title">Place</div>
-                                    
                                     <div id="place-search-location">
-                                        <div class="near">
-                                            <div class="near-wrapper">
-                                                <div class="near-location">Near <span class="near-text">Me</span></div>
+                                        <div class="left-col">
+                                            <div class="section-title">Place</div>
+                                            <div class="near">
+                                                <div class="near-wrapper">
+                                                    <div class="near-location">Near <span class="near-text">Me</span></div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div id="change-location-btn" class="change">Change Location</div>
+                                        <div class="right-col">
+                                            <div id="change-location-btn" class="change">Change Location</div>
+                                        </div>
                                     </div>
                                     
                                     <div id="place-search" class="place-search">

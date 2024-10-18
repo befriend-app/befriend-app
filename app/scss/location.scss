@@ -11,8 +11,20 @@ html.#{$class_change_location} {
 }
 
 #place-search-location {
-    margin-top: -8px;
+    display: flex;
 
+    .left-col {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .right-col {
+        margin-left: auto;
+    }
+
+    .section-title {
+        margin-bottom: 0 !important;
+    }
     .near {
         font-size: 10px;
         font-weight: 500;
@@ -29,9 +41,6 @@ html.#{$class_change_location} {
     }
 
     .change {
-        position: absolute;
-        top: 0;
-        right: 0;
         font-size: 10px;
         color: black;
         border-radius: 6px;
