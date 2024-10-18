@@ -61,19 +61,21 @@ body.loading {
 }
 
 #overlay {
+    display: block;
+    position: fixed;
+    top: 0;
     height: 100vh;
     height: 100dvh;
     width: 100vw;
     z-index: 20;
     background-color: black;
-    position: fixed;
     opacity: 0;
     visibility: hidden;
-    display: block;
+    will-change: opacity;
+    transform: translateZ(0);
     transition:
-        opacity $overlay_transition_ms,
-        visibility 0ms $overlay_transition_ms;
-    top: 0;
+            opacity $overlay_transition_ms,
+            visibility 0ms $overlay_transition_ms;
 }
 
 html.#{$class_places_shown},
@@ -82,8 +84,7 @@ html.#{$class_create_activity_shown} {
     #overlay {
         opacity: 0.18;
         visibility: visible;
-        transition:
-            opacity $overlay_transition_ms,
-            visibility 0ms;
+        transition: opacity $overlay_transition_ms,
+                    visibility 0ms;
     }
 }

@@ -463,7 +463,9 @@ befriend.html = {
                 html += `<div class="place" data-place-id="${place.fsq_place_id}">${place_html.full}</div>`;
             }
 
-            befriend.els.places.querySelector(".places").innerHTML = html;
+            let places_el = befriend.els.places.querySelector(".places")
+
+            places_el.innerHTML = html;
 
             befriend.html.setPlacesHours();
 
