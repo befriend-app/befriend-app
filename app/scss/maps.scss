@@ -1,7 +1,48 @@
 #activities-map-wrapper {
-    position: relative;
     margin-bottom: 10px;
     height: 100px;
+
+    .buttons-wrapper {
+        position: relative;
+
+        $icon_pos_x_y: 8px;
+
+        .reset-location {
+            position: absolute;
+            border: 1px transparent;
+            border-radius: 6px;
+            background-color: lighten($color_lightgray, 10%);
+            padding: 0 10px;
+            height: 0;
+            transition: height 300ms ease-in-out;
+            overflow-y: hidden;
+            width: fit-content;
+            z-index: 3;
+            top: $icon_pos_x_y;
+            left: $icon_pos_x_y;
+            font-size: 10px;
+            @include flex-center-col;
+        }
+
+        .reset-to-marker {
+            position: absolute;
+            border: 1px solid $color_gray;
+            border-radius: 6px;
+            transition: height 300ms ease-in-out;
+            overflow-y: hidden;
+            width: 27px;
+            height: 27px;
+            z-index: 3;
+            top: $icon_pos_x_y;
+            right: $icon_pos_x_y;
+            background: white;
+            @include flex-center-col;
+
+            svg {
+                height: 17px;
+            }
+        }
+    }
 
     .map-context-details {
         display: none;

@@ -96,13 +96,13 @@ befriend.places = {
             befriend.places.autoComplete.obj[id] = place;
         }
     },
-    setPreviousAutoComplete: function (place) {
+    setPreviousAutoComplete: function () {
         let search_input_el = befriend.els.activities.querySelector(".input-search-place");
 
         let search_value = search_input_el.value;
 
         if (search_value < befriend.places.autoComplete.minChars) {
-            befriend.places.setAutoComplete([]);
+            befriend.places.setAutoComplete([], true);
         } else {
             try {
                 befriend.places.searchPlace(search_value, true);
