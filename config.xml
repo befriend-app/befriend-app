@@ -21,14 +21,15 @@
         <string>Your location is used to find places and match you with people nearby.</string>
     </edit-config>
 
+<!--    <edit-config file="*-Info.plist" mode="merge" target="UIViewControllerBasedStatusBarAppearance">-->
+<!--        <true />-->
+<!--    </edit-config>-->
+
     <preference name="DisallowOverscroll" value="true" />
 
     <preference name="StatusBarHidden" value="true" />
     <preference name="StatusBarOverlaysWebView" value="true" />
     <preference name="StatusBarDefaultScrollToTop" value="true" />
-
-    <!--    <preference name="ViewControllerBasedStatusBarAppearance" value="false" />-->
-
 
 <!--    <preference name="StatusBarBackgroundColor" value="default" />-->
     <preference name="StatusBarStyle" value="#000" />

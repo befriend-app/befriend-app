@@ -63,11 +63,7 @@ befriend.styles = {
     },
     setBackgroundAlpha: function (alpha) {
         try {
-            StatusBar.setBackgroundTransparency(alpha, function () {
-
-            }, function () {
-
-            });
+            StatusBar.setBackgroundTransparency(alpha, 300);
         } catch(e) {
             console.error(e);
         }
