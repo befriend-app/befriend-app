@@ -338,11 +338,13 @@ befriend.places = {
 
                 place_el._listener = true;
 
-                place_el.addEventListener("click", (e) => {
+                place_el.addEventListener('click', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
 
-                    befriend.activities.toggleCreateActvity(true);
+                    let place_id = place_el.getAttribute("data-place-id");
+
+                    befriend.activities.displayCreateActivity(place_id);
                 });
             }
         },

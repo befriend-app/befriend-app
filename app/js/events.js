@@ -21,6 +21,8 @@ befriend.events = {
         document.querySelector("body").addEventListener("click", function (e) {
             e = e || window.event;
 
+            console.log("body click handler");
+
             if (befriend.activities.isCreateActivityShown()) {
                 //hide create activity to the right
                 if (!e.target.closest("#create-activity")) {
@@ -29,7 +31,7 @@ befriend.events = {
                         return false;
                     }
 
-                    befriend.activities.toggleCreateActvity(false);
+                    befriend.activities.toggleCreateActivity(false);
                 }
             } else if (befriend.places.isPlacesShown()) {
                 //hide places to bottom

@@ -63,6 +63,17 @@ befriend.activities = {
             }
         });
     },
+    displayCreateActivity: function (place_id) {
+        befriend.styles.toggleStatusBar(false);
+
+        //move map to top, change height
+
+
+        requestAnimationFrame(function () {
+            befriend.html.createActivity(place_id);
+            befriend.activities.toggleCreateActivity(true);
+        });
+    },
     createNewActivity: function (persons_count) {
         return new Promise(async (resolve, reject) => {
             try {
@@ -77,12 +88,13 @@ befriend.activities = {
             resolve();
         });
     },
-    toggleCreateActvity: function (show) {
+    toggleCreateActivity: function (show) {
         if (show) {
             befriend.timing.showCreateActivity = timeNow();
 
             addClassEl(befriend.classes.createActivityShown, document.documentElement);
 
+            //hide display places after transition
             setTimeout(() => {
                 if (befriend.places.isPlacesShown()) {
                     befriend.places.toggleDisplayPlaces(false);

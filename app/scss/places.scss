@@ -67,6 +67,8 @@ html.#{$class_places_shown} {
             display: flex;
 
             &.is_address {
+                padding: 10px 10px;
+
                 .location {
                     height: 100%;
                 }

@@ -1,6 +1,7 @@
 #activities-map-wrapper {
     position: relative;
     margin-bottom: 10px;
+    height: 100px;
 
     .map-context-details {
         display: none;
@@ -165,7 +166,7 @@
 
 #activities-map {
     width: 100%;
-    height: 100px;
+    height: 100%;
     border-radius: 8px;
     border: 0.5px solid $color_lightgray;
 }

@@ -1,36 +1,47 @@
-function addStatusBarBorder() {
-    return new Promise(async (resolve, reject) => {
-        try {
-            if (befriend.variables.app_background) {
-                StatusBar.addBorder(
-                    befriend.variables.app_background, //color
-                    1, //height
-                    function () {
-                        resolve();
-                    },
-                    function (error) {
-                        console.error("Error adding border: " + error);
-                        resolve();
-                    },
-                );
-            }
-        } catch (e) {
-            console.error(e);
-            resolve();
-        }
-    });
-}
-
 befriend.styles = {
     init: function () {
         return new Promise(async (resolve, reject) => {
             try {
-                await addStatusBarBorder();
+                await befriend.styles.setStatusBarBorder(1);
             } catch (e) {
                 console.error(e);
             }
 
             resolve();
+        });
+    },
+    toggleStatusBar: function (show) {
+        if(!StatusBar) {
+            return;
+        }
+
+        if(show) {
+            StatusBar.show();
+        } else {
+            befriend.styles.setStatusBarBorder(0);
+            StatusBar.hide();
+        }
+    },
+    setStatusBarBorder: function (px) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                if (befriend.variables.app_background) {
+                    StatusBar.addBorder(
+                        befriend.variables.app_background, //color
+                        px, //height
+                        function () {
+                            resolve();
+                        },
+                        function (error) {
+                            console.error("Error adding border: " + error);
+                            resolve();
+                        },
+                    );
+                }
+            } catch (e) {
+                console.error(e);
+                resolve();
+            }
         });
     },
     getStatusBarHeight: function () {

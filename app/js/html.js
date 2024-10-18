@@ -2,6 +2,7 @@ befriend.html = {
     setEls: function () {
         befriend.els.views = document.getElementById("views");
         befriend.els.activities = document.getElementById("activities");
+        befriend.els.activities_map = document.getElementById("activities-map");
         befriend.els.change_location = document.getElementById("change-location");
         befriend.els.change_location_btn = document.getElementById("change-location-btn");
         befriend.els.num_persons = document.getElementById("num-persons");
@@ -628,4 +629,15 @@ befriend.html = {
             }
         }
     },
+    createActivity: function (place_id) {
+        if(!place_id) {
+            return false;
+        }
+
+        let place = befriend.places.data.obj[place_id] || befriend.places.autoComplete.obj[place_id];
+
+        console.log({
+            place
+        })
+    }
 };
