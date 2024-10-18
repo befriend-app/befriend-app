@@ -469,10 +469,123 @@ befriend.html = {
 
             befriend.html.setPlacesHours();
 
-            befriend.places.events.onHandleSelectPlace();
+            befriend.places.events.handleSelectPlace(places_el.getElementsByClassName('place'));
 
             resolve();
         });
+    },
+    autoCompleteSuggestions: function (places, skip_dropdown) {
+        let suggestions_el = befriend.els.activities
+            .querySelector(".place-search-suggestions")
+            .querySelector(".container");
+
+        let html = "";
+
+        for (let place of places) {
+            let place_html = {
+                name: ``,
+                distance: ``,
+                location: ``,
+                full: ``,
+            };
+
+            //name
+            if (place.name) {
+                place_html.name = `<div class="name">${place.name}</div>`;
+            }
+
+            //location
+            if (place.location_address) {
+                place_html.location += `<div class="address">${place.location_address}</div>`;
+            }
+
+            if (place.location_address_2) {
+                //do not show if zip code in address_2
+
+                let is_postcode =
+                    place.location_address_2.includes(place.location_postcode) || isZIPFormat(place.location_address_2);
+
+                if (!is_postcode) {
+                    //do not show if address and address_2 are too similar
+                    let str_similarity = stringSimilarity(place.location_address, place.location_address_2);
+
+                    if (str_similarity < 0.5) {
+                        place_html.location += `<div class="address_2">${place.location_address_2}</div>`;
+                    }
+                }
+            }
+
+            place_html.location += `<div class="locality">${place.location_locality}, ${place.location_region}</div>`;
+
+            //distance
+            let distance_html = "";
+
+            if (place.distance) {
+                distance_html = place.distance.miles_km.toFixed(1);
+
+                if (place.distance.miles_km < 1) {
+                    //hide trailing zero if less than 1 m/km
+                    distance_html = parseFloat(place.distance.miles_km.toFixed(1));
+                }
+
+                if (parseFloat(distance_html) % 1 === 0) {
+                    //add decimal if rounded exactly to integer
+                    distance_html = parseFloat(distance_html).toFixed(1);
+                }
+
+                if (place.distance.use_km) {
+                    //km
+                    if (place.distance.miles_km < 0.1) {
+                        //meters
+                        distance_html = place.distance.meters;
+                        distance_html += " meters";
+                    } else {
+                        distance_html += " km";
+                    }
+                } else {
+                    //miles
+                    if (place.distance.miles_km < 0.1) {
+                        //feet
+                        distance_html = metersToFeet(place.distance.meters);
+                        distance_html += " ft";
+                    } else {
+                        distance_html += " m";
+                    }
+                }
+
+                place_html.distance = `<div class="distance">${distance_html}</div>`;
+            }
+
+            place_html.full = `
+                    <div class="left-col">
+                          ${place_html.distance}
+                          ${place_html.name}
+                         
+                         <div class="location">
+                             <div class="location-address">
+                                ${place_html.location}
+                             </div>
+                         </div>
+                    </div>
+                                    
+                    <div class="right-col">
+                        <div class="button">Select</div>
+                    </div>`;
+
+            let id = place.fsq_place_id || place.fsq_address_id || "";
+
+            let is_address = place.fsq_address_id ? "is_address" : "";
+
+            html += `<div class="place ${is_address}" data-place-id="${id}">${place_html.full}</div>`;
+        }
+
+        suggestions_el.innerHTML = html;
+
+        if (!skip_dropdown) {
+            befriend.places.toggleAutoComplete(true);
+        }
+
+        befriend.places.events.handleSelectPlace(suggestions_el.getElementsByClassName('place'));
     },
     setPlacesHours: function () {
         //header

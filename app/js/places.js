@@ -78,7 +78,7 @@ befriend.places = {
     setAutoComplete: function (places, skip_dropdown) {
         befriend.places.setAutoCompleteData(places);
 
-        befriend.places.displaySuggestions(places, skip_dropdown);
+        befriend.html.autoCompleteSuggestions(places, skip_dropdown);
     },
     setAutoCompleteData: function (places) {
         if (!places) {
@@ -95,119 +95,6 @@ befriend.places = {
             befriend.places.autoComplete.items.push(place);
             befriend.places.autoComplete.obj[id] = place;
         }
-    },
-    displaySuggestions: function (places, skip_dropdown) {
-        let suggestions_el = befriend.els.activities
-            .querySelector(".place-search-suggestions")
-            .querySelector(".container");
-
-        let html = "";
-
-        for (let place of places) {
-            let place_html = {
-                name: ``,
-                distance: ``,
-                location: ``,
-                full: ``,
-            };
-
-            //name
-            if (place.name) {
-                place_html.name = `<div class="name">${place.name}</div>`;
-            }
-
-            //location
-            if (place.location_address) {
-                place_html.location += `<div class="address">${place.location_address}</div>`;
-            }
-
-            if (place.location_address_2) {
-                //do not show if zip code in address_2
-
-                let is_postcode =
-                    place.location_address_2.includes(place.location_postcode) || isZIPFormat(place.location_address_2);
-
-                if (!is_postcode) {
-                    //do not show if address and address_2 are too similar
-                    let str_similarity = stringSimilarity(place.location_address, place.location_address_2);
-
-                    if (str_similarity < 0.5) {
-                        place_html.location += `<div class="address_2">${place.location_address_2}</div>`;
-                    }
-                }
-            }
-
-            place_html.location += `<div class="locality">${place.location_locality}, ${place.location_region}</div>`;
-
-            //distance
-            let distance_html = "";
-
-            if (place.distance) {
-                distance_html = place.distance.miles_km.toFixed(1);
-
-                if (place.distance.miles_km < 1) {
-                    //hide trailing zero if less than 1 m/km
-                    distance_html = parseFloat(place.distance.miles_km.toFixed(1));
-                }
-
-                if (parseFloat(distance_html) % 1 === 0) {
-                    //add decimal if rounded exactly to integer
-                    distance_html = parseFloat(distance_html).toFixed(1);
-                }
-
-                if (place.distance.use_km) {
-                    //km
-                    if (place.distance.miles_km < 0.1) {
-                        //meters
-                        distance_html = place.distance.meters;
-                        distance_html += " meters";
-                    } else {
-                        distance_html += " km";
-                    }
-                } else {
-                    //miles
-                    if (place.distance.miles_km < 0.1) {
-                        //feet
-                        distance_html = metersToFeet(place.distance.meters);
-                        distance_html += " ft";
-                    } else {
-                        distance_html += " m";
-                    }
-                }
-
-                place_html.distance = `<div class="distance">${distance_html}</div>`;
-            }
-
-            place_html.full = `
-                    <div class="left-col">
-                          ${place_html.distance}
-                          ${place_html.name}
-                         
-                         <div class="location">
-                             <div class="location-address">
-                                ${place_html.location}
-                             </div>
-                         </div>
-                    </div>
-                                    
-                    <div class="right-col">
-                        <div class="button">Select</div>
-                    </div>`;
-
-            let id = place.fsq_place_id || place.fsq_address_id || "";
-
-            let is_address = place.fsq_address_id ? "is_address" : "";
-
-            html += `<div class="place ${is_address}" data-place-id="${id}">${place_html.full}</div>`;
-        }
-
-        suggestions_el.innerHTML = html;
-
-        if (!skip_dropdown) {
-            befriend.places.toggleAutoComplete(true);
-        }
-
-        befriend.places.events.onSearchPlaceSelect();
     },
     setPreviousAutoComplete: function (place) {
         let search_input_el = befriend.els.activities.querySelector(".input-search-place");
@@ -347,6 +234,10 @@ befriend.places = {
 
         befriend.places.autoComplete.session_token = token;
 
+        setTimeout(function () {
+            befriend.places.autoComplete.session_token = null;
+        }, 60 * 1000);
+
         return token;
     },
     searchPlace: function (search_str, skip_dropdown) {
@@ -434,12 +325,12 @@ befriend.places = {
                 befriend.places.toggleDisplayPlaces(false);
             });
         },
-        onSearchPlaceSelect: function () {},
-        onHandleSelectPlace: function () {
-            let places = befriend.els.places.getElementsByClassName("place");
+        handleSelectPlace: function (els) {
+            //remove session token
+            befriend.places.autoComplete.session_token = null;
 
-            for (let i = 0; i < places.length; i++) {
-                let place_el = places[i];
+            for (let i = 0; i < els.length; i++) {
+                let place_el = els[i];
 
                 if (place_el._listener) {
                     continue;
