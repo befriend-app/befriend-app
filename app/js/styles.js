@@ -4,6 +4,20 @@ befriend.styles = {
             try {
                 befriend.styles.setBackgroundAlpha(1);
                 await befriend.styles.setStatusBarBorder(1);
+
+                //set margin top based on status bar height
+                if(is_ios) {
+                    try {
+                        let sbh = await befriend.styles.getStatusBarHeight();
+
+                        let views_el = document.getElementById('views');
+
+                        views_el.style.marginTop = sbh + befriend.variables.view_gap_tb + 'px';
+                    } catch(e) {
+
+                    }
+                }
+
             } catch (e) {
                 console.error(e);
             }
