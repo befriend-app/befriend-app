@@ -71,8 +71,11 @@ befriend.html = {
                                             <div class="sub-section-title"></div>
                                             <input type="text" class="input-search-place" placeholder="Search for place">
                                         </div>
-                                        <div class="place-search-suggestions">
-                                            <div class="container"></div>
+                                        
+                                        <div class="place-search-suggestions-wrapper">
+                                            <div class="place-search-suggestions">
+                                                <div class="container"></div>
+                                            </div>
                                         </div>
                                     </div>  
     

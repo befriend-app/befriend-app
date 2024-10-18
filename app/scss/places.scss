@@ -40,6 +40,11 @@ html.#{$class_places_shown} {
         }
     }
 
+    .place-search-suggestions-wrapper {
+        width: 100%;
+        position: relative;
+    }
+
     .place-search-suggestions {
         position: absolute;
         overflow-y: hidden;
