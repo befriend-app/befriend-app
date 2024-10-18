@@ -8,6 +8,7 @@ window["befriend"] = {
     timing: {
         showPlaces: null,
         showChangeLocation: null,
+        showCreateActivity: null,
     },
     els: {},
     variables: null,

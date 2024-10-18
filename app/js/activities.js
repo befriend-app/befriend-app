@@ -79,10 +79,21 @@ befriend.activities = {
     },
     toggleCreateActvity: function (show) {
         if (show) {
+            befriend.timing.showCreateActivity = timeNow();
+
             addClassEl(befriend.classes.createActivityShown, document.documentElement);
+
+            setTimeout(() => {
+                if (befriend.places.isPlacesShown()) {
+                    befriend.places.toggleDisplayPlaces(false);
+                }
+            }, befriend.variables.activities_transition_ms);
         } else {
             removeClassEl(befriend.classes.createActivityShown, document.documentElement);
         }
+    },
+    isCreateActivityShown: function () {
+        return elHasClass(document.documentElement, befriend.classes.createActivityShown);
     },
     events: {
         init: function () {

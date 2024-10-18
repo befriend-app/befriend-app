@@ -77,7 +77,8 @@ body.loading {
 }
 
 html.#{$class_places_shown},
-html.#{$class_change_location} {
+html.#{$class_change_location},
+html.#{$class_create_activity_shown} {
     #overlay {
         opacity: 0.18;
         visibility: visible;
