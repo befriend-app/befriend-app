@@ -240,6 +240,7 @@ html.#{$class_create_activity_shown} {
 
                 &:last-of-type {
                     margin-top: $activity_gap_tb;
+                    margin-bottom: 0;
                 }
             }
 

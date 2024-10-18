@@ -95,6 +95,25 @@ befriend.activities = {
     isCreateActivityShown: function () {
         return elHasClass(document.documentElement, befriend.classes.createActivityShown);
     },
+    updateLevelHeight: function (level_num, skip_set_prev) {
+        let level_el = befriend.els.activities.querySelector(`.level_${level_num}.show`);
+
+        if(!level_el) {
+            return;
+        }
+
+        let last_row = lastArrItem(level_el.getElementsByClassName(`level_${level_num}_row`));
+
+        last_row.style.marginBottom = "0px";
+
+        let level_height = getElHeightHidden(level_el);
+
+        if(!skip_set_prev) {
+            level_el.setAttribute("data-prev-height", `${level_height}px`);
+        }
+
+        level_el.style.height = `${level_height}px`;
+    },
     events: {
         init: function () {
             return new Promise(async (resolve, reject) => {
@@ -228,15 +247,7 @@ befriend.activities = {
                                                 ${level_2_html}
                                             </div>`;
 
-                        let last_row = lastArrItem(level_2_el.getElementsByClassName("level_2_row"));
-
-                        last_row.style.marginBottom = "0px";
-
-                        let level_2_height = getElHeightHidden(level_2_el);
-
-                        level_2_el.setAttribute("data-prev-height", `${level_2_height}px`);
-
-                        level_2_el.style.height = `${level_2_height}px`;
+                        befriend.activities.updateLevelHeight(2);
 
                         befriend.activities.events.level2();
                     });
@@ -382,17 +393,23 @@ befriend.activities = {
                                                 ${level_3_html}
                                             </div>`;
 
-                        let last_row = lastArrItem(level_3_el.getElementsByClassName("level_3_row"));
+                        befriend.activities.updateLevelHeight(3);
 
-                        last_row.style.marginBottom = "0px";
+                        requestAnimationFrame(function () {
+                            befriend.activities.updateLevelHeight(2, true);
+                        });
 
-                        let level_3_height = getElHeightHidden(level_3_el);
-
-                        level_3_el.style.height = `${level_3_height}px`;
-
-                        let total_level_2_height = parseFloat(prev_height_level_2) + level_3_height;
-
-                        closest_level_2_el.style.height = `${total_level_2_height}px`;
+                        // let last_row = lastArrItem(level_3_el.getElementsByClassName("level_3_row"));
+                        //
+                        // last_row.style.marginBottom = "0px";
+                        //
+                        // let level_3_height = getElHeightHidden(level_3_el);
+                        //
+                        // level_3_el.style.height = `${level_3_height}px`;
+                        //
+                        // let total_level_2_height = parseFloat(prev_height_level_2) + level_3_height;
+                        //
+                        // closest_level_2_el.style.height = `${total_level_2_height}px`;
 
                         befriend.activities.events.level3();
                     });
