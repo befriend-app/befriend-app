@@ -292,6 +292,10 @@ befriend.activities = {
                             // only show places when there are no level 3 categories
                             if (!level_2_activity.sub || !Object.keys(level_2_activity.sub).length) {
                                 befriend.places.displayPlaces(befriend.activities.selected.level_2);
+
+                                setTimeout(function () {
+                                    removeClassEl('active', el);
+                                }, befriend.variables.places_transition_ms);
                             }
                         }
 
@@ -433,6 +437,10 @@ befriend.activities = {
                             befriend.activities.selected.level_3 = level_3_activity;
 
                             befriend.places.displayPlaces(befriend.activities.selected.level_3);
+
+                            setTimeout(function () {
+                                removeClassEl('active', el);
+                            }, befriend.variables.places_transition_ms);
                         }
                     });
                 }
