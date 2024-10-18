@@ -24,7 +24,7 @@
     <preference name="DisallowOverscroll" value="true" />
 
     <preference name="StatusBarHidden" value="true" />
-    <preference name="StatusBarOverlaysWebView" value="false" />
+    <preference name="StatusBarOverlaysWebView" value="true" />
     <preference name="StatusBarDefaultScrollToTop" value="true" />
 
     <!--    <preference name="ViewControllerBasedStatusBarAppearance" value="false" />-->
