@@ -2,6 +2,7 @@ befriend.styles = {
     init: function () {
         return new Promise(async (resolve, reject) => {
             try {
+                befriend.styles.setBackgroundAlpha(1);
                 await befriend.styles.setStatusBarBorder(1);
             } catch (e) {
                 console.error(e);
@@ -37,12 +38,25 @@ befriend.styles = {
                             resolve();
                         },
                     );
+                } else {
+                    resolve();
                 }
             } catch (e) {
                 console.error(e);
                 resolve();
             }
         });
+    },
+    setBackgroundAlpha: function (alpha) {
+        try {
+            StatusBar.setBackgroundTransparency(alpha, function () {
+
+            }, function () {
+
+            });
+        } catch(e) {
+            console.error(e);
+        }
     },
     getStatusBarHeight: function () {
         return new Promise(async (resolve, reject) => {
