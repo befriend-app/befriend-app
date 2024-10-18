@@ -3,6 +3,7 @@ window["befriend"] = {
         placesShown: "display-places",
         changeLocationShown: "display-change-location",
         placesSuggestShown: "show-suggestions",
+        createActivityShown: "create-activity",
     },
     timing: {
         showPlaces: null,

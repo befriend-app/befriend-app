@@ -77,6 +77,13 @@ befriend.activities = {
             resolve();
         });
     },
+    toggleCreateActvity: function (show) {
+        if (show) {
+            addClassEl(befriend.classes.createActivityShown, document.documentElement);
+        } else {
+            removeClassEl(befriend.classes.createActivityShown, document.documentElement);
+        }
+    },
     events: {
         init: function () {
             return new Promise(async (resolve, reject) => {

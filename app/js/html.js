@@ -58,7 +58,6 @@ befriend.html = {
                                         <div class="near">
                                             <div class="near-wrapper">
                                                 <div class="near-location">Near <span class="near-text">Me</span></div>
-                                               
                                             </div>
                                         </div>
                                         <div id="change-location-btn" class="change">Change Location</div>
@@ -124,6 +123,8 @@ befriend.html = {
                             <span class="spinner"></span>
                         </div>
                     </div>
+
+                    <div id="create-activity"></div>
                     
                     <div id="overlay"></div>
                     
@@ -205,7 +206,7 @@ befriend.html = {
                                 <div class="name">${schedule_icon}${name_html}</div>
                                 <div class="time"></div>
                             </div>
-                         </div>`;
+                        </div>`;
             }
 
             befriend.els.when.querySelector(".when-options").innerHTML = html;
@@ -420,11 +421,11 @@ befriend.html = {
                     place_html.rating += `<div class="rating">
                                                 <div class="stars">${stars_html}</div>
                                                 <div class="num">${rating_str}</div>
-                                          </div>`;
+                                        </div>`;
                 } else {
                     place_html.rating += `<div class="rating">
                                                 <div class="no-rating">No Rating</div>
-                                          </div>`;
+                                        </div>`;
                 }
 
                 //todo
@@ -459,12 +460,14 @@ befriend.html = {
                         <div class="button">Select</div>
                     </div>`;
 
-                html += `<div class="place" data-place-id="${place.id}">${place_html.full}</div>`;
+                html += `<div class="place" data-place-id="${place.fsq_place_id}">${place_html.full}</div>`;
             }
 
             befriend.els.places.querySelector(".places").innerHTML = html;
 
             befriend.html.setPlacesHours();
+
+            befriend.places.events.onHandleSelectPlace();
 
             resolve();
         });

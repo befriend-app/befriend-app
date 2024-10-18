@@ -58,7 +58,7 @@ befriend.places = {
 
         for (let place of places) {
             befriend.places.data.items.push(place);
-            befriend.places.data.obj[place.id] = place;
+            befriend.places.data.obj[place.fsq_place_id] = place;
         }
 
         befriend.places.setIsOpen();
@@ -203,7 +203,7 @@ befriend.places = {
 
         suggestions_el.innerHTML = html;
 
-        if(!skip_dropdown) {
+        if (!skip_dropdown) {
             befriend.places.toggleAutoComplete(true);
         }
 
@@ -435,5 +435,25 @@ befriend.places = {
             });
         },
         onSearchPlaceSelect: function () {},
+        onHandleSelectPlace: function () {
+            let places = befriend.els.places.getElementsByClassName("place");
+
+            for (let i = 0; i < places.length; i++) {
+                let place_el = places[i];
+
+                if (place_el._listener) {
+                    continue;
+                }
+
+                place_el._listener = true;
+
+                place_el.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    befriend.activities.toggleCreateActvity(true);
+                });
+            }
+        },
     },
 };

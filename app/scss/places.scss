@@ -96,6 +96,7 @@ html.#{$class_places_shown} {
                 @include flex-center-col;
 
                 .button {
+                    display: none;
                     padding: 4px 14px;
                     border-radius: 6px;
                     background-color: $brand_color_b;
@@ -266,6 +267,7 @@ html.#{$class_places_shown} {
                 z-index: 2;
 
                 .button {
+                    display: none;
                     margin-top: auto;
                     padding: 4px 14px;
                     border-radius: 6px;
