@@ -193,6 +193,14 @@ befriend.maps = {
         
         for(let marker of markers) {
             if(marker) {
+                //set data to null
+                for(let k in befriend.maps.markers) {
+                    if(befriend.maps.markers[k] === marker) {
+                        befriend.maps.markers[k] = null;
+                    }
+                }
+
+                //remove from map
                 marker.remove();
             }    
         }
@@ -232,7 +240,6 @@ befriend.maps = {
         }
 
         // Create a 'LngLatBounds' with both corners at the first coordinate.
-
         const bounds = new mapboxgl.LngLatBounds(
             coordinates[0],
             coordinates[0]
@@ -248,7 +255,8 @@ befriend.maps = {
         let padding = max_dim * margin_percent;
 
         map.fitBounds(bounds, {
-            padding: padding
+            padding: padding,
+            maxZoom: 14
         });
     },
     events: {
