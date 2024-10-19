@@ -80,6 +80,23 @@ befriend.activities = {
 
         befriend.activities.toggleCreateActivity(true);
 
+        //add be marker to map
+        let place = befriend.places.getPlace(place_id);
+
+        let lat = place.location_lat;
+        let lon = place.location_lon;
+
+        befriend.maps.addMarker(befriend.maps.maps.activities, {
+            lat, lon
+        }, {
+            is_place: true
+        }, true);
+
+        //remove pin marker if custom location
+        if(befriend.location.isCustom()) {
+            befriend.maps.removeMarkers(befriend.maps.markers.pin);
+        }
+
         //change height, move map to top
 
         //remove transition for resizing map canvas
@@ -105,18 +122,6 @@ befriend.activities = {
         setTimeout(async function () {
             //hide display places/overlay
             befriend.places.toggleDisplayPlaces(false);
-
-            map_el.style.transition = "initial";
-
-            await rafAwait();
-
-            // map_el.style.top = 0;
-            // map_el.style.left = 0;
-
-            // map_el.style.removeProperty('transform');
-
-            await rafAwait();
-            map_el.style.removeProperty("transition");
         }, befriend.variables.create_activity_transition_ms);
     },
     createNewActivity: function (persons_count) {
@@ -185,7 +190,6 @@ befriend.activities = {
                 e.stopPropagation();
 
                 befriend.styles.transformStatusBar(0, befriend.variables.create_activity_transition_ms / 1000);
-                // befriend.styles.transformStatusBar(0, .2);
 
                 let map_to_box = document.getElementById("activities-map-wrapper").getBoundingClientRect();
 
@@ -213,6 +217,14 @@ befriend.activities = {
                 map_el.style.removeProperty("transition");
 
                 befriend.activities.toggleCreateActivity(false);
+
+                befriend.maps.removeMarkers(befriend.maps.markers.place);
+
+                befriend.maps.setMapCenter(befriend.maps.maps.activities, befriend.location.current);
+
+                if(befriend.location.isCustom()) {
+                    befriend.maps.addMarkerCustom();
+                }
             });
         },
         level1: function () {

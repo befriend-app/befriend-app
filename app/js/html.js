@@ -650,7 +650,7 @@ befriend.html = {
             return false;
         }
 
-        let place = befriend.places.data.obj[place_id] || befriend.places.autoComplete.obj[place_id];
+        let place = befriend.places.getPlace(place_id);
 
         console.log({
             place,

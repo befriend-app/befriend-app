@@ -75,6 +75,9 @@ befriend.places = {
             return 1; // display not open last
         });
     },
+    getPlace: function (place_id) {
+        return befriend.places.data.obj[place_id] || befriend.places.autoComplete.obj[place_id];
+    },
     setAutoComplete: function (places, skip_dropdown) {
         befriend.places.setAutoCompleteData(places);
 

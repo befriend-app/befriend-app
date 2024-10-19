@@ -9,7 +9,7 @@ befriend.maps = {
     markers: {
         me: null,
         pin: null,
-        be: null,
+        place: null,
     },
     defaultZoom: 13,
     init: function () {
@@ -134,7 +134,7 @@ befriend.maps = {
             }, 3600 * 1000);
         }, update_in);
     },
-    addMarker: function (map, location, marker_type) {
+    addMarker: function (map, location, marker_type, center_to_map) {
         return new Promise(async (resolve, reject) => {
             let image_location;
 
@@ -162,20 +162,28 @@ befriend.maps = {
 
                 let marker = new mapboxgl.Marker(el).setLngLat([location.lon, location.lat]).addTo(map);
 
+                if(center_to_map) {
+                    befriend.maps.setMapCenter(map, location);
+                }
+
                 if (marker_type.is_me) {
                     befriend.maps.markers.me = marker;
                 } else if (marker_type.is_pin) {
                     befriend.maps.markers.pin = marker;
                 } else if (marker_type.is_place) {
-                    befriend.maps.markers.be = marker;
+                    befriend.maps.markers.place = marker;
                 }
-
 
                 resolve(marker);
             } catch (error) {
                 console.error(error);
                 reject(error);
             }
+        });
+    },
+    addMarkerCustom: function () {
+        befriend.maps.addMarker(befriend.maps.maps.activities, befriend.location.search, {
+            is_pin: true,
         });
     },
     removeMarkers: function (markers) {

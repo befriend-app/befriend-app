@@ -46,6 +46,9 @@ befriend.location = {
     isDevice: function () {
         return befriend.location.device === befriend.location.current;
     },
+    isCustom: function () {
+        return befriend.location.search === befriend.location.current;
+    },
     toggleChangeLocation: function (show) {
         if (show) {
             befriend.timing.showChangeLocation = timeNow();
@@ -64,11 +67,9 @@ befriend.location = {
         befriend.location.toggleChangeLocation(false);
         befriend.els.activities.querySelector(".near-text").innerHTML = befriend.location.current.name;
 
-        befriend.maps.removeMarkers([befriend.maps.markers.me, befriend.maps.markers.pin, befriend.maps.markers.be]);
+        befriend.maps.removeMarkers([befriend.maps.markers.me, befriend.maps.markers.pin, befriend.maps.markers.place]);
 
-        befriend.maps.addMarker(befriend.maps.maps.activities, befriend.location.search, {
-            is_pin: true,
-        });
+        befriend.maps.addMarkerCustom();
 
         befriend.maps.setMapCenter(befriend.maps.maps.activities, befriend.location.search, befriend.maps.defaultZoom);
 
@@ -218,7 +219,7 @@ befriend.location = {
 
                 befriend.els.activities.querySelector(".near-text").innerHTML = "Me";
 
-                befriend.maps.removeMarkers([befriend.maps.markers.me, befriend.maps.markers.pin, befriend.maps.markers.be]);
+                befriend.maps.removeMarkers([befriend.maps.markers.me, befriend.maps.markers.pin, befriend.maps.markers.place]);
 
                 befriend.maps.addMarker(befriend.maps.maps.activities, befriend.location.current, {
                     is_me: true,
