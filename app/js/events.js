@@ -24,18 +24,7 @@ befriend.events = {
             console.log("body click handler");
 
             if (befriend.activities.isCreateActivityShown()) {
-                //hide create activity to the right
-                if (!e.target.closest("#create-activity")) {
-                    //do not hide on double click if place just clicked
-                    if (
-                        timeNow() - befriend.timing.showCreateActivity <
-                        befriend.variables.create_activity_transition_ms
-                    ) {
-                        return false;
-                    }
-
-                    befriend.activities.toggleCreateActivity(false);
-                }
+                //do nothing
             } else if (befriend.places.isPlacesShown()) {
                 //hide places to bottom
                 if (!e.target.closest("#places")) {

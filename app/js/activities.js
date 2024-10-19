@@ -64,16 +64,13 @@ befriend.activities = {
         });
     },
     displayCreateActivity: async function (place_id) {
+        let map_el = befriend.els.activities_map;
+
         let status_bar_height = 0;
 
         try {
             status_bar_height = await befriend.styles.getStatusBarHeight();
         } catch (e) {}
-
-        setTimeout(function () {
-            //hide overlay
-            befriend.styles.hideOverlay(true);
-        }, befriend.variables.create_activity_transition_ms);
 
         //transform/transition system status bar
         befriend.styles.transformStatusBar(
@@ -86,29 +83,41 @@ befriend.activities = {
         //change height, move map to top
 
         //remove transition for resizing map canvas
-        befriend.els.activities_map.style.transition = "initial";
-        befriend.els.activities_map.style.width = "100vw";
-        befriend.els.activities_map.style.height = `${befriend.variables.map_create_activity_h}px`;
+        map_el.style.transition = "initial";
+        map_el.style.width = "100vw";
+        map_el.style.height = `${befriend.variables.map_create_activity_h}px`;
 
         //calculate transform
-        let map_box = befriend.els.activities_map.getBoundingClientRect();
+        let map_box = map_el.getBoundingClientRect();
 
         await rafAwait();
 
         befriend.maps.maps.activities.resize();
 
         //remove removed-transition
-        befriend.els.activities_map.style.removeProperty("transition");
-        befriend.els.activities_map.style.position = "absolute";
+        map_el.style.removeProperty("transition");
+        map_el.style.position = "absolute";
 
         await rafAwait();
 
-        befriend.els.activities_map.style.transform = `translate(${-map_box.x}px, ${-map_box.y}px)`;
+        map_el.style.transform = `translate(${-map_box.x}px, ${-map_box.y}px)`;
 
-        // await rafAwait();
+        setTimeout(async function () {
+            //hide display places/overlay
+            befriend.places.toggleDisplayPlaces(false);
 
-        // befriend.els.activities_map.style.top = 0;
-        // befriend.els.activities_map.style.left = 0;
+            map_el.style.transition = "initial";
+
+            await rafAwait();
+
+            // map_el.style.top = 0;
+            // map_el.style.left = 0;
+
+            // map_el.style.removeProperty('transform');
+
+            await rafAwait();
+            map_el.style.removeProperty("transition");
+        }, befriend.variables.create_activity_transition_ms);
     },
     createNewActivity: function (persons_count) {
         return new Promise(async (resolve, reject) => {
@@ -160,11 +169,50 @@ befriend.activities = {
             return new Promise(async (resolve, reject) => {
                 try {
                     await befriend.activities.events.level1();
+                    befriend.activities.events.onCreateActivityBack();
                 } catch (e) {
                     console.error(e);
                 }
 
                 resolve();
+            });
+        },
+        onCreateActivityBack: function () {
+            let back_el = document.getElementById("create-activity-back");
+
+            back_el.addEventListener("click", async function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                befriend.styles.transformStatusBar(0, befriend.variables.create_activity_transition_ms / 1000);
+                // befriend.styles.transformStatusBar(0, .2);
+
+                let map_to_box = document.getElementById("activities-map-wrapper").getBoundingClientRect();
+
+                let map_el = befriend.els.activities_map;
+
+                map_el.style.removeProperty("transition");
+
+                await rafAwait();
+
+                map_el.style.transform = `translate(${map_to_box.x}px, ${map_to_box.y}px)`;
+
+                await rafAwait();
+
+                map_el.style.removeProperty("transform");
+
+                map_el.style.removeProperty("height");
+                map_el.style.removeProperty("width");
+
+                map_el.style.transition = "initial";
+
+                await rafAwait();
+
+                befriend.maps.maps.activities.resize();
+
+                map_el.style.removeProperty("transition");
+
+                befriend.activities.toggleCreateActivity(false);
             });
         },
         level1: function () {

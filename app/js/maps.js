@@ -53,7 +53,7 @@ befriend.maps = {
                 befriend.maps.maps.activities = map;
 
                 befriend.maps.addMarker(map, location, {
-                    is_me: true
+                    is_me: true,
                 });
             } catch (e) {
                 console.error(e);
@@ -137,12 +137,12 @@ befriend.maps = {
             let image_location;
 
             try {
-                if(marker_type.is_me) {
-                    image_location = '/img/marker-me.png';
-                } else if(marker_type.is_pin) {
-                    image_location = '/img/marker.png';
-                } else if(marker_type.is_place) {
-                    image_location = '/img/marker-be.png';
+                if (marker_type.is_me) {
+                    image_location = "/img/marker-me.png";
+                } else if (marker_type.is_pin) {
+                    image_location = "/img/marker.png";
+                } else if (marker_type.is_place) {
+                    image_location = "/img/marker-be.png";
                 }
 
                 const image_dimensions = await getImgDimensions(image_location);

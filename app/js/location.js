@@ -66,19 +66,11 @@ befriend.location = {
 
         befriend.maps.removeMarker(befriend.maps.markers.currentMarker);
 
-        befriend.maps.addMarker(
-            befriend.maps.maps.activities,
-            befriend.location.search,
-            {
-                is_pin: true
-            }
-        );
+        befriend.maps.addMarker(befriend.maps.maps.activities, befriend.location.search, {
+            is_pin: true,
+        });
 
-        befriend.maps.setMapCenter(
-            befriend.maps.maps.activities,
-            befriend.location.search,
-            befriend.maps.defaultZoom,
-        );
+        befriend.maps.setMapCenter(befriend.maps.maps.activities, befriend.location.search, befriend.maps.defaultZoom);
 
         befriend.location.toggleResetLocationButton(true);
 
@@ -228,13 +220,9 @@ befriend.location = {
 
                 befriend.maps.removeMarker(befriend.maps.markers.currentMarker);
 
-                befriend.maps.addMarker(
-                    befriend.maps.maps.activities,
-                    befriend.location.current,
-                    {
-                        is_me: true
-                    }
-                );
+                befriend.maps.addMarker(befriend.maps.maps.activities, befriend.location.current, {
+                    is_me: true,
+                });
 
                 befriend.maps.setMapCenter(
                     befriend.maps.maps.activities,
