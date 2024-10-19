@@ -291,3 +291,9 @@ function getImgDimensions(url) {
         img.src = url;
     });
 }
+
+function rafAwait() {
+    return new Promise(async (resolve, reject) => {
+        requestAnimationFrame(resolve);
+    });
+}
