@@ -16,7 +16,7 @@ befriend.location = {
             }
 
             function geoLocationSuccess(position) {
-                if(!befriend.location.device) {
+                if (!befriend.location.device) {
                     befriend.location.device = {};
                 }
 
@@ -221,7 +221,11 @@ befriend.location = {
 
                 befriend.els.activities.querySelector(".near-text").innerHTML = "Me";
 
-                befriend.maps.removeMarkers([befriend.maps.markers.me, befriend.maps.markers.pin, befriend.maps.markers.place]);
+                befriend.maps.removeMarkers([
+                    befriend.maps.markers.me,
+                    befriend.maps.markers.pin,
+                    befriend.maps.markers.place,
+                ]);
 
                 befriend.maps.addMarker(befriend.maps.maps.activities, befriend.location.current, {
                     is_me: true,

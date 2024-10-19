@@ -21,8 +21,6 @@ befriend.events = {
         document.querySelector("body").addEventListener("click", function (e) {
             e = e || window.event;
 
-            console.log("body click handler");
-
             if (befriend.activities.isCreateActivityShown()) {
                 //do nothing
             } else if (befriend.places.isPlacesShown()) {

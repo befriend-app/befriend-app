@@ -498,7 +498,11 @@ html.#{$class_create_activity_shown} {
 
     .main {
         height: calc(calc(100% - $create_activity_bottom_h));
-        //background-color: #0080ea;
+
+        .container {
+            padding: 0 30px;
+            padding-top: 50px;
+        }
     }
 
     .bottom {
@@ -517,13 +521,17 @@ html.#{$class_create_activity_shown} {
 }
 
 #create-activity-back {
+    $dim: 40px;
     position: fixed;
-    top: 15px;
-    left: 15px;
-    height: 34px;
-    width: 40px;
+    top: calc(calc($map_create_activity_h - $dim * 1.5));
+    left: $dim / 2;
+    height: $dim;
+    width: $dim;
     opacity: 0;
     z-index: 100;
+    border-radius: 50%;
+    background: white;
+    border: 1px solid $color_lightgray;
     transition:
         opacity $overlay_transition_ms,
         visibility 0ms $overlay_transition_ms;

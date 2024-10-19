@@ -162,7 +162,7 @@ befriend.maps = {
 
                 let marker = new mapboxgl.Marker(el).setLngLat([location.lon, location.lat]).addTo(map);
 
-                if(center_to_map) {
+                if (center_to_map) {
                     befriend.maps.setMapCenter(map, location);
                 }
 
@@ -187,22 +187,22 @@ befriend.maps = {
         });
     },
     removeMarkers: function (markers) {
-        if(!Array.isArray(markers)) {
+        if (!Array.isArray(markers)) {
             markers = [markers];
         }
-        
-        for(let marker of markers) {
-            if(marker) {
+
+        for (let marker of markers) {
+            if (marker) {
                 //set data to null
-                for(let k in befriend.maps.markers) {
-                    if(befriend.maps.markers[k] === marker) {
+                for (let k in befriend.maps.markers) {
+                    if (befriend.maps.markers[k] === marker) {
                         befriend.maps.markers[k] = null;
                     }
                 }
 
                 //remove from map
                 marker.remove();
-            }    
+            }
         }
     },
     setMapCenter: function (map, location, zoom_level, fly_to) {
@@ -229,21 +229,18 @@ befriend.maps = {
         // Extract coordinates from markers
         let coordinates = [];
 
-        for(let marker of markers) {
-            if(marker) {
+        for (let marker of markers) {
+            if (marker) {
                 coordinates.push(marker.getLngLat());
             }
         }
 
-        if(!coordinates.length) {
+        if (!coordinates.length) {
             return;
         }
 
         // Create a 'LngLatBounds' with both corners at the first coordinate.
-        const bounds = new mapboxgl.LngLatBounds(
-            coordinates[0],
-            coordinates[0]
-        );
+        const bounds = new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]);
 
         // Extend the 'LngLatBounds' to include every coordinate in the bounds result.
         for (const coord of coordinates) {
@@ -256,7 +253,7 @@ befriend.maps = {
 
         map.fitBounds(bounds, {
             padding: padding,
-            maxZoom: 14
+            maxZoom: 14,
         });
     },
     events: {

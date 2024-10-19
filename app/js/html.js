@@ -133,15 +133,39 @@ befriend.html = {
                             <span class="spinner"></span>
                         </div>
                     </div>
+                    
+                    <div id="create-activity-back">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 416.001 351.9995"><path id="Left_Arrow" d="M400.001,159.9995H54.625L187.313,27.3115c6.252-6.252,6.252-16.376,0-22.624s-16.376-6.252-22.624,0L4.689,164.6875c-6.252,6.252-6.252,16.376,0,22.624l160,160c3.124,3.124,7.22,4.688,11.312,4.688s8.188-1.564,11.312-4.688c6.252-6.252,6.252-16.376,0-22.624L54.625,191.9995h345.376c8.836,0,16-7.164,16-16s-7.164-16-16-16Z"/></svg>
+                    </div>
 
                     <div id="create-activity">
-                        <div id="create-activity-back">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 416.001 351.9995"><path id="Left_Arrow" d="M400.001,159.9995H54.625L187.313,27.3115c6.252-6.252,6.252-16.376,0-22.624s-16.376-6.252-22.624,0L4.689,164.6875c-6.252,6.252-6.252,16.376,0,22.624l160,160c3.124,3.124,7.22,4.688,11.312,4.688s8.188-1.564,11.312-4.688c6.252-6.252,6.252-16.376,0-22.624L54.625,191.9995h345.376c8.836,0,16-7.164,16-16s-7.164-16-16-16Z"/></svg>
-                        </div>
-                    
                         <div class="main">
                             <div class="container">
-                                
+                                <div class="activity section">
+                                    <div class="label">Activity</div>
+                                    
+                                    <div class="info"></div>
+                                </div>
+                                <div class="place section">
+                                    <div class="label">Place</div>
+                                    
+                                    <div class="info"></div>
+                                </div>
+                                <div class="when section">
+                                    <div class="label">When</div>
+                                        
+                                    <div class="info"></div>
+                                </div>
+                                <div class="friends section">
+                                    <div class="label">Friends</div>
+                                    
+                                    <div class="info"></div>
+                                </div>
+                                <div class="filters section">
+                                    <div class="label">Filters</div>
+                                    
+                                    <div class="info"></div>
+                                </div>
                             </div>
                         </div>
                         

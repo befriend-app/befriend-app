@@ -86,14 +86,20 @@ befriend.activities = {
         let lat = place.location_lat;
         let lon = place.location_lon;
 
-        befriend.maps.addMarker(befriend.maps.maps.activities, {
-            lat, lon
-        }, {
-            is_place: true
-        }, true);
+        befriend.maps.addMarker(
+            befriend.maps.maps.activities,
+            {
+                lat,
+                lon,
+            },
+            {
+                is_place: true,
+            },
+            true,
+        );
 
         //remove pin marker if custom location
-        if(befriend.location.isCustom()) {
+        if (befriend.location.isCustom()) {
             befriend.maps.removeMarkers(befriend.maps.markers.pin);
         }
 
@@ -118,7 +124,12 @@ befriend.activities = {
         }
 
         //update map zoom to show all markers
-        befriend.maps.fitMarkersWithMargin(befriend.maps.maps.activities, [befriend.maps.markers.me, befriend.maps.markers.place], befriend.maps.markers.place, .2);
+        befriend.maps.fitMarkersWithMargin(
+            befriend.maps.maps.activities,
+            [befriend.maps.markers.me, befriend.maps.markers.place],
+            befriend.maps.markers.place,
+            0.2,
+        );
 
         //remove removed-transition
         map_el.style.removeProperty("transition");
@@ -198,6 +209,8 @@ befriend.activities = {
                 e.preventDefault();
                 e.stopPropagation();
 
+                back_el.style.display = "none";
+
                 befriend.styles.transformStatusBar(0, befriend.variables.create_activity_transition_ms / 1000);
 
                 let map_to_box = document.getElementById("activities-map-wrapper").getBoundingClientRect();
@@ -231,9 +244,11 @@ befriend.activities = {
 
                 befriend.maps.setMapCenter(befriend.maps.maps.activities, befriend.location.current);
 
-                if(befriend.location.isCustom()) {
+                if (befriend.location.isCustom()) {
                     befriend.maps.addMarkerCustom();
                 }
+
+                back_el.style.removeProperty('display');
             });
         },
         level1: function () {
@@ -376,8 +391,6 @@ befriend.activities = {
                     el.addEventListener("click", function (e) {
                         e.preventDefault();
                         e.stopPropagation();
-
-                        console.log("level 2 clicked");
 
                         let parent_id = this.closest(".level_2").getAttribute("data-parent-id");
 
