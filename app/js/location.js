@@ -68,14 +68,15 @@ befriend.location = {
 
         befriend.maps.addMarker(
             befriend.maps.maps.activities,
-            befriend.location.search.lat,
-            befriend.location.search.lon,
+            befriend.location.search,
+            {
+                is_pin: true
+            }
         );
 
         befriend.maps.setMapCenter(
             befriend.maps.maps.activities,
-            befriend.location.search.lat,
-            befriend.location.search.lon,
+            befriend.location.search,
             befriend.maps.defaultZoom,
         );
 
@@ -229,14 +230,15 @@ befriend.location = {
 
                 befriend.maps.addMarker(
                     befriend.maps.maps.activities,
-                    befriend.location.current.lat,
-                    befriend.location.current.lon,
+                    befriend.location.current,
+                    {
+                        is_me: true
+                    }
                 );
 
                 befriend.maps.setMapCenter(
                     befriend.maps.maps.activities,
-                    befriend.location.current.lat,
-                    befriend.location.current.lon,
+                    befriend.location.current,
                     befriend.maps.defaultZoom,
                 );
 

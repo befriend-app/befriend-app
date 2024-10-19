@@ -52,7 +52,9 @@ befriend.maps = {
 
                 befriend.maps.maps.activities = map;
 
-                befriend.maps.addMarker(map, location.lat, location.lon);
+                befriend.maps.addMarker(map, location, {
+                    is_me: true
+                });
             } catch (e) {
                 console.error(e);
             }
@@ -130,10 +132,18 @@ befriend.maps = {
             }, 3600 * 1000);
         }, update_in);
     },
-    addMarker: function (map, lat, lng) {
+    addMarker: function (map, location, marker_type) {
         return new Promise(async (resolve, reject) => {
+            let image_location;
+
             try {
-                const image_location = "/img/marker.png";
+                if(marker_type.is_me) {
+                    image_location = '/img/marker-me.png';
+                } else if(marker_type.is_pin) {
+                    image_location = '/img/marker.png';
+                } else if(marker_type.is_place) {
+                    image_location = '/img/marker-be.png';
+                }
 
                 const image_dimensions = await getImgDimensions(image_location);
 
@@ -148,7 +158,7 @@ befriend.maps = {
                 el.style.height = `${befriend.variables.map_marker_height}px`;
                 el.style.marginTop = `${befriend.variables.map_marker_height / -2}px`;
 
-                let marker = new mapboxgl.Marker(el).setLngLat([lng, lat]).addTo(map);
+                let marker = new mapboxgl.Marker(el).setLngLat([location.lon, location.lat]).addTo(map);
 
                 befriend.maps.markers.currentMarker = marker;
 
@@ -162,10 +172,10 @@ befriend.maps = {
     removeMarker: function (marker) {
         marker.remove();
     },
-    setMapCenter: function (map, lat, lng, zoom_level, fly_to) {
+    setMapCenter: function (map, location, zoom_level, fly_to) {
         if (fly_to) {
             let options = {
-                center: [lng, lat],
+                center: [location.lon, location.lat],
                 essential: true,
             };
 
@@ -176,9 +186,9 @@ befriend.maps = {
             map.flyTo(options);
         } else {
             if (zoom_level) {
-                map.setCenter([lng, lat]).setZoom(zoom_level);
+                map.setCenter([location.lon, location.lat]).setZoom(zoom_level);
             } else {
-                map.setCenter([lng, lat]);
+                map.setCenter([location.lon, location.lat]);
             }
         }
     },
@@ -201,10 +211,7 @@ befriend.maps = {
                 e.preventDefault();
                 e.stopPropagation();
 
-                let lat = befriend.location.current.lat;
-                let lon = befriend.location.current.lon;
-
-                befriend.maps.setMapCenter(befriend.maps.maps.activities, lat, lon, 14, true);
+                befriend.maps.setMapCenter(befriend.maps.maps.activities, befriend.location.current, 14, true);
             });
         },
     },
