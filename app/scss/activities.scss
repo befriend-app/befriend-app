@@ -496,14 +496,30 @@ html.#{$class_create_activity_shown} {
     transform: translateX(115vw);
     overscroll-behavior: none;
 
-    .container {
+    .main {
+        height: calc(calc(100% - $create_activity_bottom_h));
+        //background-color: #0080ea;
+    }
+
+    .bottom {
+        height: $create_activity_bottom_h;
+        @include flex-center-col;
+
+        #create-activity-btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            background-color: $brand_color_a;
+            color: white;
+            min-width: 200px;
+            @include flex-center;
+        }
     }
 }
 
 #create-activity-back {
     position: fixed;
-    top: calc(15px);
-    left: 20px;
+    top: 15px;
+    left: 15px;
     height: 34px;
     width: 40px;
     opacity: 0;
