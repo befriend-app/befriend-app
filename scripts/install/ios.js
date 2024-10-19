@@ -40,8 +40,6 @@ function iosTargetVersion() {
     const paths2 = findFilePathsByFilename("../", "Pods.xcodeproj");
     const paths = paths1.concat(paths2);
 
-    // console.log('Apply patch to', paths);
-
     for (let path of paths) {
         let content = fs.readFileSync(path, { encoding: "utf-8" });
         content = content.replace(/IPHONEOS_DEPLOYMENT_TARGET = [0-9]+.0;/g, "IPHONEOS_DEPLOYMENT_TARGET = 12.0;");

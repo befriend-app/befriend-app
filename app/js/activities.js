@@ -80,7 +80,7 @@ befriend.activities = {
 
         befriend.activities.toggleCreateActivity(true);
 
-        //add be marker to map
+        //add place marker to map
         let place = befriend.places.getPlace(place_id);
 
         let lat = place.location_lat;
@@ -110,6 +110,15 @@ befriend.activities = {
         await rafAwait();
 
         befriend.maps.maps.activities.resize();
+
+        await rafAwait();
+
+        while (!befriend.maps.markers.place) {
+            await rafAwait();
+        }
+
+        //update map zoom to show all markers
+        befriend.maps.fitMarkersWithMargin(befriend.maps.maps.activities, [befriend.maps.markers.me, befriend.maps.markers.place], befriend.maps.markers.place, .2);
 
         //remove removed-transition
         map_el.style.removeProperty("transition");

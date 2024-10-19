@@ -3,6 +3,7 @@ befriend.html = {
         befriend.els.views = document.getElementById("views");
         befriend.els.activities = document.getElementById("activities");
         befriend.els.activities_map = document.getElementById("activities-map");
+        befriend.els.activities_map_wrapper = document.getElementById("activities-map-wrapper");
         befriend.els.change_location = document.getElementById("change-location");
         befriend.els.change_location_btn = document.getElementById("change-location-btn");
         befriend.els.num_persons = document.getElementById("num-persons");

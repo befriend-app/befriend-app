@@ -217,6 +217,40 @@ befriend.maps = {
             }
         }
     },
+    fitMarkersWithMargin: function (map, markers, center_marker, margin_percent) {
+        // Extract coordinates from markers
+        let coordinates = [];
+
+        for(let marker of markers) {
+            if(marker) {
+                coordinates.push(marker.getLngLat());
+            }
+        }
+
+        if(!coordinates.length) {
+            return;
+        }
+
+        // Create a 'LngLatBounds' with both corners at the first coordinate.
+
+        const bounds = new mapboxgl.LngLatBounds(
+            coordinates[0],
+            coordinates[0]
+        );
+
+        // Extend the 'LngLatBounds' to include every coordinate in the bounds result.
+        for (const coord of coordinates) {
+            bounds.extend(coord);
+        }
+
+        let max_dim = Math.max(map.getCanvas().offsetWidth, map.getCanvas().offsetHeight);
+
+        let padding = max_dim * margin_percent;
+
+        map.fitBounds(bounds, {
+            padding: padding
+        });
+    },
     events: {
         init: function () {
             return new Promise(async (resolve, reject) => {
