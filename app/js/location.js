@@ -16,10 +16,12 @@ befriend.location = {
             }
 
             function geoLocationSuccess(position) {
-                befriend.location.device = {
-                    lat: position.coords.latitude,
-                    lon: position.coords.longitude,
-                };
+                if(!befriend.location.device) {
+                    befriend.location.device = {};
+                }
+
+                befriend.location.device.lat = position.coords.latitude;
+                befriend.location.device.lon = position.coords.longitude;
 
                 if (!befriend.location.current) {
                     befriend.location.current = befriend.location.device;
