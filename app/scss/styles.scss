@@ -75,17 +75,25 @@ body.loading {
     will-change: opacity;
     transform: translateZ(0);
     transition:
+        opacity $overlay_transition_ms,
+        visibility 0ms $overlay_transition_ms;
+
+    &.hide {
+        opacity: 0 !important;
+        visibility: hidden !important;
+        transition:
             opacity $overlay_transition_ms,
-            visibility 0ms $overlay_transition_ms;
+            visibility 0ms $overlay_transition_ms !important;
+    }
 }
 
 html.#{$class_places_shown},
-html.#{$class_change_location},
-html.#{$class_create_activity_shown} {
+html.#{$class_change_location} {
     #overlay {
         opacity: 0.18;
         visibility: visible;
-        transition: opacity $overlay_transition_ms,
-                    visibility 0ms;
+        transition:
+            opacity $overlay_transition_ms,
+            visibility 0ms;
     }
 }

@@ -6,18 +6,15 @@ befriend.styles = {
                 await befriend.styles.setStatusBarBorder(1);
 
                 //set margin top based on status bar height
-                if(is_ios) {
+                if (is_ios) {
                     try {
                         let sbh = await befriend.styles.getStatusBarHeight();
 
-                        let views_el = document.getElementById('views');
+                        let views_el = document.getElementById("views");
 
-                        views_el.style.marginTop = sbh + befriend.variables.view_gap_tb + 'px';
-                    } catch(e) {
-
-                    }
+                        views_el.style.marginTop = sbh + befriend.variables.view_gap_tb + "px";
+                    } catch (e) {}
                 }
-
             } catch (e) {
                 console.error(e);
             }
@@ -27,20 +24,22 @@ befriend.styles = {
     },
     transformStatusBar: function (px, transition_sec) {
         return new Promise(async (resolve, reject) => {
-            if(!isNumeric(transition_sec)) {
-                transition_sec = .3;
+            if (!isNumeric(transition_sec)) {
+                transition_sec = 0.3;
             }
 
             try {
-                StatusBar.transformStatusBar(px, transition_sec,
-                    function(success) {
+                StatusBar.transformStatusBar(
+                    px,
+                    transition_sec,
+                    function (success) {
                         resolve();
                     },
-                    function(error) {
+                    function (error) {
                         resolve();
-                    }
+                    },
                 );
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
                 resolve();
             }
@@ -48,11 +47,11 @@ befriend.styles = {
         });
     },
     toggleStatusBar: function (show) {
-        if(!StatusBar) {
+        if (!StatusBar) {
             return;
         }
 
-        if(show) {
+        if (show) {
             StatusBar.show();
         } else {
             befriend.styles.setStatusBarBorder(0);
@@ -60,19 +59,21 @@ befriend.styles = {
         }
     },
     setStatusBarBorder: function (px, color) {
-        if(!color) {
+        if (!color) {
             color = befriend.variables.app_background;
         }
 
         return new Promise(async (resolve, reject) => {
             try {
-                StatusBar.setStatusBarBorder(px, color,
-                    function(success) {
+                StatusBar.setStatusBarBorder(
+                    px,
+                    color,
+                    function (success) {
                         resolve();
                     },
-                    function(error) {
+                    function (error) {
                         resolve();
-                    }
+                    },
                 );
             } catch (e) {
                 console.error(e);
@@ -82,12 +83,12 @@ befriend.styles = {
     },
     setBackgroundAlpha: function (alpha, transition_sec) {
         try {
-            if(!isNumeric(transition_sec)) {
-                transition_sec = .3;
+            if (!isNumeric(transition_sec)) {
+                transition_sec = 0.3;
             }
 
             StatusBar.setBackgroundTransparency(alpha, transition_sec);
-        } catch(e) {
+        } catch (e) {
             console.error(e);
         }
     },
@@ -119,5 +120,12 @@ befriend.styles = {
         }
 
         return inset_height;
+    },
+    hideOverlay: function (hide) {
+        if (hide) {
+            addClassEl("hide", "overlay");
+        } else {
+            removeClassEl("hide", "overlay");
+        }
     },
 };

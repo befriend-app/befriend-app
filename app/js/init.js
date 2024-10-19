@@ -36,10 +36,10 @@ function loadCSS() {
         console.error(e);
     }
 
-    if(is_ios) {
-        addClassEl('ios', document.documentElement);
-    } else if(is_android) {
-        addClassEl('android', document.documentElement);
+    if (is_ios) {
+        addClassEl("ios", document.documentElement);
+    } else if (is_android) {
+        addClassEl("android", document.documentElement);
     }
 
     try {

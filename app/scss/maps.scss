@@ -1,6 +1,7 @@
 #activities-map-wrapper {
     margin-bottom: 10px;
-    height: 100px;
+    width: 100%;
+    height: $map_activities_h;
 
     .buttons-wrapper {
         position: relative;
@@ -206,10 +207,12 @@
 }
 
 #activities-map {
-    width: 100%;
-    height: 100%;
+    width: calc(calc(100vw - $app_margin_lr * 2 - $view_padding_lr * 2));
+    height: $map_activities_h;
     border-radius: 8px;
     border: 0.5px solid $color_lightgray;
+    transform: translate(0, 0);
+    transition: all $create_activity_transition_ms;
 }
 
 .mapboxgl-ctrl-logo {

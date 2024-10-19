@@ -63,16 +63,52 @@ befriend.activities = {
             }
         });
     },
-    displayCreateActivity: function (place_id) {
-        befriend.styles.toggleStatusBar(false);
+    displayCreateActivity: async function (place_id) {
+        let status_bar_height = 0;
 
-        //move map to top, change height
+        try {
+            status_bar_height = await befriend.styles.getStatusBarHeight();
+        } catch (e) {}
 
+        setTimeout(function () {
+            //hide overlay
+            befriend.styles.hideOverlay(true);
+        }, befriend.variables.create_activity_transition_ms);
 
-        requestAnimationFrame(function () {
-            befriend.html.createActivity(place_id);
-            befriend.activities.toggleCreateActivity(true);
-        });
+        //transform/transition system status bar
+        befriend.styles.transformStatusBar(
+            status_bar_height + 5,
+            befriend.variables.create_activity_transition_ms / 1000,
+        );
+
+        befriend.activities.toggleCreateActivity(true);
+
+        //change height, move map to top
+
+        //remove transition for resizing map canvas
+        befriend.els.activities_map.style.transition = "initial";
+        befriend.els.activities_map.style.width = "100vw";
+        befriend.els.activities_map.style.height = `${befriend.variables.map_create_activity_h}px`;
+
+        //calculate transform
+        let map_box = befriend.els.activities_map.getBoundingClientRect();
+
+        await rafAwait();
+
+        befriend.maps.maps.activities.resize();
+
+        //remove removed-transition
+        befriend.els.activities_map.style.removeProperty("transition");
+        befriend.els.activities_map.style.position = "absolute";
+
+        await rafAwait();
+
+        befriend.els.activities_map.style.transform = `translate(${-map_box.x}px, ${-map_box.y}px)`;
+
+        // await rafAwait();
+
+        // befriend.els.activities_map.style.top = 0;
+        // befriend.els.activities_map.style.left = 0;
     },
     createNewActivity: function (persons_count) {
         return new Promise(async (resolve, reject) => {
@@ -93,13 +129,6 @@ befriend.activities = {
             befriend.timing.showCreateActivity = timeNow();
 
             addClassEl(befriend.classes.createActivityShown, document.documentElement);
-
-            //hide display places after transition
-            setTimeout(() => {
-                if (befriend.places.isPlacesShown()) {
-                    befriend.places.toggleDisplayPlaces(false);
-                }
-            }, befriend.variables.activities_transition_ms);
         } else {
             removeClassEl(befriend.classes.createActivityShown, document.documentElement);
         }
@@ -110,7 +139,7 @@ befriend.activities = {
     updateLevelHeight: function (level_num, skip_set_prev) {
         let level_el = befriend.els.activities.querySelector(`.level_${level_num}.show`);
 
-        if(!level_el) {
+        if (!level_el) {
             return;
         }
 
@@ -120,7 +149,7 @@ befriend.activities = {
 
         let level_height = getElHeightHidden(level_el);
 
-        if(!skip_set_prev) {
+        if (!skip_set_prev) {
             level_el.setAttribute("data-prev-height", `${level_height}px`);
         }
 
@@ -317,7 +346,7 @@ befriend.activities = {
                                 befriend.places.displayPlaces(befriend.activities.selected.level_2);
 
                                 setTimeout(function () {
-                                    removeClassEl('active', el);
+                                    removeClassEl("active", el);
                                 }, befriend.variables.places_transition_ms);
                             }
                         }
@@ -468,7 +497,7 @@ befriend.activities = {
                             befriend.places.displayPlaces(befriend.activities.selected.level_3);
 
                             setTimeout(function () {
-                                removeClassEl('active', el);
+                                removeClassEl("active", el);
                             }, befriend.variables.places_transition_ms);
                         }
                     });

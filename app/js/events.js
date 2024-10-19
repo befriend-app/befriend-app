@@ -27,7 +27,10 @@ befriend.events = {
                 //hide create activity to the right
                 if (!e.target.closest("#create-activity")) {
                     //do not hide on double click if place just clicked
-                    if (timeNow() - befriend.timing.showCreateActivity < befriend.variables.activities_transition_ms) {
+                    if (
+                        timeNow() - befriend.timing.showCreateActivity <
+                        befriend.variables.create_activity_transition_ms
+                    ) {
                         return false;
                     }
 

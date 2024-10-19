@@ -133,7 +133,11 @@ befriend.html = {
                         </div>
                     </div>
 
-                    <div id="create-activity"></div>
+                    <div id="create-activity">
+                        <div class="container">
+                            
+                        </div>
+                    </div>
                     
                     <div id="overlay"></div>
                     
@@ -472,13 +476,13 @@ befriend.html = {
                 html += `<div class="place" data-place-id="${place.fsq_place_id}">${place_html.full}</div>`;
             }
 
-            let places_el = befriend.els.places.querySelector(".places")
+            let places_el = befriend.els.places.querySelector(".places");
 
             places_el.innerHTML = html;
 
             befriend.html.setPlacesHours();
 
-            befriend.places.events.handleSelectPlace(places_el.getElementsByClassName('place'));
+            befriend.places.events.handleSelectPlace(places_el.getElementsByClassName("place"));
 
             resolve();
         });
@@ -594,7 +598,7 @@ befriend.html = {
             befriend.places.toggleAutoComplete(true);
         }
 
-        befriend.places.events.handleSelectPlace(suggestions_el.getElementsByClassName('place'));
+        befriend.places.events.handleSelectPlace(suggestions_el.getElementsByClassName("place"));
     },
     setPlacesHours: function () {
         //header
@@ -638,14 +642,14 @@ befriend.html = {
         }
     },
     createActivity: function (place_id) {
-        if(!place_id) {
+        if (!place_id) {
             return false;
         }
 
         let place = befriend.places.data.obj[place_id] || befriend.places.autoComplete.obj[place_id];
 
         console.log({
-            place
-        })
-    }
+            place,
+        });
+    },
 };

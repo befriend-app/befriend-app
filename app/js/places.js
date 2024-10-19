@@ -338,7 +338,7 @@ befriend.places = {
 
                 place_el._listener = true;
 
-                place_el.addEventListener('click', function (e) {
+                place_el.addEventListener("click", function (e) {
                     e.preventDefault();
                     e.stopPropagation();
 
