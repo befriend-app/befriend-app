@@ -2,7 +2,7 @@ befriend.styles = {
     init: function () {
         return new Promise(async (resolve, reject) => {
             try {
-                befriend.styles.setBackgroundAlpha(1);
+                await befriend.styles.transformStatusBar(0, 0);
                 await befriend.styles.setStatusBarBorder(1);
 
                 //set margin top based on status bar height
@@ -25,6 +25,28 @@ befriend.styles = {
             resolve();
         });
     },
+    transformStatusBar: function (px, transition_sec) {
+        return new Promise(async (resolve, reject) => {
+            if(!isNumeric(transition_sec)) {
+                transition_sec = .3;
+            }
+
+            try {
+                StatusBar.transformStatusBar(px, transition_sec,
+                    function(success) {
+                        resolve();
+                    },
+                    function(error) {
+                        resolve();
+                    }
+                );
+            } catch(e) {
+                console.error(e);
+                resolve();
+            }
+            resolve();
+        });
+    },
     toggleStatusBar: function (show) {
         if(!StatusBar) {
             return;
@@ -37,33 +59,34 @@ befriend.styles = {
             StatusBar.hide();
         }
     },
-    setStatusBarBorder: function (px) {
+    setStatusBarBorder: function (px, color) {
+        if(!color) {
+            color = befriend.variables.app_background;
+        }
+
         return new Promise(async (resolve, reject) => {
             try {
-                if (befriend.variables.app_background) {
-                    StatusBar.addBorder(
-                        befriend.variables.app_background, //color
-                        px, //height
-                        function () {
-                            resolve();
-                        },
-                        function (error) {
-                            console.error("Error adding border: " + error);
-                            resolve();
-                        },
-                    );
-                } else {
-                    resolve();
-                }
+                StatusBar.setStatusBarBorder(px, color,
+                    function(success) {
+                        resolve();
+                    },
+                    function(error) {
+                        resolve();
+                    }
+                );
             } catch (e) {
                 console.error(e);
                 resolve();
             }
         });
     },
-    setBackgroundAlpha: function (alpha) {
+    setBackgroundAlpha: function (alpha, transition_sec) {
         try {
-            StatusBar.setBackgroundTransparency(alpha, 300);
+            if(!isNumeric(transition_sec)) {
+                transition_sec = .3;
+            }
+
+            StatusBar.setBackgroundTransparency(alpha, transition_sec);
         } catch(e) {
             console.error(e);
         }
