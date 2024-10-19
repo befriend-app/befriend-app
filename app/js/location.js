@@ -64,7 +64,7 @@ befriend.location = {
         befriend.location.toggleChangeLocation(false);
         befriend.els.activities.querySelector(".near-text").innerHTML = befriend.location.current.name;
 
-        befriend.maps.removeMarker(befriend.maps.markers.currentMarker);
+        befriend.maps.removeMarkers([befriend.maps.markers.me, befriend.maps.markers.pin, befriend.maps.markers.be]);
 
         befriend.maps.addMarker(befriend.maps.maps.activities, befriend.location.search, {
             is_pin: true,
@@ -218,7 +218,7 @@ befriend.location = {
 
                 befriend.els.activities.querySelector(".near-text").innerHTML = "Me";
 
-                befriend.maps.removeMarker(befriend.maps.markers.currentMarker);
+                befriend.maps.removeMarkers([befriend.maps.markers.me, befriend.maps.markers.pin, befriend.maps.markers.be]);
 
                 befriend.maps.addMarker(befriend.maps.maps.activities, befriend.location.current, {
                     is_me: true,

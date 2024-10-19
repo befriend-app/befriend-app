@@ -7,7 +7,9 @@ befriend.maps = {
         activities: null,
     },
     markers: {
-        currentMarker: null,
+        me: null,
+        pin: null,
+        be: null,
     },
     defaultZoom: 13,
     init: function () {
@@ -160,7 +162,14 @@ befriend.maps = {
 
                 let marker = new mapboxgl.Marker(el).setLngLat([location.lon, location.lat]).addTo(map);
 
-                befriend.maps.markers.currentMarker = marker;
+                if (marker_type.is_me) {
+                    befriend.maps.markers.me = marker;
+                } else if (marker_type.is_pin) {
+                    befriend.maps.markers.pin = marker;
+                } else if (marker_type.is_place) {
+                    befriend.maps.markers.be = marker;
+                }
+
 
                 resolve(marker);
             } catch (error) {
@@ -169,8 +178,16 @@ befriend.maps = {
             }
         });
     },
-    removeMarker: function (marker) {
-        marker.remove();
+    removeMarkers: function (markers) {
+        if(!Array.isArray(markers)) {
+            markers = [markers];
+        }
+        
+        for(let marker of markers) {
+            if(marker) {
+                marker.remove();
+            }    
+        }
     },
     setMapCenter: function (map, location, zoom_level, fly_to) {
         if (fly_to) {
