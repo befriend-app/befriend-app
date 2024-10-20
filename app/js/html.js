@@ -2,6 +2,7 @@ befriend.html = {
     setEls: function () {
         befriend.els.views = document.getElementById("views");
         befriend.els.activities = document.getElementById("activities");
+        befriend.els.activity_duration = document.getElementById("activity-duration");
         befriend.els.activities_map = document.getElementById("activities-map");
         befriend.els.activities_map_wrapper = document.getElementById("activities-map-wrapper");
         befriend.els.change_location = document.getElementById("change-location");
@@ -157,6 +158,15 @@ befriend.html = {
                                         
                                     <div class="info"></div>
                                 </div>
+                                <div id="activity-duration" class="set-duration section">
+                                    <div class="label">Duration</div>
+                                    
+                                    <div class="slider">
+                                        <div>30</div>
+                                        <input id="range-activity-duration" class="range" type="range" value="30" min="10" max="600" step="5">
+                                    </div>
+                                </div>
+
                                 <div class="friends section">
                                     <div class="label">Friends</div>
                                     
@@ -367,7 +377,7 @@ befriend.html = {
                 };
 
                 //location
-                place_html.location = befriend.html.getPlaceHTML(place);
+                place_html.location = befriend.html.getPlaceLocation(place);
 
                 //distance
                 place_html.distance = place.distance.miles_km.toFixed(1);
@@ -522,7 +532,7 @@ befriend.html = {
                 place_html.name = `<div class="name">${place.name}</div>`;
             }
 
-            place_html.location = befriend.html.getPlaceHTML(place);
+            place_html.location = befriend.html.getPlaceLocation(place);
 
             //distance
             let distance_html = "";
@@ -663,13 +673,45 @@ befriend.html = {
 
         activity_el.querySelector('.info').innerHTML = activity_name;
 
-        let place_el = parent_el.querySelector('.place');
+        //set place
+        let place_el = parent_el.querySelector('.place').querySelector('.info');
 
-        let place_html = befriend.html.getPlaceHTML(place);
+        let place_name_html = ``;
 
-        place_el.innerHTML = `<div class="address"></div><div class="city"></div>${state}`
+        if(place.name) {
+            place_name_html = `<div class="place-name">${place.name}</div>`;
+        }
+
+        let location_html = befriend.html.getPlaceLocation(place);
+
+        place_el.innerHTML = `${place_name_html}<div class="location">${location_html}</div>`;
+
+        //set when
+        let when_el = parent_el.querySelector('.when');
+
+        let when_current = befriend.when.selected;
+
+        let when_str = '';
+
+        if(when_current.is_now) {
+            when_str = when_current.name;
+        } else if(when_current.is_schedule) {
+            //todo
+            when_str = 'Scheduled';
+        } else {
+            when_str = when_current.time.formatted;
+        }
+
+        let duration_value = '';
+
+        when_el.querySelector('.info').innerHTML = `<div class="time">${when_str}</div><div class="duration">for<div class="value">${duration_value}</div></div>`;
+
+        //set friends
+
+
+        //set filters
     },
-    getPlaceHTML(place) {
+    getPlaceLocation(place) {
         let html = '';
 
         if (place.location_address) {

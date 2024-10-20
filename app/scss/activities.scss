@@ -501,10 +501,10 @@ html.#{$class_create_activity_shown} {
 
         .container {
             padding: 30px 30px;
-
             display: flex;
             flex-direction: column;
             gap: 10px 0;
+            overflow-x: hidden;
 
             .section {
                 padding: 10px 0;
@@ -527,6 +527,165 @@ html.#{$class_create_activity_shown} {
                     padding-top: 6px;
                     font-size: 14px;
                 }
+
+                &.place {
+                    .place-name {
+                        font-size: 15px;
+                        //font-weight: 500;
+                    }
+
+                    .info {
+                        font-size: 12px;
+                    }
+
+                    .location {
+                        margin-top: 4px;
+                    }
+                }
+            }
+        }
+    }
+
+    .set-duration {
+        .slider {
+            position: relative;
+            width: 400px;
+            max-width: calc(calc(100% - $range_duration_dim));
+            margin: auto;
+            margin-top: 20px;
+
+            div {
+                position: absolute;
+                color: white;
+                background-color: $brand_color_a;
+                width: $range_duration_dim;
+                height: $range_duration_dim;
+                border-radius: 50%;
+                pointer-events: none;
+                font-size: 12px;
+                border: 1px solid $color_lightgray;
+
+                @include flex-center;
+
+                span {
+                    margin-left: 2px;
+                    font-size: 7px;
+                    font-weight: 600;
+                }
+            }
+        }
+
+        .range {
+            -webkit-appearance: none;
+            vertical-align: middle;
+            outline: none;
+            border: none;
+            padding: 0;
+            background: none;
+            width: 100%;
+            margin: 0;
+            height: $range_duration_dim;
+
+            &::-webkit-slider-runnable-track {
+                background-color: #d7dbdd;
+                height: 6px;
+                border-radius: 3px;
+                border: 1px solid transparent;
+            }
+
+            &::-moz-range-track {
+                background-color: #d7dbdd;
+                height: 6px;
+                border-radius: 3px;
+                border: none;
+            }
+
+            &::-ms-track {
+                color: transparent;
+                border: none;
+                background: none;
+                height: 6px;
+            }
+
+            &::-ms-fill-lower {
+                background-color: #d7dbdd;
+                border-radius: 3px;
+            }
+
+            &::-ms-fill-upper {
+                background-color: #d7dbdd;
+                border-radius: 3px;
+            }
+
+            &::-ms-tooltip {
+                display: none;
+            }
+
+            &::-moz-range-thumb {
+                border-radius: 20px;
+                height: $range_duration_dim;
+                width: $range_duration_dim;
+                border: none;
+                background: none;
+                background-color: #606670;
+                opacity: 0; //hides knob below circle
+            }
+
+            &:active::-moz-range-thumb {
+                outline: none;
+            }
+
+            &::-webkit-slider-thumb {
+                -webkit-appearance: none !important;
+                border-radius: 100%;
+                background-color: #606670;
+                height: $range_duration_dim;
+                width: $range_duration_dim;
+                margin-top: calc(-#{$range_duration_dim * 0.46});
+                border: 1px solid darken(lightgray, 30%);
+                opacity: 0; //hides knob below circle
+            }
+
+            &:active::-webkit-slider-thumb {
+                outline: none;
+            }
+
+            &::-ms-thumb {
+                border-radius: 100%;
+                background-color: #606670;
+                height: $range_duration_dim;
+                width: $range_duration_dim;
+                border: none;
+                opacity: 0;
+            }
+
+            &:active::-ms-thumb {
+                border: none;
+            }
+
+            &::-moz-range-track {
+                background-color: #606670;
+                border: none;
+            }
+
+            &::-ms-fill-lower {
+                background-color: #606670;
+            }
+
+            &::-ms-fill-upper {
+                background-color: #606670;
+            }
+
+            &::-webkit-slider-thumb {
+                background-color: #aaa;
+            }
+
+            &::-moz-range-thumb {
+                background-color: #aaa;
+            }
+
+            &::-ms-thumb {
+                background-color: #aaa;
             }
         }
     }
@@ -565,6 +724,6 @@ html.#{$class_create_activity_shown} {
     @include flex-center-col;
 
     svg {
-        height: 22px;
+        height: 17px;
     }
 }

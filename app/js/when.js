@@ -50,7 +50,14 @@ befriend.when = {
 
                 let date = befriend.when.getOptionDateTime(data);
 
-                el.querySelector(".time").innerHTML = date.format(`h:mm a`);
+                let time_formatted = date.format(`h:mm a`);
+
+                data.time = {
+                    formatted: time_formatted,
+                    unix: date.unix()
+                };
+
+                el.querySelector(".time").innerHTML = time_formatted;
 
                 if (befriend.places.isPlacesShown()) {
                     befriend.places.updatePlacesOpen();

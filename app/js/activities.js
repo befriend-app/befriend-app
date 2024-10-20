@@ -23,6 +23,10 @@ befriend.activities = {
         level_2: null,
         level_3: null,
     },
+    duration: {
+        default: 30,
+        current: 30
+    },
     init: function () {
         return new Promise(async (resolve, reject) => {
             //add brand color to top of activity colors
@@ -199,6 +203,7 @@ befriend.activities = {
                 try {
                     await befriend.activities.events.level1();
                     befriend.activities.events.onCreateActivityBack();
+                    befriend.activities.events.activityDuration();
                 } catch (e) {
                     console.error(e);
                 }
@@ -254,6 +259,62 @@ befriend.activities = {
 
                 back_el.style.removeProperty('display');
             });
+        },
+        activityDuration: function () {
+            let minutes = befriend.activities.duration.default;
+
+            let sliderRange = document.getElementById("range-activity-duration");
+
+            function updatePosition() {
+                let widthSubtract = 0;
+
+                if (window.innerWidth < 450) {
+                    // widthSubtract = 25;
+                }
+
+                let width = sliderRange.offsetWidth - widthSubtract;
+
+                let min = sliderRange.getAttribute("min");
+                let max = sliderRange.getAttribute("max");
+
+                let percent = (sliderRange.valueAsNumber - min) / max;
+
+                let offset = - befriend.variables.range_duration_dim / 2;
+
+                let position = width * percent + offset;
+
+                rangeVal.innerHTML = minutes;
+                rangeVal.style.left = `${position}px`;
+            }
+
+            window.addEventListener("resize", function (e) {
+                updatePosition();
+            });
+
+            window.addEventListener("orientationchange", function (e) {
+                updatePosition();
+            });
+
+            //set position of number for range
+            let rangeVal = befriend.els.activity_duration.querySelector(".slider div");
+
+            sliderRange.setAttribute("value", minutes);
+
+            sliderRange.addEventListener("input", function (e) {
+                let val = this.value;
+
+                if (!isNumeric(val)) {
+                    return;
+                }
+
+                minutes = parseInt(val);
+
+                befriend.activities.duration.current = minutes;
+
+                updatePosition();
+            });
+
+            updatePosition();
         },
         level1: function () {
             return new Promise(async (resolve, reject) => {

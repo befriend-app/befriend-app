@@ -259,7 +259,7 @@ html.#{$class_places_shown} {
             .distance-price {
                 display: flex;
                 align-items: center;
-                margin-bottom: 5px;
+                margin-bottom: 4px;
 
                 .distance {
                     font-size: 12px;
@@ -298,7 +298,7 @@ html.#{$class_places_shown} {
                 font-size: 14px;
                 max-width: calc(100vw - calc($places_padding_lr * 2 + $places_right_col));
                 line-height: 140%;
-                margin-bottom: 5px;
+                margin-bottom: 4px;
             }
 
             .location {
