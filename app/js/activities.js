@@ -24,11 +24,8 @@ befriend.activities = {
         level_3: null,
     },
     duration: {
-        selected: {
-            user: null,
-            current: null
-        },
-        default: 90,
+        selected: null,
+        default: 90, //min
         groups: {
             "60": {
                 max: 60,
@@ -241,6 +238,11 @@ befriend.activities = {
     setDurations: function () {
         befriend.html.setDurations();
     },
+    updateDuration: function (duration) {
+        befriend.activities.duration.selected = duration;
+
+        //set duration in when string
+    },
     displayCreateActivity: async function () {
         //set html
         befriend.html.createActivity();
@@ -435,6 +437,102 @@ befriend.activities = {
             });
         },
         activityDuration: function () {
+            let level_1_el = befriend.els.activity_duration.querySelector('.level_1');
+            let level_1_els = level_1_el.getElementsByClassName('button');
+            let level_2_el = befriend.els.activity_duration.querySelector('.level_2');
+            let level_2_options = level_2_el.getElementsByClassName('options');
+            let all_duration_options = level_2_el.getElementsByClassName('option');
+
+            //handle click on level 1
+            for(let level_1_i = 0; level_1_i < level_1_els.length; level_1_i++) {
+                let el = level_1_els[level_1_i];
+
+                el.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    removeElsClass(level_1_els, 'active');
+
+                    addClassEl('active', el);
+
+                    //set active options
+                    for(let level_2_i = 0; level_2_i < level_2_options.length; level_2_i++) {
+                        let group = level_2_options[level_2_i];
+
+                        if(parseInt(group.getAttribute('data-min-max')) === parseInt(el.getAttribute('data-min-max'))) {
+                            //show group
+                            addClassEl('active', group);
+
+                            //select option
+                            let option_els = group.getElementsByClassName('option');
+
+                            removeElsClass(option_els, 'selected');
+
+                            let min_selected = null;
+
+                            //previously selected by user
+                            for(let i = 0; i < option_els.length; i++) {
+                                let option_el = option_els[i];
+
+                                if(elHasClass(option_el, 'is_user')) {
+                                    let min = parseInt(option_el.getAttribute('data-min'));
+                                    min_selected = min;
+                                    addClassEl('selected', option_el);
+                                    //
+                                    // if(min === befriend.activities.duration.selected) {
+                                    //
+                                    // }
+                                }
+                            }
+
+                            if(!min_selected) {
+                                //custom for group
+                                if(level_1_i === 0) {
+                                    for(let i = 0; i < option_els.length; i++) {
+                                        let option_el = option_els[i];
+
+                                        let min = parseInt(option_el.getAttribute('data-min'));
+
+                                        if(min === 30) {
+                                            addClassEl('selected', option_el);
+                                            min_selected = min;
+                                        }
+                                    }
+                                } else {
+                                    min_selected = parseInt(option_els[0].getAttribute('data-min'));
+                                    addClassEl('selected', option_els[0]);
+                                }
+                            }
+
+                            befriend.activities.updateDuration(min_selected);
+                        } else {
+                            removeClassEl('active', group);
+                        }
+                    }
+                });
+            }
+
+            //handle selection of duration
+            for(let i = 0; i < all_duration_options.length; i++) {
+                let el = all_duration_options[i];
+
+                el.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    let group_options = el.closest('.options').getElementsByClassName('option');
+
+                    removeElsClass(group_options, 'selected');
+                    removeElsClass(group_options, 'is_user');
+
+                    addClassEl('selected', el);
+                    addClassEl('is_user', el);
+
+                    let min = parseInt(el.getAttribute('data-min'));
+
+                    befriend.activities.updateDuration(min);
+                });
+            }
 
         },
         level1: function () {

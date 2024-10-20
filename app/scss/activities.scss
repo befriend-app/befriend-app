@@ -624,9 +624,10 @@ html.#{$class_create_activity_shown} {
             }
 
             .num {
-                $h: 16px;
+                $h: 14px;
                 font-size: $h;
                 line-height: $h;
+                font-weight: 500;
             }
 
             .unit {
@@ -634,33 +635,38 @@ html.#{$class_create_activity_shown} {
                 margin-top: 4px;
                 font-size: $h;
                 line-height: $h;
+                font-weight: 300;
             }
         }
     }
 
     .level_2 {
+        $gap_lr: 6px;
+        $padding_lr: 10px;
+        $row_items: 3;
+
         margin-top: 10px;
         border: 1px solid $color_lightgray;
         border-radius: 8px;
-        padding: 10px 10px;
+        padding: 10px $padding_lr;
 
         .options {
             height: 0;
             overflow: hidden;
             display: flex;
             flex-wrap: wrap;
-            transition: all 300ms;
-            gap: 6px 6px;
+            //transition: all 300ms;
+            gap: 6px $gap_lr;
 
             &.active {
                 height: fit-content;
             }
 
             .option {
-                flex-basis: 20%;
+                flex-basis: calc(calc(calc(100% - $gap_lr * ($row_items - 1)) / $row_items));
                 background: #FFE0B2;
-                transition: all 300ms;
-                padding: 4px 12px;
+                //transition: background-color 300ms;
+                padding: 4px 0px;
                 border-radius: 8px;
                 gap: 0 5px;
 

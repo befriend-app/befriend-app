@@ -751,11 +751,11 @@ befriend.html = {
 
         let keys = Object.keys(befriend.activities.duration.groups);
 
-        let current_duration = befriend.activities.duration.selected.user || befriend.activities.duration.selected.current;
+        let current_duration = befriend.activities.duration.selected;
 
         if(!current_duration) {
             current_duration = befriend.activities.duration.default;
-            befriend.activities.duration.selected.current = current_duration;
+            befriend.activities.duration.selected = current_duration;
         }
 
         let active_set = false;
@@ -819,7 +819,7 @@ befriend.html = {
             }
 
             level_2_html += `
-                <div class="options min-${group.max} ${active_class}">
+                <div class="options min-${group.max} ${active_class}" data-min-max="${group.max}">
                     ${options_html}
                 </div>
             `;
