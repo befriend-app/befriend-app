@@ -11,6 +11,7 @@ befriend.html = {
         befriend.els.when = document.getElementById("when");
         befriend.els.who = document.getElementById("who");
         befriend.els.place_search = document.getElementById("place-search");
+        befriend.els.create_activity = document.getElementById("create-activity");
     },
     appInit: function () {
         return new Promise(async (resolve, reject) => {
@@ -676,12 +677,28 @@ befriend.html = {
             }
         }
     },
-    createActivity: function (place_id) {
-        if (!place_id) {
-            return false;
+    createActivity: function () {
+        let activity_obj = {
+            activity: null,
+            place: null,
+            when: null,
+            friends: null,
+            filters: null
+        };
+
+        let place = befriend.places.selected.place;
+
+        let parent_el = befriend.els.create_activity.querySelector('.main');
+
+        //set activity
+        let activity_el = parent_el.querySelector('.activity');
+
+        if(befriend.places.selected.is_activity_type) {
+
         }
 
-        let place = befriend.places.getPlace(place_id);
+
+
 
         console.log({
             place,

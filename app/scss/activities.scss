@@ -500,8 +500,28 @@ html.#{$class_create_activity_shown} {
         height: calc(calc(100% - $create_activity_bottom_h));
 
         .container {
-            padding: 0 30px;
-            padding-top: 50px;
+            padding: 30px 30px;
+
+            display: flex;
+            flex-direction: column;
+            gap: 20px 0;
+
+            .section {
+                padding: 10px 0;
+
+                &:first-of-type {
+                    padding-top: 0;
+                }
+
+                .label {
+                    width: 100%;
+                    font-size: 17px;
+                    color: lighten(black, 24%);
+                    font-weight: 500;
+                    border-bottom: 1px solid lighten($brand_color_a, 10%);
+                    padding-bottom: 6px;
+                }
+            }
         }
     }
 

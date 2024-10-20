@@ -9,6 +9,10 @@ befriend.places = {
         obj: {},
         minChars: 3,
     },
+    selected: {
+        place: null,
+        is_activity_type: false
+    },
     displayPlaces: function (activity_type) {
         return new Promise(async (resolve, reject) => {
             //set custom title and time
@@ -347,7 +351,10 @@ befriend.places = {
 
                     let place_id = place_el.getAttribute("data-place-id");
 
-                    befriend.activities.displayCreateActivity(place_id);
+                    befriend.places.selected.place = befriend.places.getPlace(place_id);
+                    befriend.places.selected.is_activity_type = befriend.places.isPlacesShown();
+
+                    befriend.activities.displayCreateActivity();
                 });
             }
         },

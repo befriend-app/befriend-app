@@ -63,7 +63,11 @@ befriend.activities = {
             }
         });
     },
-    displayCreateActivity: async function (place_id) {
+    displayCreateActivity: async function () {
+        //set html
+        befriend.html.createActivity();
+
+        //transition logic
         let map_el = befriend.els.activities_map;
 
         let status_bar_height = 0;
@@ -81,7 +85,7 @@ befriend.activities = {
         befriend.activities.toggleCreateActivity(true);
 
         //add place marker to map
-        let place = befriend.places.getPlace(place_id);
+        let place = befriend.places.selected.place;
 
         let lat = place.location_lat;
         let lon = place.location_lon;

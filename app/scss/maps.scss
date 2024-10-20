@@ -1,12 +1,21 @@
+html.#{$class_create_activity_shown} {
+    #activities-map-wrapper {
+        .buttons-wrapper {
+            visibility: hidden;
+        }
+    }
+}
+
 #activities-map-wrapper {
     margin-bottom: 10px;
     width: 100%;
     height: $map_activities_h;
 
     .buttons-wrapper {
-        position: relative;
-
         $icon_pos_x_y: 8px;
+
+        position: relative;
+        visibility: visible;
 
         .reset-location {
             position: absolute;
