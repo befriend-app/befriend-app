@@ -53,6 +53,7 @@ body {
 
 body.loading {
     visibility: hidden;
+    opacity: 0;
 }
 
 #app {
