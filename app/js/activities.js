@@ -24,13 +24,184 @@ befriend.activities = {
         level_3: null,
     },
     duration: {
-        default: 30,
-        current: 30
+        selected: {
+            user: null,
+            current: null
+        },
+        default: 90,
+        groups: {
+            "60": {
+                max: 60,
+                num: '10 - 60',
+                unit: 'minutes',
+                options: [
+                    [{
+                       num: 10,
+                       unit: 'min',
+                        minutes: 10
+                    }],
+                    [{
+                        num: 15,
+                        unit: 'min',
+                        minutes: 15
+                    }],
+                    [{
+                        num: 20,
+                        unit: 'min',
+                        minutes: 20
+                    }],
+                    [{
+                        num: 30,
+                        unit: 'min',
+                        minutes: 30
+                    }],
+                    [{
+                        num: 40,
+                        unit: 'min',
+                        minutes: 40
+                    }],
+                    [{
+                        num: 50,
+                        unit: 'min',
+                        minutes: 50
+                    }],
+                ]
+            },
+            "120": {
+                max: 120,
+                num: '1 - 2',
+                unit: 'hours',
+                options: [
+                    [{
+                        num: 1,
+                        unit: 'hr',
+                        minutes: 60
+                    }],
+                    [{
+                        num: 1,
+                        unit: 'hr',
+                        minutes: 70
+                    },
+                        {
+                            num: 10,
+                            unit: 'min',
+                            minutes: 70
+                        }
+                    ],
+                    [{
+                        num: 1,
+                        unit: 'hr',
+                        minutes: 80
+                    },
+                        {
+                            num: 20,
+                            unit: 'min',
+                            minutes: 80
+                        }
+                    ],
+                    [{
+                        num: 1,
+                        unit: 'hr',
+                        minutes: 90
+                    },
+                        {
+                            num: 30,
+                            unit: 'min',
+                            minutes: 90
+                        }
+                    ],
+                    [{
+                        num: 1,
+                        unit: 'hr',
+                        minutes: 100
+                    },
+                        {
+                            num: 40,
+                            unit: 'min',
+                            minutes: 100
+                        }
+                    ],
+                    [{
+                        num: 1,
+                        unit: 'hr',
+                        minutes: 110
+                    },
+                        {
+                            num: 50,
+                            unit: 'min',
+                            minutes: 110
+                        }
+                    ],
+                ]
+            },
+            "240": {
+                max: 240,
+                num: '2 - 4',
+                unit: 'hours',
+                options: [
+                    [{
+                        num: 2,
+                        unit: 'hrs',
+                        minutes: 120
+                    }],
+                    [{
+                        num: 2.5,
+                        unit: 'hrs',
+                        minutes: 150
+                    }],
+                    [{
+                        num: 3,
+                        unit: 'hrs',
+                        minutes: 180
+                    }],
+                    [{
+                        num: 3.5,
+                        unit: 'hrs',
+                        minutes: 210
+                    }],
+                ]
+            },
+            "360": {
+                max: 360,
+                num: '4 - 6',
+                unit: 'hours',
+                options: [
+                    [{
+                        num: 4,
+                        unit: 'hrs',
+                        minutes: 240
+                    }],
+                    [{
+                        num: 4.5,
+                        unit: 'hrs',
+                        minutes: 270
+                    }],
+                    [{
+                        num: 5,
+                        unit: 'hrs',
+                        minutes: 300
+                    }],
+                    [{
+                        num: 5.5,
+                        unit: 'hrs',
+                        minutes: 330
+                    }],
+                    [{
+                        num: 6,
+                        unit: 'hrs',
+                        minutes: 360
+                    }],
+                ]
+            }
+        }
     },
     init: function () {
         return new Promise(async (resolve, reject) => {
             //add brand color to top of activity colors
             befriend.activities.types.colors.unshift(befriend.variables.brand_color_a);
+
+            //set activity durations
+            befriend.activities.setDurations();
 
             try {
                 await befriend.activities.setActivityTypes();
@@ -66,6 +237,9 @@ befriend.activities = {
                 return reject();
             }
         });
+    },
+    setDurations: function () {
+        befriend.html.setDurations();
     },
     displayCreateActivity: async function () {
         //set html
@@ -261,60 +435,7 @@ befriend.activities = {
             });
         },
         activityDuration: function () {
-            let minutes = befriend.activities.duration.default;
 
-            let sliderRange = document.getElementById("range-activity-duration");
-
-            function updatePosition() {
-                let widthSubtract = 0;
-
-                if (window.innerWidth < 450) {
-                    // widthSubtract = 25;
-                }
-
-                let width = sliderRange.offsetWidth - widthSubtract;
-
-                let min = sliderRange.getAttribute("min");
-                let max = sliderRange.getAttribute("max");
-
-                let percent = (sliderRange.valueAsNumber - min) / max;
-
-                let offset = - befriend.variables.range_duration_dim / 2;
-
-                let position = width * percent + offset;
-
-                rangeVal.innerHTML = minutes;
-                rangeVal.style.left = `${position}px`;
-            }
-
-            window.addEventListener("resize", function (e) {
-                updatePosition();
-            });
-
-            window.addEventListener("orientationchange", function (e) {
-                updatePosition();
-            });
-
-            //set position of number for range
-            let rangeVal = befriend.els.activity_duration.querySelector(".slider div");
-
-            sliderRange.setAttribute("value", minutes);
-
-            sliderRange.addEventListener("input", function (e) {
-                let val = this.value;
-
-                if (!isNumeric(val)) {
-                    return;
-                }
-
-                minutes = parseInt(val);
-
-                befriend.activities.duration.current = minutes;
-
-                updatePosition();
-            });
-
-            updatePosition();
         },
         level1: function () {
             return new Promise(async (resolve, reject) => {

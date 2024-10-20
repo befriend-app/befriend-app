@@ -143,6 +143,16 @@ befriend.html = {
                     <div id="create-activity">
                         <div class="main">
                             <div class="container">
+                                <div id="activity-duration" class="set-duration section">
+                                    <div class="label">Duration</div>
+                                    
+                                    <div class="level_1">
+                                    </div>
+                                    
+                                    <div class="level_2">
+                                    </div>
+                                </div>
+
                                 <div class="activity section">
                                     <div class="label">Activity</div>
                                     
@@ -157,14 +167,6 @@ befriend.html = {
                                     <div class="label">When</div>
                                         
                                     <div class="info"></div>
-                                </div>
-                                <div id="activity-duration" class="set-duration section">
-                                    <div class="label">Duration</div>
-                                    
-                                    <div class="slider">
-                                        <div>30</div>
-                                        <input id="range-activity-duration" class="range" type="range" value="30" min="10" max="600" step="5">
-                                    </div>
                                 </div>
 
                                 <div class="friends section">
@@ -271,6 +273,7 @@ befriend.html = {
             befriend.els.when.querySelector(".when-options").innerHTML = html;
 
             befriend.when.setWhenTimes();
+
             resolve();
         });
     },
@@ -738,5 +741,90 @@ befriend.html = {
         html += `<div class="locality">${place.location_locality}, ${place.location_region}</div>`;
 
         return html;
+    },
+    setDurations: function () {
+        let level_1_el = befriend.els.activity_duration.querySelector('.level_1');
+        let level_2_el = befriend.els.activity_duration.querySelector('.level_2');
+
+        //set level 1
+        let level_1_html = '';
+
+        let keys = Object.keys(befriend.activities.duration.groups);
+
+        let current_duration = befriend.activities.duration.selected.user || befriend.activities.duration.selected.current;
+
+        if(!current_duration) {
+            current_duration = befriend.activities.duration.default;
+            befriend.activities.duration.selected.current = current_duration;
+        }
+
+        let active_set = false;
+
+        for(let i = 0; i < keys.length; i++) {
+            let key = keys[i];
+            let group = befriend.activities.duration.groups[key];
+
+            let active_class = '';
+
+            if(!active_set && group.max > current_duration) {
+                active_class = 'active';
+                active_set = true;
+            }
+
+            level_1_html += `
+                <div class="button ${active_class}" data-min-max="${group.max}">
+                    <div class="num">${group.num}</div>
+                    <div class="unit">${group.unit}</div>
+                </div>
+            `;
+        }
+
+        level_1_el.innerHTML = level_1_html;
+
+        //set level 2
+        let level_2_html = ``;
+
+        active_set = false;
+
+        for(let i = 0; i < keys.length; i++) {
+            let key = keys[i];
+            let group = befriend.activities.duration.groups[key];
+
+            let active_class = '';
+
+            if(!active_set && group.max > current_duration) {
+                active_class = 'active';
+                active_set = true;
+            }
+
+            let options_html = '';
+
+            for(let option of group.options) {
+                let selected_class = option[0].minutes === current_duration ?
+                    'selected' : '';
+
+                let option_html = ``;
+
+                for(let i = 0; i < option.length; i++) {
+                    let item = option[i];
+
+                    option_html += `<div class="num-unit">
+                                        <div class="num">${item.num}</div><div class="unit">${item.unit}</div>
+                                    </div>`
+                }
+
+                options_html += `<div class="option ${selected_class}" data-min="${option[0].minutes}">
+                                    ${option_html}
+                                </div>`;
+            }
+
+            level_2_html += `
+                <div class="options min-${group.max} ${active_class}">
+                    ${options_html}
+                </div>
+            `;
+        }
+
+        level_2_el.innerHTML = level_2_html;
     }
 };
