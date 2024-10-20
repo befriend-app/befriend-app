@@ -166,7 +166,13 @@ befriend.html = {
                                 <div class="when section">
                                     <div class="label">When</div>
                                         
-                                    <div class="info"></div>
+                                    <div class="info">
+                                        <div class="time"></div>
+                                        <div class="duration">
+                                            <span>for</span>
+                                            <div class="value"></div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="friends section">
@@ -705,9 +711,8 @@ befriend.html = {
             when_str = when_current.time.formatted;
         }
 
-        let duration_value = '';
-
-        when_el.querySelector('.info').innerHTML = `<div class="time">${when_str}</div><div class="duration">for<div class="value">${duration_value}</div></div>`;
+        when_el.querySelector('.time').innerHTML = when_str;
+        when_el.querySelector('.duration').querySelector('.value').innerHTML = befriend.activities.getDurationStr();
 
         //set friends
 

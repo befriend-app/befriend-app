@@ -493,11 +493,12 @@ html.#{$class_create_activity_shown} {
     position: fixed;
     bottom: 0;
     z-index: 99;
-    //transform: translateX(115vw);
+    transform: translateX(115vw);
     overscroll-behavior: none;
 
     .main {
         height: calc(calc(100% - $create_activity_bottom_h));
+        overflow-y: scroll;
 
         .container {
             padding: 30px 30px;
@@ -540,6 +541,27 @@ html.#{$class_create_activity_shown} {
 
                     .location {
                         margin-top: 4px;
+                    }
+                }
+
+                &.when {
+                    $gap: 4px;
+
+                    .time {
+                        font-weight: 500;
+                        margin-right: $gap;
+                    }
+
+                    .info {
+                        display: flex;
+                    }
+
+                    .duration {
+                        display: flex;
+
+                        .value {
+                            margin-left: $gap;
+                        }
                     }
                 }
             }
