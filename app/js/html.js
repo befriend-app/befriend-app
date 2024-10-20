@@ -367,28 +367,7 @@ befriend.html = {
                 };
 
                 //location
-                if (place.location_address) {
-                    place_html.location += `<div class="address">${place.location_address}</div>`;
-                }
-
-                if (place.location_address_2) {
-                    //do not show if zip code in address_2
-
-                    let is_postcode =
-                        place.location_address_2.includes(place.location_postcode) ||
-                        isZIPFormat(place.location_address_2);
-
-                    if (!is_postcode) {
-                        //do not show if address and address_2 are too similar
-                        let str_similarity = stringSimilarity(place.location_address, place.location_address_2);
-
-                        if (str_similarity < 0.5) {
-                            place_html.location += `<div class="address_2">${place.location_address_2}</div>`;
-                        }
-                    }
-                }
-
-                place_html.location += `<div class="locality">${place.location_locality}, ${place.location_region}</div>`;
+                place_html.location = befriend.html.getPlaceHTML(place);
 
                 //distance
                 place_html.distance = place.distance.miles_km.toFixed(1);
@@ -543,28 +522,7 @@ befriend.html = {
                 place_html.name = `<div class="name">${place.name}</div>`;
             }
 
-            //location
-            if (place.location_address) {
-                place_html.location += `<div class="address">${place.location_address}</div>`;
-            }
-
-            if (place.location_address_2) {
-                //do not show if zip code in address_2
-
-                let is_postcode =
-                    place.location_address_2.includes(place.location_postcode) || isZIPFormat(place.location_address_2);
-
-                if (!is_postcode) {
-                    //do not show if address and address_2 are too similar
-                    let str_similarity = stringSimilarity(place.location_address, place.location_address_2);
-
-                    if (str_similarity < 0.5) {
-                        place_html.location += `<div class="address_2">${place.location_address_2}</div>`;
-                    }
-                }
-            }
-
-            place_html.location += `<div class="locality">${place.location_locality}, ${place.location_region}</div>`;
+            place_html.location = befriend.html.getPlaceHTML(place);
 
             //distance
             let distance_html = "";
@@ -692,16 +650,51 @@ befriend.html = {
 
         //set activity
         let activity_el = parent_el.querySelector('.activity');
+        let activity_name = null;
 
         if(befriend.places.selected.is_activity_type) {
+            let obj = befriend.activities.selected;
+            let level = obj.level_3 || obj.level_2 || obj.level_1;
 
+            activity_name = level.notification;
+        } else {
+            activity_name = 'Meet';
         }
 
+        activity_el.querySelector('.info').innerHTML = activity_name;
 
+        let place_el = parent_el.querySelector('.place');
 
+        let place_html = befriend.html.getPlaceHTML(place);
 
-        console.log({
-            place,
-        });
+        place_el.innerHTML = `<div class="address"></div><div class="city"></div>${state}`
     },
+    getPlaceHTML(place) {
+        let html = '';
+
+        if (place.location_address) {
+            html += `<div class="address">${place.location_address}</div>`;
+        }
+
+        if (place.location_address_2) {
+            //do not show if zip code in address_2
+
+            let is_postcode =
+                place.location_address_2.includes(place.location_postcode) ||
+                isZIPFormat(place.location_address_2);
+
+            if (!is_postcode) {
+                //do not show if address and address_2 are too similar
+                let str_similarity = stringSimilarity(place.location_address, place.location_address_2);
+
+                if (str_similarity < 0.5) {
+                    html += `<div class="address_2">${place.location_address_2}</div>`;
+                }
+            }
+        }
+
+        html += `<div class="locality">${place.location_locality}, ${place.location_region}</div>`;
+
+        return html;
+    }
 };
