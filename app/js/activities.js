@@ -25,7 +25,7 @@ befriend.activities = {
     },
     duration: {
         selected: null,
-        default: 90, //min
+        default: 30, //min
         groups: {
             "60": {
                 max: 60,

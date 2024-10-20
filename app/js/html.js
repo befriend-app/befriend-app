@@ -143,7 +143,13 @@ befriend.html = {
                     <div id="create-activity">
                         <div class="main">
                             <div class="container">
-                                <div id="activity-duration" class="set-duration section">
+                                <div class="activity section">
+                                    <div class="label">Activity</div>
+                                    
+                                    <div class="info"></div>
+                                </div>
+                                
+                                <div id="activity-duration" class="section">
                                     <div class="label">Duration</div>
                                     
                                     <div class="level_1">
@@ -152,12 +158,7 @@ befriend.html = {
                                     <div class="level_2">
                                     </div>
                                 </div>
-
-                                <div class="activity section">
-                                    <div class="label">Activity</div>
-                                    
-                                    <div class="info"></div>
-                                </div>
+                                
                                 <div class="place section">
                                     <div class="label">Place</div>
                                     
