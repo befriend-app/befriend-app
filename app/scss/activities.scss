@@ -504,15 +504,17 @@ html.#{$class_create_activity_shown} {
 
     .mode {
         border-radius: 10px;
-        background-color: lighten($brand_color_a, 35%);
         transition: all 300ms;
         height: $h;
         padding: 0 10px;
         display: flex;
         align-items: center;
+        border: 1px solid $color_lightgray;
+        background: white;
 
         &.active {
             background-color: $brand_color_a;
+            border-color: transparent;
 
             svg {
                 fill: white;
