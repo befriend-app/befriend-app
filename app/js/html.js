@@ -179,8 +179,19 @@ befriend.html = {
                                 <div class="friends section">
                                     <div class="label">Friends</div>
                                     
-                                    <div class="info"></div>
+                                    <div class="info">
+                                        <div class="col type">
+                                            <div class="sub-heading">Type</div>
+                                            <div class="value"></div>
+                                        </div>
+                                        
+                                        <div class="col quantity">
+                                            <div class="sub-heading">Qty.</div>
+                                            <div class="value"></div>
+                                        </div>
+                                    </div>
                                 </div>
+                                
                                 <div class="filters section">
                                     <div class="label">Filters</div>
                                     
@@ -667,9 +678,13 @@ befriend.html = {
         let place = befriend.places.selected.place;
 
         let parent_el = befriend.els.create_activity.querySelector('.main');
+        let activity_el = parent_el.querySelector('.activity');
+        let place_el = parent_el.querySelector('.place').querySelector('.info');
+        let when_el = parent_el.querySelector('.when');
+        let friends_el = parent_el.querySelector('.friends');
+        let filters_el = parent_el.querySelector('.filters');
 
         //set activity
-        let activity_el = parent_el.querySelector('.activity');
         let activity_name = null;
 
         if(befriend.places.selected.is_activity_type) {
@@ -683,8 +698,6 @@ befriend.html = {
         activity_el.querySelector('.info').innerHTML = activity_name;
 
         //set place
-        let place_el = parent_el.querySelector('.place').querySelector('.info');
-
         let place_name_html = ``;
 
         if(place.name) {
@@ -696,8 +709,6 @@ befriend.html = {
         place_el.innerHTML = `${place_name_html}<div class="location">${location_html}</div>`;
 
         //set when
-        let when_el = parent_el.querySelector('.when');
-
         let when_current = befriend.when.selected;
 
         let when_str = '';
@@ -716,6 +727,21 @@ befriend.html = {
 
         //set friends
 
+        let friend_type_str = '';
+
+        if(befriend.friends.type.is_new) {
+            friend_type_str = 'New';
+        } else if(befriend.friends.type.is_existing) {
+            friend_type_str = 'Existing';
+        } else if(befriend.friends.type.is_both) {
+            friend_type_str = 'New and/or Existing';
+        }
+
+        //friend type
+        friends_el.querySelector('.type').querySelector('.value').innerHTML = friend_type_str;
+
+        //number of persons
+        friends_el.querySelector('.quantity').querySelector('.value').innerHTML = befriend.friends.activity_friends_num;
 
         //set filters
     },

@@ -352,8 +352,14 @@ befriend.activities = {
 
         await rafAwait();
 
+        let ts = timeNow();
+
         while (!befriend.maps.markers.place) {
             await rafAwait();
+
+            if(timeNow() - ts > 500) {
+                break;
+            }
         }
 
         //update map zoom to show all markers
@@ -370,8 +376,10 @@ befriend.activities = {
 
         await rafAwait();
 
+        //transition map to top
         map_el.style.transform = `translate(${-map_box.x}px, ${-map_box.y}px)`;
 
+        //hide display places after transition
         setTimeout(async function () {
             //hide display places/overlay
             befriend.places.toggleDisplayPlaces(false);

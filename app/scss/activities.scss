@@ -564,12 +564,47 @@ html.#{$class_create_activity_shown} {
                         }
                     }
                 }
+
+                &.friends {
+                    .info {
+                        display: flex;
+                        gap: 10px 0;
+
+                        .col {
+                            flex-basis: 50%;
+                        }
+
+                        .sub-heading {
+                            font-weight: 600;
+                            text-transform: uppercase;
+                            font-size: 12px;
+                        }
+
+                        .value {
+                            font-size: 14px;
+                        }
+
+                        .quantity {
+                            .value {
+                                margin-left: 9px;
+                            }
+                        }
+                    }
+                }
+
+                &.filters {
+
+                }
+
             }
         }
     }
 
     .bottom {
         height: $create_activity_bottom_h;
+        box-sizing: border-box;
+        border-top: .5px solid lighten(black, 40%);
+
         @include flex-center-col;
 
         #create-activity-btn {
