@@ -1,3 +1,71 @@
+function resizeAndRepositionMap(mapEl) {
+    return new Promise(async (resolve, reject) => {
+        mapEl.style.transition = 'initial';
+        mapEl.style.width = '100vw';
+        mapEl.style.height = `${befriend.variables.map_create_activity_h}px`;
+
+        const mapBox = mapEl.getBoundingClientRect();
+
+        await rafAwait();
+
+        befriend.maps.maps.activities.resize();
+
+        await rafAwait();
+
+        mapEl.style.position = 'absolute';
+        mapEl.style.removeProperty('transition');
+        await rafAwait();
+
+        mapEl.style.transform = `translate(${-mapBox.x}px, ${-mapBox.y}px)`;
+
+        await rafAwait();
+
+        resolve();
+    });
+}
+
+function getPlaceCoordinates(place) {
+    return new Promise(async (resolve, reject) => {
+        if (!place.location_lat || !place.location_lon) {
+            try {
+                const addressGeo = await befriend.places.getAddressGeo(place);
+                place.location_lat = addressGeo.lat;
+                place.location_lon = addressGeo.lon;
+            } catch (e) {
+                console.error('Error getting address geo:', e);
+                return reject();
+            }
+        }
+
+        resolve({
+            lat: place.location_lat, lon: place.location_lon
+        });
+    });
+}
+
+function addPlaceMarkerToMap(to) {
+    befriend.maps.addMarker(
+        befriend.maps.maps.activities,
+        { lat: to.lat, lon: to.lon },
+        { is_place: true },
+        true
+    );
+
+    // Wait for the place marker to be added
+    const startTime = timeNow();
+
+    return new Promise(resolve => {
+        const checkMarker = () => {
+            if (befriend.maps.markers.place || timeNow() - startTime > 500) {
+                resolve();
+            } else {
+                requestAnimationFrame(checkMarker);
+            }
+        };
+        checkMarker();
+    });
+}
+
 befriend.activities = {
     types: {
         data: null,
@@ -292,19 +360,12 @@ befriend.activities = {
         }
     },
     displayCreateActivity: async function () {
-        //set html
+        //set up html and transition logic
         befriend.html.createActivity();
-
-        //transition logic
         let map_el = befriend.els.activities_map;
+        let status_bar_height = await befriend.styles.getStatusBarHeight();
 
-        let status_bar_height = 0;
-
-        try {
-            status_bar_height = await befriend.styles.getStatusBarHeight();
-        } catch (e) {}
-
-        //transform/transition system status bar
+        //transform status bar
         befriend.styles.transformStatusBar(
             status_bar_height + 5,
             befriend.variables.hide_statusbar_ms / 1000,
@@ -312,91 +373,32 @@ befriend.activities = {
 
         befriend.activities.toggleCreateActivity(true);
 
-        //add place marker to map
+        //handle location and mapping
         let place = befriend.places.selected.place;
-        let from;
 
+        let from = befriend.location.device;
+
+        //remove pin marker and set custom from
+        if (befriend.location.isCustom()) {
+            befriend.maps.removeMarkers(befriend.maps.markers.pin);
+            from = befriend.location.search;
+            from.is_custom = true;
+        }
+
+        // Resize and reposition map
         try {
-            if(befriend.location.isCustom()) {
-                from = befriend.location.search;
-                from.is_custom = true;
-            } else {
-                from = befriend.location.device;
-            }
-
-            // let travel = await befriend.places.getTravelTimes(from, to);
+            await resizeAndRepositionMap(map_el);
         } catch(e) {
             console.error(e);
         }
 
-        //remove pin marker if custom location
-        if (befriend.location.isCustom()) {
-            befriend.maps.removeMarkers(befriend.maps.markers.pin);
-        }
+        //Add place marker to map
+        try {
+             let to = await getPlaceCoordinates(place);
 
-        //change height, move map to top
-
-        //remove transition for resizing map canvas
-        map_el.style.transition = "initial";
-        map_el.style.width = "100vw";
-        map_el.style.height = `${befriend.variables.map_create_activity_h}px`;
-
-        //calculate transform
-        let map_box = map_el.getBoundingClientRect();
-
-        await rafAwait();
-
-        befriend.maps.maps.activities.resize();
-
-        await rafAwait();
-
-        //remove removed-transition
-
-        map_el.style.position = "absolute";
-        map_el.style.removeProperty("transition");
-
-        await rafAwait();
-
-        //transition map to top
-        map_el.style.transform = `translate(${-map_box.x}px, ${-map_box.y}px)`;
-
-        await rafAwait();
-
-        if(!place.location_lat || !place.location_lon) {
-            try {
-                let address_geo = await befriend.places.getAddressGeo(place);
-                place.location_lat = address_geo.lat;
-                place.location_lon = address_geo.lon;
-            } catch(e) {
-                console.error(e);
-            }
-        }
-
-        let to = {
-            lat: place.location_lat,
-            lon: place.location_lon
-        };
-
-        befriend.maps.addMarker(
-            befriend.maps.maps.activities,
-            {
-                lat: to.lat,
-                lon: to.lon,
-            },
-            {
-                is_place: true,
-            },
-            true,
-        );
-
-        let ts = timeNow();
-
-        while (!befriend.maps.markers.place) {
-            await rafAwait();
-
-            if(timeNow() - ts > 500) {
-                break;
-            }
+             await addPlaceMarkerToMap(to);
+        } catch(e) {
+            console.error(e);
         }
 
         // update map zoom to show all markers
