@@ -352,7 +352,17 @@ befriend.places = {
                     let place_id = place_el.getAttribute("data-place-id");
 
                     befriend.places.selected.place = befriend.places.getPlace(place_id);
-                    befriend.places.selected.is_activity_type = befriend.places.isPlacesShown();
+
+                    if(befriend.places.isPlacesShown()) {
+                        befriend.places.selected.is_activity_type = true;
+
+                        //use duration for activity
+                        let activity_type = befriend.activities.getCurrentActivityType();
+
+                        if(activity_type) {
+                            befriend.activities.updateDuration(activity_type.duration, true);
+                        }
+                    }
 
                     befriend.activities.displayCreateActivity();
                 });

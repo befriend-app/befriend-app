@@ -673,10 +673,9 @@ befriend.html = {
         let activity_name = null;
 
         if(befriend.places.selected.is_activity_type) {
-            let obj = befriend.activities.selected;
-            let level = obj.level_3 || obj.level_2 || obj.level_1;
+            let activity = befriend.activities.getCurrentActivityType();
 
-            activity_name = level.notification;
+            activity_name = activity.notification;
         } else {
             activity_name = 'Meet';
         }

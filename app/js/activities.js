@@ -238,12 +238,49 @@ befriend.activities = {
     setDurations: function () {
         befriend.html.setDurations();
     },
-    updateDuration: function (duration) {
+    updateDuration: function (duration, update_buttons) {
         befriend.activities.duration.selected = duration;
 
         //set duration in when string
         befriend.els.create_activity.querySelector('.when').querySelector('.duration').querySelector('.value').innerHTML = befriend.activities.getDurationStr();
 
+        if(update_buttons) {
+            //remove all selected groups
+            let buttons = befriend.els.activity_duration.getElementsByClassName('button');
+            let options = befriend.els.activity_duration.getElementsByClassName('options');
+            let option_els = befriend.els.activity_duration.getElementsByClassName('option');
+
+            removeElsClass(buttons, 'active');
+            removeElsClass(options, 'active');
+
+            //select
+            for(let i = 0; i < option_els.length; i++) {
+                let option = option_els[i];
+
+                if(parseInt(option.getAttribute('data-min')) === duration) {
+                    let group = option.closest('.options');
+
+                    //set active
+                    addClassEl('active', group);
+
+                    //remove selected
+                    removeElsClass(group.getElementsByClassName('option'), 'selected');
+
+                    //add selected
+                    addClassEl('selected', option);
+
+                    //set group active
+                    for(let i = 0; i < buttons.length; i++) {
+                        let button = buttons[i];
+
+                        if(button.getAttribute('data-min-max') === group.getAttribute('data-min-max')) {
+                            addClassEl('active', button);
+                        }
+                    }
+                }
+            }
+
+        }
     },
     displayCreateActivity: async function () {
         //set html
@@ -329,6 +366,11 @@ befriend.activities = {
             //hide display places/overlay
             befriend.places.toggleDisplayPlaces(false);
         }, befriend.variables.create_activity_transition_ms);
+    },
+    getCurrentActivityType: function () {
+        let obj = befriend.activities.selected;
+
+        return obj.level_3 || obj.level_2 || obj.level_1;
     },
     createNewActivity: function (persons_count) {
         return new Promise(async (resolve, reject) => {

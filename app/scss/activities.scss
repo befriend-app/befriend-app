@@ -620,6 +620,7 @@ html.#{$class_create_activity_shown} {
             @include flex-center-col;
             border-right: .5px solid lighten(black, 10%);
             padding: 6px 0;
+            box-sizing: border-box;
 
             &:first-of-type {
                 border-top-left-radius: $br_1;
