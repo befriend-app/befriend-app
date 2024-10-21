@@ -610,6 +610,8 @@ befriend.activities = {
 
                 back_el.style.display = "none";
 
+                befriend.els.travel_times.style.display = "none";
+
                 befriend.styles.transformStatusBar(0, befriend.variables.create_activity_transition_ms / 1000);
 
                 let map_to_box = document.getElementById("activities-map-wrapper").getBoundingClientRect();
@@ -648,6 +650,7 @@ befriend.activities = {
                 }
 
                 back_el.style.removeProperty("display");
+                befriend.els.travel_times.style.removeProperty('display');
             });
         },
         activityDuration: function () {

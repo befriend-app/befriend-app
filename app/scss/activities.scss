@@ -9,7 +9,7 @@ html.#{$class_create_activity_shown} {
         transform: translateX(0);
     }
 
-    #create-activity-back {
+    #create-activity-back, #travel-times {
         opacity: 1;
         visibility: visible;
         transition:
@@ -484,9 +484,99 @@ html.#{$class_create_activity_shown} {
     }
 }
 
+#travel-times {
+    $h: 26px;
+    $w: 70px;
+    $icon_h: $h * .6;
+    $max_width: $w * .3;
+
+    position: fixed;
+    display: flex;
+    justify-content: space-between;
+    width: calc(calc(100vw - $create_activity_gap_lr * 2));
+    top: calc(calc($map_create_activity_h - $h * 1.5));
+    left: calc($create_activity_gap_lr);
+    opacity: 0;
+    z-index: 100;
+    //transition:
+    //        opacity $overlay_transition_ms,
+    //        visibility 0ms $overlay_transition_ms;
+
+    .mode {
+        border-radius: 10px;
+        background-color: lighten($brand_color_a, 35%);
+        transition: all 300ms;
+        height: $h;
+        padding: 0 10px;
+        display: flex;
+        align-items: center;
+
+        &.active {
+            background-color: $brand_color_a;
+
+            svg {
+                fill: white;
+            }
+
+            .value {
+                color: white !important;
+            }
+        }
+
+        &.drive {
+            svg {
+                $r: calc(56.0002 / 43.9885);
+
+                width: calc(calc($icon_h * $r) + 4px);
+            }
+        }
+
+        &.bike {
+            svg {
+                $r: calc(176.669 / 97.693);
+
+                width: calc(calc($icon_h * $r) + 4px);
+            }
+        }
+
+        &.walk {
+            $walk_h: $icon_h * 1.2;
+
+            .icon {
+                height: $walk_h;
+            }
+
+            svg {
+                height:  $walk_h !important;
+            }
+        }
+
+        .icon {
+            display: flex;
+            height: $icon_h;
+            padding-right: 6px;
+
+            svg {
+                height: $icon_h;
+                max-width: $max_width;
+                transition: all 300ms;
+            }
+        }
+
+        .value {
+            font-size: 13px;
+            display: flex;
+            min-width: 45px;
+            transition: all 300ms;
+            text-align: center;
+            justify-content: center;
+            opacity: 0;
+        }
+    }
+}
+
 #create-activity {
     $gap_tb: 30px;
-    $gap_lr: 30px;
 
     overflow-y: scroll;
     background-color: #fff;
@@ -499,97 +589,12 @@ html.#{$class_create_activity_shown} {
     transform: translateX(115vw);
     overscroll-behavior: none;
 
-    #travel-times {
-        $h: 26px;
-        $w: 70px;
-        $icon_h: $h * .6;
-        $max_width: $w * .3;
-
-        display: flex;
-        justify-content: space-between;
-        padding-top: 10px;
-        margin-bottom: 10px;
-
-        .mode {
-            border-radius: 10px;
-            background-color: lighten($brand_color_a, 35%);
-            transition: all 300ms;
-            height: $h;
-            padding: 0 10px;
-            display: flex;
-            align-items: center;
-
-            &.active {
-                background-color: $brand_color_a;
-
-                svg {
-                    fill: white;
-                }
-
-                .value {
-                    color: white !important;
-                }
-            }
-
-            &.drive {
-                svg {
-                    $r: calc(56.0002 / 43.9885);
-
-                    width: calc(calc($icon_h * $r) + 4px);
-                }
-            }
-
-            &.bike {
-                svg {
-                    $r: calc(176.669 / 97.693);
-
-                    width: calc(calc($icon_h * $r) + 4px);
-                }
-            }
-
-            &.walk {
-                $walk_h: $icon_h * 1.2;
-
-                .icon {
-                    height: $walk_h;
-                }
-
-                svg {
-                    height:  $walk_h !important;
-                }
-            }
-
-            .icon {
-                display: flex;
-                height: $icon_h;
-                padding-right: 6px;
-
-                svg {
-                    height: $icon_h;
-                    max-width: $max_width;
-                    transition: all 300ms;
-                }
-            }
-
-            .value {
-                font-size: 13px;
-                display: flex;
-                min-width: 45px;
-                transition: all 300ms;
-                text-align: center;
-                justify-content: center;
-                opacity: 0;
-            }
-        }
-    }
-
     .main {
         height: calc(calc(100% - $create_activity_bottom_h));
         overflow-y: scroll;
 
         .container {
-            padding: $gap_tb $gap_lr;
-            padding-top: 0;
+            padding: $gap_tb $create_activity_gap_lr;
             overflow-x: hidden;
 
             .sections {
@@ -710,7 +715,7 @@ html.#{$class_create_activity_shown} {
 #create-activity-back {
     $dim: 40px;
     position: fixed;
-    top: calc(calc($map_create_activity_h - $dim * 1.5));
+    top: calc(calc($map_create_activity_h * .5 - $dim * .5));
     left: calc($dim / 2);
     height: $dim;
     width: $dim;
