@@ -3,6 +3,8 @@ befriend.location = {
     device: null,
     search: null,
     init: function () {
+        console.log("[init] Location");
+
         return new Promise(async (resolve, reject) => {
             function getLocation() {
                 const geoLocationOptions = {};

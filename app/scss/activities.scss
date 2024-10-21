@@ -485,6 +485,9 @@ html.#{$class_create_activity_shown} {
 }
 
 #create-activity {
+    $gap_tb: 30px;
+    $gap_lr: 30px;
+
     overflow-y: scroll;
     background-color: #fff;
     width: 100vw;
@@ -496,16 +499,104 @@ html.#{$class_create_activity_shown} {
     transform: translateX(115vw);
     overscroll-behavior: none;
 
+    #travel-times {
+        $h: 26px;
+        $w: 70px;
+        $icon_h: $h * .6;
+        $max_width: $w * .3;
+
+        display: flex;
+        justify-content: space-between;
+        padding-top: 10px;
+        margin-bottom: 10px;
+
+        .mode {
+            border-radius: 10px;
+            background-color: lighten($brand_color_a, 35%);
+            transition: all 300ms;
+            height: $h;
+            padding: 0 10px;
+            display: flex;
+            align-items: center;
+
+            &.active {
+                background-color: $brand_color_a;
+
+                svg {
+                    fill: white;
+                }
+
+                .value {
+                    color: white !important;
+                }
+            }
+
+            &.drive {
+                svg {
+                    $r: calc(56.0002 / 43.9885);
+
+                    width: calc(calc($icon_h * $r) + 4px);
+                }
+            }
+
+            &.bike {
+                svg {
+                    $r: calc(176.669 / 97.693);
+
+                    width: calc(calc($icon_h * $r) + 4px);
+                }
+            }
+
+            &.walk {
+                $walk_h: $icon_h * 1.2;
+
+                .icon {
+                    height: $walk_h;
+                }
+
+                svg {
+                    height:  $walk_h !important;
+                }
+            }
+
+            .icon {
+                display: flex;
+                height: $icon_h;
+                padding-right: 6px;
+
+                svg {
+                    height: $icon_h;
+                    max-width: $max_width;
+                    transition: all 300ms;
+                }
+            }
+
+            .value {
+                font-size: 13px;
+                display: flex;
+                min-width: 45px;
+                transition: all 300ms;
+                text-align: center;
+                justify-content: center;
+                opacity: 0;
+            }
+        }
+    }
+
     .main {
         height: calc(calc(100% - $create_activity_bottom_h));
         overflow-y: scroll;
 
         .container {
-            padding: 30px 30px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px 0;
+            padding: $gap_tb $gap_lr;
+            padding-top: 0;
             overflow-x: hidden;
+
+            .sections {
+                display: flex;
+                flex-direction: column;
+                gap: 10px 0;
+            }
 
             .section {
                 padding: 10px 0;
@@ -593,9 +684,7 @@ html.#{$class_create_activity_shown} {
                 }
 
                 &.filters {
-
                 }
-
             }
         }
     }
@@ -603,7 +692,7 @@ html.#{$class_create_activity_shown} {
     .bottom {
         height: $create_activity_bottom_h;
         box-sizing: border-box;
-        border-top: .5px solid lighten(black, 40%);
+        border-top: 0.5px solid lighten(black, 40%);
 
         @include flex-center-col;
 
@@ -671,7 +760,7 @@ html.#{$class_create_activity_shown} {
             flex-basis: 25%;
             background-color: $brand_color_b;
             @include flex-center-col;
-            border-right: .5px solid lighten(black, 10%);
+            border-right: 0.5px solid lighten(black, 10%);
             padding: 6px 0;
             box-sizing: border-box;
 
@@ -739,7 +828,7 @@ html.#{$class_create_activity_shown} {
 
             .option {
                 flex-basis: calc(calc(calc(100% - $gap_lr * ($row_items - 1)) / $row_items));
-                background: #FFE0B2;
+                background: #ffe0b2;
                 //transition: background-color 300ms;
                 padding: 4px 0px;
                 border-radius: 8px;
@@ -748,7 +837,7 @@ html.#{$class_create_activity_shown} {
                 @include flex-center;
 
                 &.selected {
-                    background: #FFB74D;
+                    background: #ffb74d;
                 }
 
                 .num-unit {

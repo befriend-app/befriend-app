@@ -11,7 +11,7 @@ befriend.places = {
     },
     selected: {
         place: null,
-        is_activity_type: false
+        is_activity_type: false,
     },
     displayPlaces: function (activity_type) {
         return new Promise(async (resolve, reject) => {
@@ -288,12 +288,12 @@ befriend.places = {
     getAddressGeo: function (place) {
         return new Promise(async (resolve, reject) => {
             try {
-                 let r = await axios.post(joinPaths(api_domain, 'geocode'), {
-                     place: place
-                 });
+                let r = await axios.post(joinPaths(api_domain, "geocode"), {
+                    place: place,
+                });
 
-                 resolve(r.data.geo);
-            } catch(e) {
+                resolve(r.data.geo);
+            } catch (e) {
                 console.error(e);
                 return reject();
             }
@@ -302,12 +302,29 @@ befriend.places = {
     getTravelTimes: function (from, to) {
         return new Promise(async (resolve, reject) => {
             try {
-                 let r = await axios.post(joinPaths(api_domain, "travel-time"), {
-                     from, to
-                 });
+                let unix_ts;
 
-                 resolve(r.data);
-            } catch(e) {
+                let when = befriend.when.selected;
+
+                if(when.is_now) {
+                    unix_ts = timeNow(true);
+                } else if(when.is_schedule) {
+                    //todo
+                    unix_ts = timeNow(true);
+                } else {
+                    unix_ts = when.time.unix;
+                }
+
+                let date = dayjs.unix(unix_ts).format('YYYY-MM-DDTHH:mm');
+
+                let r = await axios.post(joinPaths(api_domain, "travel-time"), {
+                    when: date,
+                    from,
+                    to,
+                });
+
+                resolve(r.data);
+            } catch (e) {
                 console.error(e);
                 return reject();
             }
@@ -381,13 +398,13 @@ befriend.places = {
 
                     befriend.places.selected.place = befriend.places.getPlace(place_id);
 
-                    if(befriend.places.isPlacesShown()) {
+                    if (befriend.places.isPlacesShown()) {
                         befriend.places.selected.is_activity_type = true;
 
                         //use duration for activity
                         let activity_type = befriend.activities.getCurrentActivityType();
 
-                        if(activity_type) {
+                        if (activity_type) {
                             befriend.activities.updateDuration(activity_type.duration, true);
                         }
                     } else {

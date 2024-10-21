@@ -26,6 +26,8 @@ befriend.when = {
     ],
     init: function () {
         return new Promise(async (resolve, reject) => {
+            console.log("[init] When");
+
             try {
                 await befriend.html.setWhen();
             } catch (e) {
@@ -54,7 +56,7 @@ befriend.when = {
 
                 data.time = {
                     formatted: time_formatted,
-                    unix: date.unix()
+                    unix: date.unix(),
                 };
 
                 el.querySelector(".time").innerHTML = time_formatted;

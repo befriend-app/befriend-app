@@ -1,7 +1,7 @@
 function resizeAndRepositionMap(mapEl) {
     return new Promise(async (resolve, reject) => {
-        mapEl.style.transition = 'initial';
-        mapEl.style.width = '100vw';
+        mapEl.style.transition = "initial";
+        mapEl.style.width = "100vw";
         mapEl.style.height = `${befriend.variables.map_create_activity_h}px`;
 
         const mapBox = mapEl.getBoundingClientRect();
@@ -12,8 +12,9 @@ function resizeAndRepositionMap(mapEl) {
 
         await rafAwait();
 
-        mapEl.style.position = 'absolute';
-        mapEl.style.removeProperty('transition');
+        mapEl.style.position = "absolute";
+        mapEl.style.removeProperty("transition");
+
         await rafAwait();
 
         mapEl.style.transform = `translate(${-mapBox.x}px, ${-mapBox.y}px)`;
@@ -32,29 +33,25 @@ function getPlaceCoordinates(place) {
                 place.location_lat = addressGeo.lat;
                 place.location_lon = addressGeo.lon;
             } catch (e) {
-                console.error('Error getting address geo:', e);
+                console.error("Error getting address geo:", e);
                 return reject();
             }
         }
 
         resolve({
-            lat: place.location_lat, lon: place.location_lon
+            lat: place.location_lat,
+            lon: place.location_lon,
         });
     });
 }
 
 function addPlaceMarkerToMap(to) {
-    befriend.maps.addMarker(
-        befriend.maps.maps.activities,
-        { lat: to.lat, lon: to.lon },
-        { is_place: true },
-        true
-    );
+    befriend.maps.addMarker(befriend.maps.maps.activities, { lat: to.lat, lon: to.lon }, { is_place: true }, true);
 
     // Wait for the place marker to be added
     const startTime = timeNow();
 
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
         const checkMarker = () => {
             if (befriend.maps.markers.place || timeNow() - startTime > 500) {
                 resolve();
@@ -95,172 +92,211 @@ befriend.activities = {
         selected: null,
         default: 30, //min
         groups: {
-            "60": {
+            60: {
                 max: 60,
-                num: '10 - 60',
-                unit: 'minutes',
+                num: "10 - 60",
+                unit: "minutes",
                 options: [
-                    [{
-                       num: 10,
-                       unit: 'min',
-                        minutes: 10
-                    }],
-                    [{
-                        num: 15,
-                        unit: 'min',
-                        minutes: 15
-                    }],
-                    [{
-                        num: 20,
-                        unit: 'min',
-                        minutes: 20
-                    }],
-                    [{
-                        num: 30,
-                        unit: 'min',
-                        minutes: 30
-                    }],
-                    [{
-                        num: 40,
-                        unit: 'min',
-                        minutes: 40
-                    }],
-                    [{
-                        num: 50,
-                        unit: 'min',
-                        minutes: 50
-                    }],
-                ]
-            },
-            "120": {
-                max: 120,
-                num: '1 - 2',
-                unit: 'hours',
-                options: [
-                    [{
-                        num: 1,
-                        unit: 'hr',
-                        minutes: 60
-                    }],
-                    [{
-                        num: 1,
-                        unit: 'hr',
-                        minutes: 70
-                    },
+                    [
                         {
                             num: 10,
-                            unit: 'min',
-                            minutes: 70
-                        }
+                            unit: "min",
+                            minutes: 10,
+                        },
                     ],
-                    [{
-                        num: 1,
-                        unit: 'hr',
-                        minutes: 80
-                    },
+                    [
+                        {
+                            num: 15,
+                            unit: "min",
+                            minutes: 15,
+                        },
+                    ],
+                    [
                         {
                             num: 20,
-                            unit: 'min',
-                            minutes: 80
-                        }
+                            unit: "min",
+                            minutes: 20,
+                        },
                     ],
-                    [{
-                        num: 1,
-                        unit: 'hr',
-                        minutes: 90
-                    },
+                    [
                         {
                             num: 30,
-                            unit: 'min',
-                            minutes: 90
-                        }
+                            unit: "min",
+                            minutes: 30,
+                        },
                     ],
-                    [{
-                        num: 1,
-                        unit: 'hr',
-                        minutes: 100
-                    },
+                    [
                         {
                             num: 40,
-                            unit: 'min',
-                            minutes: 100
-                        }
+                            unit: "min",
+                            minutes: 40,
+                        },
                     ],
-                    [{
-                        num: 1,
-                        unit: 'hr',
-                        minutes: 110
-                    },
+                    [
                         {
                             num: 50,
-                            unit: 'min',
-                            minutes: 110
-                        }
+                            unit: "min",
+                            minutes: 50,
+                        },
                     ],
-                ]
+                ],
             },
-            "240": {
+            120: {
+                max: 120,
+                num: "1 - 2",
+                unit: "hours",
+                options: [
+                    [
+                        {
+                            num: 1,
+                            unit: "hr",
+                            minutes: 60,
+                        },
+                    ],
+                    [
+                        {
+                            num: 1,
+                            unit: "hr",
+                            minutes: 70,
+                        },
+                        {
+                            num: 10,
+                            unit: "min",
+                            minutes: 70,
+                        },
+                    ],
+                    [
+                        {
+                            num: 1,
+                            unit: "hr",
+                            minutes: 80,
+                        },
+                        {
+                            num: 20,
+                            unit: "min",
+                            minutes: 80,
+                        },
+                    ],
+                    [
+                        {
+                            num: 1,
+                            unit: "hr",
+                            minutes: 90,
+                        },
+                        {
+                            num: 30,
+                            unit: "min",
+                            minutes: 90,
+                        },
+                    ],
+                    [
+                        {
+                            num: 1,
+                            unit: "hr",
+                            minutes: 100,
+                        },
+                        {
+                            num: 40,
+                            unit: "min",
+                            minutes: 100,
+                        },
+                    ],
+                    [
+                        {
+                            num: 1,
+                            unit: "hr",
+                            minutes: 110,
+                        },
+                        {
+                            num: 50,
+                            unit: "min",
+                            minutes: 110,
+                        },
+                    ],
+                ],
+            },
+            240: {
                 max: 240,
-                num: '2 - 4',
-                unit: 'hours',
+                num: "2 - 4",
+                unit: "hours",
                 options: [
-                    [{
-                        num: 2,
-                        unit: 'hrs',
-                        minutes: 120
-                    }],
-                    [{
-                        num: 2.5,
-                        unit: 'hrs',
-                        minutes: 150
-                    }],
-                    [{
-                        num: 3,
-                        unit: 'hrs',
-                        minutes: 180
-                    }],
-                    [{
-                        num: 3.5,
-                        unit: 'hrs',
-                        minutes: 210
-                    }],
-                ]
+                    [
+                        {
+                            num: 2,
+                            unit: "hrs",
+                            minutes: 120,
+                        },
+                    ],
+                    [
+                        {
+                            num: 2.5,
+                            unit: "hrs",
+                            minutes: 150,
+                        },
+                    ],
+                    [
+                        {
+                            num: 3,
+                            unit: "hrs",
+                            minutes: 180,
+                        },
+                    ],
+                    [
+                        {
+                            num: 3.5,
+                            unit: "hrs",
+                            minutes: 210,
+                        },
+                    ],
+                ],
             },
-            "360": {
+            360: {
                 max: 360,
-                num: '4 - 6',
-                unit: 'hours',
+                num: "4 - 6",
+                unit: "hours",
                 options: [
-                    [{
-                        num: 4,
-                        unit: 'hrs',
-                        minutes: 240
-                    }],
-                    [{
-                        num: 4.5,
-                        unit: 'hrs',
-                        minutes: 270
-                    }],
-                    [{
-                        num: 5,
-                        unit: 'hrs',
-                        minutes: 300
-                    }],
-                    [{
-                        num: 5.5,
-                        unit: 'hrs',
-                        minutes: 330
-                    }],
-                    [{
-                        num: 6,
-                        unit: 'hrs',
-                        minutes: 360
-                    }],
-                ]
-            }
-        }
+                    [
+                        {
+                            num: 4,
+                            unit: "hrs",
+                            minutes: 240,
+                        },
+                    ],
+                    [
+                        {
+                            num: 4.5,
+                            unit: "hrs",
+                            minutes: 270,
+                        },
+                    ],
+                    [
+                        {
+                            num: 5,
+                            unit: "hrs",
+                            minutes: 300,
+                        },
+                    ],
+                    [
+                        {
+                            num: 5.5,
+                            unit: "hrs",
+                            minutes: 330,
+                        },
+                    ],
+                    [
+                        {
+                            num: 6,
+                            unit: "hrs",
+                            minutes: 360,
+                        },
+                    ],
+                ],
+            },
+        },
     },
     init: function () {
+        console.log("[init] Activities");
+
         return new Promise(async (resolve, reject) => {
             //add brand color to top of activity colors
             befriend.activities.types.colors.unshift(befriend.variables.brand_color_a);
@@ -310,44 +346,47 @@ befriend.activities = {
         befriend.activities.duration.selected = duration;
 
         //set duration in when string
-        befriend.els.create_activity.querySelector('.when').querySelector('.duration').querySelector('.value').innerHTML = befriend.activities.getDurationStr();
+        befriend.els.create_activity
+            .querySelector(".when")
+            .querySelector(".duration")
+            .querySelector(".value").innerHTML = befriend.activities.getDurationStr();
 
-        if(update_buttons) {
-            let level_1 = befriend.els.create_activity.querySelector('.level_1');
+        if (update_buttons) {
+            let level_1 = befriend.els.create_activity.querySelector(".level_1");
             //remove all selected groups
-            let buttons = befriend.els.activity_duration.getElementsByClassName('button');
-            let options = befriend.els.activity_duration.getElementsByClassName('options');
-            let option_els = befriend.els.activity_duration.getElementsByClassName('option');
+            let buttons = befriend.els.activity_duration.getElementsByClassName("button");
+            let options = befriend.els.activity_duration.getElementsByClassName("options");
+            let option_els = befriend.els.activity_duration.getElementsByClassName("option");
 
-            removeElsClass(buttons, 'active');
-            removeElsClass(options, 'active');
+            removeElsClass(buttons, "active");
+            removeElsClass(options, "active");
 
             //select
-            for(let i = 0; i < option_els.length; i++) {
+            for (let i = 0; i < option_els.length; i++) {
                 let option = option_els[i];
 
-                if(parseInt(option.getAttribute('data-min')) === duration) {
-                    let group = option.closest('.options');
+                if (parseInt(option.getAttribute("data-min")) === duration) {
+                    let group = option.closest(".options");
 
                     //set active
-                    addClassEl('active', group);
+                    addClassEl("active", group);
 
                     //remove selected
-                    removeElsClass(group.getElementsByClassName('option'), 'selected');
+                    removeElsClass(group.getElementsByClassName("option"), "selected");
 
                     //add selected
-                    addClassEl('selected', option);
+                    addClassEl("selected", option);
 
                     //set group active
-                    for(let i = 0; i < buttons.length; i++) {
+                    for (let i = 0; i < buttons.length; i++) {
                         let button = buttons[i];
 
-                        if(button.getAttribute('data-min-max') === group.getAttribute('data-min-max')) {
-                            addClassEl('active', button);
+                        if (button.getAttribute("data-min-max") === group.getAttribute("data-min-max")) {
+                            addClassEl("active", button);
                             let cls = level_1.classList;
 
-                            for(let j = 0; j < cls.length; j++) {
-                                if(cls[j].includes('group')) {
+                            for (let j = 0; j < cls.length; j++) {
+                                if (cls[j].includes("group")) {
                                     removeClassEl(cls[j], level_1);
                                 }
                             }
@@ -359,6 +398,63 @@ befriend.activities = {
             }
         }
     },
+    setTravelTimes: function (from, to) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let data = await befriend.places.getTravelTimes(from, to);
+
+                let key_class_dict = {
+                    driving: 'drive',
+                    walking: 'walk',
+                    bicycle: 'bike'
+                };
+
+                for(let k in data.modes) {
+                    let mode = data.modes[k];
+
+                    let cls = key_class_dict[k];
+
+                    let el = befriend.els.travel_times.querySelector(`.mode.${cls}`);
+
+                    let value_el = el.querySelector('.value');
+
+                    value_el.style.opacity = 0;
+
+                    let time_str = '';
+
+                    if(mode.hours) {
+                        time_str = `${mode.hours} hr`;
+
+                        if(mode.hours > 1) {
+                            time_str += 's';
+                        }
+
+                        if(mode.mins > 0) {
+                            time_str += ' ';
+                        }
+                    }
+
+                    if(mode.mins) {
+                        time_str += `${mode.mins}`;
+
+                        if(mode.hours < 1) {
+                            time_str += ' min';
+                        }
+                    }
+
+                    value_el.innerHTML = time_str;
+
+                    requestAnimationFrame(function () {
+                         value_el.style.opacity = 1;
+                    });
+                }
+            } catch(e) {
+                console.error(e);
+            }
+
+            resolve();
+        });
+    },
     displayCreateActivity: async function () {
         //set up html and transition logic
         befriend.html.createActivity();
@@ -366,10 +462,7 @@ befriend.activities = {
         let status_bar_height = await befriend.styles.getStatusBarHeight();
 
         //transform status bar
-        befriend.styles.transformStatusBar(
-            status_bar_height + 5,
-            befriend.variables.hide_statusbar_ms / 1000,
-        );
+        befriend.styles.transformStatusBar(status_bar_height + 5, befriend.variables.hide_statusbar_ms / 1000);
 
         befriend.activities.toggleCreateActivity(true);
 
@@ -388,16 +481,18 @@ befriend.activities = {
         // Resize and reposition map
         try {
             await resizeAndRepositionMap(map_el);
-        } catch(e) {
+        } catch (e) {
             console.error(e);
         }
 
         //Add place marker to map
         try {
-             let to = await getPlaceCoordinates(place);
+            let to = await getPlaceCoordinates(place);
 
-             await addPlaceMarkerToMap(to);
-        } catch(e) {
+            befriend.activities.setTravelTimes(from, to);
+
+            await addPlaceMarkerToMap(to);
+        } catch (e) {
             console.error(e);
         }
 
@@ -407,7 +502,7 @@ befriend.activities = {
             [befriend.maps.markers.me, befriend.maps.markers.place],
             befriend.maps.markers.place,
             0.2,
-            befriend.variables.create_activity_transition_ms
+            befriend.variables.create_activity_transition_ms,
         );
 
         //hide display places after transition
@@ -471,19 +566,18 @@ befriend.activities = {
 
         let duration_str = `${minutes} minutes`;
 
-        if(minutes >= 60 && minutes < 120) {
-            if(minutes === 60) {
+        if (minutes >= 60 && minutes < 120) {
+            if (minutes === 60) {
                 duration_str = `1 hour`;
             } else {
                 duration_str = `1 hour, ${minutes - 60} minutes`;
             }
-
-        } else if(minutes >= 120) {
+        } else if (minutes >= 120) {
             let hours = Math.floor(minutes / 60);
             let half = (minutes % 60) / 60;
 
-            if(half) {
-                let half_str = half.toFixed(1).replace(/0/g, '');
+            if (half) {
+                let half_str = half.toFixed(1).replace(/0/g, "");
 
                 duration_str = `${hours}${half_str} hours`;
             } else {
@@ -553,32 +647,32 @@ befriend.activities = {
                     befriend.maps.addMarkerCustom();
                 }
 
-                back_el.style.removeProperty('display');
+                back_el.style.removeProperty("display");
             });
         },
         activityDuration: function () {
-            let level_1_el = befriend.els.activity_duration.querySelector('.level_1');
-            let level_1_els = level_1_el.getElementsByClassName('button');
-            let level_2_el = befriend.els.activity_duration.querySelector('.level_2');
-            let level_2_options = level_2_el.getElementsByClassName('options');
-            let all_duration_options = level_2_el.getElementsByClassName('option');
+            let level_1_el = befriend.els.activity_duration.querySelector(".level_1");
+            let level_1_els = level_1_el.getElementsByClassName("button");
+            let level_2_el = befriend.els.activity_duration.querySelector(".level_2");
+            let level_2_options = level_2_el.getElementsByClassName("options");
+            let all_duration_options = level_2_el.getElementsByClassName("option");
 
             //handle click on level 1
-            for(let level_1_i = 0; level_1_i < level_1_els.length; level_1_i++) {
+            for (let level_1_i = 0; level_1_i < level_1_els.length; level_1_i++) {
                 let el = level_1_els[level_1_i];
 
-                el.addEventListener('click', function (e) {
+                el.addEventListener("click", function (e) {
                     e.preventDefault();
                     e.stopPropagation();
 
-                    removeElsClass(level_1_els, 'active');
+                    removeElsClass(level_1_els, "active");
 
-                    addClassEl('active', el);
+                    addClassEl("active", el);
 
                     let cls = level_1_el.classList;
 
-                    for(let j = 0; j < cls.length; j++) {
-                        if(cls[j].includes('group')) {
+                    for (let j = 0; j < cls.length; j++) {
+                        if (cls[j].includes("group")) {
                             removeClassEl(cls[j], level_1_el);
                         }
                     }
@@ -586,28 +680,30 @@ befriend.activities = {
                     addClassEl(`group-${level_1_i + 1}`, level_1_el);
 
                     //set active options
-                    for(let level_2_i = 0; level_2_i < level_2_options.length; level_2_i++) {
+                    for (let level_2_i = 0; level_2_i < level_2_options.length; level_2_i++) {
                         let group = level_2_options[level_2_i];
 
-                        if(parseInt(group.getAttribute('data-min-max')) === parseInt(el.getAttribute('data-min-max'))) {
+                        if (
+                            parseInt(group.getAttribute("data-min-max")) === parseInt(el.getAttribute("data-min-max"))
+                        ) {
                             //show group
-                            addClassEl('active', group);
+                            addClassEl("active", group);
 
                             //select option
-                            let option_els = group.getElementsByClassName('option');
+                            let option_els = group.getElementsByClassName("option");
 
-                            removeElsClass(option_els, 'selected');
+                            removeElsClass(option_els, "selected");
 
                             let min_selected = null;
 
                             //previously selected by user
-                            for(let i = 0; i < option_els.length; i++) {
+                            for (let i = 0; i < option_els.length; i++) {
                                 let option_el = option_els[i];
 
-                                if(elHasClass(option_el, 'is_user')) {
-                                    let min = parseInt(option_el.getAttribute('data-min'));
+                                if (elHasClass(option_el, "is_user")) {
+                                    let min = parseInt(option_el.getAttribute("data-min"));
                                     min_selected = min;
-                                    addClassEl('selected', option_el);
+                                    addClassEl("selected", option_el);
                                     //
                                     // if(min === befriend.activities.duration.selected) {
                                     //
@@ -615,55 +711,54 @@ befriend.activities = {
                                 }
                             }
 
-                            if(!min_selected) {
+                            if (!min_selected) {
                                 //custom for group
-                                if(level_1_i === 0) {
-                                    for(let i = 0; i < option_els.length; i++) {
+                                if (level_1_i === 0) {
+                                    for (let i = 0; i < option_els.length; i++) {
                                         let option_el = option_els[i];
 
-                                        let min = parseInt(option_el.getAttribute('data-min'));
+                                        let min = parseInt(option_el.getAttribute("data-min"));
 
-                                        if(min === 30) {
-                                            addClassEl('selected', option_el);
+                                        if (min === 30) {
+                                            addClassEl("selected", option_el);
                                             min_selected = min;
                                         }
                                     }
                                 } else {
-                                    min_selected = parseInt(option_els[0].getAttribute('data-min'));
-                                    addClassEl('selected', option_els[0]);
+                                    min_selected = parseInt(option_els[0].getAttribute("data-min"));
+                                    addClassEl("selected", option_els[0]);
                                 }
                             }
 
                             befriend.activities.updateDuration(min_selected);
                         } else {
-                            removeClassEl('active', group);
+                            removeClassEl("active", group);
                         }
                     }
                 });
             }
 
             //handle selection of duration
-            for(let i = 0; i < all_duration_options.length; i++) {
+            for (let i = 0; i < all_duration_options.length; i++) {
                 let el = all_duration_options[i];
 
-                el.addEventListener('click', function (e) {
+                el.addEventListener("click", function (e) {
                     e.preventDefault();
                     e.stopPropagation();
 
-                    let group_options = el.closest('.options').getElementsByClassName('option');
+                    let group_options = el.closest(".options").getElementsByClassName("option");
 
-                    removeElsClass(group_options, 'selected');
-                    removeElsClass(group_options, 'is_user');
+                    removeElsClass(group_options, "selected");
+                    removeElsClass(group_options, "is_user");
 
-                    addClassEl('selected', el);
-                    addClassEl('is_user', el);
+                    addClassEl("selected", el);
+                    addClassEl("is_user", el);
 
-                    let min = parseInt(el.getAttribute('data-min'));
+                    let min = parseInt(el.getAttribute("data-min"));
 
                     befriend.activities.updateDuration(min);
                 });
             }
-
         },
         level1: function () {
             return new Promise(async (resolve, reject) => {

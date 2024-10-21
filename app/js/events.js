@@ -1,5 +1,7 @@
 befriend.events = {
     init: function () {
+        console.log("[init] Events");
+
         return new Promise(async (resolve, reject) => {
             try {
                 befriend.events.bodyClickHandler();

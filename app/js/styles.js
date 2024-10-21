@@ -1,5 +1,7 @@
 befriend.styles = {
     init: function () {
+        console.log("[init] Styles");
+
         return new Promise(async (resolve, reject) => {
             try {
                 await befriend.styles.transformStatusBar(0, 0);

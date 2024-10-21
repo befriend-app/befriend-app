@@ -13,6 +13,8 @@ befriend.maps = {
     },
     defaultZoom: 13,
     init: function () {
+        console.log("[init] Maps");
+
         return new Promise(async (resolve, reject) => {
             try {
                 await befriend.maps.loadActivityMap();
@@ -256,7 +258,7 @@ befriend.maps = {
             maxZoom: 14,
         };
 
-        if(isNumeric(duration)) {
+        if (isNumeric(duration)) {
             options.duration = duration;
         }
 
