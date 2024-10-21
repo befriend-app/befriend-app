@@ -308,28 +308,27 @@ befriend.activities = {
         //transform/transition system status bar
         befriend.styles.transformStatusBar(
             status_bar_height + 5,
-            befriend.variables.create_activity_transition_ms / 1000,
+            befriend.variables.hide_statusbar_ms / 1000,
         );
 
         befriend.activities.toggleCreateActivity(true);
 
         //add place marker to map
         let place = befriend.places.selected.place;
+        let from;
 
-        let lat = place.location_lat;
-        let lon = place.location_lon;
+        try {
+            if(befriend.location.isCustom()) {
+                from = befriend.location.search;
+                from.is_custom = true;
+            } else {
+                from = befriend.location.device;
+            }
 
-        befriend.maps.addMarker(
-            befriend.maps.maps.activities,
-            {
-                lat,
-                lon,
-            },
-            {
-                is_place: true,
-            },
-            true,
-        );
+            // let travel = await befriend.places.getTravelTimes(from, to);
+        } catch(e) {
+            console.error(e);
+        }
 
         //remove pin marker if custom location
         if (befriend.location.isCustom()) {
@@ -352,6 +351,45 @@ befriend.activities = {
 
         await rafAwait();
 
+        //remove removed-transition
+
+        map_el.style.position = "absolute";
+        map_el.style.removeProperty("transition");
+
+        await rafAwait();
+
+        //transition map to top
+        map_el.style.transform = `translate(${-map_box.x}px, ${-map_box.y}px)`;
+
+        await rafAwait();
+
+        if(!place.location_lat || !place.location_lon) {
+            try {
+                let address_geo = await befriend.places.getAddressGeo(place);
+                place.location_lat = address_geo.lat;
+                place.location_lon = address_geo.lon;
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        let to = {
+            lat: place.location_lat,
+            lon: place.location_lon
+        };
+
+        befriend.maps.addMarker(
+            befriend.maps.maps.activities,
+            {
+                lat: to.lat,
+                lon: to.lon,
+            },
+            {
+                is_place: true,
+            },
+            true,
+        );
+
         let ts = timeNow();
 
         while (!befriend.maps.markers.place) {
@@ -362,22 +400,14 @@ befriend.activities = {
             }
         }
 
-        //update map zoom to show all markers
+        // update map zoom to show all markers
         befriend.maps.fitMarkersWithMargin(
             befriend.maps.maps.activities,
             [befriend.maps.markers.me, befriend.maps.markers.place],
             befriend.maps.markers.place,
             0.2,
+            befriend.variables.create_activity_transition_ms
         );
-
-        //remove removed-transition
-        map_el.style.removeProperty("transition");
-        map_el.style.position = "absolute";
-
-        await rafAwait();
-
-        //transition map to top
-        map_el.style.transform = `translate(${-map_box.x}px, ${-map_box.y}px)`;
 
         //hide display places after transition
         setTimeout(async function () {

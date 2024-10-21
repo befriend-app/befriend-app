@@ -285,6 +285,34 @@ befriend.places = {
             resolve();
         });
     },
+    getAddressGeo: function (place) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                 let r = await axios.post(joinPaths(api_domain, 'geocode'), {
+                     place: place
+                 });
+
+                 resolve(r.data.geo);
+            } catch(e) {
+                console.error(e);
+                return reject();
+            }
+        });
+    },
+    getTravelTimes: function (from, to) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                 let r = await axios.post(joinPaths(api_domain, "travel-time"), {
+                     from, to
+                 });
+
+                 resolve(r.data);
+            } catch(e) {
+                console.error(e);
+                return reject();
+            }
+        });
+    },
     events: {
         init: function () {
             return new Promise(async (resolve, reject) => {

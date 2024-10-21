@@ -726,7 +726,6 @@ befriend.html = {
         when_el.querySelector('.duration').querySelector('.value').innerHTML = befriend.activities.getDurationStr();
 
         //set friends
-
         let friend_type_str = '';
 
         if(befriend.friends.type.is_new) {

@@ -225,7 +225,7 @@ befriend.maps = {
             }
         }
     },
-    fitMarkersWithMargin: function (map, markers, center_marker, margin_percent) {
+    fitMarkersWithMargin: function (map, markers, center_marker, margin_percent, duration) {
         // Extract coordinates from markers
         let coordinates = [];
 
@@ -251,10 +251,16 @@ befriend.maps = {
 
         let padding = max_dim * margin_percent;
 
-        map.fitBounds(bounds, {
+        let options = {
             padding: padding,
             maxZoom: 14,
-        });
+        };
+
+        if(isNumeric(duration)) {
+            options.duration = duration;
+        }
+
+        map.fitBounds(bounds, options);
     },
     events: {
         init: function () {
