@@ -608,11 +608,29 @@ html.#{$class_create_activity_shown} {
 
 #activity-duration {
     .level_1 {
+        $br_1: 10px;
+
         margin-top: 6px;
         display: flex;
         flex-wrap: nowrap;
 
-        $br_1: 10px;
+        &.group-2 {
+            .button:nth-of-type(1) {
+                border-right: 0 !important;
+            }
+        }
+
+        &.group-3 {
+            .button:nth-of-type(2) {
+                border-right: 0 !important;
+            }
+        }
+
+        &.group-4 {
+            .button:nth-of-type(3) {
+                border-right: 0 !important;
+            }
+        }
 
         .button {
             flex-basis: 25%;
@@ -634,10 +652,9 @@ html.#{$class_create_activity_shown} {
             }
 
             &.active {
+                border-right: 0;
                 background-color: $brand_color_a;
                 color: white;
-
-                border-right: 0;
             }
 
             &.no-end {

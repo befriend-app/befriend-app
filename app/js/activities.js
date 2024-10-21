@@ -245,6 +245,7 @@ befriend.activities = {
         befriend.els.create_activity.querySelector('.when').querySelector('.duration').querySelector('.value').innerHTML = befriend.activities.getDurationStr();
 
         if(update_buttons) {
+            let level_1 = befriend.els.create_activity.querySelector('.level_1');
             //remove all selected groups
             let buttons = befriend.els.activity_duration.getElementsByClassName('button');
             let options = befriend.els.activity_duration.getElementsByClassName('options');
@@ -275,6 +276,15 @@ befriend.activities = {
 
                         if(button.getAttribute('data-min-max') === group.getAttribute('data-min-max')) {
                             addClassEl('active', button);
+                            let cls = level_1.classList;
+
+                            for(let j = 0; j < cls.length; j++) {
+                                if(cls[j].includes('group')) {
+                                    removeClassEl(cls[j], level_1);
+                                }
+                            }
+
+                            addClassEl(`group-${i + 1}`, level_1);
                         }
                     }
                 }
@@ -525,6 +535,16 @@ befriend.activities = {
                     removeElsClass(level_1_els, 'active');
 
                     addClassEl('active', el);
+
+                    let cls = level_1_el.classList;
+
+                    for(let j = 0; j < cls.length; j++) {
+                        if(cls[j].includes('group')) {
+                            removeClassEl(cls[j], level_1_el);
+                        }
+                    }
+
+                    addClassEl(`group-${level_1_i + 1}`, level_1_el);
 
                     //set active options
                     for(let level_2_i = 0; level_2_i < level_2_options.length; level_2_i++) {
