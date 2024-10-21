@@ -390,6 +390,8 @@ befriend.places = {
                         if(activity_type) {
                             befriend.activities.updateDuration(activity_type.duration, true);
                         }
+                    } else {
+                        befriend.places.selected.is_activity_type = false;
                     }
 
                     befriend.activities.displayCreateActivity();

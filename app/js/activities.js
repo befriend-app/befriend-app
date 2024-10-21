@@ -289,7 +289,6 @@ befriend.activities = {
                     }
                 }
             }
-
         }
     },
     displayCreateActivity: async function () {
