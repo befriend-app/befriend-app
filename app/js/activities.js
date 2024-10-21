@@ -294,6 +294,7 @@ befriend.activities = {
             },
         },
     },
+    travelMode: 'drive',
     init: function () {
         console.log("[init] Activities");
 
@@ -594,6 +595,7 @@ befriend.activities = {
                     await befriend.activities.events.level1();
                     befriend.activities.events.onCreateActivityBack();
                     befriend.activities.events.activityDuration();
+                    befriend.activities.events.travelTimeMode();
                 } catch (e) {
                     console.error(e);
                 }
@@ -760,6 +762,24 @@ befriend.activities = {
                     let min = parseInt(el.getAttribute("data-min"));
 
                     befriend.activities.updateDuration(min);
+                });
+            }
+        },
+        travelTimeMode: function () {
+            let els = befriend.els.travel_times.getElementsByClassName('mode');
+
+            for(let i = 0; i < els.length; i++) {
+                let mode_el = els[i];
+
+                mode_el.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    removeElsClass(els, 'active');
+
+                    addClassEl('active', mode_el);
+
+                    befriend.activities.travelMode = mode_el.getAttribute('data-moe');
                 });
             }
         },
