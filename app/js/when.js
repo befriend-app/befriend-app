@@ -1,11 +1,12 @@
 befriend.when = {
     selected: {
         main: null,
-        createActivity: null
+        createActivity: null,
     },
-    thresholds: { //min
+    thresholds: {
+        //min
         now: 10,
-        future: 5
+        future: 5,
     },
     options: [
         { id: 'now', name: 'Now', is_now: true },

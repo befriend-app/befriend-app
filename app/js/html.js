@@ -13,6 +13,7 @@ befriend.html = {
         befriend.els.who = document.getElementById('who');
         befriend.els.place_search = document.getElementById('place-search');
         befriend.els.create_activity = document.getElementById('create-activity');
+        befriend.els.create_activity_btn = document.getElementById('create-activity-btn');
         befriend.els.travel_times = document.getElementById('travel-times');
     },
     appInit: function () {

@@ -629,8 +629,8 @@ html.#{$class_create_activity_shown} {
                     height: 0;
                     overflow-y: hidden;
                     transition:
-                            opacity 300ms ease,
-                            height 300ms ease
+                        opacity 300ms ease,
+                        height 300ms ease;
                 }
 
                 .inner {
@@ -645,8 +645,8 @@ html.#{$class_create_activity_shown} {
                     width: 20px;
                     height: 20px;
                     transition:
-                            opacity 300ms ease,
-                            transform 300ms ease;
+                        opacity 300ms ease,
+                        transform 300ms ease;
                     z-index: 2;
                     top: -8px;
                     opacity: 0;

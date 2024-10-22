@@ -59,13 +59,8 @@ befriend.events = {
         });
     },
     resizeHandler: function () {
-        let evs = ['resize', 'orientationchange'];
-
-        for(let ev of evs) {
-            window.addEventListener(ev, function () {
-                befriend.styles.createActivity.updateCloseMessagePosition();
-            });
-        }
-
-    }
+        window.addEventListener('resize', function () {
+            befriend.styles.createActivity.updateCloseMessagePosition();
+        });
+    },
 };

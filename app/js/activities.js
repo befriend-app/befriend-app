@@ -301,7 +301,7 @@ befriend.activities = {
     },
     travel: {
         mode: 'driving',
-        times: null
+        times: null,
     },
     init: function () {
         console.log('[init] Activities');
@@ -614,7 +614,7 @@ befriend.activities = {
         return duration_str;
     },
     getCurrentTravelTime: function () {
-        if(!befriend.activities.travel.times) {
+        if (!befriend.activities.travel.times) {
             return null;
         }
 
@@ -624,7 +624,7 @@ befriend.activities = {
         const originalTimes = {
             driving: null,
             walking: null,
-            bicycle: null
+            bicycle: null,
         };
 
         function hideMessage() {
@@ -640,7 +640,8 @@ befriend.activities = {
                 inner.innerHTML = 'Your activity time has been updated automatically.';
                 inner.style.backgroundColor = befriend.variables.color_green;
             } else {
-                inner.innerHTML = 'Please update your activity location and/or schedule for a later time.';
+                inner.innerHTML =
+                    'Please update your activity location and/or schedule for a later time.';
                 inner.style.backgroundColor = befriend.variables.color_red;
             }
 
@@ -657,17 +658,18 @@ befriend.activities = {
             if (originalTimes[mode]) {
                 when_el.querySelector('.time').innerHTML = originalTimes[mode].whenStr;
 
-                for(let i = 0; i <befriend.when.options.length; i++) {
+                for (let i = 0; i < befriend.when.options.length; i++) {
                     let option = befriend.when.options[i];
 
-                    if(option.id === befriend.when.selected.createActivity.id) {
+                    if (option.id === befriend.when.selected.createActivity.id) {
                         befriend.when.selectOptionIndex(i);
                         break;
                     }
                 }
 
-                if(befriend.when.selected.createActivity.time) {
-                    befriend.when.selected.createActivity.time.formatted = originalTimes[mode].whenStr;
+                if (befriend.when.selected.createActivity.time) {
+                    befriend.when.selected.createActivity.time.formatted =
+                        originalTimes[mode].whenStr;
                 }
             }
         }
@@ -683,9 +685,9 @@ befriend.activities = {
         if (originalTimes[currentMode] === null) {
             let when_str = '';
 
-            if(befriend.when.selected.createActivity.is_now) {
+            if (befriend.when.selected.createActivity.is_now) {
                 when_str = 'Now';
-            } else if(befriend.when.selected.createActivity.is_schedule) {
+            } else if (befriend.when.selected.createActivity.is_schedule) {
                 when_str = 'Schedule';
             } else {
                 when_str = befriend.when.selected.createActivity.time.formatted;
@@ -693,7 +695,7 @@ befriend.activities = {
 
             originalTimes[currentMode] = {
                 mins: mins_to,
-                whenStr: when_str
+                whenStr: when_str,
             };
         }
 
@@ -738,7 +740,7 @@ befriend.activities = {
                     // Update original time for current mode
                     originalTimes[currentMode] = {
                         mins: mins_to,
-                        whenStr: new_when_str
+                        whenStr: new_when_str,
                     };
 
                     break;
@@ -752,16 +754,31 @@ befriend.activities = {
         init: function () {
             return new Promise(async (resolve, reject) => {
                 try {
-                    await befriend.activities.events.level1();
-                    befriend.activities.events.onCreateActivityBack();
+                    befriend.activities.events.level1();
                     befriend.activities.events.activityDuration();
                     befriend.activities.events.travelTimeMode();
                     befriend.activities.events.hideCreateActivityMessage();
+                    befriend.activities.events.onCreateActivityBack();
+                    befriend.activities.events.createActivity();
                 } catch (e) {
                     console.error(e);
                 }
 
                 resolve();
+            });
+        },
+        createActivity: function () {
+            let button = befriend.els.create_activity_btn;
+
+            button.addEventListener('click', async function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                try {
+                    // await
+                } catch (e) {
+                    console.error(e);
+                }
             });
         },
         onCreateActivityBack: function () {
@@ -879,10 +896,6 @@ befriend.activities = {
                                     let min = parseInt(option_el.getAttribute('data-min'));
                                     min_selected = min;
                                     addClassEl('selected', option_el);
-                                    //
-                                    // if(min === befriend.activities.duration.selected) {
-                                    //
-                                    // }
                                 }
                             }
 
@@ -946,7 +959,7 @@ befriend.activities = {
                     e.stopPropagation();
 
                     //already selected
-                    if(elHasClass(mode_el, 'active')) {
+                    if (elHasClass(mode_el, 'active')) {
                         return false;
                     }
 
@@ -973,360 +986,341 @@ befriend.activities = {
             });
         },
         level1: function () {
-            return new Promise(async (resolve, reject) => {
-                let els = befriend.els.activities.getElementsByClassName('level_1_activity');
+            let els = befriend.els.activities.getElementsByClassName('level_1_activity');
 
-                for (let i = 0; i < els.length; i++) {
-                    let el = els[i];
+            for (let i = 0; i < els.length; i++) {
+                let el = els[i];
 
-                    el.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
+                el.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
 
-                        let parent_id = this.getAttribute('data-id');
-                        let activity = befriend.activities.types.data[parent_id];
+                    let parent_id = this.getAttribute('data-id');
+                    let activity = befriend.activities.types.data[parent_id];
 
-                        let level_2_el = this.closest('.level_1_row').nextSibling;
+                    let level_2_el = this.closest('.level_1_row').nextSibling;
 
-                        //remove activity selection and hide level 2 if same activity clicked
-                        if (elHasClass(this, 'active')) {
-                            removeClassEl('active', this);
+                    //remove activity selection and hide level 2 if same activity clicked
+                    if (elHasClass(this, 'active')) {
+                        removeClassEl('active', this);
 
-                            hideLevel(level_2_el);
+                        hideLevel(level_2_el);
 
-                            befriend.activities.selected.level_1 = null;
-                            befriend.activities.selected.level_2 = null;
-                            befriend.activities.selected.level_3 = null;
+                        befriend.activities.selected.level_1 = null;
+                        befriend.activities.selected.level_2 = null;
+                        befriend.activities.selected.level_3 = null;
 
-                            befriend.places.hidePlaces();
+                        befriend.places.hidePlaces();
 
-                            return;
-                        } else {
-                            //remove active from any previously selected activity
-                            removeElsClass(els, 'active');
-                            addClassEl('active', this);
-                            befriend.activities.selected.level_1 = activity;
-                            befriend.activities.selected.level_2 = null;
-                            befriend.activities.selected.level_3 = null;
-                        }
+                        return;
+                    } else {
+                        //remove active from any previously selected activity
+                        removeElsClass(els, 'active');
+                        addClassEl('active', this);
+                        befriend.activities.selected.level_1 = activity;
+                        befriend.activities.selected.level_2 = null;
+                        befriend.activities.selected.level_3 = null;
+                    }
 
-                        let prev_level_2 = befriend.els.activities.querySelector('.level_2.show');
+                    let prev_level_2 = befriend.els.activities.querySelector('.level_2.show');
 
-                        //do not proceed if no sub categories
-                        if (!activity.sub || !Object.keys(activity.sub).length) {
-                            if (prev_level_2) {
-                                hideLevel(prev_level_2);
-                            }
-
-                            return;
-                        }
-
-                        //hide other level 2s if different from this one
+                    //do not proceed if no sub categories
+                    if (!activity.sub || !Object.keys(activity.sub).length) {
                         if (prev_level_2) {
-                            if (prev_level_2 !== level_2_el) {
-                                hideLevel(prev_level_2);
-                                addClassEl('show', level_2_el);
-                            }
-                        } else {
+                            hideLevel(prev_level_2);
+                        }
+
+                        return;
+                    }
+
+                    //hide other level 2s if different from this one
+                    if (prev_level_2) {
+                        if (prev_level_2 !== level_2_el) {
+                            hideLevel(prev_level_2);
                             addClassEl('show', level_2_el);
                         }
+                    } else {
+                        addClassEl('show', level_2_el);
+                    }
 
-                        level_2_el.setAttribute('data-parent-id', parent_id);
+                    level_2_el.setAttribute('data-parent-id', parent_id);
 
-                        let level_2_html = ``;
+                    let level_2_html = ``;
 
-                        let activities_level_2 = [];
+                    let activities_level_2 = [];
 
-                        for (let level_2_id in activity.sub) {
-                            if (
-                                activities_level_2.length ===
-                                befriend.variables.activity_level_2_row_items
-                            ) {
-                                let row_html = activities_level_2.join('');
+                    for (let level_2_id in activity.sub) {
+                        if (
+                            activities_level_2.length ===
+                            befriend.variables.activity_level_2_row_items
+                        ) {
+                            let row_html = activities_level_2.join('');
 
-                                level_2_html += `<div class="level_2_row">
+                            level_2_html += `<div class="level_2_row">
                                             ${row_html}
                                         </div>`;
 
-                                level_2_html += `<div class="level_3"></div>`;
+                            level_2_html += `<div class="level_3"></div>`;
 
-                                activities_level_2.length = [];
-                            }
+                            activities_level_2.length = [];
+                        }
 
-                            let activity =
-                                befriend.activities.types.data[parent_id].sub[level_2_id];
+                        let activity = befriend.activities.types.data[parent_id].sub[level_2_id];
 
-                            let image_html = '';
+                        let image_html = '';
 
-                            if (activity.image) {
-                                image_html += `<div class="image">
+                        if (activity.image) {
+                            image_html += `<div class="image">
                                         ${activity.image}
                                     </div>`;
-                            } else if (activity.emoji) {
-                                image_html += `<div class="emoji">
+                        } else if (activity.emoji) {
+                            image_html += `<div class="emoji">
                                         ${activity.emoji}
                                     </div>`;
-                            }
+                        }
 
-                            let icon_html = ``;
+                        let icon_html = ``;
 
-                            if (image_html) {
-                                icon_html = `<div class="icon">${image_html}</div>`;
-                            }
+                        if (image_html) {
+                            icon_html = `<div class="icon">${image_html}</div>`;
+                        }
 
-                            let no_icon_class = icon_html ? '' : 'no_icon';
+                        let no_icon_class = icon_html ? '' : 'no_icon';
 
-                            activities_level_2.push(`
+                        activities_level_2.push(`
                             <div class="activity level_2_activity" data-id="${level_2_id}">
                                 <div class="activity_wrapper ${no_icon_class}">
                                     ${icon_html}
                                     <div class="name">${activity.name}</div>
                                 </div>
                             </div>`);
-                        }
+                    }
 
-                        if (activities_level_2.length) {
-                            let row_html = activities_level_2.join('');
-                            level_2_html += `<div class="level_2_row">
+                    if (activities_level_2.length) {
+                        let row_html = activities_level_2.join('');
+                        level_2_html += `<div class="level_2_row">
                                             ${row_html}
                                         </div>`;
-                            level_2_html += `<div class="level_3"></div>`;
-                        }
+                        level_2_html += `<div class="level_3"></div>`;
+                    }
 
-                        level_2_el.innerHTML = `<div class="level_2_container">
+                    level_2_el.innerHTML = `<div class="level_2_container">
                                                 ${level_2_html}
                                             </div>`;
 
-                        befriend.activities.updateLevelHeight(2);
+                    befriend.activities.updateLevelHeight(2);
 
-                        befriend.activities.events.level2();
-                    });
-                }
-
-                resolve();
-            });
+                    befriend.activities.events.level2();
+                });
+            }
         },
         level2: function () {
-            return new Promise(async (resolve, reject) => {
-                let level_2_activity_els =
-                    befriend.els.activities.getElementsByClassName('level_2_activity');
+            let level_2_activity_els =
+                befriend.els.activities.getElementsByClassName('level_2_activity');
 
-                for (let i = 0; i < level_2_activity_els.length; i++) {
-                    let el = level_2_activity_els[i];
+            for (let i = 0; i < level_2_activity_els.length; i++) {
+                let el = level_2_activity_els[i];
 
-                    el.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
+                el.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
 
-                        let parent_id = this.closest('.level_2').getAttribute('data-parent-id');
+                    let parent_id = this.closest('.level_2').getAttribute('data-parent-id');
 
-                        let level_2_id = this.getAttribute('data-id');
+                    let level_2_id = this.getAttribute('data-id');
 
-                        let level_2_activity =
-                            befriend.activities.types.data[parent_id].sub[level_2_id];
+                    let level_2_activity =
+                        befriend.activities.types.data[parent_id].sub[level_2_id];
 
-                        let level_3_el = this.closest('.level_2_row').nextSibling;
+                    let level_3_el = this.closest('.level_2_row').nextSibling;
 
-                        let closest_level_2_el = this.closest('.level_2');
+                    let closest_level_2_el = this.closest('.level_2');
 
-                        let prev_height_level_2 =
-                            closest_level_2_el.getAttribute('data-prev-height');
+                    let prev_height_level_2 = closest_level_2_el.getAttribute('data-prev-height');
 
-                        //remove activity selection and hide level 3 if same activity clicked
-                        if (elHasClass(this, 'active')) {
-                            removeClassEl('active', this);
+                    //remove activity selection and hide level 3 if same activity clicked
+                    if (elHasClass(this, 'active')) {
+                        removeClassEl('active', this);
 
-                            hideLevel(level_3_el);
+                        hideLevel(level_3_el);
 
-                            closest_level_2_el.style.height = prev_height_level_2;
+                        closest_level_2_el.style.height = prev_height_level_2;
 
-                            befriend.activities.selected.level_2 = null;
-                            befriend.activities.selected.level_3 = null;
+                        befriend.activities.selected.level_2 = null;
+                        befriend.activities.selected.level_3 = null;
 
-                            return;
-                        } else {
-                            //remove active from any previously selected activity
-                            removeElsClass(level_2_activity_els, 'active');
-                            addClassEl('active', this);
-                            befriend.activities.selected.level_2 = level_2_activity;
-                            befriend.activities.selected.level_3 = null;
+                        return;
+                    } else {
+                        //remove active from any previously selected activity
+                        removeElsClass(level_2_activity_els, 'active');
+                        addClassEl('active', this);
+                        befriend.activities.selected.level_2 = level_2_activity;
+                        befriend.activities.selected.level_3 = null;
 
-                            // only show places when there are no level 3 categories
-                            if (
-                                !level_2_activity.sub ||
-                                !Object.keys(level_2_activity.sub).length
-                            ) {
-                                befriend.places.displayPlaces(befriend.activities.selected.level_2);
-
-                                setTimeout(function () {
-                                    removeClassEl('active', el);
-                                }, befriend.variables.places_transition_ms);
-                            }
-                        }
-
-                        let prev_level_3 = befriend.els.activities.querySelector('.level_3.show');
-
-                        //do not proceed if no sub categories
+                        // only show places when there are no level 3 categories
                         if (!level_2_activity.sub || !Object.keys(level_2_activity.sub).length) {
-                            if (prev_level_3) {
-                                hideLevel(prev_level_3);
-                            }
+                            befriend.places.displayPlaces(befriend.activities.selected.level_2);
 
-                            closest_level_2_el.style.height = prev_height_level_2;
+                            setTimeout(function () {
+                                removeClassEl('active', el);
+                            }, befriend.variables.places_transition_ms);
+                        }
+                    }
 
-                            return;
+                    let prev_level_3 = befriend.els.activities.querySelector('.level_3.show');
+
+                    //do not proceed if no sub categories
+                    if (!level_2_activity.sub || !Object.keys(level_2_activity.sub).length) {
+                        if (prev_level_3) {
+                            hideLevel(prev_level_3);
                         }
 
-                        //hide other level 3s if different from this one
-                        if (prev_level_3) {
-                            if (prev_level_3 !== level_3_el) {
-                                hideLevel(prev_level_3);
-                                addClassEl('show', level_3_el);
-                            }
-                        } else {
+                        closest_level_2_el.style.height = prev_height_level_2;
+
+                        return;
+                    }
+
+                    //hide other level 3s if different from this one
+                    if (prev_level_3) {
+                        if (prev_level_3 !== level_3_el) {
+                            hideLevel(prev_level_3);
                             addClassEl('show', level_3_el);
                         }
+                    } else {
+                        addClassEl('show', level_3_el);
+                    }
 
-                        level_3_el.setAttribute('data-parent-id', parent_id);
-                        level_3_el.setAttribute('data-level-2-id', level_2_id);
+                    level_3_el.setAttribute('data-parent-id', parent_id);
+                    level_3_el.setAttribute('data-level-2-id', level_2_id);
 
-                        let level_3_html = ``;
+                    let level_3_html = ``;
 
-                        let activities_level_3 = [];
+                    let activities_level_3 = [];
 
-                        for (let level_3_id in level_2_activity.sub) {
-                            if (
-                                activities_level_3.length ===
-                                befriend.variables.activity_level_3_row_items
-                            ) {
-                                let row_html = activities_level_3.join('');
+                    for (let level_3_id in level_2_activity.sub) {
+                        if (
+                            activities_level_3.length ===
+                            befriend.variables.activity_level_3_row_items
+                        ) {
+                            let row_html = activities_level_3.join('');
 
-                                level_3_html += `<div class="level_3_row">
+                            level_3_html += `<div class="level_3_row">
                                             ${row_html}
                                         </div>`;
 
-                                activities_level_3.length = [];
-                            }
+                            activities_level_3.length = [];
+                        }
 
-                            let activity =
-                                befriend.activities.types.data[parent_id].sub[level_2_id].sub[
-                                    level_3_id
-                                ];
+                        let activity =
+                            befriend.activities.types.data[parent_id].sub[level_2_id].sub[
+                                level_3_id
+                            ];
 
-                            let image_html = '';
+                        let image_html = '';
 
-                            if (activity.image) {
-                                image_html += `<div class="image">
+                        if (activity.image) {
+                            image_html += `<div class="image">
                                         ${activity.image}
                                     </div>`;
-                            } else if (activity.emoji) {
-                                image_html += `<div class="emoji">
+                        } else if (activity.emoji) {
+                            image_html += `<div class="emoji">
                                         ${activity.emoji}
                                     </div>`;
-                            }
+                        }
 
-                            let icon_html = ``;
+                        let icon_html = ``;
 
-                            if (image_html) {
-                                icon_html = `<div class="icon">${image_html}</div>`;
-                            }
+                        if (image_html) {
+                            icon_html = `<div class="icon">${image_html}</div>`;
+                        }
 
-                            let no_icon_class = icon_html ? '' : 'no_icon';
+                        let no_icon_class = icon_html ? '' : 'no_icon';
 
-                            activities_level_3.push(`
+                        activities_level_3.push(`
                             <div class="activity level_3_activity" data-id="${level_3_id}">
                                 <div class="activity_wrapper ${no_icon_class}">
                                     ${icon_html}
                                     <div class="name">${activity.name}</div>
                                 </div>
                             </div>`);
-                        }
+                    }
 
-                        if (activities_level_3.length) {
-                            let row_html = activities_level_3.join('');
-                            level_3_html += `<div class="level_3_row">
+                    if (activities_level_3.length) {
+                        let row_html = activities_level_3.join('');
+                        level_3_html += `<div class="level_3_row">
                                             ${row_html}
                                         </div>`;
-                        }
+                    }
 
-                        level_3_el.innerHTML = `<div class="level_3_container">
+                    level_3_el.innerHTML = `<div class="level_3_container">
                                                 ${level_3_html}
                                             </div>`;
 
-                        befriend.activities.updateLevelHeight(3);
+                    befriend.activities.updateLevelHeight(3);
 
-                        requestAnimationFrame(function () {
-                            befriend.activities.updateLevelHeight(2, true);
-                        });
-
-                        // let last_row = lastArrItem(level_3_el.getElementsByClassName("level_3_row"));
-                        //
-                        // last_row.style.marginBottom = "0px";
-                        //
-                        // let level_3_height = getElHeightHidden(level_3_el);
-                        //
-                        // level_3_el.style.height = `${level_3_height}px`;
-                        //
-                        // let total_level_2_height = parseFloat(prev_height_level_2) + level_3_height;
-                        //
-                        // closest_level_2_el.style.height = `${total_level_2_height}px`;
-
-                        befriend.activities.events.level3();
+                    requestAnimationFrame(function () {
+                        befriend.activities.updateLevelHeight(2, true);
                     });
-                }
 
-                resolve();
-            });
+                    // let last_row = lastArrItem(level_3_el.getElementsByClassName("level_3_row"));
+                    //
+                    // last_row.style.marginBottom = "0px";
+                    //
+                    // let level_3_height = getElHeightHidden(level_3_el);
+                    //
+                    // level_3_el.style.height = `${level_3_height}px`;
+                    //
+                    // let total_level_2_height = parseFloat(prev_height_level_2) + level_3_height;
+                    //
+                    // closest_level_2_el.style.height = `${total_level_2_height}px`;
+
+                    befriend.activities.events.level3();
+                });
+            }
         },
         level3: function () {
-            return new Promise(async (resolve, reject) => {
-                let level_3_activity_els =
-                    befriend.els.activities.getElementsByClassName('level_3_activity');
+            let level_3_activity_els =
+                befriend.els.activities.getElementsByClassName('level_3_activity');
 
-                for (let i = 0; i < level_3_activity_els.length; i++) {
-                    let el = level_3_activity_els[i];
+            for (let i = 0; i < level_3_activity_els.length; i++) {
+                let el = level_3_activity_els[i];
 
-                    el.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
+                el.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
 
-                        console.log('level 3 clicked');
+                    console.log('level 3 clicked');
 
-                        let level_3_el = this.closest('.level_3');
+                    let level_3_el = this.closest('.level_3');
 
-                        let parent_id = level_3_el.getAttribute('data-parent-id');
+                    let parent_id = level_3_el.getAttribute('data-parent-id');
 
-                        let level_2_id = level_3_el.getAttribute('data-level-2-id');
+                    let level_2_id = level_3_el.getAttribute('data-level-2-id');
 
-                        let level_3_id = this.getAttribute('data-id');
+                    let level_3_id = this.getAttribute('data-id');
 
-                        let level_3_activity =
-                            befriend.activities.types.data[parent_id].sub[level_2_id].sub[
-                                level_3_id
-                            ];
+                    let level_3_activity =
+                        befriend.activities.types.data[parent_id].sub[level_2_id].sub[level_3_id];
 
-                        //remove activity selection and hide level 3 if same activity clicked
-                        if (elHasClass(this, 'active')) {
-                            removeClassEl('active', this);
-                            befriend.activities.selected.level_3 = null;
-                            // befriend.places.displayPlaces(befriend.activities.selected.level_2);
-                        } else {
-                            //remove active from any previously selected activity
-                            removeElsClass(level_3_activity_els, 'active');
-                            addClassEl('active', this);
-                            befriend.activities.selected.level_3 = level_3_activity;
+                    //remove activity selection and hide level 3 if same activity clicked
+                    if (elHasClass(this, 'active')) {
+                        removeClassEl('active', this);
+                        befriend.activities.selected.level_3 = null;
+                        // befriend.places.displayPlaces(befriend.activities.selected.level_2);
+                    } else {
+                        //remove active from any previously selected activity
+                        removeElsClass(level_3_activity_els, 'active');
+                        addClassEl('active', this);
+                        befriend.activities.selected.level_3 = level_3_activity;
 
-                            befriend.places.displayPlaces(befriend.activities.selected.level_3);
+                        befriend.places.displayPlaces(befriend.activities.selected.level_3);
 
-                            setTimeout(function () {
-                                removeClassEl('active', el);
-                            }, befriend.variables.places_transition_ms);
-                        }
-                    });
-                }
-
-                resolve();
-            });
+                        setTimeout(function () {
+                            removeClassEl('active', el);
+                        }, befriend.variables.places_transition_ms);
+                    }
+                });
+            }
         },
     },
 };

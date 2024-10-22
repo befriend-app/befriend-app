@@ -137,8 +137,8 @@ befriend.styles = {
 
             if (messageEl && closeEl) {
                 const rect = messageEl.getBoundingClientRect();
-                closeEl.style.left = `${rect.width + 14}px`;
+                closeEl.style.left = `${rect.width + 12}px`;
             }
-        }
-    }
+        },
+    },
 };
