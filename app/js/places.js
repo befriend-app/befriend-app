@@ -217,7 +217,7 @@ befriend.places = {
     setPlacesTime: function () {
         let places_time_str = '';
 
-        let selected = befriend.when.selected;
+        let selected = befriend.when.selected.main;
 
         if (selected.is_now) {
             places_time_str = `<div class="value now">Now</div>`;
@@ -307,7 +307,7 @@ befriend.places = {
             try {
                 let unix_ts;
 
-                let when = befriend.when.selected;
+                let when = befriend.when.selected.main;
 
                 if (when.is_now) {
                     unix_ts = timeNow(true);

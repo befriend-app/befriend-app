@@ -299,7 +299,10 @@ befriend.activities = {
             },
         },
     },
-    travelMode: 'drive',
+    travel: {
+        mode: 'driving',
+        times: null
+    },
     init: function () {
         console.log('[init] Activities');
 
@@ -412,18 +415,14 @@ befriend.activities = {
             try {
                 let data = await befriend.places.getTravelTimes(from, to);
 
-                let key_class_dict = {
-                    driving: 'drive',
-                    walking: 'walk',
-                    bicycle: 'bike',
-                };
+                befriend.activities.travel.times = data;
 
-                for (let k in data.modes) {
-                    let mode = data.modes[k];
+                befriend.activities.updateWhenAuto();
 
-                    let cls = key_class_dict[k];
+                for (let mode_name in data.modes) {
+                    let mode = data.modes[mode_name];
 
-                    let el = befriend.els.travel_times.querySelector(`.mode.${cls}`);
+                    let el = befriend.els.travel_times.querySelector(`.mode.${mode_name}`);
 
                     let value_el = el.querySelector('.value');
 
@@ -465,6 +464,9 @@ befriend.activities = {
         });
     },
     displayCreateActivity: async function () {
+        //set which when was selected coming into the create-activity view
+        befriend.when.selected.createActivity = structuredClone(befriend.when.selected.main);
+
         //set up html and transition logic
         befriend.html.createActivity();
         let map_el = befriend.els.activities_map;
@@ -475,6 +477,16 @@ befriend.activities = {
             status_bar_height + 5,
             befriend.variables.hide_statusbar_ms / 1000,
         );
+
+        //remove prev message
+        let message_el = document.getElementById('create-activity-top-message');
+
+        message_el.style.transition = 'none';
+
+        removeClassEl('show', message_el);
+        message_el.style.removeProperty('height');
+
+        message_el.querySelector('.inner').style.removeProperty('backgroundColor');
 
         befriend.activities.toggleCreateActivity(true);
 
@@ -496,6 +508,8 @@ befriend.activities = {
         } catch (e) {
             console.error(e);
         }
+
+        message_el.style.removeProperty('transition');
 
         //Add place marker to map
         try {
@@ -599,6 +613,69 @@ befriend.activities = {
 
         return duration_str;
     },
+    getCurrentTravelTime: function () {
+        if(!befriend.activities.travel.times) {
+            return null;
+        }
+
+        return befriend.activities.travel.times.modes[befriend.activities.travel.mode].total;
+    },
+    updateWhenAuto: async function () {
+        let needs_update = false;
+        let when = befriend.when.selected.createActivity;
+        let mins_to = befriend.activities.getCurrentTravelTime();
+        let new_when_str = '';
+
+        let when_el = befriend.els.create_activity.querySelector('.when');
+        let message_el = document.getElementById('create-activity-top-message');
+
+        if(when.is_now) {
+            if(mins_to > befriend.when.thresholds.now) {
+                needs_update = true;
+            }
+        } else if(when.is_schedule) {
+
+        } else {
+            if(mins_to > when.mins + befriend.when.thresholds.future) {
+                needs_update = true;
+            }
+        }
+
+        if(needs_update) {
+            //select closest possible time
+            for(let i = 0; i < befriend.when.options.length; i++) {
+                let option = befriend.when.options[i];
+
+                if(option.mins && mins_to < option.mins) {
+                    //auto select when button
+                    befriend.when.selectOptionIndex(i);
+
+                    //new when string
+                    new_when_str = befriend.when.selected.main.time.formatted;
+
+                    break;
+                }
+            }
+
+            let inner = message_el.querySelector('.inner');
+
+            if(new_when_str) {
+                when_el.querySelector('.time').innerHTML = new_when_str;
+                inner.innerHTML = 'Your activity time has been updated automatically.'
+                inner.style.backgroundColor = befriend.variables.color_green;
+            } else {
+                inner.innerHTML = 'Please update your activity location and/or schedule for a later time.'
+                inner.style.backgroundColor = befriend.variables.color_red;
+            }
+
+            //calc height of message
+            let height = getElHeightHidden(message_el);
+
+            message_el.style.height = `${height}px`;
+
+            addClassEl('show', message_el);
+        }
+    },
     events: {
         init: function () {
             return new Promise(async (resolve, reject) => {
@@ -607,6 +684,7 @@ befriend.activities = {
                     befriend.activities.events.onCreateActivityBack();
                     befriend.activities.events.activityDuration();
                     befriend.activities.events.travelTimeMode();
+                    befriend.activities.events.hideCreateActivityMessage();
                 } catch (e) {
                     console.error(e);
                 }
@@ -799,9 +877,23 @@ befriend.activities = {
 
                     addClassEl('active', mode_el);
 
-                    befriend.activities.travelMode = mode_el.getAttribute('data-moe');
+                    befriend.activities.travel.mode = mode_el.getAttribute('data-mode');
+
+                    befriend.activities.updateWhenAuto();
                 });
             }
+        },
+        hideCreateActivityMessage: function () {
+            let message_el = document.getElementById('create-activity-top-message');
+            let close_el = message_el.querySelector('.close');
+
+            close_el.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                message_el.style.removeProperty('height');
+                removeClassEl('show', message_el);
+            });
         },
         level1: function () {
             return new Promise(async (resolve, reject) => {

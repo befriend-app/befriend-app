@@ -1,5 +1,12 @@
 befriend.when = {
-    selected: null,
+    selected: {
+        main: null,
+        createActivity: null
+    },
+    thresholds: { //min
+        now: 10,
+        future: 5
+    },
     options: [
         { name: 'Now', is_now: true },
         { value: '15', unit: 'mins', mins: 15 },
@@ -101,7 +108,7 @@ befriend.when = {
     getCurrentlySelectedDateTime() {
         let activity_time = null;
 
-        let when_selected = befriend.when.selected;
+        let when_selected = befriend.when.selected.main;
 
         if (when_selected) {
             if (when_selected.is_now) {
@@ -121,6 +128,15 @@ befriend.when = {
         }
 
         return activity_time;
+    },
+    selectOptionIndex: function (index) {
+        let when_els = befriend.els.when.getElementsByClassName('when-option');
+
+        removeElsClass(when_els, 'active');
+
+        addClassEl('active', when_els[index]);
+
+        befriend.when.selected.main = befriend.when.options[index];
     },
     events: {
         init: function () {
@@ -145,10 +161,7 @@ befriend.when = {
                         e.preventDefault();
                         e.stopPropagation();
 
-                        removeElsClass(when_els, 'active');
-                        addClassEl('active', el);
-
-                        befriend.when.selected = befriend.when.options[i];
+                        befriend.when.selectOptionIndex(i);
                     });
                 }
 
