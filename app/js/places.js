@@ -27,8 +27,8 @@ befriend.places = {
             befriend.places.toggleDisplayPlaces(true);
 
             try {
-                let r = await axios.put(
-                    joinPaths(api_domain, 'activity_type', activity_type.token, 'places'),
+                let r = await befriend.api.put(
+                    joinPaths('activity_type', activity_type.token, 'places'),
                     {
                         location: {
                             map: befriend.location.getMarkerCoords(),
@@ -278,7 +278,7 @@ befriend.places = {
                     },
                 };
 
-                const r = await axios.post(joinPaths(api_domain, `autocomplete/places`), params);
+                const r = await befriend.api.post('autocomplete/places', params);
 
                 befriend.places.setAutoComplete(r.data.places, skip_dropdown);
             } catch (error) {
@@ -291,7 +291,7 @@ befriend.places = {
     getAddressGeo: function (place) {
         return new Promise(async (resolve, reject) => {
             try {
-                let r = await axios.post(joinPaths(api_domain, 'geocode'), {
+                let r = await befriend.api.post('geocode', {
                     place: place,
                 });
 
@@ -320,7 +320,7 @@ befriend.places = {
 
                 let date = dayjs.unix(unix_ts).format('YYYY-MM-DDTHH:mm');
 
-                let r = await axios.post(joinPaths(api_domain, 'travel-time'), {
+                let r = await befriend.api.post('travel-time', {
                     when: date,
                     from,
                     to,

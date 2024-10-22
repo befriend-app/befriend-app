@@ -89,7 +89,7 @@ befriend.maps = {
             }
 
             try {
-                let r = await axios.get(joinPaths(api_domain, 'mapbox/token'));
+                let r = await befriend.api.get('mapbox/token');
 
                 token = befriend.maps.token.data = {
                     token: r.data.token,

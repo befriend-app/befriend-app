@@ -325,7 +325,7 @@ befriend.activities = {
     getActivityTypes: function () {
         return new Promise(async (resolve, reject) => {
             try {
-                let r = await axios.get(joinPaths(api_domain, 'activity_types'));
+                let r = await befriend.api.get('activity_types');
 
                 befriend.activities.types.data = r.data;
 
@@ -541,20 +541,6 @@ befriend.activities = {
         let obj = befriend.activities.selected;
 
         return obj.level_3 || obj.level_2 || obj.level_1;
-    },
-    createNewActivity: function (persons_count) {
-        return new Promise(async (resolve, reject) => {
-            try {
-                let r = await axios.post(joinPaths(api_domain, 'activities'), {
-                    persons: persons_count,
-                    filters: {},
-                });
-            } catch (e) {
-                console.error(e);
-            }
-
-            resolve();
-        });
     },
     toggleCreateActivity: function (show) {
         if (show) {
@@ -774,8 +760,12 @@ befriend.activities = {
                 e.preventDefault();
                 e.stopPropagation();
 
+                let activity = {};
+
                 try {
-                    // await
+                    let r = await befriend.auth.post('activities', {
+                        activity: activity
+                    });
                 } catch (e) {
                     console.error(e);
                 }

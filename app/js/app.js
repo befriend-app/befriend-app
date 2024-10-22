@@ -104,6 +104,44 @@ window['befriend'] = {
         });
     },
     api: {
+        get: function (route) {
+            return new Promise(async (resolve, reject) => {
+                try {
+                     let r = await axios.get(joinPaths(api_domain, route));
+
+                     resolve(r);
+                } catch(e) {
+                    console.error(e);
+                    return reject(e);
+                }
+            });
+        },
+        post: function (route, data) {
+            return new Promise(async (resolve, reject) => {
+                try {
+                     let r = await axios.post(joinPaths(api_domain, route), data);
+
+                     resolve(r);
+                } catch(e) {
+                    console.error(e);
+                    return reject(e);
+                }
+            });
+        },
+        put: function (route, data) {
+            return new Promise(async (resolve, reject) => {
+                try {
+                    let r = await axios.put(joinPaths(api_domain, route), data);
+
+                    resolve(r);
+                } catch(e) {
+                    console.error(e);
+                    return reject(e);
+                }
+            });
+        },
+    },
+    auth: {
         post: function (route, data) {
             return new Promise(async (resolve, reject) => {
                 let requestData = {};
