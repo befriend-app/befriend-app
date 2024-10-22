@@ -25,6 +25,8 @@
 <!--        <true />-->
 <!--    </edit-config>-->
 
+    <preference name="Orientation" value="portrait" />
+
     <preference name="DisallowOverscroll" value="true" />
 
     <preference name="StatusBarHidden" value="true" />
