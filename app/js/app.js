@@ -27,6 +27,13 @@ window['befriend'] = {
         console.log('Befriend: [init]');
 
         return new Promise(async (resolve, reject) => {
+            //user
+            try {
+                await befriend.user.init();
+            } catch(e) {
+                console.error(e);
+            }
+
             //html
             try {
                 await befriend.html.appInit();
@@ -99,13 +106,25 @@ window['befriend'] = {
     api: {
         post: function (route, data) {
             return new Promise(async (resolve, reject) => {
+                let requestData = {};
+
                 let loginObj = {
-                    person_token: befriend.user.person_token,
+                    person_token: befriend.user.person.token,
                     login_token: befriend.user.login.token
                 };
 
+                if(data && typeof data === 'object') {
+                    requestData = {...loginObj, ...data};
+                } else {
+                    requestData = {...loginObj};
+                }
+
+                console.log(requestData);
+
                 try {
-                     let r = await axios.post(route, )
+                     let r = await axios.post(joinPaths(api_domain, route), requestData);
+
+                     resolve(r);
                 } catch(e) {
                     console.error(e);
                     return reject(e);
