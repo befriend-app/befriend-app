@@ -9,10 +9,10 @@ const {
     checkPathExists,
     listFilesDir,
     isDirF,
-} = require("../helpers");
+} = require('../helpers');
 
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
 function getPlatformCmd(cmd) {
     if (isMac) {
@@ -29,18 +29,18 @@ function addAndroidPaths() {
         if (isMac) {
             let changed = false;
 
-            let user_profile_path = joinPaths(require("os").homedir(), `.zshrc`);
-            let android_home_path = joinPaths(require("os").homedir(), `Library/Android/sdk`);
+            let user_profile_path = joinPaths(require('os').homedir(), `.zshrc`);
+            let android_home_path = joinPaths(require('os').homedir(), `Library/Android/sdk`);
 
             let profile_exists = await checkPathExists(user_profile_path);
 
             if (!profile_exists) {
-                return reject("Could not find bash profile");
+                return reject('Could not find bash profile');
             }
 
             let version = null;
 
-            let cmdline_dir = joinPaths(android_home_path, "cmdline-tools");
+            let cmdline_dir = joinPaths(android_home_path, 'cmdline-tools');
             let cmdline_files = await listFilesDir(cmdline_dir);
 
             for (let f of cmdline_files) {
@@ -65,7 +65,7 @@ function addAndroidPaths() {
 
             let profile_data = await readFile(user_profile_path);
 
-            let lines = profile_data.split("\n");
+            let lines = profile_data.split('\n');
 
             for (let add_l of add_lines) {
                 let exists = false;
@@ -86,7 +86,7 @@ function addAndroidPaths() {
             }
 
             if (changed) {
-                let new_profile = lines.join("\n");
+                let new_profile = lines.join('\n');
 
                 await writeFile(user_profile_path, new_profile);
             }
@@ -102,7 +102,7 @@ function addAndroidPaths() {
 
     let requirements = {
         java: {
-            error_string: "Java JDK: not installed",
+            error_string: 'Java JDK: not installed',
             install_cmd: {
                 mac: [
                     `brew install openjdk@17`,
@@ -112,7 +112,7 @@ function addAndroidPaths() {
             },
         },
         gradle: {
-            error_string: "Gradle: not installed",
+            error_string: 'Gradle: not installed',
             install_cmd: {
                 mac: [`brew install gradle@7`],
                 windows: [],
@@ -141,7 +141,7 @@ function addAndroidPaths() {
         let java = requirements.java;
 
         if (err.stdout && err.stdout.includes(java.error_string)) {
-            console.log("Installing: Java JDK");
+            console.log('Installing: Java JDK');
 
             try {
                 let cmds = getPlatformCmd(java.install_cmd);
@@ -150,7 +150,7 @@ function addAndroidPaths() {
                     await execCmd(cmd);
                 }
 
-                console.log("Java SDK: installed successfully");
+                console.log('Java SDK: installed successfully');
             } catch (e) {
                 console.error(e);
             }
@@ -160,7 +160,7 @@ function addAndroidPaths() {
         let gradle = requirements.gradle;
 
         if (err.stdout && err.stdout.includes(gradle.error_string)) {
-            console.log("Installing: Gradle");
+            console.log('Installing: Gradle');
 
             try {
                 let cmds = getPlatformCmd(gradle.install_cmd);
@@ -169,7 +169,7 @@ function addAndroidPaths() {
                     await execCmd(cmd);
                 }
 
-                console.log("Gradle: installed successfully");
+                console.log('Gradle: installed successfully');
             } catch (e) {
                 console.error(e);
             }

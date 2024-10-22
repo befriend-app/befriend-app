@@ -3,14 +3,18 @@ befriend.location = {
     device: null,
     search: null,
     init: function () {
-        console.log("[init] Location");
+        console.log('[init] Location');
 
         return new Promise(async (resolve, reject) => {
             function getLocation() {
                 const geoLocationOptions = {};
 
                 try {
-                    navigator.geolocation.getCurrentPosition(geoLocationSuccess, geoLocationError, geoLocationOptions);
+                    navigator.geolocation.getCurrentPosition(
+                        geoLocationSuccess,
+                        geoLocationError,
+                        geoLocationOptions,
+                    );
                 } catch (e) {
                     console.error(e);
                     return reject(e);
@@ -69,13 +73,22 @@ befriend.location = {
         befriend.location.current = city;
         befriend.location.search = city;
         befriend.location.toggleChangeLocation(false);
-        befriend.els.activities.querySelector(".near-text").innerHTML = befriend.location.current.name;
+        befriend.els.activities.querySelector('.near-text').innerHTML =
+            befriend.location.current.name;
 
-        befriend.maps.removeMarkers([befriend.maps.markers.me, befriend.maps.markers.pin, befriend.maps.markers.place]);
+        befriend.maps.removeMarkers([
+            befriend.maps.markers.me,
+            befriend.maps.markers.pin,
+            befriend.maps.markers.place,
+        ]);
 
         befriend.maps.addMarkerCustom();
 
-        befriend.maps.setMapCenter(befriend.maps.maps.activities, befriend.location.search, befriend.maps.defaultZoom);
+        befriend.maps.setMapCenter(
+            befriend.maps.maps.activities,
+            befriend.location.search,
+            befriend.maps.defaultZoom,
+        );
 
         befriend.location.toggleResetLocationButton(true);
 
@@ -84,9 +97,9 @@ befriend.location = {
     },
     toggleResetLocationButton: function (show) {
         if (show) {
-            addClassEl("custom-location", befriend.els.activities);
+            addClassEl('custom-location', befriend.els.activities);
         } else {
-            removeClassEl("custom-location", befriend.els.activities);
+            removeClassEl('custom-location', befriend.els.activities);
         }
     },
     getMarkerCoords: function () {
@@ -128,32 +141,34 @@ befriend.location = {
             });
         },
         onChangeLocation: function () {
-            befriend.els.change_location_btn.addEventListener("click", function (e) {
+            befriend.els.change_location_btn.addEventListener('click', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
 
                 befriend.location.toggleChangeLocation(true);
             });
 
-            befriend.els.change_location.querySelector(".back").addEventListener("click", function (e) {
-                e.preventDefault();
-                e.stopPropagation();
+            befriend.els.change_location
+                .querySelector('.back')
+                .addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
 
-                befriend.location.toggleChangeLocation(false);
-            });
+                    befriend.location.toggleChangeLocation(false);
+                });
         },
         autoComplete: function () {
             function clearSuggestions() {
-                suggestions_el.innerHTML = "";
+                suggestions_el.innerHTML = '';
             }
 
             function displaySuggestions(cities) {
                 clearSuggestions();
 
                 for (let city of cities) {
-                    const el = document.createElement("div");
+                    const el = document.createElement('div');
 
-                    el.className = "suggestion-item";
+                    el.className = 'suggestion-item';
 
                     let location_arr = [`<div class="city">${city.name}</div>`];
 
@@ -166,10 +181,10 @@ befriend.location = {
                     }
 
                     el.innerHTML = `
-        <div class="suggestion-name">${location_arr.join("")}</div>
+        <div class="suggestion-name">${location_arr.join('')}</div>
     `;
 
-                    el.addEventListener("click", () => {
+                    el.addEventListener('click', () => {
                         befriend.location.setCustomLocation(city);
                     });
 
@@ -177,14 +192,14 @@ befriend.location = {
                 }
             }
 
-            let input_el = befriend.els.change_location.querySelector(".change-location-input");
-            let suggestions_el = befriend.els.change_location.querySelector(".suggestions");
+            let input_el = befriend.els.change_location.querySelector('.change-location-input');
+            let suggestions_el = befriend.els.change_location.querySelector('.suggestions');
 
             let debounceTimer = null;
 
             let minChars = 2;
 
-            input_el.addEventListener("input", function () {
+            input_el.addEventListener('input', function () {
                 clearTimeout(debounceTimer);
 
                 debounceTimer = setTimeout(async function () {
@@ -205,45 +220,54 @@ befriend.location = {
                             params.lon = befriend.location.device.lon;
                         }
 
-                        const r = await axios.post(joinPaths(api_domain, `autocomplete/cities`), params);
+                        const r = await axios.post(
+                            joinPaths(api_domain, `autocomplete/cities`),
+                            params,
+                        );
 
                         displaySuggestions(r.data.cities);
                     } catch (error) {
-                        console.error("Search error:", error);
+                        console.error('Search error:', error);
                     }
                 }, 100);
             });
         },
         resetToDeviceLocation: function () {
-            befriend.els.activities.querySelector(".reset-location").addEventListener("click", function (e) {
-                e.preventDefault();
-                e.stopPropagation();
+            befriend.els.activities
+                .querySelector('.reset-location')
+                .addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
 
-                befriend.location.current = befriend.location.device;
+                    befriend.location.current = befriend.location.device;
 
-                befriend.els.activities.querySelector(".near-text").innerHTML = "Me";
+                    befriend.els.activities.querySelector('.near-text').innerHTML = 'Me';
 
-                befriend.maps.removeMarkers([
-                    befriend.maps.markers.me,
-                    befriend.maps.markers.pin,
-                    befriend.maps.markers.place,
-                ]);
+                    befriend.maps.removeMarkers([
+                        befriend.maps.markers.me,
+                        befriend.maps.markers.pin,
+                        befriend.maps.markers.place,
+                    ]);
 
-                befriend.maps.addMarker(befriend.maps.maps.activities, befriend.location.current, {
-                    is_me: true,
+                    befriend.maps.addMarker(
+                        befriend.maps.maps.activities,
+                        befriend.location.current,
+                        {
+                            is_me: true,
+                        },
+                    );
+
+                    befriend.maps.setMapCenter(
+                        befriend.maps.maps.activities,
+                        befriend.location.current,
+                        befriend.maps.defaultZoom,
+                    );
+
+                    befriend.location.toggleResetLocationButton(false);
+
+                    //re-use previous autocomplete search for device location
+                    befriend.places.setPreviousAutoComplete();
                 });
-
-                befriend.maps.setMapCenter(
-                    befriend.maps.maps.activities,
-                    befriend.location.current,
-                    befriend.maps.defaultZoom,
-                );
-
-                befriend.location.toggleResetLocationButton(false);
-
-                //re-use previous autocomplete search for device location
-                befriend.places.setPreviousAutoComplete();
-            });
         },
     },
 };

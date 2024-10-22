@@ -1,19 +1,19 @@
 befriend.html = {
     setEls: function () {
-        befriend.els.views = document.getElementById("views");
-        befriend.els.activities = document.getElementById("activities");
-        befriend.els.activity_duration = document.getElementById("activity-duration");
-        befriend.els.activities_map = document.getElementById("activities-map");
-        befriend.els.activities_map_wrapper = document.getElementById("activities-map-wrapper");
-        befriend.els.change_location = document.getElementById("change-location");
-        befriend.els.change_location_btn = document.getElementById("change-location-btn");
-        befriend.els.num_persons = document.getElementById("num-persons");
-        befriend.els.places = document.getElementById("places");
-        befriend.els.when = document.getElementById("when");
-        befriend.els.who = document.getElementById("who");
-        befriend.els.place_search = document.getElementById("place-search");
-        befriend.els.create_activity = document.getElementById("create-activity");
-        befriend.els.travel_times = document.getElementById("travel-times");
+        befriend.els.views = document.getElementById('views');
+        befriend.els.activities = document.getElementById('activities');
+        befriend.els.activity_duration = document.getElementById('activity-duration');
+        befriend.els.activities_map = document.getElementById('activities-map');
+        befriend.els.activities_map_wrapper = document.getElementById('activities-map-wrapper');
+        befriend.els.change_location = document.getElementById('change-location');
+        befriend.els.change_location_btn = document.getElementById('change-location-btn');
+        befriend.els.num_persons = document.getElementById('num-persons');
+        befriend.els.places = document.getElementById('places');
+        befriend.els.when = document.getElementById('when');
+        befriend.els.who = document.getElementById('who');
+        befriend.els.place_search = document.getElementById('place-search');
+        befriend.els.create_activity = document.getElementById('create-activity');
+        befriend.els.travel_times = document.getElementById('travel-times');
     },
     appInit: function () {
         return new Promise(async (resolve, reject) => {
@@ -265,7 +265,7 @@ befriend.html = {
             </div>
         `;
 
-            document.body.insertAdjacentHTML("beforeend", html);
+            document.body.insertAdjacentHTML('beforeend', html);
 
             befriend.html.setEls();
 
@@ -274,7 +274,7 @@ befriend.html = {
     },
     setWhen: function () {
         return new Promise(async (resolve, reject) => {
-            let html = "";
+            let html = '';
 
             for (let i = 0; i < befriend.when.options.length; i++) {
                 let option = befriend.when.options[i];
@@ -289,24 +289,24 @@ befriend.html = {
                                     <div class="unit">${option.unit}</div>`;
                 }
 
-                let time_class = "";
+                let time_class = '';
 
-                let schedule_icon = "";
+                let schedule_icon = '';
 
                 if (option.is_now) {
-                    time_class = "now";
+                    time_class = 'now';
                 } else if (option.is_schedule) {
-                    time_class = "schedule";
+                    time_class = 'schedule';
                     schedule_icon = `<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 508 423.5801"><path d="M402.059,194.052V51.192c0-11.728-9.542-21.27-21.27-21.27h-16.23v-13.244c0-9.196-7.481-16.678-16.678-16.678h-16.076c-9.197,0-16.68,7.481-16.68,16.678v13.244h-43.109v-13.244C272.016,7.482,264.536,0,255.34,0h-16.078C230.066,0,222.584,7.481,222.584,16.678v13.244h-43.109v-13.244C179.475,7.482,171.994,0,162.797,0h-16.076C137.525,0,130.043,7.481,130.043,16.678v13.244h-43.109v-13.244C86.934,7.482,79.453,0,70.256,0h-16.076C44.983,0,37.5,7.481,37.5,16.678v13.244h-16.23C9.542,29.922,0,39.464,0,51.192v303.018c0,11.728,9.542,21.269,21.27,21.269h278.336c20.874,29.103,54.985,48.101,93.453,48.101,63.379,0,114.941-51.561,114.941-114.939,0-60.35-46.753-109.983-105.941-114.589h0ZM333.125,18h13.434v41.846h-13.434V18ZM240.584,18h13.432v41.846h-13.432V18ZM148.043,18h13.432v41.846h-13.432V18ZM55.5,18h13.434v41.846h-13.434V18ZM21.27,47.922h16.23v13.244c0,9.197,7.482,16.68,16.68,16.68h16.076c9.196,0,16.678-7.482,16.678-16.68v-13.244h43.109v13.244c0,9.197,7.481,16.68,16.678,16.68h16.076c9.196,0,16.678-7.482,16.678-16.68v-13.244h43.109v13.244c0,9.197,7.481,16.68,16.678,16.68h16.078c9.195,0,16.676-7.482,16.676-16.68v-13.244h43.109v13.244c0,9.197,7.482,16.68,16.68,16.68h16.076c9.196,0,16.678-7.482,16.678-16.68v-13.244h16.23c1.772,0,3.27,1.497,3.27,3.27v41.919H18v-41.919c0-1.773,1.497-3.27,3.27-3.27h0ZM21.27,357.479c-1.772,0-3.27-1.497-3.27-3.269V111.11h366.059v82.941c-59.188,4.606-105.939,54.24-105.939,114.589,0,17.454,3.918,34.007,10.908,48.838H21.27v.001ZM393.059,405.58c-53.453,0-96.939-43.486-96.939-96.938s43.486-96.94,96.939-96.94,96.941,43.487,96.941,96.94-43.487,96.938-96.941,96.938h0ZM96.723,278.202h-45.336c-4.971,0-9,4.03-9,9v46.244c0,4.97,4.029,9,9,9h45.336c4.971,0,9-4.03,9-9v-46.244c0-4.971-4.03-9-9-9ZM87.723,324.446h-27.336v-28.244h27.336v28.244ZM305.336,190.389h45.338c4.971,0,9-4.03,9-9v-46.244c0-4.97-4.029-9-9-9h-45.338c-4.971,0-9,4.03-9,9v46.244c0,4.97,4.029,9,9,9ZM314.336,144.145h27.338v28.244h-27.338v-28.244ZM266.023,202.173h-45.338c-4.971,0-9,4.029-9,9v46.243c0,4.97,4.029,9,9,9h45.338c4.971,0,9-4.03,9-9v-46.243c0-4.97-4.029-9-9-9h0ZM257.023,248.416h-27.338v-28.243h27.338v28.243ZM181.373,126.145h-45.338c-4.971,0-9,4.03-9,9v46.244c0,4.97,4.029,9,9,9h45.338c4.971,0,9-4.03,9-9v-46.244c0-4.97-4.029-9-9-9ZM172.373,172.389h-27.338v-28.244h27.338v28.244ZM266.023,278.202h-45.338c-4.971,0-9,4.03-9,9v46.244c0,4.97,4.029,9,9,9h45.338c4.971,0,9-4.03,9-9v-46.244c0-4.971-4.029-9-9-9ZM257.023,324.446h-27.338v-28.244h27.338v28.244ZM266.023,126.145h-45.338c-4.971,0-9,4.03-9,9v46.244c0,4.97,4.029,9,9,9h45.338c4.971,0,9-4.03,9-9v-46.244c0-4.97-4.029-9-9-9ZM257.023,172.389h-27.338v-28.244h27.338v28.244ZM181.373,202.173h-45.338c-4.971,0-9,4.029-9,9v46.243c0,4.97,4.029,9,9,9h45.338c4.971,0,9-4.03,9-9v-46.243c0-4.97-4.029-9-9-9ZM172.373,248.416h-27.338v-28.243h27.338v28.243ZM96.723,202.173h-45.336c-4.971,0-9,4.029-9,9v46.243c0,4.97,4.029,9,9,9h45.336c4.971,0,9-4.03,9-9v-46.243c0-4.97-4.03-9-9-9ZM87.723,248.416h-27.336v-28.243h27.336v28.243ZM96.723,126.145h-45.336c-4.971,0-9,4.03-9,9v46.244c0,4.97,4.029,9,9,9h45.336c4.971,0,9-4.03,9-9v-46.244c0-4.97-4.03-9-9-9ZM87.723,172.389h-27.336v-28.244h27.336v28.244ZM181.373,278.202h-45.338c-4.971,0-9,4.03-9,9v46.244c0,4.97,4.029,9,9,9h45.338c4.971,0,9-4.03,9-9v-46.244c0-4.971-4.029-9-9-9ZM172.373,324.446h-27.338v-28.244h27.338v28.244ZM410.478,298.585c2.485,4.305,1.011,9.809-3.294,12.294l-5.125,2.959v5.917c0,4.971-4.029,9-9,9-3.554,0-6.617-2.065-8.08-5.055l-34.99,20.202c-1.417.818-2.965,1.208-4.491,1.208-3.111,0-6.136-1.614-7.803-4.501-2.485-4.305-1.011-9.809,3.294-12.294l43.07-24.868v-72.763c0-4.971,4.029-9,9-9s9,4.029,9,9v63.433c3.322-.231,6.642,1.39,8.419,4.468h0Z"/></svg>`;
                 } else {
-                    time_class = "time";
+                    time_class = 'time';
                 }
 
                 let bc = befriend.when.colors[i];
 
-                let font_white_class = useWhiteOnBackground(bc) ? "font_white" : "";
+                let font_white_class = useWhiteOnBackground(bc) ? 'font_white' : '';
 
-                let active_class = i === 0 ? "active" : "";
+                let active_class = i === 0 ? 'active' : '';
 
                 html += `<div class="when-option ${time_class} ${active_class}" data-index="${i}">
                             <div class="tab ${font_white_class}" style="background-color: ${bc}">${tab_html}</div>
@@ -318,7 +318,7 @@ befriend.html = {
                         </div>`;
             }
 
-            befriend.els.when.querySelector(".when-options").innerHTML = html;
+            befriend.els.when.querySelector('.when-options').innerHTML = html;
 
             befriend.when.setWhenTimes();
 
@@ -342,7 +342,7 @@ befriend.html = {
                     let level_1_id = level_1_ids[i];
 
                     if (activities_row.length === befriend.variables.activity_row_items) {
-                        let row_html = activities_row.join("");
+                        let row_html = activities_row.join('');
 
                         level_1_html += `<div class="level_1_row">
                                             ${row_html}
@@ -372,11 +372,11 @@ befriend.html = {
                         icon_html = `<div class="icon">${image_html}</div>`;
                     }
 
-                    let center_class = icon_html ? "" : "center";
+                    let center_class = icon_html ? '' : 'center';
 
                     let bc = befriend.activities.types.colors[i];
 
-                    let font_white_class = useWhiteOnBackground(bc) ? "font_white" : "";
+                    let font_white_class = useWhiteOnBackground(bc) ? 'font_white' : '';
 
                     activities_row.push(`
                         <div class="activity level_1_activity ${font_white_class}" data-id="${level_1_id}" style="background-color: ${bc}">
@@ -389,7 +389,7 @@ befriend.html = {
                 }
 
                 if (activities_row.length) {
-                    let row_html = activities_row.join("");
+                    let row_html = activities_row.join('');
                     level_1_html += `<div class="level_1_row">
                                             ${row_html}
                                         </div>`;
@@ -400,11 +400,13 @@ befriend.html = {
                     <div class="level_1">${level_1_html}</div>
                 `;
 
-                befriend.els.activities.querySelector(".activities").innerHTML = html;
+                befriend.els.activities.querySelector('.activities').innerHTML = html;
 
-                let last_row = lastArrItem(befriend.els.activities.getElementsByClassName("level_1_row"));
+                let last_row = lastArrItem(
+                    befriend.els.activities.getElementsByClassName('level_1_row'),
+                );
 
-                last_row.style.marginBottom = "0px";
+                last_row.style.marginBottom = '0px';
 
                 resolve();
             } catch (e) {
@@ -415,7 +417,7 @@ befriend.html = {
     },
     setPlaces: function () {
         return new Promise(async (resolve, reject) => {
-            let html = "";
+            let html = '';
 
             for (let place of befriend.places.data.items) {
                 let place_html = {
@@ -448,27 +450,27 @@ befriend.html = {
                     if (place.distance.miles_km < 0.1) {
                         //meters
                         place_html.distance = place.distance.meters;
-                        place_html.distance += " meters";
+                        place_html.distance += ' meters';
                     } else {
-                        place_html.distance += " km";
+                        place_html.distance += ' km';
                     }
                 } else {
                     //miles
                     if (place.distance.miles_km < 0.1) {
                         //feet
                         place_html.distance = metersToFeet(place.distance.meters);
-                        place_html.distance += " ft";
+                        place_html.distance += ' ft';
                     } else {
-                        place_html.distance += " m";
+                        place_html.distance += ' m';
                     }
                 }
 
                 //price
                 if (place.price) {
-                    let price_str = "";
+                    let price_str = '';
 
                     for (let i = 0; i < place.price; i++) {
-                        price_str += "$";
+                        price_str += '$';
                     }
 
                     place_html.price += `<div class="price">${price_str}</div>`;
@@ -498,7 +500,7 @@ befriend.html = {
                             }
                         }
 
-                        let percent_str = percent + "%";
+                        let percent_str = percent + '%';
 
                         let star_html = `<div class="circle-container">
                                                 <div class="fill" style="background: linear-gradient(to right, ${color} ${percent_str}, transparent ${percent_str});"></div>
@@ -552,23 +554,23 @@ befriend.html = {
                 html += `<div class="place" data-place-id="${place.fsq_place_id}">${place_html.full}</div>`;
             }
 
-            let places_el = befriend.els.places.querySelector(".places");
+            let places_el = befriend.els.places.querySelector('.places');
 
             places_el.innerHTML = html;
 
             befriend.html.setPlacesHours();
 
-            befriend.places.events.handleSelectPlace(places_el.getElementsByClassName("place"));
+            befriend.places.events.handleSelectPlace(places_el.getElementsByClassName('place'));
 
             resolve();
         });
     },
     autoCompleteSuggestions: function (places, skip_dropdown) {
         let suggestions_el = befriend.els.activities
-            .querySelector(".place-search-suggestions")
-            .querySelector(".container");
+            .querySelector('.place-search-suggestions')
+            .querySelector('.container');
 
-        let html = "";
+        let html = '';
 
         for (let place of places) {
             let place_html = {
@@ -586,7 +588,7 @@ befriend.html = {
             place_html.location = befriend.html.getPlaceLocation(place);
 
             //distance
-            let distance_html = "";
+            let distance_html = '';
 
             if (place.distance) {
                 distance_html = place.distance.miles_km.toFixed(1);
@@ -606,18 +608,18 @@ befriend.html = {
                     if (place.distance.miles_km < 0.1) {
                         //meters
                         distance_html = place.distance.meters;
-                        distance_html += " meters";
+                        distance_html += ' meters';
                     } else {
-                        distance_html += " km";
+                        distance_html += ' km';
                     }
                 } else {
                     //miles
                     if (place.distance.miles_km < 0.1) {
                         //feet
                         distance_html = metersToFeet(place.distance.meters);
-                        distance_html += " ft";
+                        distance_html += ' ft';
                     } else {
-                        distance_html += " m";
+                        distance_html += ' m';
                     }
                 }
 
@@ -640,9 +642,9 @@ befriend.html = {
                         <div class="button">Select</div>
                     </div>`;
 
-            let id = place.fsq_place_id || place.fsq_address_id || "";
+            let id = place.fsq_place_id || place.fsq_address_id || '';
 
-            let is_address = place.fsq_address_id ? "is_address" : "";
+            let is_address = place.fsq_address_id ? 'is_address' : '';
 
             html += `<div class="place ${is_address}" data-place-id="${id}">${place_html.full}</div>`;
         }
@@ -653,29 +655,29 @@ befriend.html = {
             befriend.places.toggleAutoComplete(true);
         }
 
-        befriend.places.events.handleSelectPlace(suggestions_el.getElementsByClassName("place"));
+        befriend.places.events.handleSelectPlace(suggestions_el.getElementsByClassName('place'));
     },
     setPlacesHours: function () {
         //header
         befriend.places.setPlacesTime();
 
-        let places_els = befriend.els.places.getElementsByClassName("place");
+        let places_els = befriend.els.places.getElementsByClassName('place');
 
         for (let i = 0; i < places_els.length; i++) {
             let el = places_els[i];
 
-            let hours_el = el.querySelector(".hours");
+            let hours_el = el.querySelector('.hours');
 
-            removeClassEl("show", hours_el);
-            removeClassEl("open", hours_el);
-            removeClassEl("closed", hours_el);
+            removeClassEl('show', hours_el);
+            removeClassEl('open', hours_el);
+            removeClassEl('closed', hours_el);
 
-            let id = el.getAttribute("data-place-id");
+            let id = el.getAttribute('data-place-id');
 
             let place_data = befriend.places.data.obj[id];
 
             if (!place_data) {
-                console.error("No place data");
+                console.error('No place data');
                 continue;
             }
 
@@ -683,16 +685,16 @@ befriend.html = {
                 continue;
             }
 
-            addClassEl("show", hours_el);
+            addClassEl('show', hours_el);
 
             if (place_data.is_open) {
                 hours_el.innerHTML = `<div class="status">Open</div>`;
 
-                addClassEl("open", hours_el);
+                addClassEl('open', hours_el);
             } else {
                 hours_el.innerHTML = `<div class="status">Closed</div>`;
 
-                addClassEl("closed", hours_el);
+                addClassEl('closed', hours_el);
             }
         }
     },
@@ -707,12 +709,12 @@ befriend.html = {
 
         let place = befriend.places.selected.place;
 
-        let parent_el = befriend.els.create_activity.querySelector(".main");
-        let activity_el = parent_el.querySelector(".activity");
-        let place_el = parent_el.querySelector(".place").querySelector(".info");
-        let when_el = parent_el.querySelector(".when");
-        let friends_el = parent_el.querySelector(".friends");
-        let filters_el = parent_el.querySelector(".filters");
+        let parent_el = befriend.els.create_activity.querySelector('.main');
+        let activity_el = parent_el.querySelector('.activity');
+        let place_el = parent_el.querySelector('.place').querySelector('.info');
+        let when_el = parent_el.querySelector('.when');
+        let friends_el = parent_el.querySelector('.friends');
+        let filters_el = parent_el.querySelector('.filters');
 
         //set activity
         let activity_name = null;
@@ -722,10 +724,10 @@ befriend.html = {
 
             activity_name = activity.notification;
         } else {
-            activity_name = "Meet";
+            activity_name = 'Meet';
         }
 
-        activity_el.querySelector(".info").innerHTML = activity_name;
+        activity_el.querySelector('.info').innerHTML = activity_name;
 
         //set place
         let place_name_html = ``;
@@ -741,41 +743,43 @@ befriend.html = {
         //set when
         let when_current = befriend.when.selected;
 
-        let when_str = "";
+        let when_str = '';
 
         if (when_current.is_now) {
             when_str = when_current.name;
         } else if (when_current.is_schedule) {
             //todo
-            when_str = "Scheduled";
+            when_str = 'Scheduled';
         } else {
             when_str = when_current.time.formatted;
         }
 
-        when_el.querySelector(".time").innerHTML = when_str;
-        when_el.querySelector(".duration").querySelector(".value").innerHTML = befriend.activities.getDurationStr();
+        when_el.querySelector('.time').innerHTML = when_str;
+        when_el.querySelector('.duration').querySelector('.value').innerHTML =
+            befriend.activities.getDurationStr();
 
         //set friends
-        let friend_type_str = "";
+        let friend_type_str = '';
 
         if (befriend.friends.type.is_new) {
-            friend_type_str = "New";
+            friend_type_str = 'New';
         } else if (befriend.friends.type.is_existing) {
-            friend_type_str = "Existing";
+            friend_type_str = 'Existing';
         } else if (befriend.friends.type.is_both) {
-            friend_type_str = "New and/or Existing";
+            friend_type_str = 'New and/or Existing';
         }
 
         //friend type
-        friends_el.querySelector(".type").querySelector(".value").innerHTML = friend_type_str;
+        friends_el.querySelector('.type').querySelector('.value').innerHTML = friend_type_str;
 
         //number of persons
-        friends_el.querySelector(".quantity").querySelector(".value").innerHTML = befriend.friends.activity_friends_num;
+        friends_el.querySelector('.quantity').querySelector('.value').innerHTML =
+            befriend.friends.activity_friends_num;
 
         //set filters
     },
     getPlaceLocation(place) {
-        let html = "";
+        let html = '';
 
         if (place.location_address) {
             html += `<div class="address">${place.location_address}</div>`;
@@ -785,11 +789,15 @@ befriend.html = {
             //do not show if zip code in address_2
 
             let is_postcode =
-                place.location_address_2.includes(place.location_postcode) || isZIPFormat(place.location_address_2);
+                place.location_address_2.includes(place.location_postcode) ||
+                isZIPFormat(place.location_address_2);
 
             if (!is_postcode) {
                 //do not show if address and address_2 are too similar
-                let str_similarity = stringSimilarity(place.location_address, place.location_address_2);
+                let str_similarity = stringSimilarity(
+                    place.location_address,
+                    place.location_address_2,
+                );
 
                 if (str_similarity < 0.5) {
                     html += `<div class="address_2">${place.location_address_2}</div>`;
@@ -802,11 +810,11 @@ befriend.html = {
         return html;
     },
     setDurations: function () {
-        let level_1_el = befriend.els.activity_duration.querySelector(".level_1");
-        let level_2_el = befriend.els.activity_duration.querySelector(".level_2");
+        let level_1_el = befriend.els.activity_duration.querySelector('.level_1');
+        let level_2_el = befriend.els.activity_duration.querySelector('.level_2');
 
         //set level 1
-        let level_1_html = "";
+        let level_1_html = '';
 
         let keys = Object.keys(befriend.activities.duration.groups);
 
@@ -823,10 +831,10 @@ befriend.html = {
             let key = keys[i];
             let group = befriend.activities.duration.groups[key];
 
-            let active_class = "";
+            let active_class = '';
 
             if (!active_set && group.max > current_duration) {
-                active_class = "active";
+                active_class = 'active';
                 active_set = true;
             }
 
@@ -849,17 +857,17 @@ befriend.html = {
             let key = keys[i];
             let group = befriend.activities.duration.groups[key];
 
-            let active_class = "";
+            let active_class = '';
 
             if (!active_set && group.max > current_duration) {
-                active_class = "active";
+                active_class = 'active';
                 active_set = true;
             }
 
-            let options_html = "";
+            let options_html = '';
 
             for (let option of group.options) {
-                let selected_class = option[0].minutes === current_duration ? "selected" : "";
+                let selected_class = option[0].minutes === current_duration ? 'selected' : '';
 
                 let option_html = ``;
 

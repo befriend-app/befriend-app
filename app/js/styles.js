@@ -1,6 +1,6 @@
 befriend.styles = {
     init: function () {
-        console.log("[init] Styles");
+        console.log('[init] Styles');
 
         return new Promise(async (resolve, reject) => {
             try {
@@ -12,9 +12,9 @@ befriend.styles = {
                     try {
                         let sbh = await befriend.styles.getStatusBarHeight();
 
-                        let views_el = document.getElementById("views");
+                        let views_el = document.getElementById('views');
 
-                        views_el.style.marginTop = sbh + befriend.variables.view_gap_tb + "px";
+                        views_el.style.marginTop = sbh + befriend.variables.view_gap_tb + 'px';
                     } catch (e) {}
                 }
             } catch (e) {
@@ -102,7 +102,7 @@ befriend.styles = {
                         resolve(height);
                     },
                     function (error) {
-                        console.error("Error adding border: " + error);
+                        console.error('Error adding border: ' + error);
                         return resolve(0);
                     },
                 );
@@ -113,7 +113,7 @@ befriend.styles = {
         });
     },
     getInsetHeight: function () {
-        let inset_height = getComputedStyle(document.documentElement).getPropertyValue("--sat");
+        let inset_height = getComputedStyle(document.documentElement).getPropertyValue('--sat');
 
         inset_height = parseFloat(inset_height);
 
@@ -125,9 +125,9 @@ befriend.styles = {
     },
     hideOverlay: function (hide) {
         if (hide) {
-            addClassEl("hide", "overlay");
+            addClassEl('hide', 'overlay');
         } else {
-            removeClassEl("hide", "overlay");
+            removeClassEl('hide', 'overlay');
         }
     },
 };

@@ -1,5 +1,5 @@
 function addClassEl(name, el) {
-    if (typeof el !== "object") {
+    if (typeof el !== 'object') {
         el = document.getElementById(el);
     }
 
@@ -23,10 +23,10 @@ function getElHeightHidden(el) {
 
     let test_el = el.cloneNode(true);
 
-    test_el.style.visibility = "hidden";
-    test_el.style.position = "absolute";
+    test_el.style.visibility = 'hidden';
+    test_el.style.position = 'absolute';
     test_el.style.width = `${width}px`;
-    test_el.style.removeProperty("height");
+    test_el.style.removeProperty('height');
 
     el.parentNode.appendChild(test_el);
 
@@ -42,7 +42,7 @@ function elHasClass(el, cl) {
         return false;
     }
 
-    if (typeof el === "string") {
+    if (typeof el === 'string') {
         el = document.getElementById(el);
     }
 
@@ -54,7 +54,7 @@ function elHasClass(el, cl) {
 }
 
 function fireClick(node) {
-    if (typeof node === "string") {
+    if (typeof node === 'string') {
         node = document.getElementById(node);
     }
 
@@ -62,16 +62,20 @@ function fireClick(node) {
         return;
     }
 
-    if (node.nodeName.toLowerCase() === "input" && node.getAttribute("type") === "checkbox" && (is_ios || is_android)) {
+    if (
+        node.nodeName.toLowerCase() === 'input' &&
+        node.getAttribute('type') === 'checkbox' &&
+        (is_ios || is_android)
+    ) {
         node.click();
     } else if (document.createEvent) {
-        var evt = document.createEvent("MouseEvents");
-        evt.initEvent("click", true, false);
+        var evt = document.createEvent('MouseEvents');
+        evt.initEvent('click', true, false);
         node.dispatchEvent(evt);
     } else if (document.createEventObject) {
-        node.fireEvent(`on${"click"}`);
-    } else if (typeof node[`on${"click"}`] == "function") {
-        node[`on${"click"}`]();
+        node.fireEvent(`on${'click'}`);
+    } else if (typeof node[`on${'click'}`] == 'function') {
+        node[`on${'click'}`]();
     }
 }
 
@@ -81,7 +85,7 @@ function generateToken(length) {
     }
 
     //edit the token allowed characters
-    let a = "abcdefghijklmnopqrstuvwxyz1234567890".split("");
+    let a = 'abcdefghijklmnopqrstuvwxyz1234567890'.split('');
     let b = [];
 
     for (let i = 0; i < length; i++) {
@@ -89,12 +93,12 @@ function generateToken(length) {
         b[i] = a[j];
     }
 
-    return b.join("");
+    return b.join('');
 }
 
 function hideLevel(level_el) {
-    removeClassEl("show", level_el);
-    level_el.style.height = "0";
+    removeClassEl('show', level_el);
+    level_el.style.height = '0';
 }
 
 function lastArrItem(els) {
@@ -139,7 +143,7 @@ function metersToFeet(meters, decimals = 0) {
 }
 
 function removeClassEl(name, el) {
-    if (typeof el !== "object") {
+    if (typeof el !== 'object') {
         el = document.getElementById(el);
     }
 
@@ -248,7 +252,7 @@ function stringSimilarity(str1, str2, substringLength, caseSensitive) {
 
 function useWhiteOnBackground(hexColor) {
     // Remove the # if it's there
-    hexColor = hexColor.replace("#", "");
+    hexColor = hexColor.replace('#', '');
 
     // Convert hex to RGB
     const r = parseInt(hexColor.substr(0, 2), 16);
@@ -286,7 +290,7 @@ function getImgDimensions(url) {
         };
 
         img.onerror = function () {
-            return reject("image not found");
+            return reject('image not found');
         };
         img.src = url;
     });

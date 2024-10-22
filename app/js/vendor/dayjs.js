@@ -1,40 +1,43 @@
 !(function (t, e) {
-    "object" == typeof exports && "undefined" != typeof module
+    'object' == typeof exports && 'undefined' != typeof module
         ? (module.exports = e())
-        : "function" == typeof define && define.amd
+        : 'function' == typeof define && define.amd
           ? define(e)
-          : ((t = "undefined" != typeof globalThis ? globalThis : t || self).dayjs = e());
+          : ((t = 'undefined' != typeof globalThis ? globalThis : t || self).dayjs = e());
 })(this, function () {
-    "use strict";
+    'use strict';
     var t = 1e3,
         e = 6e4,
         n = 36e5,
-        r = "millisecond",
-        i = "second",
-        s = "minute",
-        u = "hour",
-        a = "day",
-        o = "week",
-        c = "month",
-        f = "quarter",
-        h = "year",
-        d = "date",
-        l = "Invalid Date",
-        $ = /^(\d{4})[-/]?(\d{1,2})?[-/]?(\d{0,2})[Tt\s]*(\d{1,2})?:?(\d{1,2})?:?(\d{1,2})?[.:]?(\d+)?$/,
+        r = 'millisecond',
+        i = 'second',
+        s = 'minute',
+        u = 'hour',
+        a = 'day',
+        o = 'week',
+        c = 'month',
+        f = 'quarter',
+        h = 'year',
+        d = 'date',
+        l = 'Invalid Date',
+        $ =
+            /^(\d{4})[-/]?(\d{1,2})?[-/]?(\d{0,2})[Tt\s]*(\d{1,2})?:?(\d{1,2})?:?(\d{1,2})?[.:]?(\d+)?$/,
         y = /\[([^\]]+)]|Y{1,4}|M{1,4}|D{1,2}|d{1,4}|H{1,2}|h{1,2}|a|A|m{1,2}|s{1,2}|Z{1,2}|SSS/g,
         M = {
-            name: "en",
-            weekdays: "Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"),
-            months: "January_February_March_April_May_June_July_August_September_October_November_December".split("_"),
+            name: 'en',
+            weekdays: 'Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday'.split('_'),
+            months: 'January_February_March_April_May_June_July_August_September_October_November_December'.split(
+                '_',
+            ),
             ordinal: function (t) {
-                var e = ["th", "st", "nd", "rd"],
+                var e = ['th', 'st', 'nd', 'rd'],
                     n = t % 100;
-                return "[" + t + (e[(n - 20) % 10] || e[n] || e[0]) + "]";
+                return '[' + t + (e[(n - 20) % 10] || e[n] || e[0]) + ']';
             },
         },
         m = function (t, e, n) {
             var r = String(t);
-            return !r || r.length >= e ? t : "" + Array(e + 1 - r.length).join(n) + t;
+            return !r || r.length >= e ? t : '' + Array(e + 1 - r.length).join(n) + t;
         },
         v = {
             s: m,
@@ -43,7 +46,7 @@
                     n = Math.abs(e),
                     r = Math.floor(n / 60),
                     i = n % 60;
-                return (e <= 0 ? "+" : "-") + m(r, 2, "0") + ":" + m(i, 2, "0");
+                return (e <= 0 ? '+' : '-') + m(r, 2, '0') + ':' + m(i, 2, '0');
             },
             m: function t(e, n) {
                 if (e.date() < n.date()) return -t(n, e);
@@ -59,29 +62,29 @@
             p: function (t) {
                 return (
                     { M: c, y: h, w: o, d: a, D: d, h: u, m: s, s: i, ms: r, Q: f }[t] ||
-                    String(t || "")
+                    String(t || '')
                         .toLowerCase()
-                        .replace(/s$/, "")
+                        .replace(/s$/, '')
                 );
             },
             u: function (t) {
                 return void 0 === t;
             },
         },
-        g = "en",
+        g = 'en',
         D = {};
     D[g] = M;
-    var p = "$isDayjsObject",
+    var p = '$isDayjsObject',
         S = function (t) {
             return t instanceof _ || !(!t || !t[p]);
         },
         w = function t(e, n, r) {
             var i;
             if (!e) return g;
-            if ("string" == typeof e) {
+            if ('string' == typeof e) {
                 var s = e.toLowerCase();
                 D[s] && (i = s), n && ((D[s] = n), (i = s));
-                var u = e.split("-");
+                var u = e.split('-');
                 if (!i && u.length > 1) return t(u[0]);
             } else {
                 var a = e.name;
@@ -91,7 +94,7 @@
         },
         O = function (t, e) {
             if (S(t)) return t.clone();
-            var n = "object" == typeof e ? e : {};
+            var n = 'object' == typeof e ? e : {};
             return (n.date = t), (n.args = arguments), new _(n);
         },
         b = v;
@@ -102,7 +105,10 @@
         });
     var _ = (function () {
             function M(t) {
-                (this.$L = w(t.locale, null, !0)), this.parse(t), (this.$x = this.$x || t.x || {}), (this[p] = !0);
+                (this.$L = w(t.locale, null, !0)),
+                    this.parse(t),
+                    (this.$x = this.$x || t.x || {}),
+                    (this[p] = !0);
             }
             var m = M.prototype;
             return (
@@ -113,14 +119,32 @@
                         if (null === e) return new Date(NaN);
                         if (b.u(e)) return new Date();
                         if (e instanceof Date) return new Date(e);
-                        if ("string" == typeof e && !/Z$/i.test(e)) {
+                        if ('string' == typeof e && !/Z$/i.test(e)) {
                             var r = e.match($);
                             if (r) {
                                 var i = r[2] - 1 || 0,
-                                    s = (r[7] || "0").substring(0, 3);
+                                    s = (r[7] || '0').substring(0, 3);
                                 return n
-                                    ? new Date(Date.UTC(r[1], i, r[3] || 1, r[4] || 0, r[5] || 0, r[6] || 0, s))
-                                    : new Date(r[1], i, r[3] || 1, r[4] || 0, r[5] || 0, r[6] || 0, s);
+                                    ? new Date(
+                                          Date.UTC(
+                                              r[1],
+                                              i,
+                                              r[3] || 1,
+                                              r[4] || 0,
+                                              r[5] || 0,
+                                              r[6] || 0,
+                                              s,
+                                          ),
+                                      )
+                                    : new Date(
+                                          r[1],
+                                          i,
+                                          r[3] || 1,
+                                          r[4] || 0,
+                                          r[5] || 0,
+                                          r[6] || 0,
+                                          s,
+                                      );
                             }
                         }
                         return new Date(e);
@@ -173,14 +197,18 @@
                         },
                         $ = function (t, e) {
                             return b.w(
-                                n.toDate()[t].apply(n.toDate("s"), (r ? [0, 0, 0, 0] : [23, 59, 59, 999]).slice(e)),
+                                n
+                                    .toDate()
+                                    [
+                                        t
+                                    ].apply(n.toDate('s'), (r ? [0, 0, 0, 0] : [23, 59, 59, 999]).slice(e)),
                                 n,
                             );
                         },
                         y = this.$W,
                         M = this.$M,
                         m = this.$D,
-                        v = "set" + (this.$u ? "UTC" : "");
+                        v = 'set' + (this.$u ? 'UTC' : '');
                     switch (f) {
                         case h:
                             return r ? l(1, 0) : l(31, 11);
@@ -192,13 +220,13 @@
                             return l(r ? m - D : m + (6 - D), M);
                         case a:
                         case d:
-                            return $(v + "Hours", 0);
+                            return $(v + 'Hours', 0);
                         case u:
-                            return $(v + "Minutes", 1);
+                            return $(v + 'Minutes', 1);
                         case s:
-                            return $(v + "Seconds", 2);
+                            return $(v + 'Seconds', 2);
                         case i:
-                            return $(v + "Milliseconds", 3);
+                            return $(v + 'Milliseconds', 3);
                         default:
                             return this.clone();
                     }
@@ -209,21 +237,23 @@
                 (m.$set = function (t, e) {
                     var n,
                         o = b.p(t),
-                        f = "set" + (this.$u ? "UTC" : ""),
+                        f = 'set' + (this.$u ? 'UTC' : ''),
                         l = ((n = {}),
-                        (n[a] = f + "Date"),
-                        (n[d] = f + "Date"),
-                        (n[c] = f + "Month"),
-                        (n[h] = f + "FullYear"),
-                        (n[u] = f + "Hours"),
-                        (n[s] = f + "Minutes"),
-                        (n[i] = f + "Seconds"),
-                        (n[r] = f + "Milliseconds"),
+                        (n[a] = f + 'Date'),
+                        (n[d] = f + 'Date'),
+                        (n[c] = f + 'Month'),
+                        (n[h] = f + 'FullYear'),
+                        (n[u] = f + 'Hours'),
+                        (n[s] = f + 'Minutes'),
+                        (n[i] = f + 'Seconds'),
+                        (n[r] = f + 'Milliseconds'),
                         n)[o],
                         $ = o === a ? this.$D + (e - this.$W) : e;
                     if (o === c || o === h) {
                         var y = this.clone().set(d, 1);
-                        y.$d[l]($), y.init(), (this.$d = y.set(d, Math.min(this.$D, y.daysInMonth())).$d);
+                        y.$d[l]($),
+                            y.init(),
+                            (this.$d = y.set(d, Math.min(this.$D, y.daysInMonth())).$d);
                     } else l && this.$d[l]($);
                     return this.init(), this;
                 }),
@@ -257,7 +287,7 @@
                     var e = this,
                         n = this.$locale();
                     if (!this.isValid()) return n.invalidDate || l;
-                    var r = t || "YYYY-MM-DDTHH:mm:ssZ",
+                    var r = t || 'YYYY-MM-DDTHH:mm:ssZ',
                         i = b.z(this),
                         s = this.$H,
                         u = this.$m,
@@ -269,12 +299,12 @@
                             return (t && (t[n] || t(e, r))) || i[n].slice(0, s);
                         },
                         d = function (t) {
-                            return b.s(s % 12 || 12, t, "0");
+                            return b.s(s % 12 || 12, t, '0');
                         },
                         $ =
                             f ||
                             function (t, e, n) {
-                                var r = t < 12 ? "AM" : "PM";
+                                var r = t < 12 ? 'AM' : 'PM';
                                 return n ? r.toLowerCase() : r;
                             };
                     return r.replace(y, function (t, r) {
@@ -282,58 +312,58 @@
                             r ||
                             (function (t) {
                                 switch (t) {
-                                    case "YY":
+                                    case 'YY':
                                         return String(e.$y).slice(-2);
-                                    case "YYYY":
-                                        return b.s(e.$y, 4, "0");
-                                    case "M":
+                                    case 'YYYY':
+                                        return b.s(e.$y, 4, '0');
+                                    case 'M':
                                         return a + 1;
-                                    case "MM":
-                                        return b.s(a + 1, 2, "0");
-                                    case "MMM":
+                                    case 'MM':
+                                        return b.s(a + 1, 2, '0');
+                                    case 'MMM':
                                         return h(n.monthsShort, a, c, 3);
-                                    case "MMMM":
+                                    case 'MMMM':
                                         return h(c, a);
-                                    case "D":
+                                    case 'D':
                                         return e.$D;
-                                    case "DD":
-                                        return b.s(e.$D, 2, "0");
-                                    case "d":
+                                    case 'DD':
+                                        return b.s(e.$D, 2, '0');
+                                    case 'd':
                                         return String(e.$W);
-                                    case "dd":
+                                    case 'dd':
                                         return h(n.weekdaysMin, e.$W, o, 2);
-                                    case "ddd":
+                                    case 'ddd':
                                         return h(n.weekdaysShort, e.$W, o, 3);
-                                    case "dddd":
+                                    case 'dddd':
                                         return o[e.$W];
-                                    case "H":
+                                    case 'H':
                                         return String(s);
-                                    case "HH":
-                                        return b.s(s, 2, "0");
-                                    case "h":
+                                    case 'HH':
+                                        return b.s(s, 2, '0');
+                                    case 'h':
                                         return d(1);
-                                    case "hh":
+                                    case 'hh':
                                         return d(2);
-                                    case "a":
+                                    case 'a':
                                         return $(s, u, !0);
-                                    case "A":
+                                    case 'A':
                                         return $(s, u, !1);
-                                    case "m":
+                                    case 'm':
                                         return String(u);
-                                    case "mm":
-                                        return b.s(u, 2, "0");
-                                    case "s":
+                                    case 'mm':
+                                        return b.s(u, 2, '0');
+                                    case 's':
                                         return String(e.$s);
-                                    case "ss":
-                                        return b.s(e.$s, 2, "0");
-                                    case "SSS":
-                                        return b.s(e.$ms, 3, "0");
-                                    case "Z":
+                                    case 'ss':
+                                        return b.s(e.$s, 2, '0');
+                                    case 'SSS':
+                                        return b.s(e.$ms, 3, '0');
+                                    case 'Z':
                                         return i;
                                 }
                                 return null;
                             })(t) ||
-                            i.replace(":", "")
+                            i.replace(':', '')
                         );
                     });
                 }),
@@ -414,14 +444,14 @@
     return (
         (O.prototype = k),
         [
-            ["$ms", r],
-            ["$s", i],
-            ["$m", s],
-            ["$H", u],
-            ["$W", a],
-            ["$M", c],
-            ["$y", h],
-            ["$D", d],
+            ['$ms', r],
+            ['$s', i],
+            ['$m', s],
+            ['$H', u],
+            ['$W', a],
+            ['$M', c],
+            ['$y', h],
+            ['$D', d],
         ].forEach(function (t) {
             k[t[1]] = function (e) {
                 return this.$g(e, t[0], t[1]);

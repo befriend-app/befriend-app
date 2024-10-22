@@ -9,7 +9,8 @@ html.#{$class_create_activity_shown} {
         transform: translateX(0);
     }
 
-    #create-activity-back, #travel-times {
+    #create-activity-back,
+    #travel-times {
         opacity: 1;
         visibility: visible;
         transition:
@@ -72,7 +73,8 @@ html.#{$class_create_activity_shown} {
                 padding: 8px 0;
                 border-radius: 6px;
                 flex-basis: calc(
-                    #{$activity_item_w} - #{$activity_gap_lr} * calc(($activity_row_items - 1) / $activity_row_items)
+                    #{$activity_item_w} - #{$activity_gap_lr} *
+                        calc(($activity_row_items - 1) / $activity_row_items)
                 );
                 display: flex;
                 justify-content: center;
@@ -144,7 +146,8 @@ html.#{$class_create_activity_shown} {
             .level_2_container {
                 padding: $activity_level_2_ptb $activity_level_2_plr;
                 width: calc(
-                    100vw - #{$app_margin_lr * 2} - #{$activity_level_2_plr * 2} - #{$activity_level_2_border_w * 2}
+                    100vw - #{$app_margin_lr * 2} - #{$activity_level_2_plr * 2} - #{$activity_level_2_border_w *
+                        2}
                 );
             }
 
@@ -487,8 +490,8 @@ html.#{$class_create_activity_shown} {
 #travel-times {
     $h: 26px;
     $w: 70px;
-    $icon_h: $h * .6;
-    $max_width: $w * .3;
+    $icon_h: $h * 0.6;
+    $max_width: $w * 0.3;
 
     position: fixed;
     display: flex;
@@ -549,7 +552,7 @@ html.#{$class_create_activity_shown} {
             }
 
             svg {
-                height:  $walk_h !important;
+                height: $walk_h !important;
             }
         }
 
@@ -717,7 +720,7 @@ html.#{$class_create_activity_shown} {
 #create-activity-back {
     $dim: 40px;
     position: fixed;
-    top: calc(calc($map_create_activity_h * .5 - $dim * .5));
+    top: calc(calc($map_create_activity_h * 0.5 - $dim * 0.5));
     left: calc($dim / 2);
     height: $dim;
     width: $dim;
@@ -742,7 +745,7 @@ html.#{$class_create_activity_shown} {
     $br: 10px;
 
     .level_1 {
-        margin-top: 6px;
+        margin-top: 10px;
         display: flex;
         flex-wrap: nowrap;
 
@@ -768,7 +771,7 @@ html.#{$class_create_activity_shown} {
             flex-basis: 25%;
             background-color: lighten($brand_color_a, 48%);
             @include flex-center-col;
-            border: .5px solid $outside_bc;
+            border: 0.5px solid $outside_bc;
             //border-right: 0.5px solid lighten(black, 10%);
             padding: 6px 0;
             box-sizing: border-box;
@@ -816,7 +819,7 @@ html.#{$class_create_activity_shown} {
         $row_items: 3;
 
         border-radius: $br;
-        border: .5px solid $outside_bc;
+        border: 0.5px solid $outside_bc;
         border-top: 0;
         padding: 10px $padding_lr;
         border-top-left-radius: 0;

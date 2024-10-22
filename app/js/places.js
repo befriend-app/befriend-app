@@ -27,12 +27,15 @@ befriend.places = {
             befriend.places.toggleDisplayPlaces(true);
 
             try {
-                let r = await axios.put(joinPaths(api_domain, "activity_type", activity_type.token, "places"), {
-                    location: {
-                        map: befriend.location.getMarkerCoords(),
-                        device: befriend.location.getDeviceCoordsIfCurrent(),
+                let r = await axios.put(
+                    joinPaths(api_domain, 'activity_type', activity_type.token, 'places'),
+                    {
+                        location: {
+                            map: befriend.location.getMarkerCoords(),
+                            device: befriend.location.getDeviceCoordsIfCurrent(),
+                        },
                     },
-                });
+                );
 
                 befriend.places.setData(r.data.places);
 
@@ -104,7 +107,7 @@ befriend.places = {
         }
     },
     setPreviousAutoComplete: function () {
-        let search_input_el = befriend.els.activities.querySelector(".input-search-place");
+        let search_input_el = befriend.els.activities.querySelector('.input-search-place');
 
         let search_value = search_input_el.value;
 
@@ -150,11 +153,11 @@ befriend.places = {
             let closeHour = parseInt(place_hours.close.substring(0, 2));
 
             let open_time_date = activity_time
-                .startOf("date")
+                .startOf('date')
                 .hour(openHour)
                 .minute(parseFloat(place_hours.open.substring(2, 4)));
             let close_time_date = activity_time
-                .startOf("date")
+                .startOf('date')
                 .hour(closeHour)
                 .minute(parseFloat(place_hours.close.substring(2, 4)));
 
@@ -165,7 +168,7 @@ befriend.places = {
     },
     hidePlaces: function () {
         return new Promise(async (resolve, reject) => {
-            removeClassEl("active", befriend.els.places);
+            removeClassEl('active', befriend.els.places);
 
             resolve();
         });
@@ -194,25 +197,25 @@ befriend.places = {
     },
     toggleNoPlaces: function (show) {
         if (show) {
-            addClassEl("no-places-found", befriend.els.places);
+            addClassEl('no-places-found', befriend.els.places);
         } else {
-            removeClassEl("no-places-found", befriend.els.places);
+            removeClassEl('no-places-found', befriend.els.places);
         }
     },
     toggleSpinner: function (show) {
-        let spinnerEl = befriend.els.places.querySelector(".spinner");
+        let spinnerEl = befriend.els.places.querySelector('.spinner');
 
         if (show) {
-            addClassEl("show", spinnerEl);
+            addClassEl('show', spinnerEl);
         } else {
-            removeClassEl("show", spinnerEl);
+            removeClassEl('show', spinnerEl);
         }
     },
     setPlacesTitle: function (title) {
-        document.getElementById("places-title").innerHTML = title;
+        document.getElementById('places-title').innerHTML = title;
     },
     setPlacesTime: function () {
-        let places_time_str = "";
+        let places_time_str = '';
 
         let selected = befriend.when.selected;
 
@@ -226,7 +229,7 @@ befriend.places = {
             places_time_str = `<div class="value mins">${date_time.format(`h:mm a`)}</div>`;
         }
 
-        document.getElementById("places-time").innerHTML = places_time_str;
+        document.getElementById('places-time').innerHTML = places_time_str;
     },
     updatePlacesOpen: function () {
         befriend.places.setIsOpen();
@@ -279,7 +282,7 @@ befriend.places = {
 
                 befriend.places.setAutoComplete(r.data.places, skip_dropdown);
             } catch (error) {
-                console.error("Search error:", error);
+                console.error('Search error:', error);
             }
 
             resolve();
@@ -288,7 +291,7 @@ befriend.places = {
     getAddressGeo: function (place) {
         return new Promise(async (resolve, reject) => {
             try {
-                let r = await axios.post(joinPaths(api_domain, "geocode"), {
+                let r = await axios.post(joinPaths(api_domain, 'geocode'), {
                     place: place,
                 });
 
@@ -306,9 +309,9 @@ befriend.places = {
 
                 let when = befriend.when.selected;
 
-                if(when.is_now) {
+                if (when.is_now) {
                     unix_ts = timeNow(true);
-                } else if(when.is_schedule) {
+                } else if (when.is_schedule) {
                     //todo
                     unix_ts = timeNow(true);
                 } else {
@@ -317,7 +320,7 @@ befriend.places = {
 
                 let date = dayjs.unix(unix_ts).format('YYYY-MM-DDTHH:mm');
 
-                let r = await axios.post(joinPaths(api_domain, "travel-time"), {
+                let r = await axios.post(joinPaths(api_domain, 'travel-time'), {
                     when: date,
                     from,
                     to,
@@ -340,11 +343,11 @@ befriend.places = {
             });
         },
         searchPlace: function () {
-            let input_el = befriend.els.activities.querySelector(".input-search-place");
+            let input_el = befriend.els.activities.querySelector('.input-search-place');
 
             let debounceTimer = null;
 
-            input_el.addEventListener("input", function () {
+            input_el.addEventListener('input', function () {
                 clearTimeout(debounceTimer);
 
                 debounceTimer = setTimeout(async function () {
@@ -358,7 +361,7 @@ befriend.places = {
                 }, 100);
             });
 
-            input_el.addEventListener("focus", function () {
+            input_el.addEventListener('focus', function () {
                 if (this.value.length >= befriend.places.autoComplete.minChars) {
                     befriend.places.toggleAutoComplete(true);
                 }
@@ -368,9 +371,9 @@ befriend.places = {
             befriend.places.events.onBackPlaces();
         },
         onBackPlaces: function () {
-            let back = befriend.els.places.querySelector(".back");
+            let back = befriend.els.places.querySelector('.back');
 
-            back.addEventListener("click", (e) => {
+            back.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
 
@@ -390,11 +393,11 @@ befriend.places = {
 
                 place_el._listener = true;
 
-                place_el.addEventListener("click", function (e) {
+                place_el.addEventListener('click', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
 
-                    let place_id = place_el.getAttribute("data-place-id");
+                    let place_id = place_el.getAttribute('data-place-id');
 
                     befriend.places.selected.place = befriend.places.getPlace(place_id);
 

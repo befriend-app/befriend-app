@@ -1,6 +1,6 @@
 befriend.maps = {
     token: {
-        key: "map-token.json",
+        key: 'map-token.json',
         data: null,
     },
     maps: {
@@ -13,7 +13,7 @@ befriend.maps = {
     },
     defaultZoom: 13,
     init: function () {
-        console.log("[init] Maps");
+        console.log('[init] Maps');
 
         return new Promise(async (resolve, reject) => {
             try {
@@ -44,8 +44,8 @@ befriend.maps = {
 
             try {
                 map = new mapboxgl.Map({
-                    container: "activities-map",
-                    style: "mapbox://styles/mapbox/light-v10",
+                    container: 'activities-map',
+                    style: 'mapbox://styles/mapbox/light-v10',
                     center: [location.lon, location.lat],
                     zoom: befriend.maps.defaultZoom,
                     attributionControl: false,
@@ -89,7 +89,7 @@ befriend.maps = {
             }
 
             try {
-                let r = await axios.get(joinPaths(api_domain, "mapbox/token"));
+                let r = await axios.get(joinPaths(api_domain, 'mapbox/token'));
 
                 token = befriend.maps.token.data = {
                     token: r.data.token,
@@ -142,11 +142,11 @@ befriend.maps = {
 
             try {
                 if (marker_type.is_me) {
-                    image_location = "/img/marker-me.png";
+                    image_location = '/img/marker-me.png';
                 } else if (marker_type.is_pin) {
-                    image_location = "/img/marker.png";
+                    image_location = '/img/marker.png';
                 } else if (marker_type.is_place) {
-                    image_location = "/img/marker-be.png";
+                    image_location = '/img/marker-be.png';
                 }
 
                 const image_dimensions = await getImgDimensions(image_location);
@@ -154,15 +154,17 @@ befriend.maps = {
                 const image_ratio = image_dimensions.width / image_dimensions.height;
 
                 // create custom marker
-                const el = document.createElement("div");
+                const el = document.createElement('div');
 
-                el.className = "marker";
+                el.className = 'marker';
                 el.style.backgroundImage = `url(${image_location})`;
                 el.style.width = `${image_ratio * befriend.variables.map_marker_height}px`;
                 el.style.height = `${befriend.variables.map_marker_height}px`;
                 el.style.marginTop = `${befriend.variables.map_marker_height / -2}px`;
 
-                let marker = new mapboxgl.Marker(el).setLngLat([location.lon, location.lat]).addTo(map);
+                let marker = new mapboxgl.Marker(el)
+                    .setLngLat([location.lon, location.lat])
+                    .addTo(map);
 
                 if (center_to_map) {
                     befriend.maps.setMapCenter(map, location);
@@ -277,13 +279,18 @@ befriend.maps = {
             });
         },
         onResetToMarker: function () {
-            let reset_marker_btn = befriend.els.activities.querySelector(".reset-to-marker");
+            let reset_marker_btn = befriend.els.activities.querySelector('.reset-to-marker');
 
-            reset_marker_btn.addEventListener("click", function (e) {
+            reset_marker_btn.addEventListener('click', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
 
-                befriend.maps.setMapCenter(befriend.maps.maps.activities, befriend.location.current, 14, true);
+                befriend.maps.setMapCenter(
+                    befriend.maps.maps.activities,
+                    befriend.location.current,
+                    14,
+                    true,
+                );
             });
         },
     },

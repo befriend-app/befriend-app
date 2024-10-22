@@ -1,7 +1,7 @@
 function loadCSS() {
     return new Promise(async (resolve, reject) => {
         try {
-            let css_link = "css/styles.css";
+            let css_link = 'css/styles.css';
 
             if (dev_host) {
                 css_link = joinPaths(dev_host, css_link);
@@ -9,17 +9,17 @@ function loadCSS() {
                 css_link = joinPaths(hosts.latest, css_link);
             }
 
-            let link = document.createElement("link");
-            link.setAttribute("rel", "stylesheet");
-            link.setAttribute("type", "text/css");
+            let link = document.createElement('link');
+            link.setAttribute('rel', 'stylesheet');
+            link.setAttribute('type', 'text/css');
 
             link.onload = function () {
                 resolve();
             };
 
-            link.setAttribute("href", css_link);
+            link.setAttribute('href', css_link);
 
-            document.getElementsByTagName("head")[0].appendChild(link);
+            document.getElementsByTagName('head')[0].appendChild(link);
         } catch (e) {
             console.error(e);
             return reject(e);
@@ -28,7 +28,7 @@ function loadCSS() {
 }
 
 (async function () {
-    addClassEl("loading", document.body);
+    addClassEl('loading', document.body);
 
     try {
         await loadCSS();
@@ -37,9 +37,9 @@ function loadCSS() {
     }
 
     if (is_ios) {
-        addClassEl("ios", document.documentElement);
+        addClassEl('ios', document.documentElement);
     } else if (is_android) {
-        addClassEl("android", document.documentElement);
+        addClassEl('android', document.documentElement);
     }
 
     try {
@@ -48,5 +48,5 @@ function loadCSS() {
         console.error(e);
     }
 
-    removeClassEl("loading", document.body);
+    removeClassEl('loading', document.body);
 })();

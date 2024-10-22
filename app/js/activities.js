@@ -1,7 +1,7 @@
 function resizeAndRepositionMap(mapEl) {
     return new Promise(async (resolve, reject) => {
-        mapEl.style.transition = "initial";
-        mapEl.style.width = "100vw";
+        mapEl.style.transition = 'initial';
+        mapEl.style.width = '100vw';
         mapEl.style.height = `${befriend.variables.map_create_activity_h}px`;
 
         const mapBox = mapEl.getBoundingClientRect();
@@ -12,8 +12,8 @@ function resizeAndRepositionMap(mapEl) {
 
         await rafAwait();
 
-        mapEl.style.position = "absolute";
-        mapEl.style.removeProperty("transition");
+        mapEl.style.position = 'absolute';
+        mapEl.style.removeProperty('transition');
 
         await rafAwait();
 
@@ -33,7 +33,7 @@ function getPlaceCoordinates(place) {
                 place.location_lat = addressGeo.lat;
                 place.location_lon = addressGeo.lon;
             } catch (e) {
-                console.error("Error getting address geo:", e);
+                console.error('Error getting address geo:', e);
                 return reject();
             }
         }
@@ -46,7 +46,12 @@ function getPlaceCoordinates(place) {
 }
 
 function addPlaceMarkerToMap(to) {
-    befriend.maps.addMarker(befriend.maps.maps.activities, { lat: to.lat, lon: to.lon }, { is_place: true }, true);
+    befriend.maps.addMarker(
+        befriend.maps.maps.activities,
+        { lat: to.lat, lon: to.lon },
+        { is_place: true },
+        true,
+    );
 
     // Wait for the place marker to be added
     const startTime = timeNow();
@@ -67,20 +72,20 @@ befriend.activities = {
     types: {
         data: null,
         colors: [
-            "#C70039", // Bold Crimson
-            "#FFC300", // Bright Yellow
-            "#31a663", // Bold Leaf Green
-            "#79A881", // Bold Green
-            "#D35400", // Bold Carrot Orange
-            "#3498DB", // Bold Sky Blue
-            "#2980B9", // Bold Blue
-            "#cc6b6b", // Bold Fruit
-            "#9B59B6", // Bold Lavender
-            "#E74C3C", // Bright Red
-            "#F39C12", // Bold Orange
-            "#33b1d1", // Light Teal
-            "#16A085", // Bold Teal
-            "#F1C40F", // Bold Yellow-Green
+            '#C70039', // Bold Crimson
+            '#FFC300', // Bright Yellow
+            '#31a663', // Bold Leaf Green
+            '#79A881', // Bold Green
+            '#D35400', // Bold Carrot Orange
+            '#3498DB', // Bold Sky Blue
+            '#2980B9', // Bold Blue
+            '#cc6b6b', // Bold Fruit
+            '#9B59B6', // Bold Lavender
+            '#E74C3C', // Bright Red
+            '#F39C12', // Bold Orange
+            '#33b1d1', // Light Teal
+            '#16A085', // Bold Teal
+            '#F1C40F', // Bold Yellow-Green
         ],
     },
     selected: {
@@ -94,48 +99,48 @@ befriend.activities = {
         groups: {
             60: {
                 max: 60,
-                num: "10 - 60",
-                unit: "minutes",
+                num: '10 - 60',
+                unit: 'minutes',
                 options: [
                     [
                         {
                             num: 10,
-                            unit: "min",
+                            unit: 'min',
                             minutes: 10,
                         },
                     ],
                     [
                         {
                             num: 15,
-                            unit: "min",
+                            unit: 'min',
                             minutes: 15,
                         },
                     ],
                     [
                         {
                             num: 20,
-                            unit: "min",
+                            unit: 'min',
                             minutes: 20,
                         },
                     ],
                     [
                         {
                             num: 30,
-                            unit: "min",
+                            unit: 'min',
                             minutes: 30,
                         },
                     ],
                     [
                         {
                             num: 40,
-                            unit: "min",
+                            unit: 'min',
                             minutes: 40,
                         },
                     ],
                     [
                         {
                             num: 50,
-                            unit: "min",
+                            unit: 'min',
                             minutes: 50,
                         },
                     ],
@@ -143,73 +148,73 @@ befriend.activities = {
             },
             120: {
                 max: 120,
-                num: "1 - 2",
-                unit: "hours",
+                num: '1 - 2',
+                unit: 'hours',
                 options: [
                     [
                         {
                             num: 1,
-                            unit: "hr",
+                            unit: 'hr',
                             minutes: 60,
                         },
                     ],
                     [
                         {
                             num: 1,
-                            unit: "hr",
+                            unit: 'hr',
                             minutes: 70,
                         },
                         {
                             num: 10,
-                            unit: "min",
+                            unit: 'min',
                             minutes: 70,
                         },
                     ],
                     [
                         {
                             num: 1,
-                            unit: "hr",
+                            unit: 'hr',
                             minutes: 80,
                         },
                         {
                             num: 20,
-                            unit: "min",
+                            unit: 'min',
                             minutes: 80,
                         },
                     ],
                     [
                         {
                             num: 1,
-                            unit: "hr",
+                            unit: 'hr',
                             minutes: 90,
                         },
                         {
                             num: 30,
-                            unit: "min",
+                            unit: 'min',
                             minutes: 90,
                         },
                     ],
                     [
                         {
                             num: 1,
-                            unit: "hr",
+                            unit: 'hr',
                             minutes: 100,
                         },
                         {
                             num: 40,
-                            unit: "min",
+                            unit: 'min',
                             minutes: 100,
                         },
                     ],
                     [
                         {
                             num: 1,
-                            unit: "hr",
+                            unit: 'hr',
                             minutes: 110,
                         },
                         {
                             num: 50,
-                            unit: "min",
+                            unit: 'min',
                             minutes: 110,
                         },
                     ],
@@ -217,34 +222,34 @@ befriend.activities = {
             },
             240: {
                 max: 240,
-                num: "2 - 4",
-                unit: "hours",
+                num: '2 - 4',
+                unit: 'hours',
                 options: [
                     [
                         {
                             num: 2,
-                            unit: "hrs",
+                            unit: 'hrs',
                             minutes: 120,
                         },
                     ],
                     [
                         {
                             num: 2.5,
-                            unit: "hrs",
+                            unit: 'hrs',
                             minutes: 150,
                         },
                     ],
                     [
                         {
                             num: 3,
-                            unit: "hrs",
+                            unit: 'hrs',
                             minutes: 180,
                         },
                     ],
                     [
                         {
                             num: 3.5,
-                            unit: "hrs",
+                            unit: 'hrs',
                             minutes: 210,
                         },
                     ],
@@ -252,41 +257,41 @@ befriend.activities = {
             },
             360: {
                 max: 360,
-                num: "4 - 6",
-                unit: "hours",
+                num: '4 - 6',
+                unit: 'hours',
                 options: [
                     [
                         {
                             num: 4,
-                            unit: "hrs",
+                            unit: 'hrs',
                             minutes: 240,
                         },
                     ],
                     [
                         {
                             num: 4.5,
-                            unit: "hrs",
+                            unit: 'hrs',
                             minutes: 270,
                         },
                     ],
                     [
                         {
                             num: 5,
-                            unit: "hrs",
+                            unit: 'hrs',
                             minutes: 300,
                         },
                     ],
                     [
                         {
                             num: 5.5,
-                            unit: "hrs",
+                            unit: 'hrs',
                             minutes: 330,
                         },
                     ],
                     [
                         {
                             num: 6,
-                            unit: "hrs",
+                            unit: 'hrs',
                             minutes: 360,
                         },
                     ],
@@ -296,7 +301,7 @@ befriend.activities = {
     },
     travelMode: 'drive',
     init: function () {
-        console.log("[init] Activities");
+        console.log('[init] Activities');
 
         return new Promise(async (resolve, reject) => {
             //add brand color to top of activity colors
@@ -317,7 +322,7 @@ befriend.activities = {
     getActivityTypes: function () {
         return new Promise(async (resolve, reject) => {
             try {
-                let r = await axios.get(joinPaths(api_domain, "activity_types"));
+                let r = await axios.get(joinPaths(api_domain, 'activity_types'));
 
                 befriend.activities.types.data = r.data;
 
@@ -348,46 +353,49 @@ befriend.activities = {
 
         //set duration in when string
         befriend.els.create_activity
-            .querySelector(".when")
-            .querySelector(".duration")
-            .querySelector(".value").innerHTML = befriend.activities.getDurationStr();
+            .querySelector('.when')
+            .querySelector('.duration')
+            .querySelector('.value').innerHTML = befriend.activities.getDurationStr();
 
         if (update_buttons) {
-            let level_1 = befriend.els.create_activity.querySelector(".level_1");
+            let level_1 = befriend.els.create_activity.querySelector('.level_1');
             //remove all selected groups
-            let buttons = befriend.els.activity_duration.getElementsByClassName("button");
-            let options = befriend.els.activity_duration.getElementsByClassName("options");
-            let option_els = befriend.els.activity_duration.getElementsByClassName("option");
+            let buttons = befriend.els.activity_duration.getElementsByClassName('button');
+            let options = befriend.els.activity_duration.getElementsByClassName('options');
+            let option_els = befriend.els.activity_duration.getElementsByClassName('option');
 
-            removeElsClass(buttons, "active");
-            removeElsClass(options, "active");
+            removeElsClass(buttons, 'active');
+            removeElsClass(options, 'active');
 
             //select
             for (let i = 0; i < option_els.length; i++) {
                 let option = option_els[i];
 
-                if (parseInt(option.getAttribute("data-min")) === duration) {
-                    let group = option.closest(".options");
+                if (parseInt(option.getAttribute('data-min')) === duration) {
+                    let group = option.closest('.options');
 
                     //set active
-                    addClassEl("active", group);
+                    addClassEl('active', group);
 
                     //remove selected
-                    removeElsClass(group.getElementsByClassName("option"), "selected");
+                    removeElsClass(group.getElementsByClassName('option'), 'selected');
 
                     //add selected
-                    addClassEl("selected", option);
+                    addClassEl('selected', option);
 
                     //set group active
                     for (let i = 0; i < buttons.length; i++) {
                         let button = buttons[i];
 
-                        if (button.getAttribute("data-min-max") === group.getAttribute("data-min-max")) {
-                            addClassEl("active", button);
+                        if (
+                            button.getAttribute('data-min-max') ===
+                            group.getAttribute('data-min-max')
+                        ) {
+                            addClassEl('active', button);
                             let cls = level_1.classList;
 
                             for (let j = 0; j < cls.length; j++) {
-                                if (cls[j].includes("group")) {
+                                if (cls[j].includes('group')) {
                                     removeClassEl(cls[j], level_1);
                                 }
                             }
@@ -407,10 +415,10 @@ befriend.activities = {
                 let key_class_dict = {
                     driving: 'drive',
                     walking: 'walk',
-                    bicycle: 'bike'
+                    bicycle: 'bike',
                 };
 
-                for(let k in data.modes) {
+                for (let k in data.modes) {
                     let mode = data.modes[k];
 
                     let cls = key_class_dict[k];
@@ -423,22 +431,22 @@ befriend.activities = {
 
                     let time_str = '';
 
-                    if(mode.hours) {
+                    if (mode.hours) {
                         time_str = `${mode.hours} hr`;
 
-                        if(mode.hours > 1) {
+                        if (mode.hours > 1) {
                             time_str += 's';
                         }
 
-                        if(mode.mins > 0) {
+                        if (mode.mins > 0) {
                             time_str += ' ';
                         }
                     }
 
-                    if(mode.mins) {
+                    if (mode.mins) {
                         time_str += `${mode.mins}`;
 
-                        if(mode.hours < 1) {
+                        if (mode.hours < 1) {
                             time_str += ' min';
                         }
                     }
@@ -446,10 +454,10 @@ befriend.activities = {
                     value_el.innerHTML = time_str;
 
                     requestAnimationFrame(function () {
-                         value_el.style.opacity = 1;
+                        value_el.style.opacity = 1;
                     });
                 }
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
 
@@ -463,7 +471,10 @@ befriend.activities = {
         let status_bar_height = await befriend.styles.getStatusBarHeight();
 
         //transform status bar
-        befriend.styles.transformStatusBar(status_bar_height + 5, befriend.variables.hide_statusbar_ms / 1000);
+        befriend.styles.transformStatusBar(
+            status_bar_height + 5,
+            befriend.variables.hide_statusbar_ms / 1000,
+        );
 
         befriend.activities.toggleCreateActivity(true);
 
@@ -520,7 +531,7 @@ befriend.activities = {
     createNewActivity: function (persons_count) {
         return new Promise(async (resolve, reject) => {
             try {
-                let r = await axios.post(joinPaths(api_domain, "activities"), {
+                let r = await axios.post(joinPaths(api_domain, 'activities'), {
                     persons: persons_count,
                     filters: {},
                 });
@@ -552,12 +563,12 @@ befriend.activities = {
 
         let last_row = lastArrItem(level_el.getElementsByClassName(`level_${level_num}_row`));
 
-        last_row.style.marginBottom = "0px";
+        last_row.style.marginBottom = '0px';
 
         let level_height = getElHeightHidden(level_el);
 
         if (!skip_set_prev) {
-            level_el.setAttribute("data-prev-height", `${level_height}px`);
+            level_el.setAttribute('data-prev-height', `${level_height}px`);
         }
 
         level_el.style.height = `${level_height}px`;
@@ -578,7 +589,7 @@ befriend.activities = {
             let half = (minutes % 60) / 60;
 
             if (half) {
-                let half_str = half.toFixed(1).replace(/0/g, "");
+                let half_str = half.toFixed(1).replace(/0/g, '');
 
                 duration_str = `${hours}${half_str} hours`;
             } else {
@@ -604,23 +615,28 @@ befriend.activities = {
             });
         },
         onCreateActivityBack: function () {
-            let back_el = document.getElementById("create-activity-back");
+            let back_el = document.getElementById('create-activity-back');
 
-            back_el.addEventListener("click", async function (e) {
+            back_el.addEventListener('click', async function (e) {
                 e.preventDefault();
                 e.stopPropagation();
 
-                back_el.style.display = "none";
+                back_el.style.display = 'none';
 
-                befriend.els.travel_times.style.display = "none";
+                befriend.els.travel_times.style.display = 'none';
 
-                befriend.styles.transformStatusBar(0, befriend.variables.create_activity_transition_ms / 1000);
+                befriend.styles.transformStatusBar(
+                    0,
+                    befriend.variables.create_activity_transition_ms / 1000,
+                );
 
-                let map_to_box = document.getElementById("activities-map-wrapper").getBoundingClientRect();
+                let map_to_box = document
+                    .getElementById('activities-map-wrapper')
+                    .getBoundingClientRect();
 
                 let map_el = befriend.els.activities_map;
 
-                map_el.style.removeProperty("transition");
+                map_el.style.removeProperty('transition');
 
                 await rafAwait();
 
@@ -628,56 +644,59 @@ befriend.activities = {
 
                 await rafAwait();
 
-                map_el.style.removeProperty("transform");
+                map_el.style.removeProperty('transform');
 
-                map_el.style.removeProperty("height");
-                map_el.style.removeProperty("width");
+                map_el.style.removeProperty('height');
+                map_el.style.removeProperty('width');
 
-                map_el.style.transition = "initial";
+                map_el.style.transition = 'initial';
 
                 await rafAwait();
 
                 befriend.maps.maps.activities.resize();
 
-                map_el.style.removeProperty("transition");
+                map_el.style.removeProperty('transition');
 
                 befriend.activities.toggleCreateActivity(false);
 
                 befriend.maps.removeMarkers(befriend.maps.markers.place);
 
-                befriend.maps.setMapCenter(befriend.maps.maps.activities, befriend.location.current);
+                befriend.maps.setMapCenter(
+                    befriend.maps.maps.activities,
+                    befriend.location.current,
+                );
 
                 if (befriend.location.isCustom()) {
                     befriend.maps.addMarkerCustom();
                 }
 
-                back_el.style.removeProperty("display");
+                back_el.style.removeProperty('display');
                 befriend.els.travel_times.style.removeProperty('display');
             });
         },
         activityDuration: function () {
-            let level_1_el = befriend.els.activity_duration.querySelector(".level_1");
-            let level_1_els = level_1_el.getElementsByClassName("button");
-            let level_2_el = befriend.els.activity_duration.querySelector(".level_2");
-            let level_2_options = level_2_el.getElementsByClassName("options");
-            let all_duration_options = level_2_el.getElementsByClassName("option");
+            let level_1_el = befriend.els.activity_duration.querySelector('.level_1');
+            let level_1_els = level_1_el.getElementsByClassName('button');
+            let level_2_el = befriend.els.activity_duration.querySelector('.level_2');
+            let level_2_options = level_2_el.getElementsByClassName('options');
+            let all_duration_options = level_2_el.getElementsByClassName('option');
 
             //handle click on level 1
             for (let level_1_i = 0; level_1_i < level_1_els.length; level_1_i++) {
                 let el = level_1_els[level_1_i];
 
-                el.addEventListener("click", function (e) {
+                el.addEventListener('click', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
 
-                    removeElsClass(level_1_els, "active");
+                    removeElsClass(level_1_els, 'active');
 
-                    addClassEl("active", el);
+                    addClassEl('active', el);
 
                     let cls = level_1_el.classList;
 
                     for (let j = 0; j < cls.length; j++) {
-                        if (cls[j].includes("group")) {
+                        if (cls[j].includes('group')) {
                             removeClassEl(cls[j], level_1_el);
                         }
                     }
@@ -689,15 +708,16 @@ befriend.activities = {
                         let group = level_2_options[level_2_i];
 
                         if (
-                            parseInt(group.getAttribute("data-min-max")) === parseInt(el.getAttribute("data-min-max"))
+                            parseInt(group.getAttribute('data-min-max')) ===
+                            parseInt(el.getAttribute('data-min-max'))
                         ) {
                             //show group
-                            addClassEl("active", group);
+                            addClassEl('active', group);
 
                             //select option
-                            let option_els = group.getElementsByClassName("option");
+                            let option_els = group.getElementsByClassName('option');
 
-                            removeElsClass(option_els, "selected");
+                            removeElsClass(option_els, 'selected');
 
                             let min_selected = null;
 
@@ -705,10 +725,10 @@ befriend.activities = {
                             for (let i = 0; i < option_els.length; i++) {
                                 let option_el = option_els[i];
 
-                                if (elHasClass(option_el, "is_user")) {
-                                    let min = parseInt(option_el.getAttribute("data-min"));
+                                if (elHasClass(option_el, 'is_user')) {
+                                    let min = parseInt(option_el.getAttribute('data-min'));
                                     min_selected = min;
-                                    addClassEl("selected", option_el);
+                                    addClassEl('selected', option_el);
                                     //
                                     // if(min === befriend.activities.duration.selected) {
                                     //
@@ -722,22 +742,22 @@ befriend.activities = {
                                     for (let i = 0; i < option_els.length; i++) {
                                         let option_el = option_els[i];
 
-                                        let min = parseInt(option_el.getAttribute("data-min"));
+                                        let min = parseInt(option_el.getAttribute('data-min'));
 
                                         if (min === 30) {
-                                            addClassEl("selected", option_el);
+                                            addClassEl('selected', option_el);
                                             min_selected = min;
                                         }
                                     }
                                 } else {
-                                    min_selected = parseInt(option_els[0].getAttribute("data-min"));
-                                    addClassEl("selected", option_els[0]);
+                                    min_selected = parseInt(option_els[0].getAttribute('data-min'));
+                                    addClassEl('selected', option_els[0]);
                                 }
                             }
 
                             befriend.activities.updateDuration(min_selected);
                         } else {
-                            removeClassEl("active", group);
+                            removeClassEl('active', group);
                         }
                     }
                 });
@@ -747,19 +767,19 @@ befriend.activities = {
             for (let i = 0; i < all_duration_options.length; i++) {
                 let el = all_duration_options[i];
 
-                el.addEventListener("click", function (e) {
+                el.addEventListener('click', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
 
-                    let group_options = el.closest(".options").getElementsByClassName("option");
+                    let group_options = el.closest('.options').getElementsByClassName('option');
 
-                    removeElsClass(group_options, "selected");
-                    removeElsClass(group_options, "is_user");
+                    removeElsClass(group_options, 'selected');
+                    removeElsClass(group_options, 'is_user');
 
-                    addClassEl("selected", el);
-                    addClassEl("is_user", el);
+                    addClassEl('selected', el);
+                    addClassEl('is_user', el);
 
-                    let min = parseInt(el.getAttribute("data-min"));
+                    let min = parseInt(el.getAttribute('data-min'));
 
                     befriend.activities.updateDuration(min);
                 });
@@ -768,10 +788,10 @@ befriend.activities = {
         travelTimeMode: function () {
             let els = befriend.els.travel_times.getElementsByClassName('mode');
 
-            for(let i = 0; i < els.length; i++) {
+            for (let i = 0; i < els.length; i++) {
                 let mode_el = els[i];
 
-                mode_el.addEventListener("click", function (e) {
+                mode_el.addEventListener('click', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
 
@@ -785,23 +805,23 @@ befriend.activities = {
         },
         level1: function () {
             return new Promise(async (resolve, reject) => {
-                let els = befriend.els.activities.getElementsByClassName("level_1_activity");
+                let els = befriend.els.activities.getElementsByClassName('level_1_activity');
 
                 for (let i = 0; i < els.length; i++) {
                     let el = els[i];
 
-                    el.addEventListener("click", function (e) {
+                    el.addEventListener('click', function (e) {
                         e.preventDefault();
                         e.stopPropagation();
 
-                        let parent_id = this.getAttribute("data-id");
+                        let parent_id = this.getAttribute('data-id');
                         let activity = befriend.activities.types.data[parent_id];
 
-                        let level_2_el = this.closest(".level_1_row").nextSibling;
+                        let level_2_el = this.closest('.level_1_row').nextSibling;
 
                         //remove activity selection and hide level 2 if same activity clicked
-                        if (elHasClass(this, "active")) {
-                            removeClassEl("active", this);
+                        if (elHasClass(this, 'active')) {
+                            removeClassEl('active', this);
 
                             hideLevel(level_2_el);
 
@@ -814,14 +834,14 @@ befriend.activities = {
                             return;
                         } else {
                             //remove active from any previously selected activity
-                            removeElsClass(els, "active");
-                            addClassEl("active", this);
+                            removeElsClass(els, 'active');
+                            addClassEl('active', this);
                             befriend.activities.selected.level_1 = activity;
                             befriend.activities.selected.level_2 = null;
                             befriend.activities.selected.level_3 = null;
                         }
 
-                        let prev_level_2 = befriend.els.activities.querySelector(".level_2.show");
+                        let prev_level_2 = befriend.els.activities.querySelector('.level_2.show');
 
                         //do not proceed if no sub categories
                         if (!activity.sub || !Object.keys(activity.sub).length) {
@@ -836,21 +856,24 @@ befriend.activities = {
                         if (prev_level_2) {
                             if (prev_level_2 !== level_2_el) {
                                 hideLevel(prev_level_2);
-                                addClassEl("show", level_2_el);
+                                addClassEl('show', level_2_el);
                             }
                         } else {
-                            addClassEl("show", level_2_el);
+                            addClassEl('show', level_2_el);
                         }
 
-                        level_2_el.setAttribute("data-parent-id", parent_id);
+                        level_2_el.setAttribute('data-parent-id', parent_id);
 
                         let level_2_html = ``;
 
                         let activities_level_2 = [];
 
                         for (let level_2_id in activity.sub) {
-                            if (activities_level_2.length === befriend.variables.activity_level_2_row_items) {
-                                let row_html = activities_level_2.join("");
+                            if (
+                                activities_level_2.length ===
+                                befriend.variables.activity_level_2_row_items
+                            ) {
+                                let row_html = activities_level_2.join('');
 
                                 level_2_html += `<div class="level_2_row">
                                             ${row_html}
@@ -861,9 +884,10 @@ befriend.activities = {
                                 activities_level_2.length = [];
                             }
 
-                            let activity = befriend.activities.types.data[parent_id].sub[level_2_id];
+                            let activity =
+                                befriend.activities.types.data[parent_id].sub[level_2_id];
 
-                            let image_html = "";
+                            let image_html = '';
 
                             if (activity.image) {
                                 image_html += `<div class="image">
@@ -881,7 +905,7 @@ befriend.activities = {
                                 icon_html = `<div class="icon">${image_html}</div>`;
                             }
 
-                            let no_icon_class = icon_html ? "" : "no_icon";
+                            let no_icon_class = icon_html ? '' : 'no_icon';
 
                             activities_level_2.push(`
                             <div class="activity level_2_activity" data-id="${level_2_id}">
@@ -893,7 +917,7 @@ befriend.activities = {
                         }
 
                         if (activities_level_2.length) {
-                            let row_html = activities_level_2.join("");
+                            let row_html = activities_level_2.join('');
                             level_2_html += `<div class="level_2_row">
                                             ${row_html}
                                         </div>`;
@@ -915,30 +939,33 @@ befriend.activities = {
         },
         level2: function () {
             return new Promise(async (resolve, reject) => {
-                let level_2_activity_els = befriend.els.activities.getElementsByClassName("level_2_activity");
+                let level_2_activity_els =
+                    befriend.els.activities.getElementsByClassName('level_2_activity');
 
                 for (let i = 0; i < level_2_activity_els.length; i++) {
                     let el = level_2_activity_els[i];
 
-                    el.addEventListener("click", function (e) {
+                    el.addEventListener('click', function (e) {
                         e.preventDefault();
                         e.stopPropagation();
 
-                        let parent_id = this.closest(".level_2").getAttribute("data-parent-id");
+                        let parent_id = this.closest('.level_2').getAttribute('data-parent-id');
 
-                        let level_2_id = this.getAttribute("data-id");
+                        let level_2_id = this.getAttribute('data-id');
 
-                        let level_2_activity = befriend.activities.types.data[parent_id].sub[level_2_id];
+                        let level_2_activity =
+                            befriend.activities.types.data[parent_id].sub[level_2_id];
 
-                        let level_3_el = this.closest(".level_2_row").nextSibling;
+                        let level_3_el = this.closest('.level_2_row').nextSibling;
 
-                        let closest_level_2_el = this.closest(".level_2");
+                        let closest_level_2_el = this.closest('.level_2');
 
-                        let prev_height_level_2 = closest_level_2_el.getAttribute("data-prev-height");
+                        let prev_height_level_2 =
+                            closest_level_2_el.getAttribute('data-prev-height');
 
                         //remove activity selection and hide level 3 if same activity clicked
-                        if (elHasClass(this, "active")) {
-                            removeClassEl("active", this);
+                        if (elHasClass(this, 'active')) {
+                            removeClassEl('active', this);
 
                             hideLevel(level_3_el);
 
@@ -950,22 +977,25 @@ befriend.activities = {
                             return;
                         } else {
                             //remove active from any previously selected activity
-                            removeElsClass(level_2_activity_els, "active");
-                            addClassEl("active", this);
+                            removeElsClass(level_2_activity_els, 'active');
+                            addClassEl('active', this);
                             befriend.activities.selected.level_2 = level_2_activity;
                             befriend.activities.selected.level_3 = null;
 
                             // only show places when there are no level 3 categories
-                            if (!level_2_activity.sub || !Object.keys(level_2_activity.sub).length) {
+                            if (
+                                !level_2_activity.sub ||
+                                !Object.keys(level_2_activity.sub).length
+                            ) {
                                 befriend.places.displayPlaces(befriend.activities.selected.level_2);
 
                                 setTimeout(function () {
-                                    removeClassEl("active", el);
+                                    removeClassEl('active', el);
                                 }, befriend.variables.places_transition_ms);
                             }
                         }
 
-                        let prev_level_3 = befriend.els.activities.querySelector(".level_3.show");
+                        let prev_level_3 = befriend.els.activities.querySelector('.level_3.show');
 
                         //do not proceed if no sub categories
                         if (!level_2_activity.sub || !Object.keys(level_2_activity.sub).length) {
@@ -982,22 +1012,25 @@ befriend.activities = {
                         if (prev_level_3) {
                             if (prev_level_3 !== level_3_el) {
                                 hideLevel(prev_level_3);
-                                addClassEl("show", level_3_el);
+                                addClassEl('show', level_3_el);
                             }
                         } else {
-                            addClassEl("show", level_3_el);
+                            addClassEl('show', level_3_el);
                         }
 
-                        level_3_el.setAttribute("data-parent-id", parent_id);
-                        level_3_el.setAttribute("data-level-2-id", level_2_id);
+                        level_3_el.setAttribute('data-parent-id', parent_id);
+                        level_3_el.setAttribute('data-level-2-id', level_2_id);
 
                         let level_3_html = ``;
 
                         let activities_level_3 = [];
 
                         for (let level_3_id in level_2_activity.sub) {
-                            if (activities_level_3.length === befriend.variables.activity_level_3_row_items) {
-                                let row_html = activities_level_3.join("");
+                            if (
+                                activities_level_3.length ===
+                                befriend.variables.activity_level_3_row_items
+                            ) {
+                                let row_html = activities_level_3.join('');
 
                                 level_3_html += `<div class="level_3_row">
                                             ${row_html}
@@ -1006,9 +1039,12 @@ befriend.activities = {
                                 activities_level_3.length = [];
                             }
 
-                            let activity = befriend.activities.types.data[parent_id].sub[level_2_id].sub[level_3_id];
+                            let activity =
+                                befriend.activities.types.data[parent_id].sub[level_2_id].sub[
+                                    level_3_id
+                                ];
 
-                            let image_html = "";
+                            let image_html = '';
 
                             if (activity.image) {
                                 image_html += `<div class="image">
@@ -1026,7 +1062,7 @@ befriend.activities = {
                                 icon_html = `<div class="icon">${image_html}</div>`;
                             }
 
-                            let no_icon_class = icon_html ? "" : "no_icon";
+                            let no_icon_class = icon_html ? '' : 'no_icon';
 
                             activities_level_3.push(`
                             <div class="activity level_3_activity" data-id="${level_3_id}">
@@ -1038,7 +1074,7 @@ befriend.activities = {
                         }
 
                         if (activities_level_3.length) {
-                            let row_html = activities_level_3.join("");
+                            let row_html = activities_level_3.join('');
                             level_3_html += `<div class="level_3_row">
                                             ${row_html}
                                         </div>`;
@@ -1075,43 +1111,46 @@ befriend.activities = {
         },
         level3: function () {
             return new Promise(async (resolve, reject) => {
-                let level_3_activity_els = befriend.els.activities.getElementsByClassName("level_3_activity");
+                let level_3_activity_els =
+                    befriend.els.activities.getElementsByClassName('level_3_activity');
 
                 for (let i = 0; i < level_3_activity_els.length; i++) {
                     let el = level_3_activity_els[i];
 
-                    el.addEventListener("click", function (e) {
+                    el.addEventListener('click', function (e) {
                         e.preventDefault();
                         e.stopPropagation();
 
-                        console.log("level 3 clicked");
+                        console.log('level 3 clicked');
 
-                        let level_3_el = this.closest(".level_3");
+                        let level_3_el = this.closest('.level_3');
 
-                        let parent_id = level_3_el.getAttribute("data-parent-id");
+                        let parent_id = level_3_el.getAttribute('data-parent-id');
 
-                        let level_2_id = level_3_el.getAttribute("data-level-2-id");
+                        let level_2_id = level_3_el.getAttribute('data-level-2-id');
 
-                        let level_3_id = this.getAttribute("data-id");
+                        let level_3_id = this.getAttribute('data-id');
 
                         let level_3_activity =
-                            befriend.activities.types.data[parent_id].sub[level_2_id].sub[level_3_id];
+                            befriend.activities.types.data[parent_id].sub[level_2_id].sub[
+                                level_3_id
+                            ];
 
                         //remove activity selection and hide level 3 if same activity clicked
-                        if (elHasClass(this, "active")) {
-                            removeClassEl("active", this);
+                        if (elHasClass(this, 'active')) {
+                            removeClassEl('active', this);
                             befriend.activities.selected.level_3 = null;
                             // befriend.places.displayPlaces(befriend.activities.selected.level_2);
                         } else {
                             //remove active from any previously selected activity
-                            removeElsClass(level_3_activity_els, "active");
-                            addClassEl("active", this);
+                            removeElsClass(level_3_activity_els, 'active');
+                            addClassEl('active', this);
                             befriend.activities.selected.level_3 = level_3_activity;
 
                             befriend.places.displayPlaces(befriend.activities.selected.level_3);
 
                             setTimeout(function () {
-                                removeClassEl("active", el);
+                                removeClassEl('active', el);
                             }, befriend.variables.places_transition_ms);
                         }
                     });

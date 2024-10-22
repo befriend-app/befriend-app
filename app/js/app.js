@@ -1,9 +1,9 @@
-window["befriend"] = {
+window['befriend'] = {
     classes: {
-        placesShown: "display-places",
-        changeLocationShown: "display-change-location",
-        placesSuggestShown: "show-suggestions",
-        createActivityShown: "create-activity",
+        placesShown: 'display-places',
+        changeLocationShown: 'display-change-location',
+        placesSuggestShown: 'show-suggestions',
+        createActivityShown: 'create-activity',
     },
     timing: {
         showPlaces: null,
@@ -23,7 +23,7 @@ window["befriend"] = {
     location: null,
     maps: null,
     init: function () {
-        console.log("Befriend: [init]");
+        console.log('Befriend: [init]');
 
         return new Promise(async (resolve, reject) => {
             //html

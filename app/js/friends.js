@@ -6,9 +6,9 @@ befriend.friends = {
         is_both: false,
     },
     setType: function (type) {
-        befriend.friends.type.is_new = type === "new";
-        befriend.friends.type.is_existing = type === "existing";
-        befriend.friends.type.is_both = type === "both";
+        befriend.friends.type.is_new = type === 'new';
+        befriend.friends.type.is_existing = type === 'existing';
+        befriend.friends.type.is_both = type === 'both';
     },
     setActivityFriendNum: function (num) {
         befriend.friends.activity_friends_num = num;
@@ -28,19 +28,19 @@ befriend.friends = {
         },
         selectFriendType: function () {
             return new Promise(async (resolve, reject) => {
-                let friend_els = befriend.els.who.getElementsByClassName("friend-option");
+                let friend_els = befriend.els.who.getElementsByClassName('friend-option');
 
                 for (let i = 0; i < friend_els.length; i++) {
                     let el = friend_els[i];
 
-                    el.addEventListener("click", (e) => {
+                    el.addEventListener('click', (e) => {
                         e.preventDefault();
                         e.stopPropagation();
 
-                        removeElsClass(friend_els, "active");
-                        addClassEl("active", el);
+                        removeElsClass(friend_els, 'active');
+                        addClassEl('active', el);
 
-                        befriend.friends.setType(el.getAttribute("data-type"));
+                        befriend.friends.setType(el.getAttribute('data-type'));
                     });
                 }
 
@@ -51,7 +51,7 @@ befriend.friends = {
             return new Promise(async (resolve, reject) => {
                 //slider
                 let personsCount = 1;
-                let sliderRange = document.getElementById("range-num-persons");
+                let sliderRange = document.getElementById('range-num-persons');
 
                 function updatePosition() {
                     let widthSubtract = 0;
@@ -62,8 +62,8 @@ befriend.friends = {
 
                     let width = sliderRange.offsetWidth - widthSubtract;
 
-                    let min = sliderRange.getAttribute("min");
-                    let max = sliderRange.getAttribute("max");
+                    let min = sliderRange.getAttribute('min');
+                    let max = sliderRange.getAttribute('max');
 
                     let percent = (sliderRange.valueAsNumber - min) / max;
 
@@ -75,16 +75,16 @@ befriend.friends = {
                     rangeSpan.style.left = `${newPosition}px`;
                 }
 
-                window.addEventListener("resize", function (e) {
+                window.addEventListener('resize', function (e) {
                     updatePosition();
                 });
 
-                window.addEventListener("orientationchange", function (e) {
+                window.addEventListener('orientationchange', function (e) {
                     updatePosition();
                 });
 
                 //set position of number for range
-                let rangeSpan = befriend.els.num_persons.querySelector(".slider span");
+                let rangeSpan = befriend.els.num_persons.querySelector('.slider span');
 
                 //load prev setting
                 // let prevSetting = localStorage.getItem(settings_key);
@@ -93,9 +93,9 @@ befriend.friends = {
                 //     personsCount = parseInt(prevSetting);
                 // }
 
-                sliderRange.setAttribute("value", personsCount);
+                sliderRange.setAttribute('value', personsCount);
 
-                sliderRange.addEventListener("input", function (e) {
+                sliderRange.addEventListener('input', function (e) {
                     let val = this.value;
 
                     if (!isNumeric(val)) {

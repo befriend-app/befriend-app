@@ -1,8 +1,8 @@
-const fs = require("fs");
+const fs = require('fs');
 
 module.exports = {
-    isMac: process.platform === "darwin",
-    isWindows: process.platform.startsWith("win"),
+    isMac: process.platform === 'darwin',
+    isWindows: process.platform.startsWith('win'),
     checkPathExists: function (p) {
         return new Promise((resolve, reject) => {
             fs.exists(p, function (exists) {
@@ -14,7 +14,7 @@ module.exports = {
     },
     copyFile: function (from, to) {
         return new Promise(async (resolve, reject) => {
-            let fs = require("fs");
+            let fs = require('fs');
 
             fs.copyFile(from, to, function (err) {
                 if (err) {
@@ -27,7 +27,7 @@ module.exports = {
     },
     createDirectoryIfNotExistsRecursive: function (dirname) {
         return new Promise(async (resolve, reject) => {
-            let slash = "/";
+            let slash = '/';
 
             let directories_backwards = [dirname];
             let minimize_dir = dirname;
@@ -36,7 +36,7 @@ module.exports = {
 
             // backward slashes for windows
             if (module.exports.isWindows) {
-                slash = "\\";
+                slash = '\\';
             }
 
             while ((minimize_dir = minimize_dir.substring(0, minimize_dir.lastIndexOf(slash)))) {
@@ -72,14 +72,14 @@ module.exports = {
     dateTimeStr: function () {
         let date = new Date();
 
-        return date.toISOString().slice(0, 10) + " " + date.toISOString().substring(11, 19);
+        return date.toISOString().slice(0, 10) + ' ' + date.toISOString().substring(11, 19);
     },
     devPort: function () {
         return parseInt(process.env.DEV_PORT || 3001);
     },
     execCmd: function (cmd) {
         return new Promise(async (resolve, reject) => {
-            const { exec } = require("child_process");
+            const { exec } = require('child_process');
 
             exec(cmd, (err, stdout, stderr) => {
                 if (err) {
@@ -114,7 +114,7 @@ module.exports = {
         let args = [];
 
         for (let i = 0; i < arguments.length; i++) {
-            let arg = arguments[i] + "";
+            let arg = arguments[i] + '';
 
             if (!arg) {
                 continue;
@@ -122,10 +122,10 @@ module.exports = {
             args.push(arg);
         }
 
-        let slash = "/";
+        let slash = '/';
 
-        if (require("os").platform().startsWith("win")) {
-            slash = "\\";
+        if (require('os').platform().startsWith('win')) {
+            slash = '\\';
         }
 
         return args
@@ -133,12 +133,12 @@ module.exports = {
                 let re;
 
                 if (i === 0) {
-                    re = new RegExp(`[\\${slash}]*$`, "g");
+                    re = new RegExp(`[\\${slash}]*$`, 'g');
                 } else {
-                    re = new RegExp(`(^[\\${slash}]*|[\\/]*$)`, "g");
+                    re = new RegExp(`(^[\\${slash}]*|[\\/]*$)`, 'g');
                 }
 
-                return part.trim().replace(re, "");
+                return part.trim().replace(re, '');
             })
             .filter((x) => x.length)
             .join(slash);
@@ -168,11 +168,11 @@ module.exports = {
     loadScriptEnv: function () {
         let repo_root = module.exports.repoRoot();
 
-        const process = require("process");
+        const process = require('process');
 
         process.chdir(repo_root);
 
-        require("dotenv").config();
+        require('dotenv').config();
     },
     makeDir: function (dir) {
         return new Promise(async (resolve, reject) => {
@@ -219,7 +219,7 @@ module.exports = {
     repoRoot: function () {
         let slash = `/`;
 
-        if (process.platform.startsWith("win")) {
+        if (process.platform.startsWith('win')) {
             slash = `\\`;
         }
 
@@ -231,7 +231,7 @@ module.exports = {
     },
     writeFile: function (file_path, data) {
         return new Promise(async (resolve, reject) => {
-            let dir_name = require("path").dirname(file_path);
+            let dir_name = require('path').dirname(file_path);
 
             try {
                 if (!(await module.exports.checkPathExists(dir_name))) {
