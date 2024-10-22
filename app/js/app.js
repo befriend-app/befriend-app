@@ -10,18 +10,19 @@ window['befriend'] = {
         showChangeLocation: null,
         showCreateActivity: null,
     },
-    els: {},
-    variables: null,
-    when: null,
-    friends: null,
-    activities: null,
-    places: null,
-    events: null,
     html: null,
     styles: null,
-    timeouts: {},
+    events: null,
+    user: null,
     location: null,
+    activities: null,
+    places: null,
+    friends: null,
+    when: null,
     maps: null,
+    els: {},
+    variables: null,
+    timeouts: {},
     init: function () {
         console.log('Befriend: [init]');
 
@@ -95,4 +96,21 @@ window['befriend'] = {
             resolve();
         });
     },
+    api: {
+        post: function (route, data) {
+            return new Promise(async (resolve, reject) => {
+                let loginObj = {
+                    person_token: befriend.user.person_token,
+                    login_token: befriend.user.login.token
+                };
+
+                try {
+                     let r = await axios.post(route, )
+                } catch(e) {
+                    console.error(e);
+                    return reject(e);
+                }
+            });
+        }
+    }
 };
