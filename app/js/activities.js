@@ -69,6 +69,11 @@ function addPlaceMarkerToMap(to) {
 }
 
 befriend.activities = {
+    data: {
+        draft: null,
+        current: null,
+        all: null
+    },
     types: {
         data: null,
         colors: [
@@ -734,6 +739,14 @@ befriend.activities = {
             }
 
             updateMessage(new_when_str);
+        }
+    },
+    draft: {
+        create: function () {
+
+        },
+        update: function () {
+
         }
     },
     events: {

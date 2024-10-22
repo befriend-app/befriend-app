@@ -302,6 +302,44 @@ befriend.places = {
             }
         });
     },
+    getStructuredAddress: function (place) {
+        let structured = {
+            address: null,
+            address_2: null,
+            locality: null,
+            region: null,
+            country: null,
+        };
+
+        if (place.location_address) {
+            structured.address = place.location_address;
+        }
+
+        if (place.location_address_2) {
+            //do not show if zip code in address_2
+            let is_postcode =
+                place.location_address_2.includes(place.location_postcode) ||
+                isZIPFormat(place.location_address_2);
+
+            if (!is_postcode) {
+                //do not show if address and address_2 are too similar
+                let str_similarity = stringSimilarity(
+                    place.location_address,
+                    place.location_address_2,
+                );
+
+                if (str_similarity < 0.5) {
+                    structured.address_2 = place.location_address_2;
+                }
+            }
+        }
+
+        structured.locatity = place.location_locality;
+        structured.region = place.location_region;
+        structured.country = place.location_country;
+
+        return structured;
+    },
     getTravelTimes: function (from, to) {
         return new Promise(async (resolve, reject) => {
             try {

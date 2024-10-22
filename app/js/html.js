@@ -727,11 +727,11 @@ befriend.html = {
 
         //set activity
         let activity_name = null;
+        let activity_type = null;
 
         if (befriend.places.selected.is_activity_type) {
-            let activity = befriend.activities.getCurrentActivityType();
-
-            activity_name = activity.notification;
+            activity_type = befriend.activities.getCurrentActivityType();
+            activity_name = activity_type.notification;
         } else {
             activity_name = 'Meet';
         }
@@ -786,35 +786,35 @@ befriend.html = {
             befriend.friends.activity_friends_num;
 
         //set filters
-    },
-    getPlaceLocation(place) {
-        let html = '';
 
-        if (place.location_address) {
-            html += `<div class="address">${place.location_address}</div>`;
-        }
-
-        if (place.location_address_2) {
-            //do not show if zip code in address_2
-
-            let is_postcode =
-                place.location_address_2.includes(place.location_postcode) ||
-                isZIPFormat(place.location_address_2);
-
-            if (!is_postcode) {
-                //do not show if address and address_2 are too similar
-                let str_similarity = stringSimilarity(
-                    place.location_address,
-                    place.location_address_2,
-                );
-
-                if (str_similarity < 0.5) {
-                    html += `<div class="address_2">${place.location_address_2}</div>`;
+        //data for activity
+        befriend.activities.draft.create({
+            activity: {
+                name: activity_name,
+                token: activity_type ? activity_type.token : null,
+            },
+            place: {
+                name: place.name ? place.name : null,
+                address: {
+                    // line_1:
                 }
             }
+        });
+    },
+    getPlaceLocation(place) {
+        let structured = befriend.places.getStructuredAddress(place);
+
+        let html = '';
+
+        if (structured.address) {
+            html += `<div class="address">${structured.address}</div>`;
         }
 
-        html += `<div class="locality">${place.location_locality}, ${place.location_region}</div>`;
+        if (structured.address_2) {
+            html += `<div class="address_2">${structured.address_2}</div>`;
+        }
+
+        html += `<div class="locality">${structured.locatity}, ${structured.region}</div>`;
 
         return html;
     },
