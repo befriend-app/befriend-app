@@ -621,59 +621,109 @@ befriend.activities = {
         return befriend.activities.travel.times.modes[befriend.activities.travel.mode].total;
     },
     updateWhenAuto: async function () {
+        const originalTimes = {
+            driving: null,
+            walking: null,
+            bicycle: null
+        };
+
+        function hideMessage() {
+            message_el.style.height = '0';
+            removeClassEl('show', message_el);
+        }
+
+        function updateMessage(new_when_str) {
+            let inner = message_el.querySelector('.inner');
+
+            if (new_when_str) {
+                when_el.querySelector('.time').innerHTML = new_when_str;
+                inner.innerHTML = 'Your activity time has been updated automatically.';
+                inner.style.backgroundColor = befriend.variables.color_green;
+            } else {
+                inner.innerHTML = 'Please update your activity location and/or schedule for a later time.';
+                inner.style.backgroundColor = befriend.variables.color_red;
+            }
+
+            // Calculate height of message
+            let height = getElHeightHidden(message_el);
+            message_el.style.height = `${height}px`;
+            addClassEl('show', message_el);
+        }
+
+        function restoreOriginalTime(mode) {
+            if (originalTimes[mode]) {
+                when_el.querySelector('.time').innerHTML = originalTimes[mode].whenStr;
+
+                if(befriend.when.selected.createActivity.time) {
+                    befriend.when.selected.createActivity.time.formatted = originalTimes[mode].whenStr;
+                }
+            }
+        }
+
         let needs_update = false;
         let when = befriend.when.selected.createActivity;
         let mins_to = befriend.activities.getCurrentTravelTime();
         let new_when_str = '';
 
+        // Store original time for current mode if not already stored
+        const currentMode = befriend.activities.travel.mode;
+
+        if (originalTimes[currentMode] === null) {
+            originalTimes[currentMode] = {
+                mins: mins_to,
+                whenStr: befriend.when.selected.createActivity.time ?  befriend.when.selected.createActivity.time.formatted : 'Now'
+            };
+        }
+
         let when_el = befriend.els.create_activity.querySelector('.when');
         let message_el = document.getElementById('create-activity-top-message');
 
-        if(when.is_now) {
-            if(mins_to > befriend.when.thresholds.now) {
+        // Check if update is needed
+        if (when.is_now) {
+            if (mins_to > befriend.when.thresholds.now) {
                 needs_update = true;
+            } else {
+                // Restore original time if within threshold
+                restoreOriginalTime(currentMode, when_el);
+                hideMessage(message_el);
+                return;
             }
-        } else if(when.is_schedule) {
-
+        } else if (when.is_schedule) {
+            // Handle scheduled times if needed
         } else {
-            if(mins_to > when.mins + befriend.when.thresholds.future) {
+            if (mins_to > when.mins + befriend.when.thresholds.future) {
                 needs_update = true;
+            } else {
+                // Restore original time if within threshold
+                restoreOriginalTime(currentMode, when_el);
+                hideMessage(message_el);
+                return;
             }
         }
 
-        if(needs_update) {
-            //select closest possible time
-            for(let i = 0; i < befriend.when.options.length; i++) {
+        if (needs_update) {
+            // Find closest possible time
+            for (let i = 0; i < befriend.when.options.length; i++) {
                 let option = befriend.when.options[i];
 
-                if(option.mins && mins_to < option.mins) {
-                    //auto select when button
+                if (option.mins && mins_to < option.mins) {
+                    // Auto select when button
                     befriend.when.selectOptionIndex(i);
 
-                    //new when string
+                    // Store new when string
                     new_when_str = befriend.when.selected.main.time.formatted;
+
+                    // Update original time for current mode
+                    originalTimes[currentMode] = {
+                        mins: mins_to,
+                        whenStr: new_when_str
+                    };
 
                     break;
                 }
             }
 
-            let inner = message_el.querySelector('.inner');
-
-            if(new_when_str) {
-                when_el.querySelector('.time').innerHTML = new_when_str;
-                inner.innerHTML = 'Your activity time has been updated automatically.'
-                inner.style.backgroundColor = befriend.variables.color_green;
-            } else {
-                inner.innerHTML = 'Please update your activity location and/or schedule for a later time.'
-                inner.style.backgroundColor = befriend.variables.color_red;
-            }
-
-            //calc height of message
-            let height = getElHeightHidden(message_el);
-
-            message_el.style.height = `${height}px`;
-
-            addClassEl('show', message_el);
+            updateMessage(new_when_str);
         }
     },
     events: {
