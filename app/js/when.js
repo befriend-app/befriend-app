@@ -8,16 +8,16 @@ befriend.when = {
         future: 5
     },
     options: [
-        { name: 'Now', is_now: true },
-        { value: '15', unit: 'mins', mins: 15 },
-        { value: '30', unit: 'mins', mins: 30 },
-        { value: '45', unit: 'mins', mins: 45 },
-        { value: '1', unit: 'hr', mins: 60 },
-        { value: '1.5', unit: 'hrs', mins: 90 },
-        { value: '2', unit: 'hrs', mins: 120 },
-        { value: '3', unit: 'hrs', mins: 180 },
-        { value: '4', unit: 'hrs', mins: 240 },
-        { name: 'Schedule', is_schedule: true },
+        { id: 'now', name: 'Now', is_now: true },
+        { id: 15, value: '15', unit: 'mins', mins: 15 },
+        { id: 30, value: '30', unit: 'mins', mins: 30 },
+        { id: 45, value: '45', unit: 'mins', mins: 45 },
+        { id: 60, value: '1', unit: 'hr', mins: 60 },
+        { id: 90, value: '1.5', unit: 'hrs', mins: 90 },
+        { id: 120, value: '2', unit: 'hrs', mins: 120 },
+        { id: 180, value: '3', unit: 'hrs', mins: 180 },
+        { id: 240, value: '4', unit: 'hrs', mins: 240 },
+        { id: 'schedule', name: 'Schedule', is_schedule: true },
     ],
     colors: [
         '#FFF7A1', // Light Yellow

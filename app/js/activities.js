@@ -657,6 +657,15 @@ befriend.activities = {
             if (originalTimes[mode]) {
                 when_el.querySelector('.time').innerHTML = originalTimes[mode].whenStr;
 
+                for(let i = 0; i <befriend.when.options.length; i++) {
+                    let option = befriend.when.options[i];
+
+                    if(option.id === befriend.when.selected.createActivity.id) {
+                        befriend.when.selectOptionIndex(i);
+                        break;
+                    }
+                }
+
                 if(befriend.when.selected.createActivity.time) {
                     befriend.when.selected.createActivity.time.formatted = originalTimes[mode].whenStr;
                 }
@@ -672,9 +681,19 @@ befriend.activities = {
         const currentMode = befriend.activities.travel.mode;
 
         if (originalTimes[currentMode] === null) {
+            let when_str = '';
+
+            if(befriend.when.selected.createActivity.is_now) {
+                when_str = 'Now';
+            } else if(befriend.when.selected.createActivity.is_schedule) {
+                when_str = 'Schedule';
+            } else {
+                when_str = befriend.when.selected.createActivity.time.formatted;
+            }
+
             originalTimes[currentMode] = {
                 mins: mins_to,
-                whenStr: befriend.when.selected.createActivity.time ?  befriend.when.selected.createActivity.time.formatted : 'Now'
+                whenStr: when_str
             };
         }
 
@@ -687,7 +706,7 @@ befriend.activities = {
                 needs_update = true;
             } else {
                 // Restore original time if within threshold
-                restoreOriginalTime(currentMode, when_el);
+                restoreOriginalTime(currentMode);
                 hideMessage(message_el);
                 return;
             }
@@ -698,7 +717,7 @@ befriend.activities = {
                 needs_update = true;
             } else {
                 // Restore original time if within threshold
-                restoreOriginalTime(currentMode, when_el);
+                restoreOriginalTime(currentMode);
                 hideMessage(message_el);
                 return;
             }
