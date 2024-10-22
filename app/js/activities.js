@@ -481,10 +481,10 @@ befriend.activities = {
         //remove prev message
         let message_el = document.getElementById('create-activity-top-message');
 
-        message_el.style.transition = 'none';
+        message_el.querySelector('.message').style.transition = 'none';
 
         removeClassEl('show', message_el);
-        message_el.style.removeProperty('height');
+        message_el.querySelector('.message').style.removeProperty('height');
 
         message_el.querySelector('.inner').style.removeProperty('backgroundColor');
 
@@ -509,7 +509,7 @@ befriend.activities = {
             console.error(e);
         }
 
-        message_el.style.removeProperty('transition');
+        message_el.querySelector('.message').style.removeProperty('transition');
 
         //Add place marker to map
         try {
@@ -628,7 +628,7 @@ befriend.activities = {
         };
 
         function hideMessage() {
-            message_el.style.height = '0';
+            message_el.querySelector('.message').style.height = '0';
             removeClassEl('show', message_el);
         }
 
@@ -645,8 +645,11 @@ befriend.activities = {
             }
 
             // Calculate height of message
-            let height = getElHeightHidden(message_el);
-            message_el.style.height = `${height}px`;
+            let height = getElHeightHidden(message_el.querySelector('.message'));
+            message_el.querySelector('.message').style.height = `${height}px`;
+
+            befriend.styles.createActivity.updateCloseMessagePosition();
+
             addClassEl('show', message_el);
         }
 
@@ -923,6 +926,11 @@ befriend.activities = {
                     e.preventDefault();
                     e.stopPropagation();
 
+                    //already selected
+                    if(elHasClass(mode_el, 'active')) {
+                        return false;
+                    }
+
                     removeElsClass(els, 'active');
 
                     addClassEl('active', mode_el);
@@ -941,7 +949,7 @@ befriend.activities = {
                 e.preventDefault();
                 e.stopPropagation();
 
-                message_el.style.removeProperty('height');
+                message_el.querySelector('.message').style.removeProperty('height');
                 removeClassEl('show', message_el);
             });
         },

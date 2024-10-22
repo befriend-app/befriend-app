@@ -130,4 +130,15 @@ befriend.styles = {
             removeClassEl('hide', 'overlay');
         }
     },
+    createActivity: {
+        updateCloseMessagePosition: function () {
+            const messageEl = document.querySelector('#create-activity-top-message .message');
+            const closeEl = document.querySelector('#create-activity-top-message .close');
+
+            if (messageEl && closeEl) {
+                const rect = messageEl.getBoundingClientRect();
+                closeEl.style.left = `${rect.width + 14}px`;
+            }
+        }
+    }
 };

@@ -5,6 +5,7 @@ befriend.events = {
         return new Promise(async (resolve, reject) => {
             try {
                 befriend.events.bodyClickHandler();
+                befriend.events.resizeHandler();
 
                 await befriend.when.events.init();
                 await befriend.friends.events.init();
@@ -57,4 +58,14 @@ befriend.events = {
             }
         });
     },
+    resizeHandler: function () {
+        let evs = ['resize', 'orientationchange'];
+
+        for(let ev of evs) {
+            window.addEventListener(ev, function () {
+                befriend.styles.createActivity.updateCloseMessagePosition();
+            });
+        }
+
+    }
 };
