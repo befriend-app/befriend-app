@@ -169,11 +169,12 @@ function removeElsClass(els, cls) {
 }
 
 function roundTimeMinutes(time, minutes) {
-    var timeToReturn = new Date(time);
+    let timeToReturn = new Date(time);
 
     timeToReturn.setMilliseconds(Math.round(timeToReturn.getMilliseconds() / 1000) * 1000);
     timeToReturn.setSeconds(Math.round(timeToReturn.getSeconds() / 60) * 60);
     timeToReturn.setMinutes(Math.round(timeToReturn.getMinutes() / minutes) * minutes);
+
     return timeToReturn;
 }
 

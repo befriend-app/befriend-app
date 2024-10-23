@@ -991,6 +991,8 @@ befriend.activities = {
 
                     befriend.activities.travel.mode = mode_el.getAttribute('data-mode');
 
+                    befriend.activities.draft.update('travel.mode', befriend.activities.travel.mode);
+
                     befriend.activities.updateWhenAuto();
                 });
             }

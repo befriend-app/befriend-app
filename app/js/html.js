@@ -798,6 +798,7 @@ befriend.html = {
                 is_address: !!place.fsq_address_id
             },
             travel: {
+                mode: befriend.activities.travel.mode,
                 token: null
             },
             duration: befriend.activities.duration.selected,
