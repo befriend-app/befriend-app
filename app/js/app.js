@@ -30,7 +30,7 @@ window['befriend'] = {
             //user
             try {
                 await befriend.user.init();
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
 
@@ -107,10 +107,10 @@ window['befriend'] = {
         get: function (route) {
             return new Promise(async (resolve, reject) => {
                 try {
-                     let r = await axios.get(joinPaths(api_domain, route));
+                    let r = await axios.get(joinPaths(api_domain, route));
 
-                     resolve(r);
-                } catch(e) {
+                    resolve(r);
+                } catch (e) {
                     console.error(e);
                     return reject(e);
                 }
@@ -119,10 +119,10 @@ window['befriend'] = {
         post: function (route, data) {
             return new Promise(async (resolve, reject) => {
                 try {
-                     let r = await axios.post(joinPaths(api_domain, route), data);
+                    let r = await axios.post(joinPaths(api_domain, route), data);
 
-                     resolve(r);
-                } catch(e) {
+                    resolve(r);
+                } catch (e) {
                     console.error(e);
                     return reject(e);
                 }
@@ -134,7 +134,7 @@ window['befriend'] = {
                     let r = await axios.put(joinPaths(api_domain, route), data);
 
                     resolve(r);
-                } catch(e) {
+                } catch (e) {
                     console.error(e);
                     return reject(e);
                 }
@@ -148,26 +148,26 @@ window['befriend'] = {
 
                 let loginObj = {
                     person_token: befriend.user.person.token,
-                    login_token: befriend.user.login.token
+                    login_token: befriend.user.login.token,
                 };
 
-                if(data && typeof data === 'object') {
-                    requestData = {...loginObj, ...data};
+                if (data && typeof data === 'object') {
+                    requestData = { ...loginObj, ...data };
                 } else {
-                    requestData = {...loginObj};
+                    requestData = { ...loginObj };
                 }
 
                 console.log(requestData);
 
                 try {
-                     let r = await axios.post(joinPaths(api_domain, route), requestData);
+                    let r = await axios.post(joinPaths(api_domain, route), requestData);
 
-                     resolve(r);
-                } catch(e) {
+                    resolve(r);
+                } catch (e) {
                     console.error(e);
                     return reject(e);
                 }
             });
-        }
-    }
+        },
+    },
 };

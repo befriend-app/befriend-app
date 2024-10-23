@@ -795,19 +795,19 @@ befriend.html = {
             },
             place: {
                 id: place.fsq_place_id ? place.fsq_place_id : place.fsq_address_id,
-                is_address: !!place.fsq_address_id
+                is_address: !!place.fsq_address_id,
             },
             travel: {
                 mode: befriend.activities.travel.mode,
-                token: null
+                token: null,
             },
             duration: befriend.activities.duration.selected,
             when: befriend.when.selected.main,
             friends: {
                 type: befriend.friends.type,
-                qty: befriend.friends.activity_qty
+                qty: befriend.friends.activity_qty,
             },
-            filters: {}
+            filters: {},
         });
     },
     getPlaceLocation(place) {

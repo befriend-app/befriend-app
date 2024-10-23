@@ -72,7 +72,7 @@ befriend.activities = {
     data: {
         draft: null,
         current: null,
-        all: null
+        all: null,
     },
     types: {
         data: null,
@@ -753,18 +753,18 @@ befriend.activities = {
             befriend.activities.data.draft = data;
         },
         update: function (key, value) {
-            if(!key) {
+            if (!key) {
                 return false;
             }
 
             let draft = befriend.activities.data.draft;
 
-            if(!draft) {
+            if (!draft) {
                 return false;
             }
 
             setNestedValue(draft, key, value);
-        }
+        },
     },
     events: {
         init: function () {
@@ -794,7 +794,7 @@ befriend.activities = {
 
                 try {
                     let r = await befriend.auth.post('activities', {
-                        activity: befriend.activities.data.draft
+                        activity: befriend.activities.data.draft,
                     });
 
                     console.log(r);
@@ -991,7 +991,10 @@ befriend.activities = {
 
                     befriend.activities.travel.mode = mode_el.getAttribute('data-mode');
 
-                    befriend.activities.draft.update('travel.mode', befriend.activities.travel.mode);
+                    befriend.activities.draft.update(
+                        'travel.mode',
+                        befriend.activities.travel.mode,
+                    );
 
                     befriend.activities.updateWhenAuto();
                 });

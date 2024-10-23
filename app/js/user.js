@@ -1,13 +1,13 @@
 befriend.user = {
     local: {
         key: 'user.json',
-        data: {}
+        data: {},
     },
     person: {
-        token: null
+        token: null,
     },
     login: {
-        token: null
+        token: null,
     },
     init: function () {
         return new Promise(async (resolve, reject) => {
@@ -15,11 +15,11 @@ befriend.user = {
 
             let localData = befriend.user.getLocal();
 
-            if(localData.person && localData.person.token) {
+            if (localData.person && localData.person.token) {
                 befriend.user.person.token = localData.person.token;
             }
 
-            if(localData.login && localData.login.token) {
+            if (localData.login && localData.login.token) {
                 befriend.user.login.token = localData.login.token;
             }
 
@@ -29,11 +29,11 @@ befriend.user = {
     loadLocal: function () {
         let data = window.localStorage.getItem(befriend.user.local.key);
 
-        if(data) {
+        if (data) {
             try {
-                 data = JSON.parse(data);
-                 befriend.user.local.data = data;
-            } catch(e) {
+                data = JSON.parse(data);
+                befriend.user.local.data = data;
+            } catch (e) {
                 console.error(e);
             }
         }
@@ -42,14 +42,17 @@ befriend.user = {
         return befriend.user.local.data;
     },
     saveLocal: function () {
-        window.localStorage.setItem(befriend.user.local.key, JSON.stringify(befriend.user.local.data));
+        window.localStorage.setItem(
+            befriend.user.local.key,
+            JSON.stringify(befriend.user.local.data),
+        );
     },
     setPersonToken: function (token) {
         befriend.user.person.token = token;
 
         let data = befriend.user.getLocal();
 
-        if(!('person' in data)) {
+        if (!('person' in data)) {
             data.person = {};
         }
 
@@ -62,12 +65,12 @@ befriend.user = {
 
         let data = befriend.user.getLocal();
 
-        if(!('login' in data)) {
+        if (!('login' in data)) {
             data.login = {};
         }
 
         data.login.token = token;
 
         befriend.user.saveLocal();
-    }
+    },
 };

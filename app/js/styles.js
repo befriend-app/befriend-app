@@ -30,6 +30,17 @@ befriend.styles = {
                 transition_sec = 0.3;
             }
 
+            let ts = timeNow();
+
+            //fix statusbar not available timing bug
+            while (typeof StatusBar === 'undefined') {
+                await rafAwait();
+
+                if (timeNow() - ts > 200) {
+                    break;
+                }
+            }
+
             try {
                 StatusBar.transformStatusBar(
                     px,

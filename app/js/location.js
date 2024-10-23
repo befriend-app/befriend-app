@@ -220,10 +220,7 @@ befriend.location = {
                             params.lon = befriend.location.device.lon;
                         }
 
-                        const r = await befriend.api.post(
-                            'autocomplete/cities',
-                            params
-                        );
+                        const r = await befriend.api.post('autocomplete/cities', params);
 
                         displaySuggestions(r.data.cities);
                     } catch (error) {
