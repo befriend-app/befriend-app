@@ -305,7 +305,8 @@ befriend.activities = {
         },
     },
     travel: {
-        mode: 'driving',
+        mode: 'driving', //[driving, walking, bicycle]
+        token: null,
         times: null,
     },
     init: function () {
@@ -358,6 +359,8 @@ befriend.activities = {
     },
     updateDuration: function (duration, update_buttons) {
         befriend.activities.duration.selected = duration;
+
+        befriend.activities.draft.update('duration', duration);
 
         //set duration in when string
         befriend.els.create_activity
@@ -421,6 +424,10 @@ befriend.activities = {
                 let data = await befriend.places.getTravelTimes(from, to);
 
                 befriend.activities.travel.times = data;
+
+                befriend.activities.travel.token = data.token;
+
+                befriend.activities.draft.update('travel.token', data.token);
 
                 befriend.activities.updateWhenAuto();
 
@@ -742,11 +749,21 @@ befriend.activities = {
         }
     },
     draft: {
-        create: function () {
-
+        create: function (data) {
+            befriend.activities.data.draft = data;
         },
-        update: function () {
+        update: function (key, value) {
+            if(!key) {
+                return false;
+            }
 
+            let draft = befriend.activities.data.draft;
+
+            if(!draft) {
+                return false;
+            }
+
+            setNestedValue(draft, key, value);
         }
     },
     events: {
@@ -773,12 +790,14 @@ befriend.activities = {
                 e.preventDefault();
                 e.stopPropagation();
 
-                let activity = {};
+                //todo spinner
 
                 try {
                     let r = await befriend.auth.post('activities', {
-                        activity: activity
+                        activity: befriend.activities.data.draft
                     });
+
+                    console.log(r);
                 } catch (e) {
                     console.error(e);
                 }

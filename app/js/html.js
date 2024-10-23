@@ -783,7 +783,7 @@ befriend.html = {
 
         //number of persons
         friends_el.querySelector('.quantity').querySelector('.value').innerHTML =
-            befriend.friends.activity_friends_num;
+            befriend.friends.activity_qty;
 
         //set filters
 
@@ -794,11 +794,19 @@ befriend.html = {
                 token: activity_type ? activity_type.token : null,
             },
             place: {
-                name: place.name ? place.name : null,
-                address: {
-                    // line_1:
-                }
-            }
+                id: place.fsq_place_id ? place.fsq_place_id : place.fsq_address_id,
+                is_address: !!place.fsq_address_id
+            },
+            travel: {
+                token: null
+            },
+            duration: befriend.activities.duration.selected,
+            when: befriend.when.selected.main,
+            friends: {
+                type: befriend.friends.type,
+                qty: befriend.friends.activity_qty
+            },
+            filters: {}
         });
     },
     getPlaceLocation(place) {

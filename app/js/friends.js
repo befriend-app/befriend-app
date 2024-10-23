@@ -1,5 +1,5 @@
 befriend.friends = {
-    activity_friends_num: 1,
+    activity_qty: 1,
     type: {
         is_new: true,
         is_existing: false,
@@ -9,9 +9,13 @@ befriend.friends = {
         befriend.friends.type.is_new = type === 'new';
         befriend.friends.type.is_existing = type === 'existing';
         befriend.friends.type.is_both = type === 'both';
+
+        befriend.activities.draft.update('friends.type', befriend.friends.type);
     },
     setActivityFriendNum: function (num) {
-        befriend.friends.activity_friends_num = num;
+        befriend.friends.activity_qty = num;
+
+        befriend.activities.draft.update('friends.qty', num);
     },
     events: {
         init: function () {

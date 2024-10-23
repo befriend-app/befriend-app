@@ -199,6 +199,26 @@ function queueTimeouts(name, fun, ms) {
     befriend.timeouts[name].push(t);
 }
 
+function setNestedValue(obj, path, value) {
+    const keys = path.split('.');
+
+    let current = obj;
+
+    for (let i = 0; i < keys.length - 1; i++) {
+        const key = keys[i];
+
+        if (!(key in current)) {
+            current[key] = {};
+        }
+
+        current = current[key];
+    }
+
+    current[keys[keys.length - 1]] = value;
+
+    return obj;
+}
+
 function colorDeltaE(rgbA, rgbB) {
     let labA = colorRgb2Lab(rgbA);
     let labB = colorRgb2Lab(rgbB);

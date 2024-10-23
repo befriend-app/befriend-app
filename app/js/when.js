@@ -138,6 +138,8 @@ befriend.when = {
         addClassEl('active', when_els[index]);
 
         befriend.when.selected.main = befriend.when.options[index];
+
+        befriend.activities.draft.update('when', befriend.when.selected.main);
     },
     events: {
         init: function () {
