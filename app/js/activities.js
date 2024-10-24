@@ -683,9 +683,7 @@ befriend.activities = {
         if (originalTimes[currentMode] === null) {
             let when_str = '';
 
-            if (befriend.when.selected.createActivity.is_now) {
-                when_str = 'Now';
-            } else if (befriend.when.selected.createActivity.is_schedule) {
+            if (befriend.when.selected.createActivity.is_schedule) {
                 when_str = 'Schedule';
             } else {
                 when_str = befriend.when.selected.createActivity.time.formatted;
