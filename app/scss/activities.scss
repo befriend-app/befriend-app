@@ -793,6 +793,7 @@ html.#{$class_create_activity_shown} {
     height: $dim;
     width: $dim;
     opacity: 0;
+    visibility: hidden;
     z-index: 100;
     border-radius: 50%;
     background: white;
