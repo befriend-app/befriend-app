@@ -68,10 +68,14 @@ befriend.when = {
                 };
 
                 el.querySelector('.time').innerHTML = time_formatted;
+            }
 
-                if (befriend.places.isPlacesShown()) {
-                    befriend.places.updatePlacesOpen();
-                }
+            if (befriend.places.isPlacesShown()) {
+                befriend.places.updatePlacesOpen();
+            } else if(befriend.activities.isCreateActivityShown()) {
+                //updates time on selected obj for createActivity
+                befriend.when.selected.createActivity = structuredClone(befriend.when.selected.main);
+                befriend.activities.updateWhenAuto();
             }
         }
 

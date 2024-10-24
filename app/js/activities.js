@@ -699,16 +699,7 @@ befriend.activities = {
         let message_el = document.getElementById('create-activity-top-message');
 
         // Check if update is needed
-        if (when.is_now) {
-            if (mins_to > befriend.when.thresholds.now) {
-                needs_update = true;
-            } else {
-                // Restore original time if within threshold
-                restoreOriginalTime(currentMode);
-                hideMessage(message_el);
-                return;
-            }
-        } else if (when.is_schedule) {
+        if (when.is_schedule) {
             // Handle scheduled times if needed
         } else {
             if (mins_to > when.mins + befriend.when.thresholds.future) {
