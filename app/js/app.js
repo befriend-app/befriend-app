@@ -82,23 +82,12 @@ window['befriend'] = {
                 console.error(e);
             }
 
-            // cordova.plugins.notification.local.addActions('activity-request', [
-            //     { id: 'yes', title: 'Accept' },
-            //     { id: 'no', title: 'Decline' },
-            //     { id: 'view', title: 'View' },
-            // ]);
-            //
-            // cordova.plugins.notification.local.schedule({
-            //     title: 'Invite: Coffee with Eugene',
-            //     text: '10:30 am at Dolores Park',
-            //     actions: [
-            //         { id: 'yes', title: 'Yes' },
-            //         { id: 'no',  title: 'No' }
-            //     ],
-            //     foreground: true,
-            //     smallIcon: 'res://n_icon.png',
-            //     // icon: ''
-            // });
+            //ws
+            try {
+                befriend.ws.init();
+            } catch(e) {
+                console.error(e);
+            }
 
             resolve();
         });
@@ -157,8 +146,6 @@ window['befriend'] = {
                     requestData = { ...loginObj };
                 }
 
-                console.log(requestData);
-
                 try {
                     let r = await axios.post(joinPaths(api_domain, route), requestData);
 
@@ -170,4 +157,52 @@ window['befriend'] = {
             });
         },
     },
+    processWS: function (data) {
+        if(!data || !data.action) {
+            return false;
+        }
+
+        console.log("process ws");
+
+        if(data.action === 'notification') {
+            //calc distance of user to place
+
+            //todo based on if device/search
+            let distance = getDistanceMilesOrKM(befriend.location.getCurrent(), {
+                lat: data.activity.place.data.location_lat,
+                lon: data.activity.place.data.location_lon
+            });
+
+            let distance_formatted;
+
+            if (distance % 1 === 0) {
+                distance_formatted = Math.floor(distance);
+            } else {
+                distance_formatted = distance.toFixed(1);
+            }
+
+            // cordova.plugins.notification.local.addActions('activity-request', [
+            //     { id: 'yes', title: 'Accept' },
+            //     { id: 'no', title: 'Decline' },
+            //     { id: 'view', title: 'View' },
+            // ]);
+            //
+
+            try {
+                cordova.plugins.notification.local.schedule({
+                    title: `Invite: ${data.activity.activity.name} with ${data.person.first_name}`,
+                    text: `${data.activity.when.time.formatted} - ${distance_formatted}`,
+                    actions: [
+                        { id: 'yes', title: 'Yes' },
+                        { id: 'no',  title: 'No' }
+                    ],
+                    foreground: true,
+                    // smallIcon: 'res://n_icon.png',
+                    // icon: ''
+                });
+            } catch(e) {
+                console.error(e);
+            }
+        }
+    }
 };

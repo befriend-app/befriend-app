@@ -47,6 +47,7 @@ let js_files = {
         'styles.js',
         'helpers.js',
         'events.js',
+        'ws.js',
         styles_variables_file_name,
         'init.js', //init last
     ],

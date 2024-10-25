@@ -28,7 +28,7 @@ befriend.maps = {
     loadActivityMap: function () {
         return new Promise(async (resolve, reject) => {
             let map;
-            let location = befriend.location.getLocation();
+            let location = befriend.location.getCurrent();
 
             //get token to display map
             try {

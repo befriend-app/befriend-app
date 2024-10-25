@@ -48,7 +48,7 @@ befriend.location = {
             }, 60000);
         });
     },
-    getLocation: function () {
+    getCurrent: function () {
         return befriend.location.current;
     },
     isDevice: function () {
@@ -103,7 +103,7 @@ befriend.location = {
         }
     },
     getMarkerCoords: function () {
-        let location = befriend.location.getLocation();
+        let location = befriend.location.getCurrent();
 
         let lat = location.lat;
         let lon = location.lon;

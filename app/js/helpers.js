@@ -1,3 +1,7 @@
+const earth_radius_km = 6371;
+const meters_to_miles = 0.000621371192;
+
+
 function addClassEl(name, el) {
     if (typeof el !== 'object') {
         el = document.getElementById(el);
@@ -94,6 +98,47 @@ function generateToken(length) {
     }
 
     return b.join('');
+}
+
+function deg2rad(deg) {
+    return (deg * Math.PI) / 180;
+}
+
+function getDistanceMeters(loc_1, loc_2) {
+    const dLat = deg2rad(loc_2.lat - loc_1.lat);
+    const dLon = deg2rad(loc_2.lon - loc_1.lon);
+
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos((loc_1.lat * Math.PI) / 180) *
+        Math.cos((loc_1.lat * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return earth_radius_km * c * 1000;
+}
+
+function getDistanceMilesOrKM(loc_1, loc_2) {
+    let distance_meters = getDistanceMeters(loc_1, loc_2);
+
+    return getMilesOrKmFromMeters(distance_meters);
+}
+
+function useKM() {
+    //todo update dynamically
+    let value = false;
+
+    return value;
+}
+
+function getMilesOrKmFromMeters(meters) {
+    if (useKM()) {
+        return meters / 1000;
+    } else {
+        return meters * meters_to_miles;
+    }
 }
 
 function hideLevel(level_el) {
