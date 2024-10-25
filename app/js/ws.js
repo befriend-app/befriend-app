@@ -48,10 +48,7 @@ befriend.ws = {
 
         console.log("Connecting WS");
 
-        //tmp
-        let wsURL = `ws://127.0.0.1:8080`;
-
-        var ws_url = `${wsURL}?login_token=${befriend.user.login.token}&person_token=${befriend.user.person.token}`;
+        let ws_url = `${ws_domain}/?login_token=${befriend.user.login.token}&person_token=${befriend.user.person.token}`;
 
         try {
             befriend.ws.client = new WebSocket(ws_url);

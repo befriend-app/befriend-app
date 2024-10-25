@@ -199,14 +199,14 @@
 
 <script>
     let js_name = 'app.js';
+    let css_name = 'styles.css';
 
     window.is_app = true;
     window.is_ios = false;
     window.is_android = false;
 
     //for development
-    let dev_host = 'http://localhost:3002';
-    let dev_headers = { 'ngrok-skip-browser-warning': '69420' };
+    let dev_host = null;
 
     //for production
     let hosts = {
@@ -215,7 +215,10 @@
     };
 
     //api
-    let api_domain = 'http://localhost:4000';
+    let api_domain = 'https://api.befriend.app';
+
+    //ws
+    let ws_domain = 'wss://ws.befriend.app';
 
     (async function () {
         // set platform variables

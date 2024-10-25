@@ -1,12 +1,17 @@
 function loadCSS() {
     return new Promise(async (resolve, reject) => {
         try {
-            let css_link = 'css/styles.css';
+            //default
+            let css_url = joinPaths('css', css_name);
 
+            //latest
+            if (hosts.latest) {
+                css_url = joinPaths(dev_host, 'css', css_name);
+            }
+
+            //dev
             if (dev_host) {
-                css_link = joinPaths(dev_host, css_link);
-            } else if (hosts.latest) {
-                css_link = joinPaths(hosts.latest, css_link);
+                css_url = joinPaths(dev_host, 'css', css_name);
             }
 
             let link = document.createElement('link');
@@ -17,7 +22,7 @@ function loadCSS() {
                 resolve();
             };
 
-            link.setAttribute('href', css_link);
+            link.setAttribute('href', css_url);
 
             document.getElementsByTagName('head')[0].appendChild(link);
         } catch (e) {

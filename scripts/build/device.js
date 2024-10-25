@@ -1,4 +1,4 @@
-let {
+const {
     devPort,
     joinPaths,
     loadScriptEnv,
@@ -12,415 +12,315 @@ let {
     isDirF,
     copyFile,
 } = require('../helpers');
-
-loadScriptEnv();
-
 const yargs = require('yargs');
 const gm = require('gm').subClass({ imageMagick: '7+' });
+const os = require('os');
 
-const args = yargs.argv;
+//load env variables
+loadScriptEnv();
 
-let is_ios = false;
-let is_android = false;
-
-let no_icon = args.skip_icon;
-
-let api_domain = process.env.API_DOMAIN || `https://api.befriend.app`;
-
-let dev = {
-    is_dev: false,
-    host: null,
+// Configuration
+const CONFIG = {
+    icons: {
+        path: 'resources/icon.png',
+        foreground: 'resources/android/foreground.png',
+        background: 'resources/android/background.png',
+    },
+    urls: {
+        api: process.env.API_DOMAIN || 'https://api.befriend.app',
+        ws: process.env.WS_DOMAIN || 'wss://ws.befriend.app',
+    },
+    documentStrings: {
+        apiDomain: 'let api_domain =',
+        wsDomain: 'let ws_domain =',
+        devHost: 'let dev_host =',
+    },
+    android: {
+        iconSizes: {
+            ldpi: '30',
+            mdpi: '50',
+            hdpi: '100',
+            xhdpi: '150',
+            xxhdpi: '300',
+            xxxhdpi: '600',
+        },
+        resourceDirs: ['mipmap', 'drawable'],
+    },
 };
 
-let icons = {
-    path: `resources/icon.png`,
-    foreground: `resources/android/foreground.png`,
-    background: `resources/android/background.png`,
-};
+// Parse command line arguments
+function parseArguments() {
+    const args = yargs.argv;
+    return {
+        platforms: {
+            ios: args.ios || (!args.ios && !args.android),
+            android: args.android || (!args.ios && !args.android),
+        },
+        urls: {
+            api: ensureProtocol(args.api ? args.api : CONFIG.urls.api),
+            ws: ensureProtocolWs(args.ws ? args.ws : CONFIG.urls.ws),
+            dev: parseDevArguments(args.dev)
+        },
+        skipIcon: !!args.skip_icon,
+        minify: !!args.min,
+    };
+}
 
-let api_domain_str = `let api_domain =`;
+function parseDevArguments(devArg) {
+    if (!devArg) return { enabled: false, host: null };
 
-let dev_variable_str = `let dev_host =`;
+    return {
+        enabled: true,
+        host: typeof devArg === 'string'
+            ? ensureProtocol(devArg)
+            : `http://${getIPAddress()}:${devPort()}`,
+    };
+}
+
+// Utility functions
+function ensureProtocol(url) {
+    url = url.trim();
+    return url.includes('http') ? url : `https://${url}`;
+}
+
+function ensureProtocolWs(url) {
+    url = url.trim();
+    return url.startsWith('ws') ? url : `wss://${url}`;
+}
 
 function getIPAddress() {
-    let interfaces = require('os').networkInterfaces();
+    const interfaces = os.networkInterfaces();
 
-    for (let devName in interfaces) {
-        let iface = interfaces[devName];
+    for (const devName in interfaces) {
+        const iface = interfaces[devName];
 
-        for (let i = 0; i < iface.length; i++) {
-            let alias = iface[i];
-
-            if (alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal)
+        for (const alias of iface) {
+            if (alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal) {
                 return alias.address;
+            }
         }
     }
 
     return '0.0.0.0';
 }
 
-function setDocumentDevHost() {
-    return new Promise(async (resolve, reject) => {
-        let repo_root = repoRoot();
+// Document manipulation
+async function updateIndexHtml(urls) {
+    const indexPath = joinPaths(repoRoot(), 'www', 'index.html');
+    const content = await readFile(indexPath);
+    const lines = content.split('\n');
 
-        let index_html = joinPaths(repo_root, 'www', 'index.html');
-
-        try {
-            let data = await readFile(index_html);
-
-            let lines = data.split('\n');
-
-            for (let i = 0; i < lines.length; i++) {
-                let line = lines[i];
-
-                if (line.includes(api_domain_str)) {
-                    lines[i] = `    ${api_domain_str} '${api_domain}';`;
-                }
-
-                if (line.includes(dev_variable_str)) {
-                    if (dev.host) {
-                        lines[i] = `    ${dev_variable_str} '${dev.host}';`;
-                    } else {
-                        lines[i] = `    ${dev_variable_str} null;`;
-                    }
-                }
-            }
-
-            let new_content = lines.join('\n');
-
-            await writeFile(index_html, new_content);
-
-            resolve();
-        } catch (e) {
-            return reject(e);
+    const updatedLines = lines.map(line => {
+        if (line.includes(CONFIG.documentStrings.apiDomain)) {
+            return `    ${CONFIG.documentStrings.apiDomain} '${urls.api}';`;
         }
+        if (line.includes(CONFIG.documentStrings.wsDomain)) {
+            return `    ${CONFIG.documentStrings.wsDomain} '${urls.ws}';`;
+        }
+        if (line.includes(CONFIG.documentStrings.devHost)) {
+            return `    ${CONFIG.documentStrings.devHost} ${urls.dev.host ? `'${urls.dev.host}'` : 'null'};`;
+        }
+        return line;
     });
+
+    await writeFile(indexPath, updatedLines.join('\n'));
 }
 
-function copyIconsIOS() {
-    return new Promise(async (resolve, reject) => {
-        let asset_dir = null;
-
-        let image_dir = null;
-
-        let ios_dir = joinPaths(repoRoot(), 'platforms', 'ios');
-
-        try {
-            let platform_exists = await checkPathExists(ios_dir);
-
-            if (platform_exists) {
-                //level 1
-                let level_1_files = await listFilesDir(ios_dir);
-
-                for (let f of level_1_files) {
-                    let level_1_path = joinPaths(ios_dir, f);
-
-                    let is_dir = await isDirF(level_1_path);
-
-                    if (is_dir) {
-                        let level_2_files = await listFilesDir(level_1_path);
-
-                        for (let f of level_2_files) {
-                            if (f.includes('Assets.xcassets')) {
-                                asset_dir = joinPaths(level_1_path, f);
-                            }
-
-                            if (f.includes('Images.xcassets')) {
-                                image_dir = joinPaths(level_1_path, f);
-                            }
-
-                            if (asset_dir && image_dir) {
-                                break;
-                            }
-                        }
-                    }
-
-                    if (asset_dir && image_dir) {
-                        break;
-                    }
-                }
-
-                if (asset_dir && image_dir) {
-                    let image_icon_dir = joinPaths(image_dir, 'AppIcon.appiconset');
-                    let asset_icon_dir = joinPaths(asset_dir, 'AppIcon.appiconset');
-
-                    let image_files = await listFilesDir(image_icon_dir);
-
-                    for (let f of image_files) {
-                        try {
-                            let from = joinPaths(image_icon_dir, f);
-                            let to = joinPaths(asset_icon_dir, f);
-                            await copyFile(from, to);
-                        } catch (e) {}
-                    }
-                }
-            }
-        } catch (e) {
-            console.error(e);
-        }
-
-        resolve();
-    });
-}
-
-function setSplashAndroid() {
-    return new Promise(async (resolve, reject) => {
-        try {
-            let splash_path = joinPaths(
-                repoRoot(),
-                `platforms/android/app/src/main/res/drawable`,
-                `ic_cdv_splashscreen.xml`,
-            );
-
-            await writeFile(
-                splash_path,
-                `
-<vector xmlns:android="http://schemas.android.com/apk/res/android">
-</vector>`,
-            );
-        } catch (e) {}
-
-        resolve();
-    });
-}
-
-function setAndroidUserAgent(ua) {
-    return new Promise(async (resolve, reject) => {
-        let android_dir = joinPaths(repoRoot(), 'platforms/android');
-        let config_loc = joinPaths(android_dir, 'app/src/main/res/xml/config.xml');
-        let config_data = require('fs').readFileSync(config_loc).toString();
-        let config_lines = config_data.split('\n');
-
-        let ua_str = `\t<preference name="OverrideUserAgent" value="${ua}" />`;
-
-        let lines = [];
-
-        for (let l of config_lines) {
-            if (!l.includes('OverrideUserAgent')) {
-                lines.push(l);
-            }
-        }
-
-        let new_str = lines.join('\n');
-        new_str = new_str.replace(
-            '</widget>',
-            `${ua_str}
-</widget>`,
-        );
-
-        require('fs').writeFileSync(config_loc, new_str);
-
-        resolve();
-    });
-}
-
-function generateIconsAndroid() {
-    function createIcon(input, output, dim) {
-        return new Promise(async (resolve, reject) => {
-            await gm(input)
-                .resize(dim, dim)
-                .write(output, function (err) {
-                    if (err) {
-                        return reject(err);
-                    }
-
-                    resolve();
-                });
-        });
-    }
-
-    return new Promise(async (resolve, reject) => {
-        let source_file = joinPaths(repoRoot(), icons.path);
-
-        let foreground_source = joinPaths(repoRoot(), icons.foreground);
-        let background_source = joinPaths(repoRoot(), icons.background);
-
-        let output_root = joinPaths(repoRoot(), 'platforms/android/app/src/main/res');
-
-        let output_dirs = ['mipmap', 'drawable'];
-
-        let output_name = 'ic_launcher.png';
-
-        //update icons
-        let icon_sizes = {
-            hdpi: '100',
-            mdpi: '50',
-            ldpi: '30',
-            xhdpi: '150',
-            xxhdpi: '300',
-            xxxhdpi: '600',
-        };
-
-        //without foreground
-        for (let i in icon_sizes) {
-            let dim = icon_sizes[i];
-
-            for (let od of output_dirs) {
-                let output_folder = require('path').join(output_root, `${od}-${i}`);
-
-                if (!(await checkPathExists(output_folder))) {
-                    try {
-                        await makeDir(output_folder);
-                    } catch (e) {}
-                }
-
-                let p_out = joinPaths(output_folder, output_name);
-
-                try {
-                    await createIcon(source_file, p_out, dim);
-                } catch (e) {
-                    console.error(e);
-                }
-            }
-
-            //drawable
-            try {
-                await createIcon(source_file, joinPaths(output_root, 'drawable', output_name), dim);
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        //with foreground/background
-        let res_dirs = await listFilesDir(output_root);
-
-        for (let size in icon_sizes) {
-            let dim = icon_sizes[size];
-
-            for (let folder of res_dirs) {
-                if (folder.includes(`-${size}-v`)) {
-                    // foreground
-                    let foreground_out = joinPaths(
-                        output_root,
-                        folder,
-                        `ic_launcher_foreground.png`,
-                    );
-
-                    try {
-                        await createIcon(foreground_source, foreground_out, dim);
-                    } catch (e) {
-                        console.error(e);
-                    }
-
-                    // background
-                    let background_out = joinPaths(
-                        output_root,
-                        folder,
-                        `ic_launcher_background.png`,
-                    );
-
-                    try {
-                        await createIcon(background_source, background_out, dim);
-                    } catch (e) {
-                        console.error(e);
-                    }
-                }
-            }
-        }
-
-        //set splash screen
-        try {
-            await setSplashAndroid();
-        } catch (e) {}
-
-        resolve();
-    });
-}
-
-(async function () {
-    if (args.ios) {
-        is_ios = true;
-    }
-
-    if (args.android) {
-        is_android = true;
-    }
-
-    if (!args.ios && !args.android) {
-        is_ios = true;
-        is_android = true;
-    }
-
-    if (args.api) {
-        if (args.api.toLocaleLowerCase().includes('http')) {
-            api_domain = args.api;
-        } else {
-            api_domain = `https://${args.api}`;
-        }
-    }
-
-    if (args.dev) {
-        dev.is_dev = true;
-
-        if (typeof args.dev === 'string') {
-            if (args.dev.includes('http')) {
-                dev.host = args.dev;
-            } else {
-                dev.host = `http://${args.dev}`;
-            }
-        }
-    }
-
-    console.log({
-        building: 'app: js/css',
-    });
+// iOS build functions
+async function buildIOS(skipIcon) {
+    console.log('Building iOS...');
 
     try {
-        await require('app').build(null, args.min);
-    } catch (e) {}
+        if (!skipIcon) {
+            await execCmd(`cordova-icon --icon=${CONFIG.icons.path}`);
+            await copyIOSIcons();
+        }
+        await execCmd('cordova build ios');
+    } catch (error) {
+        console.error('iOS build failed:', error);
+    }
+}
 
-    console.log({
-        building: {
-            ios: is_ios,
-            android: is_android,
-        },
+async function copyIOSIcons() {
+    const iosDir = joinPaths(repoRoot(), 'platforms', 'ios');
+    if (!(await checkPathExists(iosDir))) return;
+
+    const { assetDir, imageDir } = await findIOSAssetDirectories(iosDir);
+    if (!assetDir || !imageDir) return;
+
+    await copyIconsBetweenDirectories(imageDir, assetDir);
+}
+
+async function findIOSAssetDirectories(iosDir) {
+    let assetDir = null;
+    let imageDir = null;
+
+    const level1Files = await listFilesDir(iosDir);
+
+    for (const file of level1Files) {
+        const level1Path = joinPaths(iosDir, file);
+        if (!(await isDirF(level1Path))) continue;
+
+        const level2Files = await listFilesDir(level1Path);
+        for (const subFile of level2Files) {
+            if (subFile.includes('Assets.xcassets')) assetDir = joinPaths(level1Path, subFile);
+            if (subFile.includes('Images.xcassets')) imageDir = joinPaths(level1Path, subFile);
+            if (assetDir && imageDir) break;
+        }
+        if (assetDir && imageDir) break;
+    }
+
+    return { assetDir, imageDir };
+}
+
+async function copyIconsBetweenDirectories(imageDir, assetDir) {
+    const imageIconDir = joinPaths(imageDir, 'AppIcon.appiconset');
+    const assetIconDir = joinPaths(assetDir, 'AppIcon.appiconset');
+    const imageFiles = await listFilesDir(imageIconDir);
+
+    for (const file of imageFiles) {
+        try {
+            await copyFile(
+                joinPaths(imageIconDir, file),
+                joinPaths(assetIconDir, file)
+            );
+        } catch (error) {
+            console.error(`Failed to copy icon ${file}:`, error);
+        }
+    }
+}
+
+// Android build functions
+async function buildAndroid(skipIcon) {
+    console.log('Building Android...');
+
+    try {
+        await setAndroidUserAgent('OS: Android');
+        await execCmd('cordova build android');
+
+        if (!skipIcon) {
+            await generateAndroidIcons();
+        }
+    } catch (error) {
+        console.error('Android build failed:', error);
+    }
+}
+
+async function setAndroidUserAgent(ua) {
+    const configPath = joinPaths(repoRoot(), 'platforms/android/app/src/main/res/xml/config.xml');
+    const configData = await readFile(configPath);
+    const lines = configData.split('\n').filter(l => !l.includes('OverrideUserAgent'));
+
+    const newConfig = lines.join('\n').replace(
+        '</widget>',
+        `\t<preference name="OverrideUserAgent" value="${ua}" />\n</widget>`
+    );
+
+    await writeFile(configPath, newConfig);
+}
+
+async function generateAndroidIcons() {
+    const outputRoot = joinPaths(repoRoot(), 'platforms/android/app/src/main/res');
+
+    // Generate basic icons
+    await generateBasicAndroidIcons(outputRoot);
+
+    // Generate foreground/background icons
+    await generateLayeredAndroidIcons(outputRoot);
+
+    // Set splash screen
+    await setSplashScreen();
+}
+
+async function generateBasicAndroidIcons(outputRoot) {
+    const sourceFile = joinPaths(repoRoot(), CONFIG.icons.path);
+
+    for (const [density, size] of Object.entries(CONFIG.android.iconSizes)) {
+        for (const dir of CONFIG.android.resourceDirs) {
+            const outputFolder = joinPaths(outputRoot, `${dir}-${density}`);
+            await makeDir(outputFolder).catch(() => {});
+
+            try {
+                await createIcon(
+                    sourceFile,
+                    joinPaths(outputFolder, 'ic_launcher.png'),
+                    size
+                );
+            } catch (error) {
+                console.error(`Failed to generate icon for ${density}:`, error);
+            }
+        }
+    }
+}
+
+async function generateLayeredAndroidIcons(outputRoot) {
+    const foregroundSource = joinPaths(repoRoot(), CONFIG.icons.foreground);
+    const backgroundSource = joinPaths(repoRoot(), CONFIG.icons.background);
+    const resDirs = await listFilesDir(outputRoot);
+
+    for (const [size, dim] of Object.entries(CONFIG.android.iconSizes)) {
+        for (const folder of resDirs) {
+            if (!folder.includes(`-${size}-v`)) continue;
+
+            try {
+                await createIcon(
+                    foregroundSource,
+                    joinPaths(outputRoot, folder, 'ic_launcher_foreground.png'),
+                    dim
+                );
+                await createIcon(
+                    backgroundSource,
+                    joinPaths(outputRoot, folder, 'ic_launcher_background.png'),
+                    dim
+                );
+            } catch (error) {
+                console.error(`Failed to generate layered icons for ${size}:`, error);
+            }
+        }
+    }
+}
+
+async function createIcon(input, output, dimension) {
+    return new Promise((resolve, reject) => {
+        gm(input)
+            .resize(dimension, dimension)
+            .write(output, err => err ? reject(err) : resolve());
     });
+}
 
-    //dev
-    if (dev.is_dev) {
-        //add host url to index.html
+async function setSplashScreen() {
+    const splashPath = joinPaths(
+        repoRoot(),
+        'platforms/android/app/src/main/res/drawable/ic_cdv_splashscreen.xml'
+    );
 
-        //if no host defined, use local ip and default dev port
-        if (!dev.host) {
-            let ip = getIPAddress();
+    await writeFile(
+        splashPath,
+        '<vector xmlns:android="http://schemas.android.com/apk/res/android"></vector>'
+    ).catch(() => {});
+}
 
-            dev.host = `http://${ip}:${devPort()}`;
-        }
+// Main build process
+async function main() {
+    const buildConfig = parseArguments();
+    console.log('Build configuration:', buildConfig);
+
+    // Build app assets
+    console.log('Building app: js/css');
+    await require('./app').build(null, buildConfig.minify).catch(console.error);
+
+    // Update index.html with configuration
+    await updateIndexHtml(buildConfig.urls);
+
+    // Build platforms
+    if (buildConfig.platforms.ios) {
+        await buildIOS(buildConfig.skipIcon);
     }
 
-    //set dev host to null or custom
-    await setDocumentDevHost();
-
-    // ios
-    if (is_ios) {
-        console.log('Build iOS');
-
-        try {
-            if (!no_icon) {
-                await execCmd(`cordova-icon --icon=${icons.path}`);
-                await copyIconsIOS();
-            }
-
-            await execCmd(`cordova build ios`);
-        } catch (e) {
-            console.error(e);
-        }
+    if (buildConfig.platforms.android) {
+        await buildAndroid(buildConfig.skipIcon);
     }
+}
 
-    //android
-    if (is_android) {
-        console.log('Build Android');
-
-        try {
-            await setAndroidUserAgent('OS: Android');
-
-            await execCmd(`cordova build android`);
-
-            if (!no_icon) {
-                await generateIconsAndroid();
-            }
-        } catch (e) {
-            console.error(e);
-        }
-    }
-})();
+// Start the build process
+main().catch(console.error);
