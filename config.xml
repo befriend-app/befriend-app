@@ -9,22 +9,6 @@
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
 
-    <edit-config target="NSLocationWhenInUseUsageDescription" file="*-Info.plist" mode="merge">
-        <string>Your location is used to find places and match you with people nearby.</string>
-    </edit-config>
-
-    <edit-config target="NSLocationAlwaysAndWhenInUseUsageDescription" file="*-Info.plist" mode="merge">
-        <string>Your location is used to find places and match you with people nearby.</string>
-    </edit-config>
-
-    <edit-config target="NSLocationAlwaysUsageDescription" file="*-Info.plist" mode="merge">
-        <string>Your location is used to find places and match you with people nearby.</string>
-    </edit-config>
-
-<!--    <edit-config file="*-Info.plist" mode="merge" target="UIViewControllerBasedStatusBarAppearance">-->
-<!--        <true />-->
-<!--    </edit-config>-->
-
     <preference name="Orientation" value="portrait" />
 
     <preference name="DisallowOverscroll" value="true" />
@@ -37,6 +21,30 @@
     <preference name="StatusBarStyle" value="#000" />
 
     <platform name="ios">
+        <!-- Allow background operation -->
+        <edit-config file="*-Info.plist" target="UIBackgroundModes" mode="replace">
+            <array>
+                <string>fetch</string>
+                <string>processing</string>
+            </array>
+        </edit-config>
+
+        <!-- Notification permissions -->
+<!--        <edit-config file="*-Info.plist" mode="merge" target="NSUserNotificationAlertStyle">-->
+<!--            <string>alert</string>-->
+<!--        </edit-config>-->
+
+        <edit-config target="NSLocationWhenInUseUsageDescription" file="*-Info.plist" mode="merge">
+            <string>Your location is used to find places and match you with people nearby.</string>
+        </edit-config>
+
+        <edit-config target="NSLocationAlwaysAndWhenInUseUsageDescription" file="*-Info.plist" mode="merge">
+            <string>Your location is used to find places and match you with people nearby.</string>
+        </edit-config>
+
+        <edit-config target="NSLocationAlwaysUsageDescription" file="*-Info.plist" mode="merge">
+            <string>Your location is used to find places and match you with people nearby.</string>
+        </edit-config>
     </platform>
 
     <platform name="android">
