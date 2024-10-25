@@ -20,6 +20,7 @@ window['befriend'] = {
     friends: null,
     when: null,
     maps: null,
+    ws: null,
     els: {},
     variables: null,
     timeouts: {},
@@ -85,7 +86,7 @@ window['befriend'] = {
             //ws
             try {
                 befriend.ws.init();
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
 
@@ -158,19 +159,19 @@ window['befriend'] = {
         },
     },
     processWS: function (data) {
-        if(!data || !data.action) {
+        if (!data || !data.action) {
             return false;
         }
 
-        console.log("process ws");
+        console.log('process ws');
 
-        if(data.action === 'notification') {
+        if (data.action === 'notification') {
             //calc distance of user to place
 
             //todo based on if device/search
             let distance = getDistanceMilesOrKM(befriend.location.getCurrent(), {
                 lat: data.activity.place.data.location_lat,
-                lon: data.activity.place.data.location_lon
+                lon: data.activity.place.data.location_lon,
             });
 
             let distance_formatted;
@@ -194,15 +195,15 @@ window['befriend'] = {
                     text: `${data.activity.when.time.formatted} - ${distance_formatted}`,
                     actions: [
                         { id: 'yes', title: 'Yes' },
-                        { id: 'no',  title: 'No' }
+                        { id: 'no', title: 'No' },
                     ],
                     foreground: true,
                     // smallIcon: 'res://n_icon.png',
                     // icon: ''
                 });
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
         }
-    }
+    },
 };

@@ -59,7 +59,7 @@ function parseArguments() {
         urls: {
             api: ensureProtocol(args.api ? args.api : CONFIG.urls.api),
             ws: ensureProtocolWs(args.ws ? args.ws : CONFIG.urls.ws),
-            dev: parseDevArguments(args.dev)
+            dev: parseDevArguments(args.dev),
         },
         skipIcon: !!args.skip_icon,
         minify: !!args.min,
@@ -71,9 +71,10 @@ function parseDevArguments(devArg) {
 
     return {
         enabled: true,
-        host: typeof devArg === 'string'
-            ? ensureProtocol(devArg)
-            : `http://${getIPAddress()}:${devPort()}`,
+        host:
+            typeof devArg === 'string'
+                ? ensureProtocol(devArg)
+                : `http://${getIPAddress()}:${devPort()}`,
     };
 }
 
@@ -110,7 +111,7 @@ async function updateIndexHtml(urls) {
     const content = await readFile(indexPath);
     const lines = content.split('\n');
 
-    const updatedLines = lines.map(line => {
+    const updatedLines = lines.map((line) => {
         if (line.includes(CONFIG.documentStrings.apiDomain)) {
             return `    ${CONFIG.documentStrings.apiDomain} '${urls.api}';`;
         }
@@ -180,10 +181,7 @@ async function copyIconsBetweenDirectories(imageDir, assetDir) {
 
     for (const file of imageFiles) {
         try {
-            await copyFile(
-                joinPaths(imageIconDir, file),
-                joinPaths(assetIconDir, file)
-            );
+            await copyFile(joinPaths(imageIconDir, file), joinPaths(assetIconDir, file));
         } catch (error) {
             console.error(`Failed to copy icon ${file}:`, error);
         }
@@ -209,12 +207,11 @@ async function buildAndroid(skipIcon) {
 async function setAndroidUserAgent(ua) {
     const configPath = joinPaths(repoRoot(), 'platforms/android/app/src/main/res/xml/config.xml');
     const configData = await readFile(configPath);
-    const lines = configData.split('\n').filter(l => !l.includes('OverrideUserAgent'));
+    const lines = configData.split('\n').filter((l) => !l.includes('OverrideUserAgent'));
 
-    const newConfig = lines.join('\n').replace(
-        '</widget>',
-        `\t<preference name="OverrideUserAgent" value="${ua}" />\n</widget>`
-    );
+    const newConfig = lines
+        .join('\n')
+        .replace('</widget>', `\t<preference name="OverrideUserAgent" value="${ua}" />\n</widget>`);
 
     await writeFile(configPath, newConfig);
 }
@@ -241,11 +238,7 @@ async function generateBasicAndroidIcons(outputRoot) {
             await makeDir(outputFolder).catch(() => {});
 
             try {
-                await createIcon(
-                    sourceFile,
-                    joinPaths(outputFolder, 'ic_launcher.png'),
-                    size
-                );
+                await createIcon(sourceFile, joinPaths(outputFolder, 'ic_launcher.png'), size);
             } catch (error) {
                 console.error(`Failed to generate icon for ${density}:`, error);
             }
@@ -266,12 +259,12 @@ async function generateLayeredAndroidIcons(outputRoot) {
                 await createIcon(
                     foregroundSource,
                     joinPaths(outputRoot, folder, 'ic_launcher_foreground.png'),
-                    dim
+                    dim,
                 );
                 await createIcon(
                     backgroundSource,
                     joinPaths(outputRoot, folder, 'ic_launcher_background.png'),
-                    dim
+                    dim,
                 );
             } catch (error) {
                 console.error(`Failed to generate layered icons for ${size}:`, error);
@@ -284,29 +277,28 @@ async function createIcon(input, output, dimension) {
     return new Promise((resolve, reject) => {
         gm(input)
             .resize(dimension, dimension)
-            .write(output, err => err ? reject(err) : resolve());
+            .write(output, (err) => (err ? reject(err) : resolve()));
     });
 }
 
 async function setSplashScreen() {
     const splashPath = joinPaths(
         repoRoot(),
-        'platforms/android/app/src/main/res/drawable/ic_cdv_splashscreen.xml'
+        'platforms/android/app/src/main/res/drawable/ic_cdv_splashscreen.xml',
     );
 
     await writeFile(
         splashPath,
-        '<vector xmlns:android="http://schemas.android.com/apk/res/android"></vector>'
+        '<vector xmlns:android="http://schemas.android.com/apk/res/android"></vector>',
     ).catch(() => {});
 }
 
 // Main build process
 async function main() {
     const buildConfig = parseArguments();
-    console.log('Build configuration:', buildConfig);
+    console.log(buildConfig);
 
     // Build app assets
-    console.log('Building app: js/css');
     await require('./app').build(null, buildConfig.minify).catch(console.error);
 
     // Update index.html with configuration

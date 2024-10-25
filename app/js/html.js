@@ -293,7 +293,7 @@ befriend.html = {
 
                 if (option.is_schedule) {
                     name_html = option.name;
-                } else if(option.is_now) {
+                } else if (option.is_now) {
                     tab_html = `<div class="value">${option.value}</div>`;
                 } else {
                     tab_html = `<div class="value">${option.value}</div>

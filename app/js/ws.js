@@ -2,87 +2,116 @@ befriend.ws = {
     client: null,
     connectionTry: 0,
     autoReconnectInterval: 5000,
-    reconnect_ip: false,
-    forceClose: function() {
-        if(befriend.ws.client) {
-            befriend.ws.client.instance.close(true);
+    reconnectInProgress: false,
+    authenticationFailed: false,
+    reconnectTimeout: null,
+    forceClose: function () {
+        if (befriend.ws.client) {
+            befriend.ws.authenticationFailed = true; // Prevent reconnection attempts
+            befriend.ws.client.close(1000, 'Authentication failed');
+            befriend.ws.client = null;
+            befriend.ws.connectionTry = 0;
         }
     },
-    init: function () {
-        function reconnect() {
-            // console.log("Reconnect ws");
+    reconnect: function () {
+        // Don't reconnect if authentication failed
+        if (befriend.ws.authenticationFailed || befriend.ws.reconnectInProgress) {
+            return;
+        }
 
-            if(befriend.ws.reconnect_ip) {
+        befriend.ws.reconnectInProgress = true;
+        befriend.ws.connectionTry++;
+
+        const reconnectDelay = befriend.ws.autoReconnectInterval * befriend.ws.connectionTry;
+
+        befriend.ws.reconnectTimeout = setTimeout(() => {
+            befriend.ws.reconnectInProgress = false;
+
+            if (befriend.ws.client?.readyState === WebSocket.OPEN) {
                 return;
             }
 
-            befriend.ws.reconnect_ip = true;
+            console.log(
+                `Attempting reconnection ${befriend.ws.connectionTry}/${befriend.ws.maxReconnectAttempts}`,
+            );
+            befriend.ws.init();
+        }, reconnectDelay);
+    },
 
-            befriend.ws.connectionTry++;
+    init: function () {
+        // Reset state if previously set
+        befriend.ws.authenticationFailed = false;
+        befriend.ws.connectionTry = 0;
+        befriend.ws.reconnectInProgress = false;
 
-            let reconnect_ms = befriend.ws.autoReconnectInterval * befriend.ws.connectionTry;
-
-            // console.log(`WebSocketClient: retry in ${reconnect_ms}ms`);
-
-            setTimeout(function(){
-                befriend.ws.reconnect_ip = false;
-
-                if(befriend.ws.client && befriend.ws.client.readyState === WebSocket.OPEN) {
-                    return;
-                }
-
-                // console.log("WebSocketClient: reconnecting...");
-
-                befriend.ws.init();
-            }, reconnect_ms);
+        if (befriend.ws.reconnectTimeout) {
+            clearTimeout(befriend.ws.reconnectTimeout);
         }
 
-        //on reconnect
-        if(befriend.ws.client) {
-            if(befriend.ws.client.readyState === WebSocket.OPEN) {
+        // Close existing connection if any
+        if (befriend.ws.client) {
+            if (befriend.ws.isConnected()) {
                 return;
             }
 
             befriend.ws.client = null;
         }
 
-        console.log("Connecting WS");
-
-        let ws_url = `${ws_domain}/?login_token=${befriend.user.login.token}&person_token=${befriend.user.person.token}`;
+        const wsUrl = `${ws_domain}/?login_token=${befriend.user.login.token}&person_token=${befriend.user.person.token}`;
 
         try {
-            befriend.ws.client = new WebSocket(ws_url);
-        } catch(e) {
-            return;
+            befriend.ws.client = new WebSocket(wsUrl);
+            befriend.ws.setupEventHandlers();
+        } catch (error) {
+            console.error('Failed to create WebSocket connection:', error);
+            befriend.ws.reconnect();
         }
+    },
 
-        befriend.ws.client.onopen = function () {
-            console.log('connection open');
+    setupEventHandlers: function () {
+        if (!befriend.ws.client) return;
+
+        befriend.ws.client.onopen = () => {
+            console.log('WebSocket connection established');
             befriend.ws.connectionTry = 0;
-        }
+            befriend.ws.authenticationFailed = false;
+        };
 
-        befriend.ws.client.onmessage = function(data, flags){
-            console.log("on message");
-
-            if(Number.parseInt(data) === 401 || Number.parseInt(data.data) === 401) {
-                befriend.ws.forceClose();
-            } else {
-                try {
-                    let parsed = JSON.parse(data.data);
-
-                    befriend.processWS(parsed);
-                } catch (e) {
-                    console.error(e);
+        befriend.ws.client.onmessage = (event) => {
+            try {
+                // Handle 401 authentication error
+                const data = event.data;
+                if (data === '401' || Number.parseInt(data) === 401) {
+                    console.log('Authentication failed (401)');
+                    befriend.ws.forceClose("Unauthenticated");
+                    return;
                 }
+
+                // Parse and process normal messages
+                const parsedData = JSON.parse(data);
+                befriend.processWS(parsedData);
+            } catch (error) {
+                console.error('Error processing message:', error);
             }
-        }
+        };
 
-        befriend.ws.client.onerror = function (e) {
-            reconnect();
-        }
+        befriend.ws.client.onerror = (error) => {
+            console.error('WebSocket error:', error);
+            if (!befriend.ws.authenticationFailed) {
+                befriend.ws.reconnect();
+            }
+        };
 
-        befriend.ws.client.onclose = function (e, b) {
-            reconnect(e);
-        }
-    }
+        befriend.ws.client.onclose = (event) => {
+            console.log(`WebSocket closed`);
+
+            if (!befriend.ws.authenticationFailed) {
+                befriend.ws.reconnect();
+            }
+        };
+    },
+
+    isConnected: function () {
+        return befriend.ws.client?.readyState === WebSocket.OPEN;
+    },
 };

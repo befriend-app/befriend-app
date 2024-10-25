@@ -1,7 +1,6 @@
 const earth_radius_km = 6371;
 const meters_to_miles = 0.000621371192;
 
-
 function addClassEl(name, el) {
     if (typeof el !== 'object') {
         el = document.getElementById(el);
@@ -111,9 +110,9 @@ function getDistanceMeters(loc_1, loc_2) {
     const a =
         Math.sin(dLat / 2) * Math.sin(dLat / 2) +
         Math.cos((loc_1.lat * Math.PI) / 180) *
-        Math.cos((loc_1.lat * Math.PI) / 180) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
+            Math.cos((loc_1.lat * Math.PI) / 180) *
+            Math.sin(dLon / 2) *
+            Math.sin(dLon / 2);
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 

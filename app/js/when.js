@@ -9,7 +9,7 @@ befriend.when = {
         future: 5,
     },
     options: [
-        { id: 'now', value: "Now", name: 'Now', is_now: true, mins: 5 },
+        { id: 'now', value: 'Now', name: 'Now', is_now: true, mins: 5 },
         { id: 15, value: '15', unit: 'mins', mins: 15 },
         { id: 30, value: '30', unit: 'mins', mins: 30 },
         { id: 45, value: '45', unit: 'mins', mins: 45 },
@@ -72,9 +72,11 @@ befriend.when = {
 
             if (befriend.places.isPlacesShown()) {
                 befriend.places.updatePlacesOpen();
-            } else if(befriend.activities.isCreateActivityShown()) {
+            } else if (befriend.activities.isCreateActivityShown()) {
                 //updates time on selected obj for createActivity
-                befriend.when.selected.createActivity = structuredClone(befriend.when.selected.main);
+                befriend.when.selected.createActivity = structuredClone(
+                    befriend.when.selected.main,
+                );
                 befriend.activities.updateWhenAuto();
             }
         }
