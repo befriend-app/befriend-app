@@ -15,6 +15,8 @@ const {
 const yargs = require('yargs');
 const gm = require('gm').subClass({ imageMagick: '7+' });
 const os = require('os');
+const plist = require('plist');
+const xcode = require('xcode');
 
 //load env variables
 loadScriptEnv();
@@ -34,6 +36,19 @@ const CONFIG = {
         apiDomain: 'let api_domain =',
         wsDomain: 'let ws_domain =',
         devHost: 'let dev_host =',
+    },
+    ios: {
+        capabilities: {
+            push: {
+                entitlement: 'aps-environment',
+                development: 'development',
+                production: 'production'
+            },
+            timeSensitive: {
+                entitlement: 'com.apple.developer.usernotifications.time-sensitive',
+                infoPlistKey: 'UNUserNotificationCenterSupportsTimeSensitiveNotifications'
+            }
+        }
     },
     android: {
         iconSizes: {
@@ -128,10 +143,142 @@ async function updateIndexHtml(urls) {
 }
 
 // iOS build functions
+async function addIOSCapabilities(iosDir) {
+    console.log('Adding iOS capabilities...');
+
+    return new Promise(async (resolve, reject) => {
+        try {
+            // Find the .xcodeproj file
+            // Find the .xcodeproj file
+            const projectName = (await listFilesDir(iosDir)).find(name => name.endsWith('.xcodeproj'));
+            if (!projectName) {
+                console.error('Could not find Xcode project');
+                return reject();
+            }
+
+            const projectPath = joinPaths(iosDir, projectName);
+            const pbxprojPath = joinPaths(projectPath, 'project.pbxproj');
+            const appName = projectName.replace('.xcodeproj', '');
+
+            // Parse the .xcodeproj file
+            const proj = xcode.project(pbxprojPath);
+            await proj.parseSync();
+
+            // Get the native target
+            const nativeTargets = proj.pbxNativeTargetSection();
+            const targetUUID = Object.keys(nativeTargets).find(key => !key.endsWith('_comment'));
+            if (!targetUUID) {
+                return reject('Could not find main target');
+            }
+
+            // Get the project
+            const pbxProjectSection = proj.pbxProjectSection();
+            const projectUUID = Object.keys(pbxProjectSection).find(key => !key.endsWith('_comment'));
+            if (!projectUUID) {
+                return reject('Could not find project');
+            }
+
+            const project = pbxProjectSection[projectUUID];
+            if (!project.attributes) {
+                project.attributes = {};
+            }
+            if (!project.attributes.TargetAttributes) {
+                project.attributes.TargetAttributes = {};
+            }
+            if (!project.attributes.TargetAttributes[targetUUID]) {
+                project.attributes.TargetAttributes[targetUUID] = {};
+            }
+            if (!project.attributes.TargetAttributes[targetUUID].SystemCapabilities) {
+                project.attributes.TargetAttributes[targetUUID].SystemCapabilities = {};
+            }
+
+            // Add Push Notifications capability
+            project.attributes.TargetAttributes[targetUUID].SystemCapabilities['com.apple.Push'] = {
+                enabled: 1
+            };
+
+            // Add entitlements file to build settings
+            const configurations = proj.pbxXCBuildConfigurationSection();
+            const buildConfigs = Object.keys(configurations)
+                .filter(key => !key.endsWith('_comment'))
+                .map(key => configurations[key])
+                .filter(config => config.buildSettings);
+
+            const entitlementsPath = `${appName}/${appName}.entitlements`;
+            buildConfigs.forEach(config => {
+                config.buildSettings.CODE_SIGN_ENTITLEMENTS = entitlementsPath;
+            });
+
+            // Write changes back to pbxproj
+            await writeFile(pbxprojPath, proj.writeSync());
+
+            // Update/create entitlements file
+            const entitlementsFullPath = joinPaths(iosDir, appName, `${appName}.entitlements`);
+            let entitlements = {};
+
+            if (await checkPathExists(entitlementsFullPath)) {
+                const content = await readFile(entitlementsFullPath);
+                try {
+                    entitlements = plist.parse(content);
+                } catch (error) {
+                    console.warn('Failed to parse existing entitlements:', error);
+                }
+            }
+
+            // Add push notification entitlement
+            entitlements[CONFIG.ios.capabilities.push.entitlement] =
+                process.env.NODE_ENV === 'production'
+                    ? CONFIG.ios.capabilities.push.production
+                    : CONFIG.ios.capabilities.push.development;
+
+            // Add time sensitive notification entitlement
+            entitlements[CONFIG.ios.capabilities.timeSensitive.entitlement] = true;
+
+            await writeFile(entitlementsFullPath, plist.build(entitlements));
+
+            // Update Info.plist
+            const infoPlistPath = joinPaths(iosDir, appName, appName, 'Info.plist');
+            let infoPlist = {};
+
+            if (await checkPathExists(infoPlistPath)) {
+                const content = await readFile(infoPlistPath);
+                try {
+                    infoPlist = plist.parse(content);
+                } catch (error) {
+                    console.warn('Failed to parse Info.plist:', error);
+                    infoPlist = {};
+                }
+            }
+
+            // Add time sensitive notifications support
+            infoPlist[CONFIG.ios.capabilities.timeSensitive.infoPlistKey] = true;
+
+            // Add background modes if not present
+            if (!infoPlist['UIBackgroundModes']) {
+                infoPlist['UIBackgroundModes'] = [];
+            }
+            if (!infoPlist['UIBackgroundModes'].includes('remote-notification')) {
+                infoPlist['UIBackgroundModes'].push('remote-notification');
+            }
+
+            await writeFile(infoPlistPath, plist.build(infoPlist));
+
+            resolve();
+        } catch (error) {
+            console.error('Failed to add iOS capabilities:', error);
+            reject(error);
+        }
+    });
+}
+
 async function buildIOS(skipIcon) {
     console.log('Building iOS...');
 
     try {
+        const iosDir = joinPaths(repoRoot(), 'platforms', 'ios');
+
+        await addIOSCapabilities(iosDir);
+
         if (!skipIcon) {
             await execCmd(`cordova-icon --icon=${CONFIG.icons.path}`);
             await copyIOSIcons();
