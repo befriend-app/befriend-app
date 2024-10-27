@@ -32,13 +32,15 @@ befriend.ws = {
             }
 
             console.log(
-                `Attempting reconnection ${befriend.ws.connectionTry}/${befriend.ws.maxReconnectAttempts}`,
+                `Reconnect attempt: ${befriend.ws.connectionTry}`,
             );
             befriend.ws.init();
         }, reconnectDelay);
     },
 
     init: function () {
+        //tmp unused
+        return;
         // Reset state if previously set
         befriend.ws.authenticationFailed = false;
         befriend.ws.connectionTry = 0;

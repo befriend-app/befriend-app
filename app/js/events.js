@@ -5,14 +5,17 @@ befriend.events = {
         return new Promise(async (resolve, reject) => {
             try {
                 befriend.events.bodyClickHandler();
+                befriend.events.onAppState();
                 befriend.events.resizeHandler();
 
+                await befriend.notifications.events.init();
                 await befriend.when.events.init();
                 await befriend.friends.events.init();
                 await befriend.maps.events.init();
                 await befriend.activities.events.init();
                 await befriend.location.events.init();
                 await befriend.places.events.init();
+
             } catch (e) {
                 console.error(e);
             }
@@ -63,4 +66,20 @@ befriend.events = {
             befriend.styles.createActivity.updateCloseMessagePosition();
         });
     },
+    onAppState: function () {
+        function onPause() {
+            console.log("on pause");
+
+            befriend.is_paused = true;
+        }
+
+        function onResume() {
+            console.log("on resume");
+
+            befriend.is_paused = false;
+        }
+
+        document.addEventListener('pause', onPause, false);
+        document.addEventListener('resume', onResume, false);
+    }
 };

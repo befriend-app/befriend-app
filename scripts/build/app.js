@@ -36,6 +36,7 @@ let js_files = {
         'vendor/dayjs.js',
         'vendor/mapbox.js',
         'app.js', //app first
+        'notifications.js',
         'user.js',
         'when.js',
         'friends.js',

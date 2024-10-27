@@ -1,4 +1,5 @@
 window['befriend'] = {
+    is_paused: false,
     classes: {
         placesShown: 'display-places',
         changeLocationShown: 'display-change-location',
@@ -21,6 +22,7 @@ window['befriend'] = {
     when: null,
     maps: null,
     ws: null,
+    notifications: null,
     els: {},
     variables: null,
     timeouts: {},

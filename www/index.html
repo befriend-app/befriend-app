@@ -206,7 +206,7 @@
     window.is_android = false;
 
     //for development
-    let dev_host = 'http://192.168.1.4:3002';
+    window.dev_host = 'http://192.168.1.4:3002';
 
     //for production
     let hosts = {
@@ -215,10 +215,10 @@
     };
 
     //api
-    let api_domain = 'http://192.168.1.4:4000';
+    window.api_domain = 'http://192.168.1.4:4000';
 
     //ws
-    let ws_domain = 'ws://192.168.1.4:8080';
+    window.ws_domain = 'ws://192.168.1.4:8080';
 
     (async function () {
         // set platform variables
