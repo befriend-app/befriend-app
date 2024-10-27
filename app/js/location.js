@@ -10,7 +10,7 @@ befriend.location = {
                 const geoLocationOptions = {};
 
                 try {
-                    navigator.geolocation.getCurrentPosition(
+                    befriend.plugins.geo.getCurrentPosition(
                         geoLocationSuccess,
                         geoLocationError,
                         geoLocationOptions,

@@ -30,19 +30,8 @@ befriend.styles = {
                 transition_sec = 0.3;
             }
 
-            let ts = timeNow();
-
-            //fix statusbar not available timing bug
-            while (typeof StatusBar === 'undefined') {
-                await rafAwait();
-
-                if (timeNow() - ts > 200) {
-                    break;
-                }
-            }
-
             try {
-                StatusBar.transformStatusBar(
+                befriend.plugins.statusBar.transform(
                     px,
                     transition_sec,
                     function (success) {
@@ -59,18 +48,6 @@ befriend.styles = {
             resolve();
         });
     },
-    toggleStatusBar: function (show) {
-        if (!StatusBar) {
-            return;
-        }
-
-        if (show) {
-            StatusBar.show();
-        } else {
-            befriend.styles.setStatusBarBorder(0);
-            StatusBar.hide();
-        }
-    },
     setStatusBarBorder: function (px, color) {
         if (!color) {
             color = befriend.variables.app_background;
@@ -78,7 +55,7 @@ befriend.styles = {
 
         return new Promise(async (resolve, reject) => {
             try {
-                StatusBar.setStatusBarBorder(
+                befriend.plugins.statusBar.setBorder(
                     px,
                     color,
                     function (success) {
@@ -94,21 +71,10 @@ befriend.styles = {
             }
         });
     },
-    setBackgroundAlpha: function (alpha, transition_sec) {
-        try {
-            if (!isNumeric(transition_sec)) {
-                transition_sec = 0.3;
-            }
-
-            StatusBar.setBackgroundTransparency(alpha, transition_sec);
-        } catch (e) {
-            console.error(e);
-        }
-    },
     getStatusBarHeight: function () {
         return new Promise(async (resolve, reject) => {
             try {
-                StatusBar.getHeight(
+                befriend.plugins.statusBar.getHeight(
                     function (height) {
                         resolve(height);
                     },

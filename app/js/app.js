@@ -26,10 +26,16 @@ window['befriend'] = {
     els: {},
     variables: null,
     timeouts: {},
+    plugins: {},
     init: function () {
         console.log('Befriend: [init]');
 
         return new Promise(async (resolve, reject) => {
+            //plugins
+            if(typeof BefriendPlugin !== 'undefined') {
+                befriend.plugins = BefriendPlugin;
+            }
+
             //user
             try {
                 await befriend.user.init();

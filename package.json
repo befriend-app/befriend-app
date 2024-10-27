@@ -22,14 +22,11 @@
   "keywords": [
     "ecosystem:cordova"
   ],
-  "author": "Apache Cordova Team",
+  "author": "Befriend",
   "license": "Apache-2.0",
   "dependencies": {
     "axios": "^1.7.7",
     "cordova-android": "^12.0.1",
-    "cordova-ios": "^7.1.1",
-    "cordova-plugin-geolocation": "^5.0.0",
-    "cordova-plugin-statusbar": "github:befriend-app/cordova-plugin-statusbar",
     "dotenv": "^16.4.5",
     "express": "^4.20.0",
     "plist": "^3.0.5",
@@ -37,7 +34,9 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.12.0",
+    "befriend-cordova-plugins": "file:os",
     "chokidar": "^3.6.0",
+    "cordova-ios": "^7.1.1",
     "csso": "^5.0.5",
     "eslint": "^9.12.0",
     "globals": "^15.10.0",
@@ -52,10 +51,7 @@
       "ios"
     ],
     "plugins": {
-      "cordova-plugin-geolocation": {
-        "GPS_REQUIRED": "true"
-      },
-      "cordova-plugin-statusbar": {}
+      "befriend-cordova-plugins": {}
     }
   }
 }

@@ -23,6 +23,7 @@ loadScriptEnv();
 
 // Configuration
 const CONFIG = {
+    plugin_name: 'befriend-cordova-plugins',
     icons: {
         path: 'resources/icon.png',
         foreground: 'resources/android/foreground.png',
@@ -142,9 +143,41 @@ async function updateIndexHtml(urls) {
     await writeFile(indexPath, updatedLines.join('\n'));
 }
 
+function addUpdatePlugins() {
+    return new Promise(async (resolve, reject) => {
+        console.log("Plugins: add/update");
+
+        let plugin_path = joinPaths(repoRoot(), 'os');
+
+        try {
+            let plugins_list = await execCmd(`cordova plugins ls`);
+
+            if(plugins_list && plugins_list.stdout && plugins_list.stdout.includes(CONFIG.plugin_name)) {
+                //remove
+                try {
+                    await execCmd(`cordova plugins rm ${CONFIG.plugin_name}`);
+                } catch(e) {
+                    console.error(e);
+                }
+            }
+        } catch(e) {
+            console.error(e);
+        }
+
+        //add
+        try {
+            await execCmd(`cordova plugins add ${plugin_path}`);
+        } catch(e) {
+            console.error(e);
+        }
+
+        resolve();
+    });
+}
+
 // iOS build functions
 async function addIOSCapabilities(iosDir) {
-    console.log('Adding iOS capabilities...');
+    // console.log('Adding iOS capabilities...');
 
     return new Promise(async (resolve, reject) => {
         try {
@@ -444,6 +477,9 @@ async function setSplashScreen() {
 async function main() {
     const buildConfig = parseArguments();
     console.log(buildConfig);
+
+    // Include OS/Plugins
+    await addUpdatePlugins();
 
     // Build app assets
     await require('./app').build(null, buildConfig.minify).catch(console.error);

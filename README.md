@@ -44,12 +44,6 @@ Ensure you have the following installed on your machine:
     node scripts/install/android.js
 ```
 
-### Plugins
-
-```
-    cordova plugin add https://github.com/katzer/cordova-plugin-local-notifications
-```
-
 ## Building
 
 ### iOS and Android
@@ -76,18 +70,3 @@ node scripts/build/device.js --dev http://192.168.1.1:3001
 ## Dev Server
 
 `node scripts/dev/serve.js`
-
-## Formatting and Linting
-
-### Formatting
-
-`npm run format`
-
--   Read more about the configuration file [here](https://prettier.io/docs/en/configuration.html)
--   Read more about the options that can be used [here](https://prettier.io/docs/en/options)
-
-### Linting
-
-`npm run lint`
-
-Read more about configuration [here](https://eslint.org/docs/latest/use/configure/)

@@ -2,22 +2,22 @@ befriend.notifications = {
     events: {
         init: function () {
             return new Promise(async (resolve, reject) => {
-                befriend.notifications.events.onLaunched();
-                befriend.notifications.events.onNotification();
+                // befriend.notifications.events.onLaunched();
+                // befriend.notifications.events.onNotification();
                 resolve();
             });
         },
         onLaunched: function() {
-            PushTokenPlugin.onLaunchNotification(function(notification) {
-                try {
+            try {
+                PushTokenPlugin.onLaunchNotification(function(notification) {
                     if (notification) {
                         window.launched_from_notify = true;
                         console.log('App was launched from notification:', notification);
                     }
-                } catch(e) {
-                    console.error(e);
-                }
-            });
+                });
+            } catch(e) {
+                console.error(e);
+            }
         },
         onNotification: function() {
             try {
