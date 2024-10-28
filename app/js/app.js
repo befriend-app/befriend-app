@@ -50,6 +50,7 @@ window['befriend'] = {
                 console.error(e);
             }
 
+            //styles
             try {
                 await befriend.styles.init();
             } catch (e) {
@@ -91,7 +92,7 @@ window['befriend'] = {
                 console.error(e);
             }
 
-            //events
+            //app events
             try {
                 await befriend.events.init();
             } catch (e) {
@@ -180,45 +181,7 @@ window['befriend'] = {
 
         console.log('process ws');
 
-        if (data.action === 'notification') {
-            //calc distance of user to place
-
-            //todo based on if device/search
-            let distance = getDistanceMilesOrKM(befriend.location.getCurrent(), {
-                lat: data.activity.place.data.location_lat,
-                lon: data.activity.place.data.location_lon,
-            });
-
-            let distance_formatted;
-
-            if (distance % 1 === 0) {
-                distance_formatted = Math.floor(distance);
-            } else {
-                distance_formatted = distance.toFixed(1);
-            }
-
-            // cordova.plugins.notification.local.addActions('activity-request', [
-            //     { id: 'yes', title: 'Accept' },
-            //     { id: 'no', title: 'Decline' },
-            //     { id: 'view', title: 'View' },
-            // ]);
-            //
-
-            try {
-                cordova.plugins.notification.local.schedule({
-                    title: `Invite: ${data.activity.activity.name} with ${data.person.first_name}`,
-                    text: `${data.activity.when.time.formatted} - ${distance_formatted}`,
-                    actions: [
-                        { id: 'yes', title: 'Yes' },
-                        { id: 'no', title: 'No' },
-                    ],
-                    foreground: true,
-                    // smallIcon: 'res://n_icon.png',
-                    // icon: ''
-                });
-            } catch (e) {
-                console.error(e);
-            }
+        if (data.action === '') {
         }
     },
 };

@@ -12,6 +12,12 @@
     UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
     center.delegate = self;
 
+    // Add observer for when app becomes active
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(handleAppBecameActive:)
+                                               name:UIApplicationDidBecomeActiveNotification
+                                             object:nil];
+
     // Register for notifications
     [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(didRegisterForRemoteNotificationsWithDeviceToken:)
@@ -45,6 +51,33 @@
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"launchNotification"];
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
+
+    // Clear badge number when app starts
+    [self clearBadgeNumber];
+}
+
+// New method to clear badge number
+- (void)clearBadgeNumber {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+    });
+}
+
+// Handle app becoming active
+- (void)handleAppBecameActive:(NSNotification *)notification {
+    [self clearBadgeNumber];
+}
+
+// Add new method to set badge number
+- (void)setBadgeNumber:(CDVInvokedUrlCommand*)command {
+    NSNumber* number = [command.arguments objectAtIndex:0];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[number integerValue]];
+
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    });
 }
 
 #pragma mark - UNUserNotificationCenterDelegate Methods
@@ -72,6 +105,9 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
          withCompletionHandler:(void (^)(void))completionHandler {
 
     NSDictionary *userInfo = response.notification.request.content.userInfo;
+
+    // Clear badge when notification is opened
+    [self clearBadgeNumber];
 
     // Handle notification click
     [self notificationClicked:[NSNotification notificationWithName:@"NotificationClicked"

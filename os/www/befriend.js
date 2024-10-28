@@ -36,6 +36,9 @@ var Befriend = {
         },
         onLaunchNotification: function(callback) {
             exec(callback, null, Befriend.notifications.nameSpace, 'onLaunchNotification', []);
+        },
+        setBadgeNumber: function(number, success, error) {
+            exec(success, error, Befriend.notifications.nameSpace, 'setBadgeNumber', [number]);
         }
     },
     geo: geo
