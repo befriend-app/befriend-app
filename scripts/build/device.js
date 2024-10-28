@@ -39,6 +39,7 @@ const CONFIG = {
         devHost: 'let dev_host =',
     },
     ios: {
+        dir: joinPaths(repoRoot(), 'platforms', 'ios'),
         capabilities: {
             push: {
                 entitlement: 'aps-environment',
@@ -52,6 +53,7 @@ const CONFIG = {
         }
     },
     android: {
+        dir: joinPaths(repoRoot(), 'platforms', 'android'),
         iconSizes: {
             ldpi: '30',
             mdpi: '50',
@@ -176,22 +178,39 @@ function addUpdatePlugins() {
 }
 
 // iOS build functions
-async function addIOSCapabilities(iosDir) {
-    // console.log('Adding iOS capabilities...');
 
+function getIOSNamePaths() {
     return new Promise(async (resolve, reject) => {
         try {
             // Find the .xcodeproj file
-            // Find the .xcodeproj file
-            const projectName = (await listFilesDir(iosDir)).find(name => name.endsWith('.xcodeproj'));
+            const projectName = (await listFilesDir(CONFIG.ios.dir)).find(name => name.endsWith('.xcodeproj'));
+
             if (!projectName) {
                 console.error('Could not find Xcode project');
                 return reject();
             }
 
-            const projectPath = joinPaths(iosDir, projectName);
+            const projectPath = joinPaths(CONFIG.ios.dir, projectName);
             const pbxprojPath = joinPaths(projectPath, 'project.pbxproj');
             const appName = projectName.replace('.xcodeproj', '');
+
+            resolve({
+                appName,
+                pbxprojPath
+            });
+        } catch(e) {
+            console.error(e);
+            return reject();
+        }
+    });
+}
+
+async function addIOSCapabilities() {
+    // console.log('Adding iOS capabilities...');
+
+    return new Promise(async (resolve, reject) => {
+        try {
+            const {appName, pbxprojPath} = await getIOSNamePaths();
 
             // Parse the .xcodeproj file
             const proj = xcode.project(pbxprojPath);
@@ -246,7 +265,7 @@ async function addIOSCapabilities(iosDir) {
             await writeFile(pbxprojPath, proj.writeSync());
 
             // Update/create entitlements file
-            const entitlementsFullPath = joinPaths(iosDir, appName, `${appName}.entitlements`);
+            const entitlementsFullPath = joinPaths(CONFIG.ios.dir, appName, `${appName}.entitlements`);
             let entitlements = {};
 
             if (await checkPathExists(entitlementsFullPath)) {
@@ -270,7 +289,7 @@ async function addIOSCapabilities(iosDir) {
             await writeFile(entitlementsFullPath, plist.build(entitlements));
 
             // Update Info.plist
-            const infoPlistPath = joinPaths(iosDir, appName, appName, 'Info.plist');
+            const infoPlistPath = joinPaths(CONFIG.ios.dir, appName, appName, 'Info.plist');
             let infoPlist = {};
 
             if (await checkPathExists(infoPlistPath)) {
@@ -304,13 +323,41 @@ async function addIOSCapabilities(iosDir) {
     });
 }
 
+function copyIOSAppDelegate() {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let files = [
+                'AppDelegate.h',
+                'AppDelegate.m'
+            ];
+
+            let src_dir = joinPaths(repoRoot(), 'os/src/ios');
+            let output_dir = joinPaths(repoRoot(), 'platforms', 'ios', )
+            let {appName} = await getIOSNamePaths();
+
+            for(let file of files) {
+
+                let input = joinPaths(src_dir, file);
+                let output = joinPaths(output_dir, appName,file);
+
+                await copyFile(input, output);
+            }
+
+            resolve();
+        } catch(e) {
+            console.error(e);
+            return reject();
+        }
+    });
+}
+
 async function buildIOS(skipIcon) {
     console.log('Building iOS...');
 
     try {
-        const iosDir = joinPaths(repoRoot(), 'platforms', 'ios');
+        await copyIOSAppDelegate();
 
-        await addIOSCapabilities(iosDir);
+        await addIOSCapabilities();
 
         if (!skipIcon) {
             await execCmd(`cordova-icon --icon=${CONFIG.icons.path}`);
@@ -323,23 +370,22 @@ async function buildIOS(skipIcon) {
 }
 
 async function copyIOSIcons() {
-    const iosDir = joinPaths(repoRoot(), 'platforms', 'ios');
-    if (!(await checkPathExists(iosDir))) return;
+    if (!(await checkPathExists(CONFIG.ios.dir))) return;
 
-    const { assetDir, imageDir } = await findIOSAssetDirectories(iosDir);
+    const { assetDir, imageDir } = await findIOSAssetDirectories(CONFIG.ios.dir);
     if (!assetDir || !imageDir) return;
 
     await copyIconsBetweenDirectories(imageDir, assetDir);
 }
 
-async function findIOSAssetDirectories(iosDir) {
+async function findIOSAssetDirectories() {
     let assetDir = null;
     let imageDir = null;
 
-    const level1Files = await listFilesDir(iosDir);
+    const level1Files = await listFilesDir(CONFIG.ios.dir);
 
     for (const file of level1Files) {
-        const level1Path = joinPaths(iosDir, file);
+        const level1Path = joinPaths(CONFIG.ios.dir, file);
         if (!(await isDirF(level1Path))) continue;
 
         const level2Files = await listFilesDir(level1Path);

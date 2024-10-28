@@ -17,7 +17,7 @@
  under the License.
  */
 
-#import "BefriendLocation.h"
+#import "Location.h"
 
 #pragma mark Constants
 
@@ -30,12 +30,12 @@
 #pragma mark -
 #pragma mark Categories
 
-@implementation BefriendLocationData
+@implementation LocationData
 
 @synthesize locationStatus, locationInfo, locationCallbacks, watchCallbacks;
-- (BefriendLocationData*)init
+- (LocationData*)init
 {
-    self = (BefriendLocationData*)[super init];
+    self = (LocationData*)[super init];
     if (self) {
         self.locationInfo = nil;
         self.locationCallbacks = nil;
@@ -47,9 +47,9 @@
 @end
 
 #pragma mark -
-#pragma mark BefriendLocation
+#pragma mark Location
 
-@implementation BefriendLocation
+@implementation Location
 
 @synthesize locationManager, locationData;
 
@@ -168,7 +168,7 @@
     didUpdateToLocation:(CLLocation*)newLocation
            fromLocation:(CLLocation*)oldLocation
 {
-    BefriendLocationData* cData = self.locationData;
+    LocationData* cData = self.locationData;
     
     cData.locationInfo = newLocation;
     @synchronized (self.locationData.locationCallbacks) {
@@ -204,9 +204,9 @@
             [self.commandDelegate sendPluginResult:result callbackId:callbackId];
         } else {
             if (!self.locationData) {
-                self.locationData = [[BefriendLocationData alloc] init];
+                self.locationData = [[LocationData alloc] init];
             }
-            BefriendLocationData* lData = self.locationData;
+            LocationData* lData = self.locationData;
             @synchronized (self.locationData.locationCallbacks) {
                 if (!lData.locationCallbacks) {
                     lData.locationCallbacks = [NSMutableArray arrayWithCapacity:1];
@@ -236,9 +236,9 @@
     BOOL enableHighAccuracy = [[command argumentAtIndex:1] boolValue];
     
     if (!self.locationData) {
-        self.locationData = [[BefriendLocationData alloc] init];
+        self.locationData = [[LocationData alloc] init];
     }
-    BefriendLocationData* lData = self.locationData;
+    LocationData* lData = self.locationData;
     
     if (!lData.watchCallbacks) {
         lData.watchCallbacks = [NSMutableDictionary dictionaryWithCapacity:1];
@@ -281,7 +281,7 @@
 - (void)returnLocationInfo:(NSString*)callbackId andKeepCallback:(BOOL)keepCallback
 {
     CDVPluginResult* result = nil;
-    BefriendLocationData* lData = self.locationData;
+    LocationData* lData = self.locationData;
     
     if (lData && !lData.locationInfo) {
         // return error
@@ -338,7 +338,7 @@
 {
     NSLog(@"locationManager::didFailWithError %@", [error localizedFailureReason]);
     
-    BefriendLocationData* lData = self.locationData;
+    LocationData* lData = self.locationData;
     if (lData && __locationStarted) {
         // TODO: probably have to once over the various error codes and return one of:
         // PositionError.PERMISSION_DENIED = 1;

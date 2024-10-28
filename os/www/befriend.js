@@ -4,14 +4,15 @@ const geo = require('./GeoLocation');
 
 var Befriend = {
     statusBar: {
+        nameSpace: 'StatusBar',
         setBorder: function(px, color, successCallback, errorCallback) {
-            exec(successCallback, errorCallback, "Befriend", "setStatusBarBorder", [px, color]);
+            exec(successCallback, errorCallback, Befriend.statusBar.nameSpace, "setStatusBarBorder", [px, color]);
         },
         transform: function(yOffset, duration, successCallback, errorCallback) {
-            exec(successCallback, errorCallback, "Befriend", "transformStatusBar", [yOffset, duration]);
+            exec(successCallback, errorCallback,Befriend.statusBar.nameSpace, "transformStatusBar", [yOffset, duration]);
         },
         getHeight: function (success, error) {
-            exec(success, error, 'Befriend', 'getStatusBarHeight', []);
+            exec(success, error, Befriend.statusBar.nameSpace, 'getStatusBarHeight', []);
         },
         setBackgroundTransparency: function(alpha, transition, success, error) {
             if(!transition) {
@@ -19,8 +20,23 @@ var Befriend = {
             } else if(transition > 1) {
                 transition = transition / 100; //ms to seconds
             }
-            exec(success, error, "Befriend", "setBackgroundTransparency", [alpha, transition]);
+            exec(success, error, Befriend.statusBar.nameSpace, "setBackgroundTransparency", [alpha, transition]);
         },
+    },
+    notifications: {
+        nameSpace: 'Notifications',
+        getToken: function(success, error) {
+            exec(success, error, Befriend.notifications.nameSpace, 'getToken', []);
+        },
+        registerForPushNotifications: function(success, error) {
+            exec(success, error, Befriend.notifications.nameSpace, 'registerForPushNotifications', []);
+        },
+        onNotificationReceived: function(callback) {
+            exec(callback, null, Befriend.notifications.nameSpace, 'onNotificationReceived', []);
+        },
+        onLaunchNotification: function(callback) {
+            exec(callback, null, Befriend.notifications.nameSpace, 'onLaunchNotification', []);
+        }
     },
     geo: geo
 };

@@ -1,13 +1,13 @@
-#import "CDVBefriend.h"
+#import "StatusBar.h"
 #import <Cordova/CDVViewController.h>
 
 #define StatusBarViewTag 1234567890
 #define StatusBarBorderViewTag 1234567891
 
-@interface CDVBefriend ()
+@interface StatusBar ()
 @end
 
-@implementation CDVBefriend
+@implementation StatusBar
 
 - (void)pluginInitialize
 {

@@ -63,6 +63,13 @@ window['befriend'] = {
                 console.error(e);
             }
 
+            //notifications
+            try {
+                await befriend.notifications.init();
+            } catch(e) {
+                console.error(e);
+            }
+
             //when
             try {
                 await befriend.when.init();

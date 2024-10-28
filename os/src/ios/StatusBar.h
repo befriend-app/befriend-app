@@ -1,7 +1,7 @@
 #import <Cordova/CDVPlugin.h>
 #import <Cordova/CDVInvokedUrlCommand.h>
 
-@interface CDVBefriend : CDVPlugin {
+@interface StatusBar : CDVPlugin {
     @protected
     UIView* _statusBarBackgroundView;
     UIColor* _statusBarBackgroundColor;

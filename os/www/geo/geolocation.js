@@ -47,6 +47,7 @@ function createTimeout (errorCallback, timeout) {
 }
 
 const geolocation = {
+    nameSpace: 'Location',
     lastPosition: null, // reference to last known (cached) position returned
     getCurrentPosition: function (successCallback, errorCallback, options) {
         argscheck.checkArgs('fFO', 'befriend.plugins.geo.getCurrentPosition', arguments);

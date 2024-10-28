@@ -2,36 +2,36 @@
 #import <CoreLocation/CoreLocation.h>
 #import <Cordova/CDVPlugin.h>
 
-enum BefriendLocationStatus {
+enum LocationStatus {
     PERMISSIONDENIED = 1,
     POSITIONUNAVAILABLE,
     TIMEOUT
 };
-typedef NSUInteger BefriendLocationStatus;
+typedef NSUInteger LocationStatus;
 
 // simple object to keep track of location information
-@interface BefriendLocationData : NSObject {
-    BefriendLocationStatus locationStatus;
+@interface LocationData : NSObject {
+    LocationStatus locationStatus;
     NSMutableArray* locationCallbacks;
     NSMutableDictionary* watchCallbacks;
     CLLocation* locationInfo;
 }
 
-@property (nonatomic, assign) BefriendLocationStatus locationStatus;
+@property (nonatomic, assign) LocationStatus locationStatus;
 @property (nonatomic, strong) CLLocation* locationInfo;
 @property (nonatomic, strong) NSMutableArray* locationCallbacks;
 @property (nonatomic, strong) NSMutableDictionary* watchCallbacks;
 
 @end
 
-@interface BefriendLocation : CDVPlugin <CLLocationManagerDelegate>{
+@interface Location : CDVPlugin <CLLocationManagerDelegate>{
     @private BOOL __locationStarted;
     @private BOOL __highAccuracyEnabled;
-    BefriendLocationData* locationData;
+    LocationData* locationData;
 }
 
 @property (nonatomic, strong) CLLocationManager* locationManager;
-@property (nonatomic, strong) BefriendLocationData* locationData;
+@property (nonatomic, strong) LocationData* locationData;
 
 - (void)getLocation:(CDVInvokedUrlCommand*)command;
 - (void)addWatch:(CDVInvokedUrlCommand*)command;
