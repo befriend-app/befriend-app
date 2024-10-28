@@ -372,9 +372,9 @@ befriend.html = {
                                         ${activity.image}
                                     </div>`;
                     } else if (activity.emoji) {
-                        image_html += `<div class="emoji">
-                                        ${activity.emoji}
-                                    </div>`;
+                        // image_html += `<div class="emoji">
+                        //                 ${activity.emoji}
+                        //             </div>`;
                     }
 
                     let icon_html = ``;
@@ -775,7 +775,7 @@ befriend.html = {
         } else if (befriend.friends.type.is_existing) {
             friend_type_str = 'Existing';
         } else if (befriend.friends.type.is_both) {
-            friend_type_str = 'New and/or Existing';
+            friend_type_str = 'New/Existing';
         }
 
         //friend type

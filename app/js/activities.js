@@ -1090,9 +1090,9 @@ befriend.activities = {
                                         ${activity.image}
                                     </div>`;
                         } else if (activity.emoji) {
-                            image_html += `<div class="emoji">
-                                        ${activity.emoji}
-                                    </div>`;
+                            // image_html += `<div class="emoji">
+                            //             ${activity.emoji}
+                            //         </div>`;
                         }
 
                         let icon_html = ``;
@@ -1239,9 +1239,9 @@ befriend.activities = {
                                         ${activity.image}
                                     </div>`;
                         } else if (activity.emoji) {
-                            image_html += `<div class="emoji">
-                                        ${activity.emoji}
-                                    </div>`;
+                            // image_html += `<div class="emoji">
+                            //             ${activity.emoji}
+                            //         </div>`;
                         }
 
                         let icon_html = ``;

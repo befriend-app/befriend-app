@@ -34,9 +34,9 @@ const CONFIG = {
         ws: process.env.WS_DOMAIN || 'wss://ws.befriend.app',
     },
     documentStrings: {
-        apiDomain: 'let api_domain =',
-        wsDomain: 'let ws_domain =',
-        devHost: 'let dev_host =',
+        apiDomain: 'window.api_domain =',
+        wsDomain: 'window.ws_domain =',
+        devHost: 'window.dev_host =',
     },
     ios: {
         dir: joinPaths(repoRoot(), 'platforms', 'ios'),
