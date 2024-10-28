@@ -2,8 +2,30 @@ befriend.notifications = {
     device: {
         token: null
     },
-    setDeviceToken: function (token) {
+    setDeviceToken: async function (token) {
         befriend.notifications.device.token = token;
+
+        //save on server if new
+        if(!befriend.user.sameDeviceToken(token)) {
+            let platform = null;
+
+            if(is_ios) {
+                platform = 'ios';
+            } else if(is_android) {
+                platform = 'android';
+            }
+
+            try {
+                 let r = await befriend.auth.post(`/devices`, {
+                     device_token: token,
+                     platform: platform
+                 });
+
+                 befriend.user.setDeviceToken(token);
+            } catch(e) {
+                console.error(e);
+            }
+        }
     },
     init: function () {
         return new Promise(async (resolve, reject) => {

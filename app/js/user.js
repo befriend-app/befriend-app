@@ -47,6 +47,26 @@ befriend.user = {
             JSON.stringify(befriend.user.local.data),
         );
     },
+    sameDeviceToken: function (token) {
+        let data = befriend.user.getLocal();
+
+        if(!data.device || !data.device.token === token) {
+            return false;
+        }
+
+        return true;
+    },
+    setDeviceToken: function (token) {
+        let data = befriend.user.getLocal();
+
+        if (!('device' in data)) {
+            data.device = {};
+        }
+
+        data.device.token = token;
+
+        befriend.user.saveLocal();
+    },
     setPersonToken: function (token) {
         befriend.user.person.token = token;
 
