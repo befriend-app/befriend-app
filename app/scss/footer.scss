@@ -4,11 +4,14 @@ footer {
     //display: none;
 
     #navigation {
+        $background_color: lighten($brand_color_a, 51.5%);
+        $transition_ms: 200ms;
+
         display: flex;
         width: 100vw;
         padding-top: $footer_pt;
         padding-bottom: var(--sab);
-        background: lighten($brand_color_a, 51.5%);
+        background: $background_color;
         border-top: 1px solid $color_lightgray;
         //height: $footer_h;
 
@@ -20,10 +23,11 @@ footer {
             align-items: center;
 
             .container {
-                transition: all 300ms;
+                transition: all $transition_ms;
                 padding: 6px 0;
                 width: 60px;
                 border-radius: 12px;
+                background-color: $background_color;
             }
 
             &.active {
@@ -36,7 +40,6 @@ footer {
 
                     path {
                         stroke: white;
-                        stroke-width: 6px;
                     }
                 }
                 .name {
@@ -51,14 +54,18 @@ footer {
             .icon {
                 svg {
                     height: 22px;
-                    transition: all 300ms;
+                    transition: all $transition_ms;
+
+                    path {
+                        stroke-width: 6px;
+                    }
                 }
             }
 
             .name {
                 font-weight: 300;
                 font-size: 12px;
-                transition: all 300ms;
+                transition: all $transition_ms;
             }
         }
     }
