@@ -5,7 +5,7 @@ befriend.notifications = {
     setDeviceToken: async function (token) {
         befriend.notifications.device.token = token;
 
-        //save on server if new
+        //save on server if new device token
         if(!befriend.user.sameDeviceToken(token)) {
             let platform = null;
 

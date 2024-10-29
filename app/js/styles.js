@@ -12,9 +12,9 @@ befriend.styles = {
                     try {
                         let sbh = await befriend.styles.getStatusBarHeight();
 
-                        let views_el = document.getElementById('views');
+                        befriend.els.views.style.setProperty('--view-top', sbh + befriend.variables.view_gap_tb + 'px');
 
-                        views_el.style.marginTop = sbh + befriend.variables.view_gap_tb + 'px';
+                        // befriend.els.views.style.marginTop = sbh + befriend.variables.view_gap_tb + 'px';
                     } catch (e) {}
                 }
             } catch (e) {

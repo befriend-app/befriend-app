@@ -5,6 +5,8 @@ befriend.events = {
         return new Promise(async (resolve, reject) => {
             try {
                 befriend.events.bodyClickHandler();
+                befriend.events.footerNavigation();
+
                 befriend.events.onAppState();
                 befriend.events.resizeHandler();
 
@@ -15,7 +17,6 @@ befriend.events = {
                 await befriend.activities.events.init();
                 await befriend.location.events.init();
                 await befriend.places.events.init();
-
             } catch (e) {
                 console.error(e);
             }
@@ -60,6 +61,41 @@ befriend.events = {
                 }
             }
         });
+    },
+    footerNavigation: function () {
+        let nameClassMap = {
+            'home': 'view-activities',
+            'friends': 'view-friends',
+            'filters': 'view-filters',
+            'me' : 'view-me'
+        };
+
+        let nav_items = befriend.els.footer.getElementsByClassName('nav-item');
+        let views = befriend.els.views.getElementsByClassName('view');
+
+        for(let i = 0; i < nav_items.length; i++) {
+            let nav_item = nav_items[i];
+
+            nav_item.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                if(elHasClass(this, 'active')) {
+                    return false;
+                }
+
+                let viewClass = nameClassMap[nav_item.getAttribute('data-nav')];
+
+                let viewEl = befriend.els.views.querySelector(`.${viewClass}`);
+
+                removeElsClass(nav_items, 'active');
+                removeElsClass(views, 'active');
+
+                addClassEl('active', this);
+                addClassEl('active', viewEl);
+            });
+        }
+
     },
     resizeHandler: function () {
         window.addEventListener('resize', function () {
