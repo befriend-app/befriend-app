@@ -104,16 +104,9 @@ befriend.activities = {
         groups: {
             60: {
                 max: 60,
-                num: '10 - 60',
+                num: '15 - 60',
                 unit: 'minutes',
                 options: [
-                    [
-                        {
-                            num: 10,
-                            unit: 'min',
-                            minutes: 10,
-                        },
-                    ],
                     [
                         {
                             num: 15,
@@ -140,6 +133,13 @@ befriend.activities = {
                             num: 40,
                             unit: 'min',
                             minutes: 40,
+                        },
+                    ],
+                    [
+                        {
+                            num: 45,
+                            unit: 'min',
+                            minutes: 45,
                         },
                     ],
                     [
