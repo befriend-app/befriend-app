@@ -51,6 +51,13 @@
 
     .about-me {
         margin-top: 25px;
+        .heading-row {
+            @include flex-center;
+
+            .add-section-btn {
+                margin-left: auto;
+            }
+        }
     }
 
     .add-section-btn {
@@ -64,7 +71,6 @@
         align-items: center;
         //border: .5px solid black;
         font-size: 13px;
-        margin-top: 7px;
 
         .icons {
             display: flex;
