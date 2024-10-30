@@ -2,49 +2,81 @@
     padding-left: 30px !important;
     padding-right: 30px !important;
     margin-top: 20px;
+    gap: initial !important;
 
     .top {
         @include flex-center;
-    }
 
-    .first-name {
-        @include flex-center-col;
-        font-size: 20px;
-        font-weight: 500;
-    }
-
-    .birthday {
-        margin-left: auto;
-
-        .icon-age {
-            //$dim: 40px;
-            display: flex;
-            gap: 0 8px;
-
-            //@include flex-center-col;
-            //
-            //border-radius: 50%;
-            //border: 1px solid;
-            //width: $dim;
-            //height: $dim;
+        .first-name {
+            @include flex-center-col;
+            font-size: 20px;
+            font-weight: 500;
         }
 
-        .age {
-            position: absolute;
-            transform: translate(10px, 16px);
-            font-size: 13px;
+        .birthday {
+            margin-left: auto;
 
-            &.one-hundred {
-                transform: translate(6px, 16px);
+            .icon-age {
+                //$dim: 40px;
+                display: flex;
+                gap: 0 8px;
+
+                //@include flex-center-col;
+                //
+                //border-radius: 50%;
+                //border: 1px solid;
+                //width: $dim;
+                //height: $dim;
             }
+
+            .age {
+                position: absolute;
+                transform: translate(10px, 16px);
+                font-size: 13px;
+
+                &.one-hundred {
+                    transform: translate(6px, 16px);
+                }
+            }
+
+            svg {
+                height: 36px;
+            }
+
+            .date {
+                font-size: 10px;
+            }
+        }
+    }
+
+    .about-me {
+        margin-top: 25px;
+    }
+
+    .add-section-btn {
+        $color: white;
+        background-color: lighten($brand_color_a, 0%);
+        padding: 4px 12px;
+        width: fit-content;
+        border-radius: 6px;
+        color: $color;
+        display: flex;
+        align-items: center;
+        //border: .5px solid black;
+        font-size: 13px;
+        margin-top: 7px;
+
+        .icons {
+            display: flex;
+            gap: 0 6px;
+            justify-content: center;
+            margin-left: 8px;
+            display: none;
         }
 
         svg {
-            height: 36px;
-        }
-
-        .date {
-            font-size: 10px;
+            height: 12px;
+            fill: $color;
         }
     }
 
@@ -57,6 +89,79 @@
             .title {
                 font-size: 18px;
                 font-weight: 500;
+            }
+        }
+    }
+}
+
+#me-section-options {
+    $min-w: 160px;
+    $max-w: 220px;
+    $preferred-w: 50vw;
+    position: fixed;
+    right: calc(-1 * clamp($min-w, $preferred-w, $max-w));
+    top: var(--sbh);
+    width: clamp($min-w, $preferred-w, $max-w);
+    height: calc(100%);
+    background: #f8f9fa;
+    box-shadow: -1px 0 3px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s;
+    padding: 20px 15px;
+    box-sizing: border-box;
+    z-index: 2;
+
+    .title {
+        font-weight: 600;
+    }
+
+    &.open {
+        right: 0;
+    }
+
+    .options {
+        display: flex;
+        flex-direction: column;
+        margin-top: 10px;
+        gap: 8px 0;
+
+        .option {
+            $plr: 10px;
+            display: flex;
+            width: calc(100% - calc($plr * 2));
+            padding: 6px $plr;
+            background-color: white;
+            border-radius: 7px;
+            border: 1px solid $color_lightgray;
+
+            .icon {
+                width: 25px;
+                @include flex-center-col;
+
+                svg {
+                    height: 20px;
+                    @include flex-center-col;
+                }
+            }
+
+            .name {
+                @include flex-center-col;
+                font-size: 12px;
+                font-weight: 500;
+                margin-left: 6px;
+            }
+
+            .add {
+                display: flex;
+                font-size: 9px;
+                margin-left: auto;
+                justify-content: center;
+                align-items: center;
+                gap: 0 5px;
+
+                svg {
+                    height: 15px;
+                    @include flex-center-col;
+                }
             }
         }
     }

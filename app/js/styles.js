@@ -12,7 +12,8 @@ befriend.styles = {
                     try {
                         let sbh = await befriend.styles.getStatusBarHeight();
 
-                        befriend.els.views.style.setProperty('--view-top', sbh + befriend.variables.view_gap_tb + 'px');
+                        befriend.els.app.style.setProperty('--sbh', sbh + 'px');
+                        befriend.els.app.style.setProperty('--view-top', sbh + befriend.variables.view_gap_tb + 'px');
 
                         // befriend.els.views.style.marginTop = sbh + befriend.variables.view_gap_tb + 'px';
                     } catch (e) {}

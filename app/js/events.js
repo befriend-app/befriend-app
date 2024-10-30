@@ -17,6 +17,9 @@ befriend.events = {
                 await befriend.activities.events.init();
                 await befriend.location.events.init();
                 await befriend.places.events.init();
+
+                await befriend.me.events.init();
+
             } catch (e) {
                 console.error(e);
             }
@@ -59,6 +62,10 @@ befriend.events = {
                 if (!e.target.closest('#place-search')) {
                     befriend.places.toggleAutoComplete(false);
                 }
+            } else if(befriend.me.isSectionOptionsShown()) {
+                if(!e.target.closest('#me-section-options')) {
+                    befriend.me.toggleSectionOptions(false);
+                }
             }
         });
     },
@@ -93,6 +100,11 @@ befriend.events = {
 
                 addClassEl('active', this);
                 addClassEl('active', viewEl);
+
+                //hide any overlays on footer nav
+                befriend.places.toggleAutoComplete(false);
+                befriend.places.toggleDisplayPlaces(false);
+                befriend.me.toggleSectionOptions(false);
             });
         }
 
