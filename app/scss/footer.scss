@@ -12,7 +12,7 @@ footer {
         padding-top: $footer_pt;
         padding-bottom: var(--sab);
         background: $background_color;
-        border-top: 1px solid $color_lightgray;
+        border-top: 1px solid $app_background;
         //height: $footer_h;
 
         .nav-item {

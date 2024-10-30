@@ -23,7 +23,7 @@ befriend.html = {
             <div id="app">
                 <div class="app-wrapper">
                     <div id="views">
-                        <div class="view active view-activities">
+                        <div id="home" class="view active view-home">
                             <div id="when" class="view-section">
                                 <div class="section-title">When</div>
                                 
@@ -101,11 +101,35 @@ befriend.html = {
                             </div>
                         </div>
                         
-                        <div class="view view-friends"><h2>Friends</h2></div>
+                        <div id="friends" class="view view-friends"><h2>Friends</h2></div>
                         
-                        <div class="view view-filters"><h2>Filters</h2></div>
+                        <div id="filters" class="view view-filters"><h2>Filters</h2></div>
                         
-                        <div class="view view-me"><h2>Me</h2></div>
+                        <div id="me" class="view view-me">
+<!--                            <div class="sections">-->
+<!--                                <div class="section intro">-->
+<!--                                    <div class="title">Intro</div>-->
+<!--                                    -->
+<!--                                    <div class="content">-->
+<!--                                        <div class="field name">-->
+<!--                                            <div class="label">Name</div>-->
+<!--                                        </div>-->
+<!--                                        -->
+<!--                                        <div class="field age">-->
+<!--                                            <div class="label">Age</div>-->
+<!--                                        </div>-->
+<!--                                        -->
+<!--                                        <div class="field gender">-->
+<!--                                            <div class="label">Gender</div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                -->
+<!--                                <div class="section life">-->
+<!--                                    <div class="title">Life</div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+                        </div>
                     </div>
                     
                     <div id="places">
@@ -255,7 +279,7 @@ befriend.html = {
                     
                     <footer>
                         <div id="navigation">
-                            <div class="nav-item home active" data-nav="home">
+                            <div class="nav-item active home" data-nav="home">
                                 <div class="container">
                                     <div class="icon">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 511.8674 466.725"><g><g><path d="M493.1526,172.925L310.2526,19.725c-31.4-26.3-77.2-26.3-108.6,0L18.7526,172.925c-22.2,18.6-25.1,51.7-6.5,73.8,9.2,11,22.5,17.7,36.7,18.6v149c0,28.8,23.4,52.2,52.3,52.3h112.4v-129c0-23.3,18.9-42.2,42.2-42.2s42.2,18.9,42.2,42.2v129.1h112.5c28.8,0,52.2-23.4,52.3-52.3v-149c28.9-1.9,50.8-26.9,48.9-55.8-1-14.2-7.7-27.5-18.6-36.7h0ZM459.4526,245.525h-16.6v168.9c0,17.8-14.4,32.3-32.3,32.3h-92.5v-109.1c0-34.4-27.9-62.2-62.2-62.2-34.4,0-62.2,27.9-62.2,62.2v109.1h-92.4c-17.8,0-32.3-14.4-32.3-32.2v-169h-16.5c-30.3,0-44-37.8-20.8-57.3L214.5526,35.025c24-20.1,58.9-20.1,82.9,0l182.8,153.3c23.2,19.4,9.5,57.2-20.8,57.2h0Z"/></g></g></svg>

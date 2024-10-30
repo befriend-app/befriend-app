@@ -3,6 +3,7 @@ befriend.user = {
         key: 'user.json',
         data: {},
     },
+    server: null,
     person: {
         token: null,
     },
@@ -21,6 +22,12 @@ befriend.user = {
 
             if (localData.login && localData.login.token) {
                 befriend.user.login.token = localData.login.token;
+            }
+
+            try {
+                befriend.user.getMe();
+            } catch(e) {
+                console.error(e);
             }
 
             resolve();
@@ -93,4 +100,19 @@ befriend.user = {
 
         befriend.user.saveLocal();
     },
+    getMe: function () {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let r = await befriend.auth.get('/me');
+
+                console.log(r.data);
+
+                befriend.user.server = r.data;
+            } catch(e) {
+                console.error(e);
+            }
+
+            resolve();
+        });
+    }
 };

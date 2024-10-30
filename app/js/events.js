@@ -64,7 +64,7 @@ befriend.events = {
     },
     footerNavigation: function () {
         let nameClassMap = {
-            'home': 'view-activities',
+            'home': 'view-home',
             'friends': 'view-friends',
             'filters': 'view-filters',
             'me' : 'view-me'

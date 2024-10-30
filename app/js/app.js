@@ -106,6 +106,8 @@ window['befriend'] = {
                 console.error(e);
             }
 
+            fireClick(befriend.els.footer.querySelector('.nav-item.me'));
+
             resolve();
         });
     },
@@ -148,6 +150,25 @@ window['befriend'] = {
         },
     },
     auth: {
+        get: function (route) {
+            return new Promise(async (resolve, reject) => {
+                let loginObj = {
+                    person_token: befriend.user.person.token,
+                    login_token: befriend.user.login.token,
+                };
+
+                try {
+                    let r = await axios.get(joinPaths(api_domain, route), {
+                        params: loginObj
+                    });
+
+                    resolve(r);
+                } catch (e) {
+                    console.error(e);
+                    return reject(e);
+                }
+            });
+        },
         post: function (route, data) {
             return new Promise(async (resolve, reject) => {
                 let requestData = {};

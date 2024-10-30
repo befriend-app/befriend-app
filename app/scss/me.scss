@@ -1,0 +1,18 @@
+#me {
+    padding-left: 30px !important;
+    padding-right: 30px !important;
+    margin-top: 30px;
+
+    .sections {
+        display: flex;
+        flex-direction: column;
+        gap: 15px 0;
+
+        .section {
+            .title {
+                font-size: 18px;
+                font-weight: 500;
+            }
+        }
+    }
+}
