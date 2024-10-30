@@ -28,14 +28,13 @@ befriend.maps = {
     loadActivityMap: function () {
         return new Promise(async (resolve, reject) => {
             let map;
+
             let location = befriend.location.getCurrent();
 
             //get token to display map
             try {
                 await befriend.maps.getToken();
-
                 befriend.maps.updateTokenInterval();
-
                 mapboxgl.accessToken = befriend.maps.token.data.token;
             } catch (e) {
                 console.error(e);
@@ -51,19 +50,52 @@ befriend.maps = {
                     attributionControl: false,
                 });
 
-                // map.addControl(new mapboxgl.GeolocateControl());
-                // map.addControl(new mapboxgl.NavigationControl());
+                map.on('load', function () {
+                    befriend.maps.maps.activities = map;
 
-                befriend.maps.maps.activities = map;
+                    befriend.maps.addMarker(map, location, {
+                        is_me: true,
+                    });
 
-                befriend.maps.addMarker(map, location, {
-                    is_me: true,
+                    resolve();
+                });
+
+                map.on('error', async function (e) {
+                    //get new token
+                    if (e.error && (e.error.status === 401 || e.error.status === 403)) {
+                        try {
+                            await befriend.maps.getToken(true);
+                            mapboxgl.accessToken = befriend.maps.token.data.token;
+
+                            map.remove();
+
+                            await rafAwait();
+
+                            map = new mapboxgl.Map({
+                                container: 'activities-map',
+                                style: 'mapbox://styles/mapbox/light-v10',
+                                center: [location.lon, location.lat],
+                                zoom: befriend.maps.defaultZoom,
+                                attributionControl: false,
+                            });
+
+                            befriend.maps.maps.activities = map;
+
+                            befriend.maps.addMarker(map, location, {
+                                is_me: true,
+                            });
+
+                            resolve();
+                        } catch (e) {
+                            console.error('Failed to refresh token:', e);
+                            reject(e);
+                        }
+                    }
                 });
             } catch (e) {
                 console.error(e);
+                reject(e);
             }
-
-            resolve();
         });
     },
     getToken: function (force_new = false) {
