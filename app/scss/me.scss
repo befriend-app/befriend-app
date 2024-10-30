@@ -1,7 +1,52 @@
 #me {
     padding-left: 30px !important;
     padding-right: 30px !important;
-    margin-top: 30px;
+    margin-top: 20px;
+
+    .top {
+        @include flex-center;
+    }
+
+    .first-name {
+        @include flex-center-col;
+        font-size: 20px;
+        font-weight: 500;
+    }
+
+    .birthday {
+        margin-left: auto;
+
+        .icon-age {
+            //$dim: 40px;
+            display: flex;
+            gap: 0 8px;
+
+            //@include flex-center-col;
+            //
+            //border-radius: 50%;
+            //border: 1px solid;
+            //width: $dim;
+            //height: $dim;
+        }
+
+        .age {
+            position: absolute;
+            transform: translate(10px, 16px);
+            font-size: 13px;
+
+            &.one-hundred {
+                transform: translate(6px, 16px);
+            }
+        }
+
+        svg {
+            height: 36px;
+        }
+
+        .date {
+            font-size: 10px;
+        }
+    }
 
     .sections {
         display: flex;

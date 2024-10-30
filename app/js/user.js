@@ -3,7 +3,9 @@ befriend.user = {
         key: 'user.json',
         data: {},
     },
-    server: null,
+    device: {
+        token: null
+    },
     person: {
         token: null,
     },
@@ -24,10 +26,8 @@ befriend.user = {
                 befriend.user.login.token = localData.login.token;
             }
 
-            try {
-                befriend.user.getMe();
-            } catch(e) {
-                console.error(e);
+            if(localData.device && localData.device.token) {
+                befriend.user.device.token = localData.device.token;
             }
 
             resolve();
@@ -48,6 +48,13 @@ befriend.user = {
     getLocal: function () {
         return befriend.user.local.data;
     },
+    setLocal: function (key, value) {
+        let data = befriend.user.getLocal();
+
+        setNestedValue(data, key, value);
+
+        befriend.user.saveLocal();
+    },
     saveLocal: function () {
         window.localStorage.setItem(
             befriend.user.local.key,
@@ -64,55 +71,18 @@ befriend.user = {
         return true;
     },
     setDeviceToken: function (token) {
-        let data = befriend.user.getLocal();
+        befriend.user.device.token = token;
 
-        if (!('device' in data)) {
-            data.device = {};
-        }
-
-        data.device.token = token;
-
-        befriend.user.saveLocal();
+        befriend.user.setLocal('device.token', token);
     },
     setPersonToken: function (token) {
         befriend.user.person.token = token;
 
-        let data = befriend.user.getLocal();
-
-        if (!('person' in data)) {
-            data.person = {};
-        }
-
-        data.person.token = token;
-
-        befriend.user.saveLocal();
+        befriend.user.setLocal('person.token', token);
     },
     setLoginToken: function (token) {
         befriend.user.login.token = token;
 
-        let data = befriend.user.getLocal();
-
-        if (!('login' in data)) {
-            data.login = {};
-        }
-
-        data.login.token = token;
-
-        befriend.user.saveLocal();
+        befriend.user.setLocal('login.token', token);
     },
-    getMe: function () {
-        return new Promise(async (resolve, reject) => {
-            try {
-                let r = await befriend.auth.get('/me');
-
-                console.log(r.data);
-
-                befriend.user.server = r.data;
-            } catch(e) {
-                console.error(e);
-            }
-
-            resolve();
-        });
-    }
 };

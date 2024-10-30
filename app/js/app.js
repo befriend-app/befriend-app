@@ -15,22 +15,25 @@ window['befriend'] = {
     styles: null,
     events: null,
     user: null,
+    me: null,
     location: null,
     activities: null,
     places: null,
     friends: null,
     when: null,
     maps: null,
-    ws: null,
     notifications: null,
-    els: {},
+    ws: null,
     variables: null,
+    els: {},
     timeouts: {},
     plugins: {},
     init: function () {
         console.log('Befriend: [init]');
 
         return new Promise(async (resolve, reject) => {
+            dayjs.extend(dayjs_plugin_advancedFormat);
+
             //plugins
             if(typeof BefriendPlugin !== 'undefined') {
                 befriend.plugins = BefriendPlugin;
@@ -89,6 +92,12 @@ window['befriend'] = {
             try {
                 await befriend.activities.init();
             } catch (e) {
+                console.error(e);
+            }
+
+            try {
+                await befriend.me.init();
+            } catch(e) {
                 console.error(e);
             }
 
