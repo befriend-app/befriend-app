@@ -147,7 +147,7 @@ module.exports = {
         }
 
         return new Promise(async (resolve, reject) => {
-            console.log('Build app: js/css');
+            console.log('Build frontend: js/css');
 
             if (build_ip) {
                 await awaitBuild();
@@ -193,7 +193,7 @@ module.exports = {
 
                 await writeFile(outputs.js, js_code);
 
-                console.log('App built');
+                console.log('Frontend built');
 
                 build_ip = false;
 

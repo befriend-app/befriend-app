@@ -90,6 +90,9 @@ befriend.maps = {
                             console.error('Failed to refresh token:', e);
                             reject(e);
                         }
+                    } else {
+                        console.error(e);
+                        reject();
                     }
                 });
             } catch (e) {
