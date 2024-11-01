@@ -148,8 +148,12 @@ befriend.me = {
                         `;
                     }
 
+                    console.log(section_data.items)
+
                     if(section_data.items) {
-                        for(let item of section_data.items) {
+                        for(let token in section_data.items) {
+                            let item = section_data.items[token];
+
                             items += `<div class="item" data-id="${item.id}">
                                         ${item.name}
                                     </div>`;
@@ -177,6 +181,46 @@ befriend.me = {
                 befriend.me.events.onSectionCategory();
             }
         }
+    },
+    addSectionItem: function (section_key, item_token) {
+        return new Promise(async (resolve, reject) => {
+            let section_data = befriend.me.data.sections.active[section_key];
+
+            if(!('items' in section_data)) {
+                section_data.items = {};
+            }
+
+            section_data.items[item_token] = section_data.data.options.find(item => item.token === item_token);
+
+            let section_els = befriend.els.me.querySelector('.sections').getElementsByClassName('section');
+
+            for(let i = 0; i < section_els.length; i++) {
+                let el = section_els[i];
+
+                if(el.getAttribute('data-key') === section_key) {
+                    let category_btn_first = el.querySelector('.category-btn');
+
+                    if(category_btn_first) {
+                        if(!elHasClass(category_btn_first, 'active')) {
+                            fireClick(category_btn_first);
+                        }
+                    }
+
+                    break;
+                }
+            }
+
+            try {
+                await befriend.auth.post(`/me/sections/item`, {
+                    section_key: section_key,
+                    item_token: item_token
+                });
+            } catch(e) {
+                console.error(e);
+            }
+
+            resolve();
+        });
     },
     setActive: function () {
         if(befriend.me.data.sections.active) {
@@ -291,19 +335,56 @@ befriend.me = {
                         let section_data = befriend.me.data.sections.active[section_key];
                         let category_items_html = ``;
 
-                        if(section_key === 'mine') {
+                        if(category === 'mine') {
+                            for(let token in section_data.items) {
+                                let item = section_data.items[token];
 
+                                category_items_html += `<div class="item" data-id="${item.id}">
+                                                            ${item.name}
+                                                        </div>`;
+                            }
                         } else {
                             for(let item of section_data.data.options) {
                                 if(item.category === category) {
-                                    category_items_html += `<div class="item" data-token="${item.token}">
+                                    if(!(item.token in section_data.items)) {
+                                        category_items_html += `<div class="item" data-token="${item.token}">
                                                             ${item.name}
                                                         </div>`;
+                                    }
                                 }
                             }
                         }
 
                         section.querySelector('.items').innerHTML = category_items_html;
+
+                        befriend.me.events.onSelectItem();
+                    });
+                }
+            }
+        },
+        onSelectItem: function () {
+            let items = befriend.els.me.querySelector('.sections').getElementsByClassName('item');
+
+            for(let i = 0; i < items.length; i++) {
+                let item = items[i];
+
+                if(!item._listener) {
+                    item._listener = true;
+
+                    item.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        let section = this.closest('.section');
+                        let section_key = section.getAttribute('data-key');
+
+                        let token = this.getAttribute('data-token');
+
+                        try {
+                            befriend.me.addSectionItem(section_key, token);
+                        } catch(e) {
+                            console.error(e);
+                        }
                     });
                 }
             }
