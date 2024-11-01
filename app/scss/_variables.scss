@@ -10,6 +10,8 @@ $color_red: #ff4444;
 $color_lightgray: #D3D3D3;
 $color_gray: #00000079;
 
+$input_focus_color: darken($brand_color_a, 5%);
+
 //classes
 $class_places_shown: display-places;
 $class_change_location: display-change-location;
