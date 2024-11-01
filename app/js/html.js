@@ -975,36 +975,5 @@ befriend.html = {
 
         level_2_el.innerHTML = level_2_html;
     },
-    setMe: function () {
-        if(!befriend.me.data) {
-            return;
-        }
 
-        let me_obj = befriend.me.data;
-
-        //first name
-        let first_name_el = befriend.els.me.querySelector('.first-name');
-
-        //birthday
-        let birthday_el = befriend.els.me.querySelector('.birthday');
-
-        //set
-        if(me_obj.first_name) {
-            first_name_el.innerHTML = me_obj.first_name;
-        }
-
-        if(me_obj.birth_date) {
-            let years = dayjs().diff(dayjs(me_obj.birth_date), 'years');
-
-            let date = dayjs(me_obj.birth_date).format('MMM. Do, YYYY');
-
-            birthday_el.querySelector('.age').innerHTML = years;
-
-            if(years >= 100) {
-                addClassEl('one-hundred', birthday_el.querySelector('.age'));
-            }
-
-            // birthday_el.querySelector('.date').innerHTML = date;
-        }
-    }
 };
