@@ -2,6 +2,7 @@ befriend.me = {
     data: {
         me: null,
         sections: {
+            all: null,
             options: null,
             active: null
         }
@@ -13,6 +14,7 @@ befriend.me = {
 
                 befriend.me.setMe();
 
+                befriend.me.setActive();
                 befriend.me.setOptions();
             } catch(e) {
                 console.error(e);
@@ -29,6 +31,7 @@ befriend.me = {
                 let data = r.data;
 
                 befriend.me.data.me = data.me;
+                befriend.me.data.sections.all = data.sections.all;
                 befriend.me.data.sections.options = data.sections.options;
                 befriend.me.data.sections.active = data.sections.active;
             } catch(e) {
@@ -70,13 +73,36 @@ befriend.me = {
             // birthday_el.querySelector('.date').innerHTML = date;
         }
     },
-    addSection: function (key) {
-        let option_data = befriend.me.data.sections.options[key];
+    saveSection: function (key) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                 let r = await befriend.auth.post('/me/sections', {key});
+            } catch(e) {
+                console.error(e);
+            }
+
+            resolve();
+        });
+    },
+    addSection: function (key, skip_save) {
+        let option_data = befriend.me.data.sections.all[key];
 
         let sections_el = befriend.els.me.querySelector('.about-me').querySelector('.sections');
 
         if(option_data) {
-            if(!(key in befriend.me.data.sections.active)) {
+            let key_exists = false;
+            let all_sections = befriend.els.me.querySelector('.about-me').getElementsByClassName('section');
+
+            for(let i = 0; i < all_sections.length; i++) {
+                let section = all_sections[i];
+
+                if(section.getAttribute('data-key') === key) {
+                    key_exists = true;
+                    break;
+                }
+            }
+
+            if(!(key_exists)) {
                 befriend.me.data.sections.active[key] = structuredClone(option_data);
 
                 delete befriend.me.data.sections.options[key];
@@ -91,6 +117,17 @@ befriend.me = {
 
                 sections_el.insertAdjacentHTML('beforeend', html);
 
+                if(!skip_save) {
+                    //save to server
+                    befriend.me.saveSection(key);
+                }
+            }
+        }
+    },
+    setActive: function () {
+        if(befriend.me.data.sections.active) {
+            for(let key in befriend.me.data.sections.active) {
+                befriend.me.addSection(key, true);
             }
         }
     },
