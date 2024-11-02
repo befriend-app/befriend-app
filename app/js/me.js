@@ -336,8 +336,7 @@ befriend.me = {
             section_container.style.height = 0;
         } else {
             removeClassEl('collapsed', el);
-            let h = getElHeightHidden(section_container);
-            section_container.style.height = `${h}px`;
+            setElHeightDynamic(section_container);
 
             befriend.me.collapseSectionT = setTimeout(function () {
                 section_container.style.overflowY = 'initial';

@@ -121,9 +121,10 @@ html.#{$class_available_me_sections} {
                     border-bottom-left-radius: $br;
                     border-bottom-right-radius: $br;
                 }
+
                 .section-container {
-                    padding-top: 0;
-                    padding-bottom: 0;
+                    margin-top: 0;
+                    margin-bottom: 0;
                 }
             }
 
@@ -168,7 +169,9 @@ html.#{$class_available_me_sections} {
             }
 
             .section-container {
-                padding: $padding_tb $padding_lr_inner;
+                padding: 0 $padding_lr_inner;
+                margin-top: $padding_tb;
+                margin-bottom: $padding_tb;
                 overflow-y: hidden;
                 transition: all 300ms;
             }
@@ -311,7 +314,7 @@ html.#{$class_available_me_sections} {
                         background: white;
                         font-size: 12px;
                         font-weight: 400;
-                        transition: all $transition_ms;
+                        transition: border-radius $transition_ms;
                     }
 
                     .arrow {
