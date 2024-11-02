@@ -273,6 +273,21 @@ befriend.me = {
             removeClassEl('open', befriend.els.meSectionOptions);
         }
     },
+    transitionSecondary: function (secondary_el, show) {
+        let options_el = secondary_el.querySelector('.options');
+
+        if(show) {
+            addClassEl('open', secondary_el);
+
+            let height = getElHeightHidden(options_el);
+
+            options_el.style.height = `${height}px`;
+        } else {
+            removeClassEl('open', secondary_el);
+
+            options_el.style.removeProperty('height');
+        }
+    },
     events: {
         init: function () {
             return new Promise(async (resolve, reject) => {
@@ -360,7 +375,9 @@ befriend.me = {
                                     }
 
                                     for(let option of section_data.data.secondary) {
-                                        options += `<div class="option" data-option="${option}">${option}</div>`;
+                                        let selected = item.secondary === option ? 'selected' : '';
+
+                                        options += `<div class="option ${selected}" data-option="${option}">${option}</div>`;
                                     }
 
                                     secondary = `<div class="secondary ${unselected}" data-value="${item.secondary ? item.secondary : ''}">
@@ -413,7 +430,7 @@ befriend.me = {
                             let open_secondary_el = befriend.els.me.querySelector('.secondary.open');
 
                             if(open_secondary_el && !e.target.closest('.secondary')) {
-                                removeClassEl('open', open_secondary_el);
+                                befriend.me.transitionSecondary(open_secondary_el, false);
                             }
 
                             return false;
@@ -455,10 +472,19 @@ befriend.me = {
                             return false;
                         }
 
+                        //hide all except current
+                        for(let i2 = 0; i2 < secondaries.length; i2++) {
+                            let secondary_2 = secondaries[i2];
+
+                            if(el !== secondary_2) {
+                                befriend.me.transitionSecondary(secondary_2, false);
+                            }
+                        }
+
                         if(elHasClass(el, 'open')) {
-                            removeClassEl('open', el);
+                            befriend.me.transitionSecondary(el, false);
                         } else {
-                            addClassEl('open', el);
+                            befriend.me.transitionSecondary(el, true);
                         }
                     });
                 }
@@ -496,7 +522,7 @@ befriend.me = {
                             //el
                             removeElsClass(options, 'selected');
                             addClassEl('selected', option);
-                            removeClassEl('open', secondary);
+                            befriend.me.transitionSecondary(secondary, false);
                             removeClassEl('unselected', secondary);
                             current_selected_el.innerHTML = option_value;
 
@@ -505,17 +531,21 @@ befriend.me = {
 
                             let item = active_section.items[item_token];
 
-                            item.secondary = option_value;
+                            let prev_option_value = item.secondary;
 
-                            //server
-                            try {
-                                await befriend.auth.put(`/me/sections/item`, {
-                                    section_name: befriend.me.data.sections.all[section_key].data_table,
-                                    section_item_id: item.id,
-                                    secondary: option_value
-                                });
-                            } catch(e) {
-                                console.error(e);
+                            if(prev_option_value !== option_value) {
+                                item.secondary = option_value;
+
+                                //server
+                                try {
+                                    await befriend.auth.put(`/me/sections/item`, {
+                                        section_name: befriend.me.data.sections.all[section_key].data_table,
+                                        section_item_id: item.id,
+                                        secondary: option_value
+                                    });
+                                } catch(e) {
+                                    console.error(e);
+                                }
                             }
                         });
                     }

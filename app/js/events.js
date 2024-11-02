@@ -72,7 +72,7 @@ befriend.events = {
                 let open_secondary_el = befriend.els.me.querySelector('.secondary.open');
 
                 if(open_secondary_el && !e.target.closest('.secondary')) {
-                    removeClassEl('open', open_secondary_el);
+                    befriend.me.transitionSecondary(open_secondary_el, false);
                 }
             }
         });
