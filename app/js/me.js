@@ -209,10 +209,12 @@ befriend.me = {
             }
 
             try {
-                await befriend.auth.post(`/me/sections/item`, {
+                let r = await befriend.auth.post(`/me/sections/item`, {
                     section_key: section_key,
                     item_token: item_token
                 });
+
+                section_data.items[item_token].id = r.data.id;
             } catch(e) {
                 console.error(e);
             }
@@ -438,6 +440,8 @@ befriend.me = {
             }
         },
         onOpenSecondary: function () {
+            console.log("on open secondary");
+
             let secondaries = befriend.els.me.getElementsByClassName('secondary');
 
             for(let i = 0; i < secondaries.length; i++) {
