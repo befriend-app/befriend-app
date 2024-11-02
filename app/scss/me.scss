@@ -1,3 +1,15 @@
+html.#{$class_available_me_sections} {
+    overflow: hidden;
+
+    body {
+        overflow: hidden;
+    }
+
+    #me-section-options {
+        right: 0;
+    }
+}
+
 #me {
     padding-left: 30px !important;
     padding-right: 30px !important;
@@ -347,14 +359,10 @@
     transition: right 0.3s;
     padding: 20px 15px;
     box-sizing: border-box;
-    z-index: 2;
+    z-index: 101;
 
     .title {
         font-weight: 600;
-    }
-
-    &.open {
-        right: 0;
     }
 
     .options {

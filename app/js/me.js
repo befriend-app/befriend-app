@@ -264,13 +264,13 @@ befriend.me = {
         }
     },
     isSectionOptionsShown: function () {
-        return elHasClass(befriend.els.meSectionOptions, 'open');
+        return elHasClass(document.documentElement, befriend.classes.availableMeSections);
     },
     toggleSectionOptions: function (show) {
         if(show) {
-            addClassEl('open', befriend.els.meSectionOptions);
+            addClassEl(befriend.classes.availableMeSections, document.documentElement);
         } else {
-            removeClassEl('open', befriend.els.meSectionOptions);
+            removeClassEl(befriend.classes.availableMeSections, document.documentElement);
         }
     },
     transitionSecondary: function (secondary_el, show) {

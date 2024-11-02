@@ -5,6 +5,7 @@ window['befriend'] = {
         changeLocationShown: 'display-change-location',
         placesSuggestShown: 'show-suggestions',
         createActivityShown: 'create-activity',
+        availableMeSections: 'display-available-me-sections'
     },
     timing: {
         showPlaces: null,
