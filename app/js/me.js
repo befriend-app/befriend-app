@@ -329,11 +329,11 @@ befriend.me = {
         }
 
         clearTimeout(befriend.me.collapseSectionT);
+        section_container.style.removeProperty('overflow-y');
 
         if(collapse) {
             addClassEl('collapsed', el);
             section_container.style.height = 0;
-            section_container.style.removeProperty('overflow-y');
         } else {
             removeClassEl('collapsed', el);
             let h = getElHeightHidden(section_container);
@@ -500,9 +500,13 @@ befriend.me = {
 
                         section.querySelector('.items').innerHTML = category_items_html;
 
+                        //events
                         befriend.me.events.onSelectItem();
                         befriend.me.events.onOpenSecondary();
                         befriend.me.events.onSelectSecondary();
+
+                        //ui
+                        befriend.me.collapseSection(section, elHasClass(section, 'collapsed'));
                     });
                 }
             }

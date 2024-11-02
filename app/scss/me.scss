@@ -251,7 +251,8 @@ html.#{$class_available_me_sections} {
                     position: relative;
 
                     .name {
-                        font-size: 14px;
+                        font-size: 13px;
+                        font-weight: 500;
                     }
 
                     .remove {
@@ -309,7 +310,7 @@ html.#{$class_available_me_sections} {
                         border-radius: $br;
                         background: white;
                         font-size: 12px;
-                        font-weight: 500;
+                        font-weight: 400;
                         transition: all $transition_ms;
                     }
 
