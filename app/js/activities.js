@@ -335,9 +335,19 @@ befriend.activities = {
 
                 befriend.activities.types.data = r.data;
 
+                befriend.user.setLocal('activities.type', r.data);
+
                 resolve();
             } catch (e) {
                 console.error(e);
+
+                //use prev activities data if error loading
+                if(befriend.user.local.data && befriend.user.local.data.activities) {
+                    console.log("Using local activity types data");
+                    befriend.activities.types.data = befriend.user.local.data.activities.type;
+                    return resolve();
+                }
+
                 return reject();
             }
         });
