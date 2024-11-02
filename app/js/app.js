@@ -203,6 +203,36 @@ window['befriend'] = {
                 }
             });
         },
+        put: function (route, data) {
+            return new Promise(async (resolve, reject) => {
+                let requestData = {};
+
+                let loginObj = {
+                    person_token: befriend.user.person.token,
+                    login_token: befriend.user.login.token,
+                };
+
+                if (data && typeof data === 'object') {
+                    requestData = { ...loginObj, ...data };
+                } else {
+                    requestData = { ...loginObj };
+                }
+
+                try {
+                    let r = await axios.put(joinPaths(api_domain, route), requestData);
+
+                    resolve(r);
+                } catch (e) {
+                    console.error(e);
+                    return reject(e);
+                }
+            });
+        },
+    },
+    isViewShown: function (view_name) {
+        let view_el = document.querySelector(`.view-${view_name}`);
+
+        return elHasClass(view_el, 'active');
     },
     processWS: function (data) {
         if (!data || !data.action) {

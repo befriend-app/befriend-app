@@ -212,8 +212,101 @@
                     cursor: pointer;
                     transition: all 0.3s;
                     font-size: 12px;
-                    background: lighten(black, 95%);
+                    background: lighten(black, 97%);
                     position: relative;
+
+                    .name {
+                        font-size: 14px;
+                    }
+
+                    .remove {
+                        $dim: 18px;
+                        position: absolute;
+                        width: $dim;
+                        height: $dim;
+                        top: 4px;
+                        right: 4px;
+                        background-color: white;
+                        border-radius: 50%;
+                        border: 1px solid lighten(black, 70%);
+                        @include flex-center-col;
+
+                        svg {
+                            width: 9px;
+                        }
+                    }
+                }
+
+                .secondary {
+                    position: relative;
+                    width: 100%;
+                    cursor: pointer;
+                    margin-top: 6px;
+
+                    // Open state
+                    &.open {
+                        .options {
+                            display: flex;
+                        }
+                    }
+
+                    // Unselected state
+                    &.unselected {
+                        .current-selected {
+                            font-weight: 300;
+                        }
+                    }
+
+                    // Selected display
+                    .current-selected {
+                        padding: 8px;
+                        border: 1px solid lighten(black, 82%);
+                        border-radius: 6px;
+                        background: white;
+                        font-size: 13px;
+                    }
+
+                    .arrow {
+                        $h: 7px;
+                        height: $h;
+                        position: absolute;
+                        right: 7px;
+                        top: calc(50% - calc($h / 2));
+                    }
+
+                    // Options container
+                    .options {
+                        display: none;
+                        position: absolute;
+                        top: 100%;
+                        left: 0;
+                        right: 0;
+                        background: white;
+                        border: 1px solid #ddd;
+                        border-top: none;
+                        border-radius: 0 0 4px 4px;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                        z-index: 3;
+                        flex-direction: column;
+                        padding: 0px 0;
+                        gap: 0 0;
+
+                        // Individual option
+                        .option {
+                            padding: 8px 8px;
+                            font-size: 13px;
+                            border-radius: 0 !important;
+                            box-sizing: border-box;
+
+                            &:hover {
+                                background: #f5f5f5;
+                            }
+
+                            &.selected {
+                                background: #e0e0e0;
+                            }
+                        }
+                    }
                 }
             }
         }

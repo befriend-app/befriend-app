@@ -148,13 +148,11 @@ befriend.me = {
                         `;
                     }
 
-                    console.log(section_data.items)
-
                     if(section_data.items) {
                         for(let token in section_data.items) {
                             let item = section_data.items[token];
 
-                            items += `<div class="item" data-id="${item.id}">
+                            items += `<div class="item" data-token="${token}">
                                         ${item.name}
                                     </div>`;
                         }
@@ -227,6 +225,18 @@ befriend.me = {
             for(let key in befriend.me.data.sections.active) {
                 befriend.me.addSection(key, true);
             }
+
+            //enable first category for each section
+            let sections = befriend.els.me.querySelector('.sections').getElementsByClassName('section');
+
+            for(let i = 0; i < sections.length; i++) {
+                let category_btns = sections[i].getElementsByClassName('category-btn');
+
+                if(category_btns && category_btns.length) {
+                    fireClick(category_btns[0]);
+                }
+            }
+
         }
     },
     setOptions: function () {
@@ -339,8 +349,34 @@ befriend.me = {
                             for(let token in section_data.items) {
                                 let item = section_data.items[token];
 
-                                category_items_html += `<div class="item" data-id="${item.id}">
-                                                            ${item.name}
+                                let secondary = '';
+                                let options = '';
+
+                                //current selected
+                                if(section_data.data && section_data.data.secondary) {
+                                    let unselected = '';
+
+                                    if(!item.secondary) {
+                                        unselected = 'unselected';
+                                    }
+
+                                    for(let option of section_data.data.secondary) {
+                                        options += `<div class="option" data-option="${option}">${option}</div>`;
+                                    }
+
+                                    secondary = `<div class="secondary ${unselected}" data-value="${item.secondary ? item.secondary : ''}">
+                                                    <div class="current-selected">${item.secondary ? item.secondary : section_data.data.unselectedStr}</div>
+                                                    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352.0005 192.001"><path id="Down_Arrow" d="M176.001,192.001c-4.092,0-8.188-1.564-11.312-4.688L4.689,27.313C-1.563,21.061-1.563,10.937,4.689,4.689s16.376-6.252,22.624,0l148.688,148.688L324.689,4.689c6.252-6.252,16.376-6.252,22.624,0s6.252,16.376,0,22.624l-160,160c-3.124,3.124-7.22,4.688-11.312,4.688h0Z"/></svg>
+                                                    <div class="options">${options}</div>
+                                                </div>`;
+                                }
+
+                                category_items_html += `<div class="item mine" data-token="${token}">
+                                                            <div class="name">${item.name}</div>
+                                                            ${secondary}
+                                                            <div class="remove">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 121.805 14.619"><path d="M7.308,14.619h107.188c4.037,0,7.309-3.272,7.309-7.31s-3.271-7.309-7.309-7.309H7.308C3.272.001,0,3.273,0,7.31s3.272,7.309,7.308,7.309Z"/></svg>
+                                                            </div>
                                                         </div>`;
                             }
                         } else {
@@ -358,6 +394,8 @@ befriend.me = {
                         section.querySelector('.items').innerHTML = category_items_html;
 
                         befriend.me.events.onSelectItem();
+                        befriend.me.events.onOpenSecondary();
+                        befriend.me.events.onSelectSecondary();
                     });
                 }
             }
@@ -375,6 +413,16 @@ befriend.me = {
                         e.preventDefault();
                         e.stopPropagation();
 
+                        if(elHasClass(item, 'mine')) {
+                            let open_secondary_el = befriend.els.me.querySelector('.secondary.open');
+
+                            if(open_secondary_el && !e.target.closest('.secondary')) {
+                                removeClassEl('open', open_secondary_el);
+                            }
+
+                            return false;
+                        }
+
                         let section = this.closest('.section');
                         let section_key = section.getAttribute('data-key');
 
@@ -386,6 +434,90 @@ befriend.me = {
                             console.error(e);
                         }
                     });
+                }
+            }
+        },
+        onOpenSecondary: function () {
+            let secondaries = befriend.els.me.getElementsByClassName('secondary');
+
+            for(let i = 0; i < secondaries.length; i++) {
+                let el = secondaries[i];
+
+                if(!el._listener) {
+                    el._listener = true;
+
+                    el.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        if(e.target.closest('.options')) {
+                            return false;
+                        }
+
+                        if(elHasClass(el, 'open')) {
+                            removeClassEl('open', el);
+                        } else {
+                            addClassEl('open', el);
+                        }
+                    });
+                }
+            }
+        },
+        onSelectSecondary: function () {
+            let secondaries = befriend.els.me.getElementsByClassName('secondary');
+
+            for(let i = 0; i < secondaries.length; i++) {
+                let secondary = secondaries[i];
+
+                let options = secondary.getElementsByClassName('option');
+
+                for(let i2 = 0; i2 < options.length; i2++) {
+                    let option = options[i2];
+
+                    if(!option._listener) {
+                        option._listener = true;
+
+                        option.addEventListener('click', async function (e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            let option_value = this.getAttribute('data-option');
+
+                            let section = this.closest('.section');
+                            let section_key = section.getAttribute('data-key');
+
+                            let item_el = this.closest('.item');
+
+                            let item_token = item_el.getAttribute('data-token');
+
+                            let current_selected_el = secondary.querySelector('.current-selected');
+
+                            //el
+                            removeElsClass(options, 'selected');
+                            addClassEl('selected', option);
+                            removeClassEl('open', secondary);
+                            removeClassEl('unselected', secondary);
+                            current_selected_el.innerHTML = option_value;
+
+                            //data
+                            let active_section = befriend.me.data.sections.active[section_key];
+
+                            let item = active_section.items[item_token];
+
+                            item.secondary = option_value;
+
+                            //server
+                            try {
+                                await befriend.auth.put(`/me/sections/item`, {
+                                    section_name: befriend.me.data.sections.all[section_key].data_table,
+                                    section_item_id: item.id,
+                                    secondary: option_value
+                                });
+                            } catch(e) {
+                                console.error(e);
+                            }
+                        });
+                    }
                 }
             }
         }

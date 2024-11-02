@@ -62,9 +62,17 @@ befriend.events = {
                 if (!e.target.closest('#place-search')) {
                     befriend.places.toggleAutoComplete(false);
                 }
-            } else if(befriend.me.isSectionOptionsShown()) {
-                if(!e.target.closest('#me-section-options')) {
-                    befriend.me.toggleSectionOptions(false);
+            } else if(befriend.isViewShown('me')) {
+                if(befriend.me.isSectionOptionsShown()) {
+                    if(!e.target.closest('#me-section-options')) {
+                        befriend.me.toggleSectionOptions(false);
+                    }
+                }
+
+                let open_secondary_el = befriend.els.me.querySelector('.secondary.open');
+
+                if(open_secondary_el && !e.target.closest('.secondary')) {
+                    removeClassEl('open', open_secondary_el);
                 }
             }
         });
