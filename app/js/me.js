@@ -189,7 +189,7 @@ befriend.me = {
                                     ${categories}
                                     ${autocomplete}
                                     ${secondary}
-                                    <div class="items">${items}</div>
+                                    <div class="items ${!items ? 'no-items': ''}">${items}</div>
                                 </div>
                             </div>`;
 
@@ -216,6 +216,11 @@ befriend.me = {
                 let el = section_els[i];
 
                 if(el.getAttribute('data-key') === section_key) {
+                    //remove no-items
+                    removeClassEl('no-items', el.querySelector('.items'));
+
+                    //automatically switch to first category
+
                     let category_btn_first = el.querySelector('.category-btn');
 
                     if(category_btn_first) {
@@ -478,42 +483,51 @@ befriend.me = {
                         let category_items_html = ``;
 
                         if(category === 'mine') {
-                            for(let token in section_data.items) {
-                                let item = section_data.items[token];
+                            if(!(Object.keys(section_data.items).length)) {
+                                //no-items
+                                addClassEl('no-items', section.querySelector('.items'));
+                            } else {
+                                for(let token in section_data.items) {
+                                    let item = section_data.items[token];
 
-                                let secondary = '';
-                                let options = '';
+                                    let secondary = '';
+                                    let options = '';
 
-                                //current selected
-                                if(section_data.data && section_data.data.secondary) {
-                                    let unselected = '';
+                                    //current selected
+                                    if(section_data.data && section_data.data.secondary) {
+                                        let unselected = '';
 
-                                    if(!item.secondary) {
-                                        unselected = 'unselected';
-                                    }
+                                        if(!item.secondary) {
+                                            unselected = 'unselected';
+                                        }
 
-                                    for(let option of section_data.data.secondary) {
-                                        let selected = item.secondary === option ? 'selected' : '';
+                                        for(let option of section_data.data.secondary) {
+                                            let selected = item.secondary === option ? 'selected' : '';
 
-                                        options += `<div class="option ${selected}" data-option="${option}">${option}</div>`;
-                                    }
+                                            options += `<div class="option ${selected}" data-option="${option}">${option}</div>`;
+                                        }
 
-                                    secondary = `<div class="secondary ${unselected}" data-value="${item.secondary ? item.secondary : ''}">
+                                        secondary = `<div class="secondary ${unselected}" data-value="${item.secondary ? item.secondary : ''}">
                                                     <div class="current-selected">${item.secondary ? item.secondary : section_data.data.unselectedStr}</div>
                                                     <svg class="arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 82.1 43.2"><path d="M41.1,43.2L0,2.2,2.1,0l39,39L80,0l2.1,2.2-41,41Z"/></svg>
                                                     <div class="options">${options}</div>
                                                 </div>`;
-                                }
+                                    }
 
-                                category_items_html += `<div class="item mine" data-token="${token}">
+                                    category_items_html += `<div class="item mine" data-token="${token}">
                                                             <div class="name">${item.name}</div>
                                                             ${secondary}
                                                             <div class="remove">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 121.805 14.619"><path d="M7.308,14.619h107.188c4.037,0,7.309-3.272,7.309-7.31s-3.271-7.309-7.309-7.309H7.308C3.272.001,0,3.273,0,7.31s3.272,7.309,7.308,7.309Z"/></svg>
                                                             </div>
                                                         </div>`;
+                                }
                             }
+
                         } else {
+                            //remove no-items
+                            removeClassEl('no-items', section.querySelector('.items'));
+
                             for(let item of section_data.data.options) {
                                 if(item.category === category) {
                                     if(!(item.token in section_data.items)) {
@@ -605,11 +619,17 @@ befriend.me = {
                         console.error(e);
                     }
 
-                    //ui
-                    befriend.me.updateSectionHeight(section, elHasClass(section, 'collapsed'));
-
                     //data/server
                     befriend.me.removeSectionItem(section_key, token);
+
+                    //ui
+                    let section_data = befriend.me.data.sections.active[section_key];
+
+                    if(!Object.keys(section_data.items).length) {
+                        addClassEl('no-items', section.querySelector('.items'));
+                    }
+
+                    befriend.me.updateSectionHeight(section, elHasClass(section, 'collapsed'));
                 });
             }
         },

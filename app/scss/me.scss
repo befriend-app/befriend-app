@@ -242,6 +242,10 @@ html.#{$class_available_me_sections} {
                 gap: 10px;
                 margin-top: $padding_tb;
 
+                &.no-items {
+                    margin-top: 0;
+                }
+
                 .item {
                     border: 1px solid $color_lightgray;
                     border-radius: 8px;
