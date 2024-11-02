@@ -566,7 +566,7 @@ befriend.activities = {
     isCreateActivityShown: function () {
         return elHasClass(document.documentElement, befriend.classes.createActivityShown);
     },
-    updateLevelHeight: function (level_num, skip_set_prev) {
+    updateLevelHeight: async function (level_num, skip_set_prev) {
         let level_el = befriend.els.activities.querySelector(`.level_${level_num}.show`);
 
         if (!level_el) {
@@ -577,7 +577,7 @@ befriend.activities = {
 
         last_row.style.marginBottom = '0px';
 
-        let level_height = getElHeightHidden(level_el);
+        let level_height = await setElHeightDynamic(level_el, true);
 
         if (!skip_set_prev) {
             level_el.setAttribute('data-prev-height', `${level_height}px`);
@@ -644,8 +644,7 @@ befriend.activities = {
             }
 
             // Calculate height of message
-            let height = getElHeightHidden(message_el.querySelector('.message'));
-            message_el.querySelector('.message').style.height = `${height}px`;
+            setElHeightDynamic(message_el.querySelector('.message'));
 
             befriend.styles.createActivity.updateCloseMessagePosition();
 

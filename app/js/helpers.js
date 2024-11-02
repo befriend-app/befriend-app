@@ -15,7 +15,7 @@ function addClassEl(name, el) {
     }
 }
 
-async function setElHeightDynamic(el) {
+async function setElHeightDynamic(el, ret_only) {
     let cs = getComputedStyle(el);
 
     let paddingX = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
@@ -42,34 +42,11 @@ async function setElHeightDynamic(el) {
 
     test_el.parentNode.removeChild(test_el);
 
+    if(ret_only) {
+        return height;
+    }
+
     el.style.height = `${height}px`;
-}
-
-function getElHeightHidden(el) {
-    let cs = getComputedStyle(el);
-
-    let paddingX = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
-    let paddingY = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
-
-    let borderX = parseFloat(cs.borderLeftWidth) + parseFloat(cs.borderRightWidth);
-
-    let width = el.offsetWidth - paddingX - borderX;
-
-    let test_el = el.cloneNode(true);
-
-    test_el.style.transition = 'none';
-    test_el.style.visibility = 'hidden';
-    test_el.style.position = 'absolute';
-    test_el.style.width = `${width}px`;
-    test_el.style.removeProperty('height');
-
-    el.parentNode.appendChild(test_el);
-
-    let height = test_el.scrollHeight - paddingY;
-
-    test_el.parentNode.removeChild(test_el);
-
-    return height;
 }
 
 function elHasClass(el, cl) {

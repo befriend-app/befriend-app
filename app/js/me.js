@@ -310,9 +310,7 @@ befriend.me = {
         if(show) {
             addClassEl('open', secondary_el);
 
-            let height = getElHeightHidden(options_el);
-
-            options_el.style.height = `${height}px`;
+            setElHeightDynamic(options_el);
         } else {
             removeClassEl('open', secondary_el);
 
