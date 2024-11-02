@@ -319,6 +319,7 @@ befriend.me = {
             options_el.style.removeProperty('height');
         }
     },
+    collapseSectionT: null,
     collapseSection: async function (el, collapse, no_transition, skip_save) {
         let section_container = el.querySelector('.section-container');
 
@@ -327,13 +328,20 @@ befriend.me = {
             await rafAwait();
         }
 
+        clearTimeout(befriend.me.collapseSectionT);
+
         if(collapse) {
             addClassEl('collapsed', el);
             section_container.style.height = 0;
+            section_container.style.removeProperty('overflow-y');
         } else {
             removeClassEl('collapsed', el);
             let h = getElHeightHidden(section_container);
             section_container.style.height = `${h}px`;
+
+            befriend.me.collapseSectionT = setTimeout(function () {
+                section_container.style.overflowY = 'initial';
+            }, 300);
         }
 
         if(!skip_save) {
