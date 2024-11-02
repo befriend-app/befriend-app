@@ -30,6 +30,12 @@ befriend.user = {
                 befriend.user.device.token = localData.device.token;
             }
 
+            if(localData.me) {
+                if(localData.me.sections && localData.me.sections.collapsed) {
+                    befriend.me.data.sections.collapsed = localData.me.sections.collapsed;
+                }
+            }
+
             resolve();
         });
     },

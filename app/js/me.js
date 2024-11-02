@@ -4,16 +4,15 @@ befriend.me = {
         sections: {
             all: null,
             options: null,
-            active: null
+            active: null,
+            collapsed: {}
         }
     },
     init: function () {
         return new Promise(async (resolve, reject) => {
             try {
                 await befriend.me.getMe();
-
                 befriend.me.setMe();
-
                 befriend.me.setActive();
                 befriend.me.setOptions();
             } catch(e) {
@@ -159,11 +158,22 @@ befriend.me = {
                     }
                 }
 
-                let html = `<div class="section" data-key="${key}">
+                //initialize collapsed if saved
+                let section_collapsed = '';
+                let section_height = '';
+
+                if(befriend.me.data.sections.collapsed[key]) {
+                    section_collapsed = 'collapsed';
+                    section_height = '0';
+                }
+
+                let html = `<div class="section ${section_collapsed}" data-key="${key}" style="${section_height}">
                                 <div class="section-top">
                                     <div class="icon">${option_data.icon}</div>
                                     <div class="title">${option_data.section_name}</div>
-                                    <div class="delete"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 346.8033 427.0013"><path d="M232.4016,154.7044c-5.5234,0-10,4.4766-10,10v189c0,5.5195,4.4766,10,10,10s10-4.4805,10-10v-189c0-5.5234-4.4766-10-10-10Z"/><path d="M114.4016,154.7044c-5.5234,0-10,4.4766-10,10v189c0,5.5195,4.4766,10,10,10s10-4.4805,10-10v-189c0-5.5234-4.4766-10-10-10Z"/><path d="M28.4016,127.1224v246.3789c0,14.5625,5.3398,28.2383,14.668,38.0508,9.2852,9.8398,22.207,15.4258,35.7305,15.4492h189.2031c13.5273-.0234,26.4492-5.6094,35.7305-15.4492,9.3281-9.8125,14.668-23.4883,14.668-38.0508V127.1224c18.543-4.9219,30.5586-22.8359,28.0781-41.8633-2.4844-19.0234-18.6914-33.2539-37.8789-33.2578h-51.1992v-12.5c.0586-10.5117-4.0977-20.6055-11.5391-28.0312C238.4212,4.0482,228.3118-.0846,217.8001.0013h-88.7969c-10.5117-.0859-20.6211,4.0469-28.0625,11.4688-7.4414,7.4258-11.5977,17.5195-11.5391,28.0312v12.5h-51.1992c-19.1875.0039-35.3945,14.2344-37.8789,33.2578-2.4805,19.0273,9.5352,36.9414,28.0781,41.8633ZM268.0032,407.0013H78.8001c-17.0977,0-30.3984-14.6875-30.3984-33.5v-245.5h250v245.5c0,18.8125-13.3008,33.5-30.3984,33.5ZM109.4016,39.5013c-.0664-5.207,1.9805-10.2188,5.6758-13.8945,3.6914-3.6758,8.7148-5.6953,13.9258-5.6055h88.7969c5.2109-.0898,10.2344,1.9297,13.9258,5.6055,3.6953,3.6719,5.7422,8.6875,5.6758,13.8945v12.5H109.4016v-12.5ZM38.2024,72.0013h270.3984c9.9414,0,18,8.0586,18,18s-8.0586,18-18,18H38.2024c-9.9414,0-18-8.0586-18-18s8.0586-18,18-18Z"/><path d="M173.4016,154.7044c-5.5234,0-10,4.4766-10,10v189c0,5.5195,4.4766,10,10,10s10-4.4805,10-10v-189c0-5.5234-4.4766-10-10-10Z"/></svg></div>
+                                    <div class="actions">                                                   
+                                        <svg class="more" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 426.667 85.334"><circle cx="42.667" cy="42.667" r="42.667"/><circle cx="213.333" cy="42.667" r="42.667"/><circle cx="384" cy="42.667" r="42.667"/></svg>
+                                    </div>
                                 </div>
                                 
                                 <div class="section-container">
@@ -176,6 +186,7 @@ befriend.me = {
 
                 sections_el.insertAdjacentHTML('beforeend', html);
 
+                befriend.me.events.onCollapseSection();
                 befriend.me.events.onSectionCategory();
             }
         }
@@ -263,6 +274,26 @@ befriend.me = {
             befriend.els.meSectionOptions.querySelector('.options').innerHTML = html;
         }
     },
+    updateCollapsed: async function () {
+        await rafAwait();
+
+        //initialize height for transition
+        let section_els = befriend.els.me.querySelector('.sections').getElementsByClassName('section');
+
+        for(let i = 0; i < section_els.length; i++) {
+            let el = section_els[i];
+
+            let key = el.getAttribute('data-key');
+
+            let collapse = false;
+
+            if(key in befriend.me.data.sections.collapsed) {
+                collapse = befriend.me.data.sections.collapsed[key];
+            }
+
+            befriend.me.collapseSection(el, collapse, false, true);
+        }
+    },
     isSectionOptionsShown: function () {
         return elHasClass(document.documentElement, befriend.classes.availableMeSections);
     },
@@ -288,6 +319,34 @@ befriend.me = {
             options_el.style.removeProperty('height');
         }
     },
+    collapseSection: async function (el, collapse, no_transition, skip_save) {
+        let section_container = el.querySelector('.section-container');
+
+        if(no_transition) {
+            section_container.style.transition = 'none';
+            await rafAwait();
+        }
+
+        if(collapse) {
+            addClassEl('collapsed', el);
+            section_container.style.height = 0;
+        } else {
+            removeClassEl('collapsed', el);
+            let h = getElHeightHidden(section_container);
+            section_container.style.height = `${h}px`;
+        }
+
+        if(!skip_save) {
+            let section_key = el.getAttribute('data-key');
+            befriend.me.data.sections.collapsed[section_key] = collapse;
+
+            befriend.user.setLocal('me.sections.collapsed', befriend.me.data.sections.collapsed);
+        }
+
+        await rafAwait();
+
+        section_container.style.removeProperty('transition');
+    },
     events: {
         init: function () {
             return new Promise(async (resolve, reject) => {
@@ -297,7 +356,7 @@ befriend.me = {
             });
         },
         onAddSection: function () {
-            //open
+            //open available sections
             let btn_el = befriend.els.me.querySelector('.add-section-btn');
 
             btn_el.addEventListener('click', function (e) {
@@ -311,7 +370,7 @@ befriend.me = {
                  }
             });
 
-            //add
+            //add selected available section
             let options = befriend.els.meSectionOptions.getElementsByClassName('option');
 
             for(let i = 0; i < options.length; i++) {
@@ -332,6 +391,30 @@ befriend.me = {
                     befriend.me.addSection(key);
 
                     this.parentNode.removeChild(this);
+                });
+            }
+        },
+        onCollapseSection: function () {
+            let top_els = befriend.els.me.getElementsByClassName('section-top');
+
+            for(let i = 0; i < top_els.length; i++) {
+                let el = top_els[i];
+
+                if(el._listener) {
+                    continue;
+                }
+
+                el._listener = true;
+
+                el.addEventListener('click', (e) => {
+                     //actions handled separately
+                     if(e.target.closest('.actions')) {
+                         return false;
+                     }
+
+                     let section_el = el.closest('.section');
+
+                     befriend.me.collapseSection(section_el, !elHasClass(section_el, 'collapsed'));
                 });
             }
         },
@@ -382,7 +465,7 @@ befriend.me = {
 
                                     secondary = `<div class="secondary ${unselected}" data-value="${item.secondary ? item.secondary : ''}">
                                                     <div class="current-selected">${item.secondary ? item.secondary : section_data.data.unselectedStr}</div>
-                                                    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352.0005 192.001"><path id="Down_Arrow" d="M176.001,192.001c-4.092,0-8.188-1.564-11.312-4.688L4.689,27.313C-1.563,21.061-1.563,10.937,4.689,4.689s16.376-6.252,22.624,0l148.688,148.688L324.689,4.689c6.252-6.252,16.376-6.252,22.624,0s6.252,16.376,0,22.624l-160,160c-3.124,3.124-7.22,4.688-11.312,4.688h0Z"/></svg>
+                                                    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 82.1 43.2"><path d="M41.1,43.2L0,2.2,2.1,0l39,39L80,0l2.1,2.2-41,41Z"/></svg>
                                                     <div class="options">${options}</div>
                                                 </div>`;
                                 }

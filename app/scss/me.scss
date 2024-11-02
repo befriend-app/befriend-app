@@ -101,8 +101,9 @@ html.#{$class_available_me_sections} {
 
     .sections {
         $padding_tb: 12px;
-        $padding_lr: 8px;
-        $padding_lr_inner: 12px;
+        $padding_lr: 12px;
+        $padding_lr_inner: 15px;
+        $br: 8px;
         display: flex;
         flex-direction: column;
         gap: 15px 0;
@@ -111,12 +112,26 @@ html.#{$class_available_me_sections} {
         .section {
             border: 1px solid $color_lightgray;
             padding: 0;
-            border-radius: 8px;
+            border-radius: $br;
+
+            &.collapsed {
+                border-bottom: 1px transparent;
+
+                .section-top {
+                    border-bottom-left-radius: $br;
+                    border-bottom-right-radius: $br;
+                }
+                .section-container {
+                    padding-top: 0;
+                    padding-bottom: 0;
+                }
+            }
 
             .section-top {
                 padding: 4px $padding_lr;
                 @include flex-center;
                 border-bottom: 1px solid $color_lightgray;
+                transition: all 300ms;
 
                 .title {
                     @include flex-center-col;
@@ -127,8 +142,6 @@ html.#{$class_available_me_sections} {
                 .icon {
                     @include flex-center-col;
 
-                    width: 24px;
-
                     margin-right: 6px;
 
                     svg {
@@ -136,20 +149,28 @@ html.#{$class_available_me_sections} {
                     }
                 }
 
-                .delete {
-                    margin-left: auto;
-                    width: 20px;
-                    height: 20px;
+                .collapse {
                     @include flex-center-col;
+                    height: 8px;
+                }
 
-                    svg {
-                        height: 13px;
+                .actions {
+                    margin-left: auto;
+                    @include flex-center;
+                    gap: 0 8px;
+
+                    .more {
+                        @include flex-center-col;
+                        height: 4px;
+                        fill: lighten(black, 30%);
                     }
                 }
             }
 
             .section-container {
                 padding: $padding_tb $padding_lr_inner;
+                overflow-y: hidden;
+                transition: all 300ms;
             }
 
             .category-filters {
@@ -220,7 +241,7 @@ html.#{$class_available_me_sections} {
 
                 .item {
                     border: 1px solid $color_lightgray;
-                    border-radius: 4px;
+                    border-radius: 8px;
                     padding: 8px;
                     text-align: center;
                     cursor: pointer;
@@ -234,7 +255,7 @@ html.#{$class_available_me_sections} {
                     }
 
                     .remove {
-                        $dim: 18px;
+                        $dim: 16px;
                         position: absolute;
                         width: $dim;
                         height: $dim;
@@ -246,14 +267,15 @@ html.#{$class_available_me_sections} {
                         @include flex-center-col;
 
                         svg {
-                            width: 9px;
+                            height: 1px;
+                            transform: scale(.7, .7);
                         }
                     }
                 }
 
                 .secondary {
                     $transition_ms: 300ms;
-                    $br: 12px;
+                    $br: 16px;
 
                     position: relative;
                     width: 100%;

@@ -19,6 +19,7 @@ function getElHeightHidden(el) {
     let cs = getComputedStyle(el);
 
     let paddingX = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
+    let paddingY = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
 
     let borderX = parseFloat(cs.borderLeftWidth) + parseFloat(cs.borderRightWidth);
 
@@ -26,6 +27,7 @@ function getElHeightHidden(el) {
 
     let test_el = el.cloneNode(true);
 
+    test_el.style.transition = 'none';
     test_el.style.visibility = 'hidden';
     test_el.style.position = 'absolute';
     test_el.style.width = `${width}px`;
@@ -33,7 +35,7 @@ function getElHeightHidden(el) {
 
     el.parentNode.appendChild(test_el);
 
-    let height = test_el.scrollHeight;
+    let height = test_el.scrollHeight - paddingY;
 
     test_el.parentNode.removeChild(test_el);
 

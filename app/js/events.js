@@ -99,9 +99,10 @@ befriend.events = {
                     return false;
                 }
 
-                let viewClass = nameClassMap[nav_item.getAttribute('data-nav')];
+                let nav_name = nav_item.getAttribute('data-nav');
+                let view_name = nameClassMap[nav_name];
 
-                let viewEl = befriend.els.views.querySelector(`.${viewClass}`);
+                let viewEl = befriend.els.views.querySelector(`.${view_name}`);
 
                 removeElsClass(nav_items, 'active');
                 removeElsClass(views, 'active');
@@ -113,6 +114,11 @@ befriend.events = {
                 befriend.places.toggleAutoComplete(false);
                 befriend.places.toggleDisplayPlaces(false);
                 befriend.me.toggleSectionOptions(false);
+
+                //view specific logic
+                if(nav_name === 'me') {
+                    befriend.me.updateCollapsed();
+                }
             });
         }
 
