@@ -330,9 +330,6 @@ befriend.me = {
                     btn._listener = true;
 
                     btn.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-
                         let category = this.getAttribute('data-category');
 
                         let section = this.closest('.section');
@@ -412,9 +409,6 @@ befriend.me = {
                     item._listener = true;
 
                     item.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-
                         if(elHasClass(item, 'mine')) {
                             let open_secondary_el = befriend.els.me.querySelector('.secondary.open');
 
@@ -427,8 +421,13 @@ befriend.me = {
 
                         let section = this.closest('.section');
                         let section_key = section.getAttribute('data-key');
-
                         let token = this.getAttribute('data-token');
+
+                        try {
+                            item.parentNode.removeChild(item);
+                        } catch(e) {
+
+                        }
 
                         try {
                             befriend.me.addSectionItem(section_key, token);
@@ -440,8 +439,6 @@ befriend.me = {
             }
         },
         onOpenSecondary: function () {
-            console.log("on open secondary");
-
             let secondaries = befriend.els.me.getElementsByClassName('secondary');
 
             for(let i = 0; i < secondaries.length; i++) {

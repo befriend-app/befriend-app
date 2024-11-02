@@ -241,7 +241,7 @@
                     position: relative;
                     width: 100%;
                     cursor: pointer;
-                    margin-top: 6px;
+                    margin-top: 5px;
 
                     // Open state
                     &.open {
@@ -259,18 +259,19 @@
 
                     // Selected display
                     .current-selected {
-                        padding: 8px;
+                        padding: 4px 8px;
                         border: 1px solid lighten(black, 82%);
-                        border-radius: 6px;
+                        border-radius: 12px;
                         background: white;
-                        font-size: 13px;
+                        font-size: 12px;
+                        font-weight: 500;
                     }
 
                     .arrow {
-                        $h: 7px;
+                        $h: 5px;
                         height: $h;
                         position: absolute;
-                        right: 7px;
+                        right: 8px;
                         top: calc(50% - calc($h / 2));
                     }
 
