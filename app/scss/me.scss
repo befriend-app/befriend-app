@@ -10,6 +10,22 @@ html.#{$class_available_me_sections} {
     }
 }
 
+html.#{$class_confirm_me_action} {
+    overflow: hidden;
+
+    body {
+        overflow: hidden;
+    }
+
+    #confirm-me-action {
+        opacity: 1;
+        visibility: visible;
+        transition:
+                opacity $confirm_action_transition_ms,
+                visibility 0ms;
+    }
+}
+
 #me {
     padding-left: 30px !important;
     padding-right: 30px !important;
@@ -104,6 +120,7 @@ html.#{$class_available_me_sections} {
         $padding_lr: 12px;
         $padding_lr_inner: 15px;
         $br: 8px;
+        $section_top_h: 32px;
         display: flex;
         flex-direction: column;
         gap: 15px 0;
@@ -125,6 +142,18 @@ html.#{$class_available_me_sections} {
                 .section-container {
                     margin-top: 0;
                     margin-bottom: 0;
+                }
+            }
+
+            &.show-menu {
+                .menu {
+                    $pt: 5px;
+                    //height: 23px !important;
+                    //padding-top: $pt !important;
+                    //padding-bottom: $pt !important;
+                    border: 1px solid lighten(black, 60%) !important;
+                    opacity: 1;
+                    width: 90px !important;
                 }
             }
 
@@ -156,14 +185,45 @@ html.#{$class_available_me_sections} {
                 }
 
                 .actions {
+                    position: relative;
                     margin-left: auto;
                     @include flex-center;
                     gap: 0 8px;
+                    height: $section_top_h;
 
                     .more {
                         @include flex-center-col;
                         height: 4px;
                         fill: lighten(black, 30%);
+                    }
+
+                    .menu {
+                        position: absolute;
+                        right: -12px;
+                        top: -3px;
+                        padding: 0 0;
+                        background: white;
+                        border-radius: 6px;
+                        width: 0;
+                        height: 36px;
+                        overflow: hidden;
+                        border: 1px transparent;
+                        transition: all 300ms;
+                        @include flex-center-col;
+
+                        .action {
+                            @include flex-center;
+                            gap: 0 3px;
+
+                            svg {
+                                height: 14px;
+                            }
+
+                            .name {
+                                font-size: 14px;
+                            }
+
+                        }
                     }
                 }
             }
@@ -370,6 +430,68 @@ html.#{$class_available_me_sections} {
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+#confirm-me-action {
+    $br: 10px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 200px;
+    box-sizing: border-box;
+    z-index: 102;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+            opacity $confirm_action_transition_ms,
+            visibility 0ms $confirm_action_transition_ms;
+
+    .title {
+        padding: 12px 20px;
+        text-align: center;
+        border: 1px solid lighten(black, 70%);
+        box-sizing: border-box;
+        border-top-left-radius: $br;
+        border-top-right-radius: $br;
+        border-bottom: .5px solid lighten(black, 30%);
+        background: white;
+
+        .main {
+            font-weight: 300;
+            font-size: 17px;
+        }
+
+        .details {
+            font-weight: 500;
+            font-size: 15px;
+            margin-top: 2px;
+        }
+    }
+
+    .buttons {
+        display: flex;
+        box-sizing: border-box;
+
+        .button {
+            padding: 8px 0;
+            color: white;
+            flex-basis: 50%;
+            @include flex-center;
+            box-sizing: border-box;
+
+            &.yes {
+                background: $brand_color_a;
+                border-right: .5px solid lighten(black, 30%);
+                border-bottom-left-radius: $br;
+            }
+
+            &.no {
+                background: lighten(black, 50%);
+                border-bottom-right-radius: $br;
             }
         }
     }

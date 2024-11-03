@@ -18,6 +18,7 @@ $class_change_location: display-change-location;
 $class_places_suggest_shown: show-suggestions;
 $class_create_activity_shown: create-activity;
 $class_available_me_sections: display-available-me-sections;
+$class_confirm_me_action: confirm-me-action;
 
 //app variables
 $app_background: #ededed;
@@ -81,3 +82,5 @@ $create_activity_transition_ms: 600ms;
 $create_activity_bottom_h: 100px;
 
 $create_activity_gap_lr: 30px;
+
+$confirm_action_transition_ms: 300ms;

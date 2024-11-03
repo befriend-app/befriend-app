@@ -1,4 +1,9 @@
 befriend.me = {
+    actions: {
+        delete: {
+            section: null
+        }
+    },
     data: {
         me: null,
         sections: {
@@ -180,7 +185,13 @@ befriend.me = {
                                 <div class="section-top">
                                     <div class="icon">${option_data.icon}</div>
                                     <div class="title">${option_data.section_name}</div>
-                                    <div class="actions">                                                   
+                                    <div class="actions">
+                                        <div class="menu">
+                                            <div class="action" data-action="delete">
+                                                <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 346.8033 427.0013"><path d="M232.4016,154.7044c-5.5234,0-10,4.4766-10,10v189c0,5.5195,4.4766,10,10,10s10-4.4805,10-10v-189c0-5.5234-4.4766-10-10-10Z"/><path d="M114.4016,154.7044c-5.5234,0-10,4.4766-10,10v189c0,5.5195,4.4766,10,10,10s10-4.4805,10-10v-189c0-5.5234-4.4766-10-10-10Z"/><path d="M28.4016,127.1224v246.3789c0,14.5625,5.3398,28.2383,14.668,38.0508,9.2852,9.8398,22.207,15.4258,35.7305,15.4492h189.2031c13.5273-.0234,26.4492-5.6094,35.7305-15.4492,9.3281-9.8125,14.668-23.4883,14.668-38.0508V127.1224c18.543-4.9219,30.5586-22.8359,28.0781-41.8633-2.4844-19.0234-18.6914-33.2539-37.8789-33.2578h-51.1992v-12.5c.0586-10.5117-4.0977-20.6055-11.5391-28.0312C238.4212,4.0482,228.3118-.0846,217.8001.0013h-88.7969c-10.5117-.0859-20.6211,4.0469-28.0625,11.4688-7.4414,7.4258-11.5977,17.5195-11.5391,28.0312v12.5h-51.1992c-19.1875.0039-35.3945,14.2344-37.8789,33.2578-2.4805,19.0273,9.5352,36.9414,28.0781,41.8633ZM268.0032,407.0013H78.8001c-17.0977,0-30.3984-14.6875-30.3984-33.5v-245.5h250v245.5c0,18.8125-13.3008,33.5-30.3984,33.5ZM109.4016,39.5013c-.0664-5.207,1.9805-10.2188,5.6758-13.8945,3.6914-3.6758,8.7148-5.6953,13.9258-5.6055h88.7969c5.2109-.0898,10.2344,1.9297,13.9258,5.6055,3.6953,3.6719,5.7422,8.6875,5.6758,13.8945v12.5H109.4016v-12.5ZM38.2024,72.0013h270.3984c9.9414,0,18,8.0586,18,18s-8.0586,18-18,18H38.2024c-9.9414,0-18-8.0586-18-18s8.0586-18,18-18Z"/><path d="M173.4016,154.7044c-5.5234,0-10,4.4766-10,10v189c0,5.5195,4.4766,10,10,10s10-4.4805,10-10v-189c0-5.5234-4.4766-10-10-10Z"/></svg></div>
+                                                <div class="name">Delete</div>
+                                            </div>
+                                        </div>                                                   
                                         <svg class="more" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 426.667 85.334"><circle cx="42.667" cy="42.667" r="42.667"/><circle cx="213.333" cy="42.667" r="42.667"/><circle cx="384" cy="42.667" r="42.667"/></svg>
                                     </div>
                                 </div>
@@ -195,7 +206,9 @@ befriend.me = {
 
                 sections_el.insertAdjacentHTML('beforeend', html);
 
-                befriend.me.events.onupdateSectionHeight();
+                befriend.me.events.onSectionActions();
+                befriend.me.events.onActionSelect();
+                befriend.me.events.onUpdateSectionHeight();
                 befriend.me.events.onSectionCategory();
             }
         }
@@ -268,6 +281,9 @@ befriend.me = {
             resolve();
         });
     },
+    deleteSection: function (section_key) {
+        console.log(section_key);
+    },
     setActive: function () {
         if(befriend.me.data.sections.active) {
             for(let key in befriend.me.data.sections.active) {
@@ -339,6 +355,13 @@ befriend.me = {
             removeClassEl(befriend.classes.availableMeSections, document.documentElement);
         }
     },
+    toggleSectionActions: function (el, show) {
+        if(show) {
+            addClassEl('show-menu', el);
+        } else {
+            removeClassEl('show-menu', el);
+        }
+    },
     transitionSecondary: function (secondary_el, show) {
         let options_el = secondary_el.querySelector('.options');
 
@@ -387,10 +410,21 @@ befriend.me = {
 
         section_container.style.removeProperty('transition');
     },
+    isConfirmActionShown: function () {
+        return elHasClass(document.documentElement, befriend.classes.confirmMeAction);
+    },
+    toggleConfirm: function (show) {
+        if(show) {
+            addClassEl(befriend.classes.confirmMeAction, document.documentElement);
+        } else {
+            removeClassEl(befriend.classes.confirmMeAction, document.documentElement);
+        }
+    },
     events: {
         init: function () {
             return new Promise(async (resolve, reject) => {
                 befriend.me.events.onAddSection();
+                befriend.me.events.confirmAction();
 
                 resolve();
             });
@@ -434,7 +468,63 @@ befriend.me = {
                 });
             }
         },
-        onupdateSectionHeight: function () {
+        onSectionActions: function () {
+            let actions_els = befriend.els.me.querySelectorAll('.section .actions');
+
+            for(let i = 0; i < actions_els.length; i++) {
+                let el = actions_els[i];
+
+                if(el._listener) {
+                    continue;
+                }
+
+                el._listener = true;
+
+                el.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    removeElsClass(befriend.els.me.getElementsByClassName('section'), 'show-menu');
+
+                    let section_el = this.closest('.section');
+
+                    befriend.me.toggleSectionActions(section_el, true);
+                });
+            }
+
+        },
+        onActionSelect: function () {
+            let actions_els = befriend.els.me.querySelectorAll('.menu .action');
+
+            for(let i = 0; i < actions_els.length; i++) {
+                let el = actions_els[i];
+
+                if(el._listener) {
+                    continue;
+                }
+
+                el._listener = true;
+
+                el.addEventListener('click', function (e) {
+                    let action = this.getAttribute('data-action');
+
+                    let section = this.closest('.section');
+                    let section_key = section.getAttribute('data-key');
+                    let section_data = befriend.me.data.sections.all[section_key];
+
+                    if(action === 'delete') {
+                        befriend.me.actions.delete.section = section_key;
+                        befriend.els.confirmMeAction.querySelector('.main').innerHTML = 'Confirm Delete';
+                        befriend.els.confirmMeAction.querySelector('.details').innerHTML = section_data.section_name;
+
+                        befriend.me.toggleConfirm(true);
+                    }
+                });
+            }
+
+            console.log(actions_els);
+        },
+        onUpdateSectionHeight: function () {
             let top_els = befriend.els.me.getElementsByClassName('section-top');
 
             for(let i = 0; i < top_els.length; i++) {
@@ -447,12 +537,19 @@ befriend.me = {
                 el._listener = true;
 
                 el.addEventListener('click', (e) => {
-                     //actions handled separately
+                     e.preventDefault();
+                     e.stopPropagation();
+
                      if(e.target.closest('.actions')) {
                          return false;
                      }
 
                      let section_el = el.closest('.section');
+
+                     //hide actions if shown
+                    if(elHasClass(section_el, 'show-menu')) {
+                        return befriend.me.toggleSectionActions(section_el, false);
+                    }
 
                      befriend.me.updateSectionHeight(section_el, !elHasClass(section_el, 'collapsed'));
                 });
@@ -728,6 +825,25 @@ befriend.me = {
                         });
                     }
                 }
+            }
+        },
+        confirmAction: function () {
+            let buttons = befriend.els.confirmMeAction.getElementsByClassName('button');
+
+            for(let i = 0; i < buttons.length; i++) {
+                let button = buttons[i];
+
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+
+                    let action = button.getAttribute('data-action');
+
+                    if(action === 'no') {
+                        befriend.me.toggleConfirm(false);
+                    } else if(action === 'yes') {
+                        befriend.me.deleteSection(befriend.me.actions.delete.section);
+                    }
+                });
             }
         }
     }

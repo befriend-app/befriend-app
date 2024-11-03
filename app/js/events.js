@@ -63,6 +63,10 @@ befriend.events = {
                     befriend.places.toggleAutoComplete(false);
                 }
             } else if(befriend.isViewShown('me')) {
+                if(befriend.me.isConfirmActionShown()) {
+                    return false;
+                }
+
                 if(befriend.me.isSectionOptionsShown()) {
                     if(!e.target.closest('#me-section-options')) {
                         befriend.me.toggleSectionOptions(false);
@@ -73,6 +77,12 @@ befriend.events = {
 
                 if(open_secondary_el && !e.target.closest('.secondary')) {
                     befriend.me.transitionSecondary(open_secondary_el, false);
+                }
+
+                let menu_shown_el = befriend.els.me.querySelector('.section.show-menu');
+
+                if(menu_shown_el && !e.target.closest('.menu')) {
+                    befriend.me.toggleSectionActions(menu_shown_el, false);
                 }
             }
         });

@@ -19,6 +19,7 @@ befriend.html = {
         befriend.els.travel_times = document.getElementById('travel-times');
         befriend.els.me = document.getElementById('me');
         befriend.els.meSectionOptions = document.getElementById('me-section-options');
+        befriend.els.confirmMeAction = document.getElementById('confirm-me-action');
     },
     appInit: function () {
         return new Promise(async (resolve, reject) => {
@@ -109,6 +110,16 @@ befriend.html = {
                         <div id="filters" class="view view-filters"><h2>Filters</h2></div>
                         
                         <div id="me" class="view view-me">
+                            <div id="confirm-me-action">
+                                <div class="title">
+                                    <div class="main"></div>
+                                    <div class="details"></div>
+                                </div>
+                                <div class="buttons">
+                                    <div class="button yes" data-action="yes">Yes</div>
+                                    <div class="button no" data-action="no">Cancel</div>
+                                </div>
+                            </div>
                             <div class="top">
                                 <div class="first-name"></div>
                                 <div class="birthday">
