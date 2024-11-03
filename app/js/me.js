@@ -13,6 +13,9 @@ befriend.me = {
             collapsed: {}
         }
     },
+    autoComplete: {
+        minChars: 2,
+    },
     init: function () {
         return new Promise(async (resolve, reject) => {
             try {
@@ -206,53 +209,36 @@ befriend.me = {
 
                 sections_el.insertAdjacentHTML('beforeend', html);
 
+                befriend.me.events.onSectionCategory();
                 befriend.me.events.onSectionActions();
+                befriend.me.events.autoComplete();
                 befriend.me.events.onActionSelect();
                 befriend.me.events.onUpdateSectionHeight();
-                befriend.me.events.onSectionCategory();
             }
         }
     },
     addSectionItem: function (section_key, item_token) {
         return new Promise(async (resolve, reject) => {
-            let section_data = befriend.me.data.sections.active[section_key];
-
-            if(!('items' in section_data)) {
-                section_data.items = {};
-            }
-
-            section_data.items[item_token] = section_data.data.options.find(item => item.token === item_token);
-
-            let section_els = befriend.els.me.querySelector('.sections').getElementsByClassName('section');
-
-            for(let i = 0; i < section_els.length; i++) {
-                let el = section_els[i];
-
-                if(el.getAttribute('data-key') === section_key) {
-                    //remove no-items
-                    removeClassEl('no-items', el.querySelector('.items'));
-
-                    //automatically switch to first category
-
-                    let category_btn_first = el.querySelector('.category-btn');
-
-                    if(category_btn_first) {
-                        if(!elHasClass(category_btn_first, 'active')) {
-                            fireClick(category_btn_first);
-                        }
-                    }
-
-                    break;
-                }
-            }
-
             try {
+                let section_data = befriend.me.data.sections.active[section_key];
+
+                if(!('items' in section_data)) {
+                    section_data.items = {};
+                }
+
                 let r = await befriend.auth.post(`/me/sections/item`, {
                     section_key: section_key,
                     item_token: item_token
                 });
 
-                section_data.items[item_token].id = r.data.id;
+                section_data.items[item_token] = r.data;
+
+                //add unique selection to options if not exists
+                let option = section_data.data.options.find(item =>item.token === item_token);
+
+                if(!option) {
+                    section_data.data.options.push(r.data);
+                }
 
                 if(r.data.secondary) {
                     let secondary_el = befriend.els.me.querySelector(`.item[data-token="${item_token}"] .secondary`);
@@ -269,6 +255,27 @@ befriend.me = {
                 }
             } catch(e) {
                 console.error(e);
+            }
+
+            let section_els = befriend.els.me.querySelector('.sections').getElementsByClassName('section');
+
+            for(let i = 0; i < section_els.length; i++) {
+                let el = section_els[i];
+
+                if(el.getAttribute('data-key') === section_key) {
+                    //remove no-items
+                    removeClassEl('no-items', el.querySelector('.items'));
+
+                    //automatically switch to first category
+
+                    let category_btn_first = el.querySelector('.category-btn');
+
+                    if(category_btn_first) {
+                        fireClick(category_btn_first);
+                    }
+
+                    break;
+                }
             }
 
             resolve();
@@ -368,6 +375,61 @@ befriend.me = {
             befriend.els.meSectionOptions.querySelector('.options').innerHTML = html;
         }
     },
+    searchItems: function (section_key, search_value) {
+        return new Promise(async (resolve, reject) => {
+            if (!search_value) {
+                return resolve();
+            }
+
+            search_value = search_value.trim();
+
+            if (search_value.length < befriend.me.autoComplete.minChars) {
+                befriend.me.toggleAutoComplete(false);
+                return resolve();
+            }
+
+            try {
+                let endpoint = befriend.me.data.sections.active[section_key].data.autoComplete.endpoint;
+
+                const r = await befriend.auth.get(`${endpoint}?search=${search_value}`);
+
+                befriend.me.setAutoComplete(section_key, r.data.items);
+            } catch (error) {
+                console.error('Search error:', error);
+            }
+        });
+    },
+    setAutoComplete: function (section_key, items) {
+        let search_container_el = befriend.els.me.querySelector(`.sections .section[data-key="${section_key}"] .search-container`);
+
+        if(search_container_el) {
+            let list = search_container_el.querySelector('.autocomplete-list');
+
+            if(list) {
+                let section_data = befriend.me.data.sections.active[section_key];
+                let items_html = '';
+
+                for(let item of items) {
+                    if(item.token in section_data.items) {
+                        continue;
+                    }
+
+                    items_html += `<div class="item" data-token="${item.token}">${item.name}</div>`;
+                }
+
+                list.innerHTML = items_html;
+
+                befriend.me.toggleAutoComplete(search_container_el, true);
+
+                befriend.me.events.onSelectAutoCompleteItem();
+            }
+        }
+    },
+    isAutoCompleteShown: function () {
+        let el = befriend.els.me.querySelector(`.search-container.${befriend.classes.autoCompleteMe}`);
+
+        return !!el;
+    },
     updateCollapsed: async function () {
         await rafAwait();
 
@@ -456,12 +518,64 @@ befriend.me = {
     isConfirmActionShown: function () {
         return elHasClass(document.documentElement, befriend.classes.confirmMeAction);
     },
+    toggleAutoComplete: function (el, show) {
+        if(!el) {
+            el = befriend.els.me.querySelector(`.search-container.${befriend.classes.autoCompleteMe}`);
+        }
+
+        if(!el) {
+            return;
+        }
+
+        if (show) {
+            addClassEl(befriend.classes.autoCompleteMe, el);
+        } else {
+            removeClassEl(befriend.classes.autoCompleteMe, el);
+        }
+    },
     toggleConfirm: function (show) {
         if(show) {
             addClassEl(befriend.classes.confirmMeAction, document.documentElement);
         } else {
             removeClassEl(befriend.classes.confirmMeAction, document.documentElement);
         }
+    },
+    sectionItemHtml: function (section_key, token) {
+        let section_data = befriend.me.data.sections.active[section_key];
+
+        let item = section_data.items[token];
+
+        let secondary = '';
+        let options = '';
+
+        //current selected
+        if(section_data.data && section_data.data.secondary) {
+            let unselected = '';
+
+            if(!item.secondary) {
+                unselected = 'unselected';
+            }
+
+            for(let option of section_data.data.secondary) {
+                let selected = item.secondary === option ? 'selected' : '';
+
+                options += `<div class="option ${selected}" data-option="${option}">${option}</div>`;
+            }
+
+            secondary = `<div class="secondary ${unselected}" data-value="${item.secondary ? item.secondary : ''}">
+                                                    <div class="current-selected">${item.secondary ? item.secondary : section_data.data.unselectedStr}</div>
+                                                    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 82.1 43.2"><path d="M41.1,43.2L0,2.2,2.1,0l39,39L80,0l2.1,2.2-41,41Z"/></svg>
+                                                    <div class="options">${options}</div>
+                                                </div>`;
+        }
+
+        return `<div class="item mine" data-token="${token}">
+                                                            <div class="name">${item.name}</div>
+                                                            ${secondary}
+                                                            <div class="remove">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 121.805 14.619"><path d="M7.308,14.619h107.188c4.037,0,7.309-3.272,7.309-7.31s-3.271-7.309-7.309-7.309H7.308C3.272.001,0,3.273,0,7.31s3.272,7.309,7.308,7.309Z"/></svg>
+                                                            </div>
+                                                        </div>`;
     },
     events: {
         init: function () {
@@ -534,9 +648,48 @@ befriend.me = {
                     let section_el = this.closest('.section');
 
                     befriend.me.toggleSectionActions(section_el, true);
+
+                    befriend.me.toggleAutoComplete(null, false);
                 });
             }
 
+        },
+        autoComplete: function () {
+            let els = befriend.els.me.getElementsByClassName('search-input');
+
+            for(let i = 0; i < els.length; i++) {
+                let el = els[i];
+
+                if(el._listener) {
+                    continue;
+                }
+
+                el._listener = true;
+
+                let debounceTimer = null;
+
+                el.addEventListener('input', function () {
+                    clearTimeout(debounceTimer);
+
+                    debounceTimer = setTimeout(async function () {
+                        const value = el.value;
+
+                        let section_key = el.closest('.section').getAttribute('data-key');
+
+                        try {
+                            befriend.me.searchItems(section_key, value);
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    }, 100);
+                });
+
+                el.addEventListener('focus', function () {
+                    if (el.value.length >= befriend.me.autoComplete.minChars) {
+                        befriend.me.toggleAutoComplete(el.closest('.search-container'), true);
+                    }
+                });
+            }
         },
         onActionSelect: function () {
             let actions_els = befriend.els.me.querySelectorAll('.menu .action');
@@ -628,39 +781,9 @@ befriend.me = {
                                 addClassEl('no-items', section.querySelector('.items'));
                             } else {
                                 for(let token in section_data.items) {
-                                    let item = section_data.items[token];
+                                    let item_html = befriend.me.sectionItemHtml(section_key, token);
 
-                                    let secondary = '';
-                                    let options = '';
-
-                                    //current selected
-                                    if(section_data.data && section_data.data.secondary) {
-                                        let unselected = '';
-
-                                        if(!item.secondary) {
-                                            unselected = 'unselected';
-                                        }
-
-                                        for(let option of section_data.data.secondary) {
-                                            let selected = item.secondary === option ? 'selected' : '';
-
-                                            options += `<div class="option ${selected}" data-option="${option}">${option}</div>`;
-                                        }
-
-                                        secondary = `<div class="secondary ${unselected}" data-value="${item.secondary ? item.secondary : ''}">
-                                                    <div class="current-selected">${item.secondary ? item.secondary : section_data.data.unselectedStr}</div>
-                                                    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 82.1 43.2"><path d="M41.1,43.2L0,2.2,2.1,0l39,39L80,0l2.1,2.2-41,41Z"/></svg>
-                                                    <div class="options">${options}</div>
-                                                </div>`;
-                                    }
-
-                                    category_items_html += `<div class="item mine" data-token="${token}">
-                                                            <div class="name">${item.name}</div>
-                                                            ${secondary}
-                                                            <div class="remove">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 121.805 14.619"><path d="M7.308,14.619h107.188c4.037,0,7.309-3.272,7.309-7.31s-3.271-7.309-7.309-7.309H7.308C3.272.001,0,3.273,0,7.31s3.272,7.309,7.308,7.309Z"/></svg>
-                                                            </div>
-                                                        </div>`;
+                                    category_items_html += item_html;
                                 }
                             }
 
@@ -887,6 +1010,34 @@ befriend.me = {
                     } else if(action === 'yes') {
                         befriend.me.deleteSection(befriend.me.actions.delete.section);
                     }
+                });
+            }
+        },
+        onSelectAutoCompleteItem: function () {
+            let els = befriend.els.me.querySelectorAll(`.autocomplete-list .item`);
+
+            for(let i = 0; i < els.length; i++) {
+                let el = els[i];
+
+                if(el._listener) {
+                    continue;
+                }
+
+                el._listener = true;
+
+                el.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    let section = el.closest('.section');
+                    let section_key = section.getAttribute('data-key');
+                    let token = el.getAttribute('data-token');
+
+                    befriend.me.toggleAutoComplete(null, false);
+
+                    befriend.me.addSectionItem(section_key, token);
+
+                    el.closest('.search-container').querySelector('.search-input').value = '';
                 });
             }
         }

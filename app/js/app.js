@@ -7,6 +7,7 @@ window['befriend'] = {
         createActivityShown: 'create-activity',
         availableMeSections: 'display-available-me-sections',
         confirmMeAction: 'confirm-me-action',
+        autoCompleteMe: 'show-auto-complete',
     },
     timing: {
         showPlaces: null,

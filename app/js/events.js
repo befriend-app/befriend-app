@@ -67,6 +67,12 @@ befriend.events = {
                     return false;
                 }
 
+                if(befriend.me.isAutoCompleteShown()) {
+                    if (!e.target.closest('.search-container')) {
+                        return befriend.me.toggleAutoComplete(null, false);
+                    }
+                }
+
                 if(befriend.me.isSectionOptionsShown()) {
                     if(!e.target.closest('#me-section-options')) {
                         befriend.me.toggleSectionOptions(false);
@@ -124,6 +130,8 @@ befriend.events = {
                 befriend.places.toggleAutoComplete(false);
                 befriend.places.toggleDisplayPlaces(false);
                 befriend.me.toggleSectionOptions(false);
+
+                befriend.me.toggleAutoComplete(null, false);
 
                 //view specific logic
                 if(nav_name === 'me') {

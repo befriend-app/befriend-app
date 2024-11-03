@@ -788,14 +788,6 @@ befriend.html = {
         }
     },
     createActivity: function () {
-        let activity_obj = {
-            activity: null,
-            place: null,
-            when: null,
-            friends: null,
-            filters: null,
-        };
-
         let place = befriend.places.selected.place;
 
         let parent_el = befriend.els.createActivity.querySelector('.main');
