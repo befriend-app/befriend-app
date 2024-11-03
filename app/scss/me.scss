@@ -357,7 +357,6 @@ html.#{$class_confirm_me_action} {
                             border-bottom-right-radius: 0;
                         }
                         .options {
-                            display: flex;
                             border: 1px solid $color_lightgray;
                             opacity: 1;
                         }
@@ -408,7 +407,9 @@ html.#{$class_confirm_me_action} {
                         transition: all $transition_ms;
                         overflow-y: hidden;
                         box-sizing: border-box;
-                        border-top: 0 !important;
+                        border-top: 1px transparent !important;
+                        display: flex;
+
                         //opacity: 0;
 
                         // Individual option

@@ -152,10 +152,10 @@ befriend.me = {
                         categories = `<div class="category-filters">${categories}</div>`
                     }
 
-                    if(section_data.data.autocomplete) {
+                    if(section_data.data.autoComplete) {
                         autocomplete = `
                             <div class="search-container">
-                                <input type="text" class="search-input" placeholder="${section_data.data.autocomplete.string}">
+                                <input type="text" class="search-input" placeholder="${section_data.data.autoComplete.string}">
                                 <div class="autocomplete-list"></div>
                             </div>
                         `;
@@ -253,6 +253,20 @@ befriend.me = {
                 });
 
                 section_data.items[item_token].id = r.data.id;
+
+                if(r.data.secondary) {
+                    let secondary_el = befriend.els.me.querySelector(`.item[data-token="${item_token}"] .secondary`);
+
+                    if(secondary_el) {
+                        secondary_el.querySelector('.current-selected').innerHTML = r.data.secondary;
+
+                        let selected_el = secondary_el.querySelector(`.option[data-option="${r.data.secondary}"]`);
+
+                        if(selected_el) {
+                            addClassEl('selected', selected_el);
+                        }
+                    }
+                }
             } catch(e) {
                 console.error(e);
             }
@@ -270,7 +284,7 @@ befriend.me = {
 
             try {
                 await befriend.auth.put(`/me/sections/item`, {
-                    section_name: befriend.me.data.sections.all[section_key].data_table,
+                    section_key: section_key,
                     section_item_id: item.id,
                     is_delete: true
                 });
@@ -552,8 +566,6 @@ befriend.me = {
                     }
                 });
             }
-
-            console.log(actions_els);
         },
         onUpdateSectionHeight: function () {
             let top_els = befriend.els.me.getElementsByClassName('section-top');
@@ -845,7 +857,7 @@ befriend.me = {
                                 //server
                                 try {
                                     await befriend.auth.put(`/me/sections/item`, {
-                                        section_name: befriend.me.data.sections.all[section_key].data_table,
+                                        section_key: section_key,
                                         section_item_id: item.id,
                                         secondary: option_value
                                     });
