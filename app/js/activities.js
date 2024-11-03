@@ -373,17 +373,17 @@ befriend.activities = {
         befriend.activities.draft.update('duration', duration);
 
         //set duration in when string
-        befriend.els.create_activity
+        befriend.els.createActivity
             .querySelector('.when')
             .querySelector('.duration')
             .querySelector('.value').innerHTML = befriend.activities.getDurationStr();
 
         if (update_buttons) {
-            let level_1 = befriend.els.create_activity.querySelector('.level_1');
+            let level_1 = befriend.els.createActivity.querySelector('.level_1');
             //remove all selected groups
-            let buttons = befriend.els.activity_duration.getElementsByClassName('button');
-            let options = befriend.els.activity_duration.getElementsByClassName('options');
-            let option_els = befriend.els.activity_duration.getElementsByClassName('option');
+            let buttons = befriend.els.activityDuration.getElementsByClassName('button');
+            let options = befriend.els.activityDuration.getElementsByClassName('options');
+            let option_els = befriend.els.activityDuration.getElementsByClassName('option');
 
             removeElsClass(buttons, 'active');
             removeElsClass(options, 'active');
@@ -444,7 +444,7 @@ befriend.activities = {
                 for (let mode_name in data.modes) {
                     let mode = data.modes[mode_name];
 
-                    let el = befriend.els.travel_times.querySelector(`.mode.${mode_name}`);
+                    let el = befriend.els.travelTimes.querySelector(`.mode.${mode_name}`);
 
                     let value_el = el.querySelector('.value');
 
@@ -491,7 +491,7 @@ befriend.activities = {
 
         //set up html and transition logic
         befriend.html.createActivity();
-        let map_el = befriend.els.activities_map;
+        let map_el = befriend.els.activityMap;
         let status_bar_height = await befriend.styles.getStatusBarHeight();
 
         //transform status bar
@@ -704,7 +704,7 @@ befriend.activities = {
             };
         }
 
-        let when_el = befriend.els.create_activity.querySelector('.when');
+        let when_el = befriend.els.createActivity.querySelector('.when');
         let message_el = document.getElementById('create-activity-top-message');
 
         // Check if update is needed
@@ -782,7 +782,7 @@ befriend.activities = {
             });
         },
         createActivity: function () {
-            let button = befriend.els.create_activity_btn;
+            let button = befriend.els.createActivityBtn;
 
             button.addEventListener('click', async function (e) {
                 e.preventDefault();
@@ -810,7 +810,7 @@ befriend.activities = {
 
                 back_el.style.display = 'none';
 
-                befriend.els.travel_times.style.display = 'none';
+                befriend.els.travelTimes.style.display = 'none';
 
                 befriend.styles.transformStatusBar(
                     0,
@@ -821,7 +821,7 @@ befriend.activities = {
                     .getElementById('activities-map-wrapper')
                     .getBoundingClientRect();
 
-                let map_el = befriend.els.activities_map;
+                let map_el = befriend.els.activityMap;
 
                 map_el.style.removeProperty('transition');
 
@@ -858,13 +858,13 @@ befriend.activities = {
                 }
 
                 back_el.style.removeProperty('display');
-                befriend.els.travel_times.style.removeProperty('display');
+                befriend.els.travelTimes.style.removeProperty('display');
             });
         },
         activityDuration: function () {
-            let level_1_el = befriend.els.activity_duration.querySelector('.level_1');
+            let level_1_el = befriend.els.activityDuration.querySelector('.level_1');
             let level_1_els = level_1_el.getElementsByClassName('button');
-            let level_2_el = befriend.els.activity_duration.querySelector('.level_2');
+            let level_2_el = befriend.els.activityDuration.querySelector('.level_2');
             let level_2_options = level_2_el.getElementsByClassName('options');
             let all_duration_options = level_2_el.getElementsByClassName('option');
 
@@ -969,7 +969,7 @@ befriend.activities = {
             }
         },
         travelTimeMode: function () {
-            let els = befriend.els.travel_times.getElementsByClassName('mode');
+            let els = befriend.els.travelTimes.getElementsByClassName('mode');
 
             for (let i = 0; i < els.length; i++) {
                 let mode_el = els[i];

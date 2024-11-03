@@ -177,13 +177,13 @@ befriend.places = {
         return elHasClass(document.documentElement, befriend.classes.placesShown);
     },
     isAutoCompleteShown: function () {
-        return elHasClass(befriend.els.place_search, befriend.classes.placesSuggestShown);
+        return elHasClass(befriend.els.placeSearch, befriend.classes.placesSuggestShown);
     },
     toggleAutoComplete: function (show) {
         if (show) {
-            addClassEl(befriend.classes.placesSuggestShown, befriend.els.place_search);
+            addClassEl(befriend.classes.placesSuggestShown, befriend.els.placeSearch);
         } else {
-            removeClassEl(befriend.classes.placesSuggestShown, befriend.els.place_search);
+            removeClassEl(befriend.classes.placesSuggestShown, befriend.els.placeSearch);
         }
     },
     toggleDisplayPlaces: function (show) {

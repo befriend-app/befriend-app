@@ -230,6 +230,40 @@ window['befriend'] = {
                 }
             });
         },
+        delete: function (route, data) {
+            return new Promise(async (resolve, reject) => {
+                let requestData = {};
+
+                let loginObj = {
+                    person_token: befriend.user.person.token,
+                    login_token: befriend.user.login.token,
+                };
+
+                if (data && typeof data === 'object') {
+                    requestData = { ...loginObj, ...data };
+                } else {
+                    requestData = { ...loginObj };
+                }
+
+                try {
+                    let r = await axios.delete(joinPaths(api_domain, route), {
+                        data: requestData
+                    });
+
+                    resolve(r);
+                } catch (e) {
+                    console.error(e);
+                    return reject(e);
+                }
+            });
+        }
+    },
+    toggleSpinner: function (show) {
+        if(show) {
+            addClassEl('show', befriend.els.viewSpinner);
+        } else {
+            removeClassEl('show', befriend.els.viewSpinner);
+        }
     },
     isViewShown: function (view_name) {
         let view_el = document.querySelector(`.view-${view_name}`);

@@ -3,21 +3,22 @@ befriend.html = {
         befriend.els.app = document.getElementById('app');
         befriend.els.footer = document.querySelector('footer');
         befriend.els.views = document.getElementById('views');
+        befriend.els.me = document.getElementById('me');
+        befriend.els.viewSpinner = document.getElementById('view-spinner');
         befriend.els.activities = document.getElementById('activities');
-        befriend.els.activity_duration = document.getElementById('activity-duration');
-        befriend.els.activities_map = document.getElementById('activities-map');
-        befriend.els.activities_map_wrapper = document.getElementById('activities-map-wrapper');
-        befriend.els.change_location = document.getElementById('change-location');
-        befriend.els.change_location_btn = document.getElementById('change-location-btn');
-        befriend.els.num_persons = document.getElementById('num-persons');
+        befriend.els.activityDuration = document.getElementById('activity-duration');
+        befriend.els.activityMap = document.getElementById('activities-map');
+        befriend.els.activityMapWrapper = document.getElementById('activities-map-wrapper');
+        befriend.els.changeLocation = document.getElementById('change-location');
+        befriend.els.changeLocationBtn = document.getElementById('change-location-btn');
+        befriend.els.numPersons = document.getElementById('num-persons');
         befriend.els.places = document.getElementById('places');
         befriend.els.when = document.getElementById('when');
         befriend.els.who = document.getElementById('who');
-        befriend.els.place_search = document.getElementById('place-search');
-        befriend.els.create_activity = document.getElementById('create-activity');
-        befriend.els.create_activity_btn = document.getElementById('create-activity-btn');
-        befriend.els.travel_times = document.getElementById('travel-times');
-        befriend.els.me = document.getElementById('me');
+        befriend.els.placeSearch = document.getElementById('place-search');
+        befriend.els.createActivity = document.getElementById('create-activity');
+        befriend.els.createActivityBtn = document.getElementById('create-activity-btn');
+        befriend.els.travelTimes = document.getElementById('travel-times');
         befriend.els.meSectionOptions = document.getElementById('me-section-options');
         befriend.els.confirmMeAction = document.getElementById('confirm-me-action');
     },
@@ -27,6 +28,8 @@ befriend.html = {
             <div id="app">
                 <div class="app-wrapper">
                     <div id="views">
+                        <div id="view-spinner"></div>
+                        
                         <div id="home" class="view active view-home">
                             <div id="when" class="view-section">
                                 <div class="section-title">When</div>
@@ -795,7 +798,7 @@ befriend.html = {
 
         let place = befriend.places.selected.place;
 
-        let parent_el = befriend.els.create_activity.querySelector('.main');
+        let parent_el = befriend.els.createActivity.querySelector('.main');
         let activity_el = parent_el.querySelector('.activity');
         let place_el = parent_el.querySelector('.place').querySelector('.info');
         let when_el = parent_el.querySelector('.when');
@@ -903,8 +906,8 @@ befriend.html = {
         return html;
     },
     setDurations: function () {
-        let level_1_el = befriend.els.activity_duration.querySelector('.level_1');
-        let level_2_el = befriend.els.activity_duration.querySelector('.level_2');
+        let level_1_el = befriend.els.activityDuration.querySelector('.level_1');
+        let level_2_el = befriend.els.activityDuration.querySelector('.level_2');
 
         //set level 1
         let level_1_html = '';

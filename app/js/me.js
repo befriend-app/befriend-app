@@ -282,7 +282,36 @@ befriend.me = {
         });
     },
     deleteSection: function (section_key) {
-        console.log(section_key);
+        return new Promise(async (resolve, reject) => {
+            try {
+                let r = await befriend.auth.delete(`/me/sections/${section_key}`);
+
+                befriend.me.toggleConfirm(false);
+
+                //copy data all->options
+                befriend.me.data.sections.options[section_key] = befriend.me.data.sections.all[section_key];
+
+                //delete from active
+                delete befriend.me.data.sections.active[section_key];
+
+                //remove el
+                let section_el = befriend.els.me.querySelector(`.sections .section[data-key="${section_key}"]`);
+
+                if(section_el) {
+                    section_el.parentNode.removeChild(section_el);
+                }
+
+                //reset options and event handlers
+                befriend.me.setOptions();
+
+                befriend.me.events.onSelectAvailableSection();
+
+                resolve();
+            } catch(e) {
+                console.error(e);
+                reject();
+            }
+        });
     },
     setActive: function () {
         if(befriend.me.data.sections.active) {
@@ -423,13 +452,14 @@ befriend.me = {
     events: {
         init: function () {
             return new Promise(async (resolve, reject) => {
-                befriend.me.events.onAddSection();
+                befriend.me.events.onAddSectionBtn();
+                befriend.me.events.onSelectAvailableSection();
                 befriend.me.events.confirmAction();
 
                 resolve();
             });
         },
-        onAddSection: function () {
+        onAddSectionBtn: function () {
             //open available sections
             let btn_el = befriend.els.me.querySelector('.add-section-btn');
 
@@ -443,7 +473,8 @@ befriend.me = {
                      befriend.me.toggleSectionOptions(true);
                  }
             });
-
+        },
+        onSelectAvailableSection: function () {
             //add selected available section
             let options = befriend.els.meSectionOptions.getElementsByClassName('option');
 
@@ -835,6 +866,7 @@ befriend.me = {
 
                 button.addEventListener('click', (e) => {
                     e.preventDefault();
+                    e.stopPropagation();
 
                     let action = button.getAttribute('data-action');
 

@@ -88,7 +88,7 @@ befriend.friends = {
                 });
 
                 //set position of number for range
-                let rangeSpan = befriend.els.num_persons.querySelector('.slider span');
+                let rangeSpan = befriend.els.numPersons.querySelector('.slider span');
 
                 //load prev setting
                 // let prevSetting = localStorage.getItem(settings_key);

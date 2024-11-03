@@ -141,14 +141,14 @@ befriend.location = {
             });
         },
         onChangeLocation: function () {
-            befriend.els.change_location_btn.addEventListener('click', function (e) {
+            befriend.els.changeLocationBtn.addEventListener('click', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
 
                 befriend.location.toggleChangeLocation(true);
             });
 
-            befriend.els.change_location
+            befriend.els.changeLocation
                 .querySelector('.back')
                 .addEventListener('click', function (e) {
                     e.preventDefault();
@@ -192,8 +192,8 @@ befriend.location = {
                 }
             }
 
-            let input_el = befriend.els.change_location.querySelector('.change-location-input');
-            let suggestions_el = befriend.els.change_location.querySelector('.suggestions');
+            let input_el = befriend.els.changeLocation.querySelector('.change-location-input');
+            let suggestions_el = befriend.els.changeLocation.querySelector('.suggestions');
 
             let debounceTimer = null;
 

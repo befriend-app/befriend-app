@@ -1,3 +1,32 @@
+#view-spinner {
+    position: absolute;
+    width: $view_spinner_dim;
+    height: $view_spinner_dim;
+    border: 5px solid $brand_color_a;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: none;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+
+    left: calc(50% - calc($view_spinner_dim / 2));
+    top: calc(50% - calc($view_spinner_dim / 2 + $places_header_h / 2));
+
+    &.show {
+        display: inline-block;
+    }
+
+    @keyframes rotation {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+}
+
+
 #views {
     //margin: 0 $app_margin_lr;
     //margin-top: $view_gap_tb;
