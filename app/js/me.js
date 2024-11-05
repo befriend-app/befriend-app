@@ -33,7 +33,9 @@ befriend.me = {
     getMe: function () {
         return new Promise(async (resolve, reject) => {
             try {
-                let r = await befriend.auth.get('/me');
+                let r = await befriend.auth.get('/me', {
+                    location: befriend.location.device
+                });
 
                 let data = r.data;
 
@@ -92,7 +94,8 @@ befriend.me = {
     saveSection: function (key) {
         return new Promise(async (resolve, reject) => {
             try {
-                 let r = await befriend.auth.post('/me/sections', {key});
+                 let location = befriend.location.device;
+                 let r = await befriend.auth.post('/me/sections', {key, location});
 
                  befriend.me.data.sections.active[key] = r.data;
             } catch(e) {
@@ -102,24 +105,22 @@ befriend.me = {
             resolve();
         });
     },
+    getSectionElByKey: function (key) {
+        let sections_el = befriend.els.me.querySelector('.about-me').querySelector('.sections');
+
+        return sections_el.querySelector(`.section[data-key="${key}"]`);
+    },
     addSection: async function (key, skip_save) {
         let option_data = befriend.me.data.sections.all[key];
         let sections_el = befriend.els.me.querySelector('.about-me').querySelector('.sections');
 
+        let section_el = befriend.me.getSectionElByKey(key);
+
+        let section_collapsed = '';
+        let section_height = '';
+
         if(option_data) {
-            let key_exists = false;
-            let all_sections = befriend.els.me.querySelector('.about-me').getElementsByClassName('section');
-
-            for(let i = 0; i < all_sections.length; i++) {
-                let section = all_sections[i];
-
-                if(section.getAttribute('data-key') === key) {
-                    key_exists = true;
-                    break;
-                }
-            }
-
-            if(!(key_exists)) {
+            if(!(section_el)) {
                 delete befriend.me.data.sections.options[key];
 
                 if(!(key in befriend.me.data.sections.active)) {
@@ -176,8 +177,6 @@ befriend.me = {
                 }
 
                 //initialize collapsed if saved
-                let section_collapsed = '';
-                let section_height = '';
 
                 if(befriend.me.data.sections.collapsed[key]) {
                     section_collapsed = 'collapsed';
@@ -214,6 +213,12 @@ befriend.me = {
                 befriend.me.events.autoComplete();
                 befriend.me.events.onActionSelect();
                 befriend.me.events.onUpdateSectionHeight();
+
+                section_el = befriend.me.getSectionElByKey(key);
+
+                if(!section_collapsed) {
+                    befriend.me.updateSectionHeight(section_el, false, true, true);
+                }
             }
         }
     },
@@ -257,24 +262,17 @@ befriend.me = {
                 console.error(e);
             }
 
-            let section_els = befriend.els.me.querySelector('.sections').getElementsByClassName('section');
+            let section_el = befriend.me.getSectionElByKey(section_key);
 
-            for(let i = 0; i < section_els.length; i++) {
-                let el = section_els[i];
+            if(section_el) {
+                removeClassEl('no-items', section_el.querySelector('.items'));
 
-                if(el.getAttribute('data-key') === section_key) {
-                    //remove no-items
-                    removeClassEl('no-items', el.querySelector('.items'));
+                //automatically switch to first category
 
-                    //automatically switch to first category
+                let category_btn_first = el.querySelector('.category-btn');
 
-                    let category_btn_first = el.querySelector('.category-btn');
-
-                    if(category_btn_first) {
-                        fireClick(category_btn_first);
-                    }
-
-                    break;
+                if(category_btn_first) {
+                    fireClick(category_btn_first);
                 }
             }
 
@@ -316,7 +314,7 @@ befriend.me = {
                 delete befriend.me.data.sections.active[section_key];
 
                 //remove el
-                let section_el = befriend.els.me.querySelector(`.sections .section[data-key="${section_key}"]`);
+                let section_el = befriend.me.getSectionElByKey(section_key);
 
                 if(section_el) {
                     section_el.parentNode.removeChild(section_el);
@@ -400,7 +398,9 @@ befriend.me = {
         });
     },
     setAutoComplete: function (section_key, items) {
-        let search_container_el = befriend.els.me.querySelector(`.sections .section[data-key="${section_key}"] .search-container`);
+        let section_el = befriend.me.getSectionElByKey(section_key);
+
+        let search_container_el = section_el.querySelector('.search-container');
 
         if(search_container_el) {
             let list = search_container_el.querySelector('.autocomplete-list');

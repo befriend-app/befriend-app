@@ -162,16 +162,24 @@ window['befriend'] = {
         },
     },
     auth: {
-        get: function (route) {
+        get: function (route, data) {
             return new Promise(async (resolve, reject) => {
                 let loginObj = {
                     person_token: befriend.user.person.token,
                     login_token: befriend.user.login.token,
                 };
 
+                let requestData = {};
+
+                if (data && typeof data === 'object') {
+                    requestData = { ...loginObj, ...data };
+                } else {
+                    requestData = { ...loginObj };
+                }
+
                 try {
                     let r = await axios.get(joinPaths(api_domain, route), {
-                        params: loginObj
+                        params: requestData
                     });
 
                     resolve(r);
