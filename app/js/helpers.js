@@ -42,7 +42,7 @@ async function setElHeightDynamic(el, ret_only) {
 
     test_el.parentNode.removeChild(test_el);
 
-    if(ret_only) {
+    if (ret_only) {
         return height;
     }
 

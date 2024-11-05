@@ -1,57 +1,57 @@
 {
-  "name": "app.befriend",
-  "displayName": "Befriend",
-  "version": "1.0.0",
-  "description": "App for in-person friends",
-  "main": "index.js",
-  "contributors": [
-    {
-      "name": "Eugene Gekhter",
-      "email": "eugene@befriend.app"
-    },
-    {
-      "name": "Logan Phillips",
-      "email": "logan@befriend.app"
-    }
-  ],
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "format": "npx prettier . --write",
-    "lint": "npx eslint ."
-  },
-  "keywords": [
-    "ecosystem:cordova"
-  ],
-  "author": "Befriend",
-  "license": "Apache-2.0",
-  "dependencies": {
-    "axios": "^1.7.7",
-    "cordova-android": "^12.0.1",
-    "dotenv": "^16.4.5",
-    "express": "^4.20.0",
-    "plist": "^3.0.5",
-    "xcode": "^3.0.1"
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.12.0",
-    "befriend-cordova-plugins": "file:os",
-    "chokidar": "^3.6.0",
-    "cordova-ios": "^7.1.1",
-    "csso": "^5.0.5",
-    "eslint": "^9.12.0",
-    "globals": "^15.10.0",
-    "gm": "^1.25.0",
-    "sass": "^1.78.0",
-    "terser": "^5.32.0",
-    "yargs": "^17.7.2"
-  },
-  "cordova": {
-    "platforms": [
-      "android",
-      "ios"
+    "name": "app.befriend",
+    "displayName": "Befriend",
+    "version": "1.0.0",
+    "description": "App for in-person friends",
+    "main": "index.js",
+    "contributors": [
+        {
+            "name": "Eugene Gekhter",
+            "email": "eugene@befriend.app"
+        },
+        {
+            "name": "Logan Phillips",
+            "email": "logan@befriend.app"
+        }
     ],
-    "plugins": {
-      "befriend-cordova-plugins": {}
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "format": "npx prettier . --write",
+        "lint": "npx eslint ."
+    },
+    "keywords": [
+        "ecosystem:cordova"
+    ],
+    "author": "Befriend",
+    "license": "Apache-2.0",
+    "dependencies": {
+        "axios": "^1.7.7",
+        "cordova-android": "^12.0.1",
+        "dotenv": "^16.4.5",
+        "express": "^4.20.0",
+        "plist": "^3.0.5",
+        "xcode": "^3.0.1"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.12.0",
+        "befriend-cordova-plugins": "file:os",
+        "chokidar": "^3.6.0",
+        "cordova-ios": "^7.1.1",
+        "csso": "^5.0.5",
+        "eslint": "^9.12.0",
+        "globals": "^15.10.0",
+        "gm": "^1.25.0",
+        "sass": "^1.78.0",
+        "terser": "^5.32.0",
+        "yargs": "^17.7.2"
+    },
+    "cordova": {
+        "platforms": [
+            "android",
+            "ios"
+        ],
+        "plugins": {
+            "befriend-cordova-plugins": {}
+        }
     }
-  }
 }

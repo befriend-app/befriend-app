@@ -342,8 +342,8 @@ befriend.activities = {
                 console.error(e);
 
                 //use prev activities data if error loading
-                if(befriend.user.local.data && befriend.user.local.data.activities) {
-                    console.log("Using local activity types data");
+                if (befriend.user.local.data && befriend.user.local.data.activities) {
+                    console.log('Using local activity types data');
                     befriend.activities.types.data = befriend.user.local.data.activities.type;
                     return resolve();
                 }

@@ -4,7 +4,7 @@ befriend.user = {
         data: {},
     },
     device: {
-        token: null
+        token: null,
     },
     person: {
         token: null,
@@ -26,12 +26,12 @@ befriend.user = {
                 befriend.user.login.token = localData.login.token;
             }
 
-            if(localData.device && localData.device.token) {
+            if (localData.device && localData.device.token) {
                 befriend.user.device.token = localData.device.token;
             }
 
-            if(localData.me) {
-                if(localData.me.sections && localData.me.sections.collapsed) {
+            if (localData.me) {
+                if (localData.me.sections && localData.me.sections.collapsed) {
                     befriend.me.data.sections.collapsed = localData.me.sections.collapsed;
                 }
             }
@@ -70,7 +70,7 @@ befriend.user = {
     sameDeviceToken: function (token) {
         let data = befriend.user.getLocal();
 
-        if(!data.device || data.device.token !== token) {
+        if (!data.device || data.device.token !== token) {
             return false;
         }
 

@@ -1,28 +1,28 @@
 befriend.notifications = {
     device: {
-        token: null
+        token: null,
     },
     setDeviceToken: async function (token) {
         befriend.notifications.device.token = token;
 
         //save on server if new device token
-        if(!befriend.user.sameDeviceToken(token)) {
+        if (!befriend.user.sameDeviceToken(token)) {
             let platform = null;
 
-            if(is_ios) {
+            if (is_ios) {
                 platform = 'ios';
-            } else if(is_android) {
+            } else if (is_android) {
                 platform = 'android';
             }
 
             try {
-                 let r = await befriend.auth.post(`/devices`, {
-                     device_token: token,
-                     platform: platform
-                 });
+                let r = await befriend.auth.post(`/devices`, {
+                    device_token: token,
+                    platform: platform,
+                });
 
-                 befriend.user.setDeviceToken(token);
-            } catch(e) {
+                befriend.user.setDeviceToken(token);
+            } catch (e) {
                 console.error(e);
             }
         }
@@ -30,14 +30,17 @@ befriend.notifications = {
     init: function () {
         return new Promise(async (resolve, reject) => {
             try {
-                befriend.plugins.notifications.registerForPushNotifications(function (token) {
-                    befriend.notifications.setDeviceToken(token);
-                    resolve();
-                }, function (err) {
-                    console.error(err);
-                    reject(err);
-                });
-            } catch(e) {
+                befriend.plugins.notifications.registerForPushNotifications(
+                    function (token) {
+                        befriend.notifications.setDeviceToken(token);
+                        resolve();
+                    },
+                    function (err) {
+                        console.error(err);
+                        reject(err);
+                    },
+                );
+            } catch (e) {
                 console.error(e);
                 return reject();
             }
@@ -51,30 +54,29 @@ befriend.notifications = {
                 resolve();
             });
         },
-        onLaunched: function() {
+        onLaunched: function () {
             try {
-                befriend.plugins.notifications.onLaunchNotification(function(notification) {
+                befriend.plugins.notifications.onLaunchNotification(function (notification) {
                     if (notification) {
                         window.launched_from_notify = true;
                         console.log('App was launched from notification:', notification);
                     }
                 });
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
         },
-        onNotification: function() {
+        onNotification: function () {
             try {
-                befriend.plugins.notifications.onNotificationReceived(function(notification) {
+                befriend.plugins.notifications.onNotificationReceived(function (notification) {
                     console.log('Received notification:', notification);
 
                     if (document.visibilityState === 'visible') {
-
                     }
                 });
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
-        }
-    }
+        },
+    },
 };

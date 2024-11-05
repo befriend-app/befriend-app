@@ -92,7 +92,7 @@ body.loading {
 html.#{$class_places_shown},
 html.#{$class_change_location},
 html.#{$class_available_me_sections},
-html.#{$class_confirm_me_action}{
+html.#{$class_confirm_me_action} {
     #overlay {
         opacity: 0.18;
         visibility: visible;

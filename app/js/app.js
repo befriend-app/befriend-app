@@ -38,7 +38,7 @@ window['befriend'] = {
             dayjs.extend(dayjs_plugin_advancedFormat);
 
             //plugins
-            if(typeof BefriendPlugin !== 'undefined') {
+            if (typeof BefriendPlugin !== 'undefined') {
                 befriend.plugins = BefriendPlugin;
             }
 
@@ -73,7 +73,7 @@ window['befriend'] = {
             //notifications
             try {
                 await befriend.notifications.init();
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
 
@@ -100,7 +100,7 @@ window['befriend'] = {
 
             try {
                 await befriend.me.init();
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
 
@@ -179,7 +179,7 @@ window['befriend'] = {
 
                 try {
                     let r = await axios.get(joinPaths(api_domain, route), {
-                        params: requestData
+                        params: requestData,
                     });
 
                     resolve(r);
@@ -256,7 +256,7 @@ window['befriend'] = {
 
                 try {
                     let r = await axios.delete(joinPaths(api_domain, route), {
-                        data: requestData
+                        data: requestData,
                     });
 
                     resolve(r);
@@ -265,10 +265,10 @@ window['befriend'] = {
                     return reject(e);
                 }
             });
-        }
+        },
     },
     toggleSpinner: function (show) {
-        if(show) {
+        if (show) {
             addClassEl('show', befriend.els.viewSpinner);
         } else {
             removeClassEl('show', befriend.els.viewSpinner);

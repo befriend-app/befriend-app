@@ -19,7 +19,6 @@ befriend.events = {
                 await befriend.places.events.init();
 
                 await befriend.me.events.init();
-
             } catch (e) {
                 console.error(e);
             }
@@ -62,32 +61,38 @@ befriend.events = {
                 if (!e.target.closest('#place-search')) {
                     befriend.places.toggleAutoComplete(false);
                 }
-            } else if(befriend.isViewShown('me')) {
-                if(befriend.me.isConfirmActionShown()) {
+            } else if (befriend.isViewShown('me')) {
+                if (befriend.me.isConfirmActionShown()) {
                     return false;
                 }
 
-                if(befriend.me.isAutoCompleteShown()) {
+                if(befriend.me.isAutoCompleteSelectShown()) {
+                    if(!e.target.closest('.select-container')) {
+                        return befriend.me.toggleAutoCompleteSelect(null, false);
+                    }
+                }
+
+                if (befriend.me.isAutoCompleteShown()) {
                     if (!e.target.closest('.search-container')) {
                         return befriend.me.toggleAutoComplete(null, false);
                     }
                 }
 
-                if(befriend.me.isSectionOptionsShown()) {
-                    if(!e.target.closest('#me-section-options')) {
+                if (befriend.me.isSectionOptionsShown()) {
+                    if (!e.target.closest('#me-section-options')) {
                         befriend.me.toggleSectionOptions(false);
                     }
                 }
 
                 let open_secondary_el = befriend.els.me.querySelector('.secondary.open');
 
-                if(open_secondary_el && !e.target.closest('.secondary')) {
+                if (open_secondary_el && !e.target.closest('.secondary')) {
                     befriend.me.transitionSecondary(open_secondary_el, false);
                 }
 
                 let menu_shown_el = befriend.els.me.querySelector('.section.show-menu');
 
-                if(menu_shown_el && !e.target.closest('.menu')) {
+                if (menu_shown_el && !e.target.closest('.menu')) {
                     befriend.me.toggleSectionActions(menu_shown_el, false);
                 }
             }
@@ -95,23 +100,23 @@ befriend.events = {
     },
     footerNavigation: function () {
         let nameClassMap = {
-            'home': 'view-home',
-            'friends': 'view-friends',
-            'filters': 'view-filters',
-            'me' : 'view-me'
+            home: 'view-home',
+            friends: 'view-friends',
+            filters: 'view-filters',
+            me: 'view-me',
         };
 
         let nav_items = befriend.els.footer.getElementsByClassName('nav-item');
         let views = befriend.els.views.getElementsByClassName('view');
 
-        for(let i = 0; i < nav_items.length; i++) {
+        for (let i = 0; i < nav_items.length; i++) {
             let nav_item = nav_items[i];
 
             nav_item.addEventListener('click', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
 
-                if(elHasClass(this, 'active')) {
+                if (elHasClass(this, 'active')) {
                     return false;
                 }
 
@@ -134,12 +139,11 @@ befriend.events = {
                 befriend.me.toggleAutoComplete(null, false);
 
                 //view specific logic
-                if(nav_name === 'me') {
+                if (nav_name === 'me') {
                     befriend.me.updateCollapsed();
                 }
             });
         }
-
     },
     resizeHandler: function () {
         window.addEventListener('resize', function () {
@@ -148,18 +152,18 @@ befriend.events = {
     },
     onAppState: function () {
         function onPause() {
-            console.log("on pause");
+            console.log('on pause');
 
             befriend.is_paused = true;
         }
 
         function onResume() {
-            console.log("on resume");
+            console.log('on resume');
 
             befriend.is_paused = false;
         }
 
         document.addEventListener('pause', onPause, false);
         document.addEventListener('resume', onResume, false);
-    }
+    },
 };

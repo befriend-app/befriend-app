@@ -9,7 +9,7 @@ const Position = function (coords, timestamp) {
             coords.accuracy,
             coords.heading,
             coords.velocity,
-            coords.altitudeAccuracy
+            coords.altitudeAccuracy,
         );
     } else {
         this.coords = new Coordinates();

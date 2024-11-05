@@ -31,9 +31,7 @@ befriend.ws = {
                 return;
             }
 
-            console.log(
-                `Reconnect attempt: ${befriend.ws.connectionTry}`,
-            );
+            console.log(`Reconnect attempt: ${befriend.ws.connectionTry}`);
             befriend.ws.init();
         }, reconnectDelay);
     },
@@ -85,7 +83,7 @@ befriend.ws = {
                 const data = event.data;
                 if (data === '401' || Number.parseInt(data) === 401) {
                     console.log('Authentication failed (401)');
-                    befriend.ws.forceClose("Unauthenticated");
+                    befriend.ws.forceClose('Unauthenticated');
                     return;
                 }
 

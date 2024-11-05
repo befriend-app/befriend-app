@@ -44,13 +44,13 @@ const CONFIG = {
             push: {
                 entitlement: 'aps-environment',
                 development: 'development',
-                production: 'production'
+                production: 'production',
             },
             timeSensitive: {
                 entitlement: 'com.apple.developer.usernotifications.time-sensitive',
-                infoPlistKey: 'UNUserNotificationCenterSupportsTimeSensitiveNotifications'
-            }
-        }
+                infoPlistKey: 'UNUserNotificationCenterSupportsTimeSensitiveNotifications',
+            },
+        },
     },
     android: {
         dir: joinPaths(repoRoot(), 'platforms', 'android'),
@@ -147,29 +147,33 @@ async function updateIndexHtml(urls) {
 
 function addUpdatePlugins() {
     return new Promise(async (resolve, reject) => {
-        console.log("Plugins: add/update");
+        console.log('Plugins: add/update');
 
         let plugin_path = joinPaths(repoRoot(), 'os');
 
         try {
             let plugins_list = await execCmd(`cordova plugins ls`);
 
-            if(plugins_list && plugins_list.stdout && plugins_list.stdout.includes(CONFIG.plugin_name)) {
+            if (
+                plugins_list &&
+                plugins_list.stdout &&
+                plugins_list.stdout.includes(CONFIG.plugin_name)
+            ) {
                 //remove
                 try {
                     await execCmd(`cordova plugins rm ${CONFIG.plugin_name}`);
-                } catch(e) {
+                } catch (e) {
                     console.error(e);
                 }
             }
-        } catch(e) {
+        } catch (e) {
             console.error(e);
         }
 
         //add
         try {
             await execCmd(`cordova plugins add ${plugin_path}`);
-        } catch(e) {
+        } catch (e) {
             console.error(e);
         }
 
@@ -183,7 +187,9 @@ function getIOSNamePaths() {
     return new Promise(async (resolve, reject) => {
         try {
             // Find the .xcodeproj file
-            const projectName = (await listFilesDir(CONFIG.ios.dir)).find(name => name.endsWith('.xcodeproj'));
+            const projectName = (await listFilesDir(CONFIG.ios.dir)).find((name) =>
+                name.endsWith('.xcodeproj'),
+            );
 
             if (!projectName) {
                 console.error('Could not find Xcode project');
@@ -196,9 +202,9 @@ function getIOSNamePaths() {
 
             resolve({
                 appName,
-                pbxprojPath
+                pbxprojPath,
             });
-        } catch(e) {
+        } catch (e) {
             console.error(e);
             return reject();
         }
@@ -210,7 +216,7 @@ async function addIOSCapabilities() {
 
     return new Promise(async (resolve, reject) => {
         try {
-            const {appName, pbxprojPath} = await getIOSNamePaths();
+            const { appName, pbxprojPath } = await getIOSNamePaths();
 
             // Parse the .xcodeproj file
             const proj = xcode.project(pbxprojPath);
@@ -218,14 +224,16 @@ async function addIOSCapabilities() {
 
             // Get the native target
             const nativeTargets = proj.pbxNativeTargetSection();
-            const targetUUID = Object.keys(nativeTargets).find(key => !key.endsWith('_comment'));
+            const targetUUID = Object.keys(nativeTargets).find((key) => !key.endsWith('_comment'));
             if (!targetUUID) {
                 return reject('Could not find main target');
             }
 
             // Get the project
             const pbxProjectSection = proj.pbxProjectSection();
-            const projectUUID = Object.keys(pbxProjectSection).find(key => !key.endsWith('_comment'));
+            const projectUUID = Object.keys(pbxProjectSection).find(
+                (key) => !key.endsWith('_comment'),
+            );
             if (!projectUUID) {
                 return reject('Could not find project');
             }
@@ -246,18 +254,18 @@ async function addIOSCapabilities() {
 
             // Add Push Notifications capability
             project.attributes.TargetAttributes[targetUUID].SystemCapabilities['com.apple.Push'] = {
-                enabled: 1
+                enabled: 1,
             };
 
             // Add entitlements file to build settings
             const configurations = proj.pbxXCBuildConfigurationSection();
             const buildConfigs = Object.keys(configurations)
-                .filter(key => !key.endsWith('_comment'))
-                .map(key => configurations[key])
-                .filter(config => config.buildSettings);
+                .filter((key) => !key.endsWith('_comment'))
+                .map((key) => configurations[key])
+                .filter((config) => config.buildSettings);
 
             const entitlementsPath = `${appName}/${appName}.entitlements`;
-            buildConfigs.forEach(config => {
+            buildConfigs.forEach((config) => {
                 config.buildSettings.CODE_SIGN_ENTITLEMENTS = entitlementsPath;
             });
 
@@ -265,7 +273,11 @@ async function addIOSCapabilities() {
             await writeFile(pbxprojPath, proj.writeSync());
 
             // Update/create entitlements file
-            const entitlementsFullPath = joinPaths(CONFIG.ios.dir, appName, `${appName}.entitlements`);
+            const entitlementsFullPath = joinPaths(
+                CONFIG.ios.dir,
+                appName,
+                `${appName}.entitlements`,
+            );
             let entitlements = {};
 
             if (await checkPathExists(entitlementsFullPath)) {
@@ -326,25 +338,21 @@ async function addIOSCapabilities() {
 function copyIOSAppDelegate() {
     return new Promise(async (resolve, reject) => {
         try {
-            let files = [
-                'AppDelegate.h',
-                'AppDelegate.m'
-            ];
+            let files = ['AppDelegate.h', 'AppDelegate.m'];
 
             let src_dir = joinPaths(repoRoot(), 'os/src/ios');
-            let output_dir = joinPaths(repoRoot(), 'platforms', 'ios', )
-            let {appName} = await getIOSNamePaths();
+            let output_dir = joinPaths(repoRoot(), 'platforms', 'ios');
+            let { appName } = await getIOSNamePaths();
 
-            for(let file of files) {
-
+            for (let file of files) {
                 let input = joinPaths(src_dir, file);
-                let output = joinPaths(output_dir, appName,file);
+                let output = joinPaths(output_dir, appName, file);
 
                 await copyFile(input, output);
             }
 
             resolve();
-        } catch(e) {
+        } catch (e) {
             console.error(e);
             return reject();
         }

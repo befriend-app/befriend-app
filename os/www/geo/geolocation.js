@@ -7,15 +7,19 @@ const Position = require('./Position');
 const timers = {}; // list of timers in use
 
 // Returns default params, overrides if provided with values
-function parseParameters (options) {
+function parseParameters(options) {
     const opt = {
         maximumAge: 0,
         enableHighAccuracy: false,
-        timeout: Infinity
+        timeout: Infinity,
     };
 
     if (options) {
-        if (options.maximumAge !== undefined && !isNaN(options.maximumAge) && options.maximumAge > 0) {
+        if (
+            options.maximumAge !== undefined &&
+            !isNaN(options.maximumAge) &&
+            options.maximumAge > 0
+        ) {
             opt.maximumAge = options.maximumAge;
         }
         if (options.enableHighAccuracy !== undefined) {
@@ -34,13 +38,13 @@ function parseParameters (options) {
 }
 
 // Returns a timeout failure, closed over a specified timeout value and error callback.
-function createTimeout (errorCallback, timeout) {
+function createTimeout(errorCallback, timeout) {
     let t = setTimeout(function () {
         clearTimeout(t);
         t = null;
         errorCallback({
             code: PositionError.TIMEOUT,
-            message: 'Position retrieval timed out.'
+            message: 'Position retrieval timed out.',
         });
     }, timeout);
     return t;
@@ -71,9 +75,9 @@ const geolocation = {
                     accuracy: p.accuracy,
                     heading: p.heading,
                     velocity: p.velocity,
-                    altitudeAccuracy: p.altitudeAccuracy
+                    altitudeAccuracy: p.altitudeAccuracy,
                 },
-                p.timestamp
+                p.timestamp,
             );
             geolocation.lastPosition = pos;
             successCallback(pos);
@@ -100,7 +104,7 @@ const geolocation = {
             fail({
                 code: PositionError.TIMEOUT,
                 message:
-                    "timeout value in PositionOptions set to 0 and no cached Position object available, or cached Position object's age exceeds provided PositionOptions' maximumAge parameter."
+                    "timeout value in PositionOptions set to 0 and no cached Position object available, or cached Position object's age exceeds provided PositionOptions' maximumAge parameter.",
             });
             // Otherwise we have to call into native to retrieve a position.
         } else {
@@ -115,7 +119,10 @@ const geolocation = {
                 // always truthy before we call into native
                 timeoutTimer.timer = true;
             }
-            exec(win, fail, 'Location', 'getLocation', [options.enableHighAccuracy, options.maximumAge]);
+            exec(win, fail, 'Location', 'getLocation', [
+                options.enableHighAccuracy,
+                options.maximumAge,
+            ]);
         }
         return timeoutTimer;
     },
@@ -149,9 +156,9 @@ const geolocation = {
                     accuracy: p.accuracy,
                     heading: p.heading,
                     velocity: p.velocity,
-                    altitudeAccuracy: p.altitudeAccuracy
+                    altitudeAccuracy: p.altitudeAccuracy,
                 },
-                p.timestamp
+                p.timestamp,
             );
             geolocation.lastPosition = pos;
             successCallback(pos);
@@ -167,7 +174,7 @@ const geolocation = {
             timers[id].timer = false;
             exec(null, null, 'Location', 'clearWatch', [id]);
         }
-    }
+    },
 };
 
 module.exports = geolocation;

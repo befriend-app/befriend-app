@@ -1,22 +1,21 @@
 {
-  "name": "befriend-cordova-plugins",
-  "version": "1.0.0",
-  "description": "Befriend Cordova Plugins",
-  "cordova": {
-    "id": "befriend-cordova-plugins",
-    "platforms": [
-      "android",
-      "ios"
-    ]
-  },
-  "scripts": {
-  },
-  "engines": [
-    {
-      "name": "cordova",
-      "version": ">=12.0.0"
-    }
-  ],
-  "author": "Eugene Gekhter",
-  "license": "Apache 2.0"
+    "name": "befriend-cordova-plugins",
+    "version": "1.0.0",
+    "description": "Befriend Cordova Plugins",
+    "cordova": {
+        "id": "befriend-cordova-plugins",
+        "platforms": [
+            "android",
+            "ios"
+        ]
+    },
+    "scripts": {},
+    "engines": [
+        {
+            "name": "cordova",
+            "version": ">=12.0.0"
+        }
+    ],
+    "author": "Eugene Gekhter",
+    "license": "Apache 2.0"
 }

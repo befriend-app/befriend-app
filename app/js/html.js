@@ -981,5 +981,4 @@ befriend.html = {
 
         level_2_el.innerHTML = level_2_html;
     },
-
 };

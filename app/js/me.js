@@ -1,8 +1,8 @@
 befriend.me = {
     actions: {
         delete: {
-            section: null
-        }
+            section: null,
+        },
     },
     data: {
         me: null,
@@ -10,8 +10,8 @@ befriend.me = {
             all: null,
             options: null,
             active: null,
-            collapsed: {}
-        }
+            collapsed: {},
+        },
     },
     autoComplete: {
         minChars: 2,
@@ -23,7 +23,7 @@ befriend.me = {
                 befriend.me.setMe();
                 befriend.me.setActive();
                 befriend.me.setOptions();
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
 
@@ -34,7 +34,7 @@ befriend.me = {
         return new Promise(async (resolve, reject) => {
             try {
                 let r = await befriend.auth.get('/me', {
-                    location: befriend.location.device
+                    location: befriend.location.device,
                 });
 
                 let data = r.data;
@@ -46,12 +46,15 @@ befriend.me = {
 
                 //local data
                 befriend.user.setLocal('me.me', data.me);
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
 
-                if(befriend.user.local.data && befriend.user.local.data.me
-                    && befriend.user.local.data.me.me) {
-                    console.log("Using local me data");
+                if (
+                    befriend.user.local.data &&
+                    befriend.user.local.data.me &&
+                    befriend.user.local.data.me.me
+                ) {
+                    console.log('Using local me data');
                     befriend.me.data.me = befriend.user.local.data.me.me;
                 }
             }
@@ -60,7 +63,7 @@ befriend.me = {
         });
     },
     setMe: function () {
-        if(!befriend.me.data.me) {
+        if (!befriend.me.data.me) {
             return;
         }
 
@@ -73,18 +76,18 @@ befriend.me = {
         let birthday_el = befriend.els.me.querySelector('.birthday');
 
         //set
-        if(me_obj.first_name) {
+        if (me_obj.first_name) {
             first_name_el.innerHTML = me_obj.first_name;
         }
 
-        if(me_obj.birth_date) {
+        if (me_obj.birth_date) {
             let years = dayjs().diff(dayjs(me_obj.birth_date), 'years');
 
             let date = dayjs(me_obj.birth_date).format('MMM. Do, YYYY');
 
             birthday_el.querySelector('.age').innerHTML = years;
 
-            if(years >= 100) {
+            if (years >= 100) {
                 addClassEl('one-hundred', birthday_el.querySelector('.age'));
             }
 
@@ -94,11 +97,11 @@ befriend.me = {
     saveSection: function (key) {
         return new Promise(async (resolve, reject) => {
             try {
-                 let location = befriend.location.device;
-                 let r = await befriend.auth.post('/me/sections', {key, location});
+                let location = befriend.location.device;
+                let r = await befriend.auth.post('/me/sections', { key, location });
 
-                 befriend.me.data.sections.active[key] = r.data;
-            } catch(e) {
+                befriend.me.data.sections.active[key] = r.data;
+            } catch (e) {
                 console.error(e);
             }
 
@@ -110,6 +113,44 @@ befriend.me = {
 
         return sections_el.querySelector(`.section[data-key="${key}"]`);
     },
+    buildSelectFilterList: function (key, data) {
+        if (!data.filterList || data.filterList.length === 0) {
+            return '';
+        }
+
+        let list_html = ``;
+
+        for(let item of data.filterList) {
+            let emoji = '';
+
+            if(item.emoji) {
+                emoji = `<div class="emoji">${item.emoji}</div>`;
+            }
+
+            list_html += `<div class="item">
+                            ${emoji}
+                            <div class="name">${item.name}</div>
+                        </div>`;
+        }
+
+        let html = `<div class="select-container">
+                        <div class="selected-container">
+                          <span class="selected-name">Select a country</span>
+                          <div class="select-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448.569 256.5604"><g id="Layer_1-2"><path d="M441.9533,40.728l-193.176,205.2496c-13.28,14.1104-35.704,14.1104-48.984,0L6.6157,40.728C-7.8979,25.3056,3.0349,0,24.2125,0h400.1424c21.1792,0,32.112,25.3056,17.5984,40.728h0Z"/></g></svg></div>
+                        </div>
+                        
+                        <div class="select-dropdown">
+                          <div class="select-search-container">
+                            <input class="select-input" type="text" placeholder="${data.placeholders.list}">
+                            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 611.9975 612.0095"><g id="_x34_"><path d="M606.203,578.714l-158.011-155.486c41.378-44.956,66.802-104.411,66.802-169.835-.02-139.954-115.296-253.393-257.507-253.393S0,113.439,0,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0,7.747-7.613,7.747-19.971.018-27.585ZM257.487,467.8c-120.326,0-217.869-95.993-217.869-214.407S137.161,38.986,257.487,38.986s217.869,95.993,217.869,214.407-97.542,214.407-217.869,214.407Z"/></g></svg>
+                          </div>
+                          <div class="list">${list_html}</div>
+                          <div class="no-results">${data.filterNoResults}</div>
+                        </div>
+                      </div>`;
+
+        return html;
+    },
     addSection: async function (key, skip_save) {
         let option_data = befriend.me.data.sections.all[key];
         let sections_el = befriend.els.me.querySelector('.about-me').querySelector('.sections');
@@ -119,16 +160,16 @@ befriend.me = {
         let section_collapsed = '';
         let section_height = '';
 
-        if(option_data) {
-            if(!(section_el)) {
+        if (option_data) {
+            if (!section_el) {
                 delete befriend.me.data.sections.options[key];
 
-                if(!(key in befriend.me.data.sections.active)) {
-                    if(!skip_save) {
+                if (!(key in befriend.me.data.sections.active)) {
+                    if (!skip_save) {
                         //save to server
                         try {
                             await befriend.me.saveSection(key);
-                        } catch(e) {
+                        } catch (e) {
                             console.error(e);
                         }
                     }
@@ -141,32 +182,43 @@ befriend.me = {
                 let secondary = '';
                 let items = '';
 
-                if(section_data.data) {
-                    if(section_data.data.categories) {
+                if (section_data.data) {
+                    if (section_data.data.categories) {
                         categories = `<div class="category-btn active" data-category="mine">
                                                 My ${option_data.section_name}
                                         </div>`;
 
-                        for(let category of section_data.data.categories) {
+                        for (let category of section_data.data.categories) {
                             categories += `<div class="category-btn" data-category="${category}">
                                                 ${category}
                                         </div>`;
                         }
 
-                        categories = `<div class="category-filters">${categories}</div>`
+                        categories = `<div class="category-filters">${categories}</div>`;
                     }
 
-                    if(section_data.data.autoComplete) {
+                    if (section_data.data.autoComplete) {
+                        let select_list = befriend.me.buildSelectFilterList(
+                            key,
+                            section_data.data.autoComplete,
+                        );
+
                         autocomplete = `
-                            <div class="search-container">
-                                <input type="text" class="search-input" placeholder="${section_data.data.autoComplete.string}">
-                                <div class="autocomplete-list"></div>
+                            <div class="search-container ${select_list ? 'has-select' : ''}">
+                                <div class="autocomplete-container">
+                                    <input type="text" class="search-input" placeholder="${section_data.data.autoComplete.placeholders.main}">
+                                    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 611.9975 612.0095"><g id="_x34_"><path d="M606.203,578.714l-158.011-155.486c41.378-44.956,66.802-104.411,66.802-169.835-.02-139.954-115.296-253.393-257.507-253.393S0,113.439,0,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0,7.747-7.613,7.747-19.971.018-27.585ZM257.487,467.8c-120.326,0-217.869-95.993-217.869-214.407S137.161,38.986,257.487,38.986s217.869,95.993,217.869,214.407-97.542,214.407-217.869,214.407Z"/></g></svg>
+
+                                    <div class="autocomplete-list"></div>
+                                </div>
+                                
+                                ${select_list}
                             </div>
                         `;
                     }
 
-                    if(section_data.items) {
-                        for(let token in section_data.items) {
+                    if (section_data.items) {
+                        for (let token in section_data.items) {
                             let item = section_data.items[token];
 
                             items += `<div class="item" data-token="${token}">
@@ -178,7 +230,7 @@ befriend.me = {
 
                 //initialize collapsed if saved
 
-                if(befriend.me.data.sections.collapsed[key]) {
+                if (befriend.me.data.sections.collapsed[key]) {
                     section_collapsed = 'collapsed';
                     section_height = '0';
                 }
@@ -202,7 +254,7 @@ befriend.me = {
                                     ${categories}
                                     ${autocomplete}
                                     ${secondary}
-                                    <div class="items ${!items ? 'no-items': ''}">${items}</div>
+                                    <div class="items ${!items ? 'no-items' : ''}">${items}</div>
                                 </div>
                             </div>`;
 
@@ -216,7 +268,7 @@ befriend.me = {
 
                 section_el = befriend.me.getSectionElByKey(key);
 
-                if(!section_collapsed) {
+                if (!section_collapsed) {
                     befriend.me.updateSectionHeight(section_el, false, true, true);
                 }
             }
@@ -227,51 +279,56 @@ befriend.me = {
             try {
                 let section_data = befriend.me.data.sections.active[section_key];
 
-                if(!('items' in section_data)) {
+                if (!('items' in section_data)) {
                     section_data.items = {};
                 }
 
                 let r = await befriend.auth.post(`/me/sections/item`, {
                     section_key: section_key,
-                    item_token: item_token
+                    item_token: item_token,
                 });
 
                 section_data.items[item_token] = r.data;
 
                 //add unique selection to options if not exists
-                let option = section_data.data.options.find(item =>item.token === item_token);
+                let option = section_data.data.options.find((item) => item.token === item_token);
 
-                if(!option) {
+                if (!option) {
                     section_data.data.options.push(r.data);
                 }
 
-                if(r.data.secondary) {
-                    let secondary_el = befriend.els.me.querySelector(`.item[data-token="${item_token}"] .secondary`);
+                if (r.data.secondary) {
+                    let secondary_el = befriend.els.me.querySelector(
+                        `.item[data-token="${item_token}"] .secondary`,
+                    );
 
-                    if(secondary_el) {
-                        secondary_el.querySelector('.current-selected').innerHTML = r.data.secondary;
+                    if (secondary_el) {
+                        secondary_el.querySelector('.current-selected').innerHTML =
+                            r.data.secondary;
 
-                        let selected_el = secondary_el.querySelector(`.option[data-option="${r.data.secondary}"]`);
+                        let selected_el = secondary_el.querySelector(
+                            `.option[data-option="${r.data.secondary}"]`,
+                        );
 
-                        if(selected_el) {
+                        if (selected_el) {
                             addClassEl('selected', selected_el);
                         }
                     }
                 }
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
 
             let section_el = befriend.me.getSectionElByKey(section_key);
 
-            if(section_el) {
+            if (section_el) {
                 removeClassEl('no-items', section_el.querySelector('.items'));
 
                 //automatically switch to first category
 
                 let category_btn_first = section_el.querySelector('.category-btn');
 
-                if(category_btn_first) {
+                if (category_btn_first) {
                     fireClick(category_btn_first);
                 }
             }
@@ -291,9 +348,9 @@ befriend.me = {
                 await befriend.auth.put(`/me/sections/item`, {
                     section_key: section_key,
                     section_item_id: item.id,
-                    is_delete: true
+                    is_delete: true,
                 });
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
 
@@ -308,15 +365,21 @@ befriend.me = {
                 befriend.me.toggleConfirm(false);
 
                 //copy data all->options
-                befriend.me.data.sections.options[section_key] = befriend.me.data.sections.all[section_key];
+                befriend.me.data.sections.options[section_key] =
+                    befriend.me.data.sections.all[section_key];
 
                 //delete from active
                 delete befriend.me.data.sections.active[section_key];
 
+                //delete in collapsed
+                delete befriend.me.data.sections.collapsed[section_key];
+
+                befriend.user.setLocal('me.sections.collapsed', befriend.me.data.sections.collapsed);
+
                 //remove el
                 let section_el = befriend.me.getSectionElByKey(section_key);
 
-                if(section_el) {
+                if (section_el) {
                     section_el.parentNode.removeChild(section_el);
                 }
 
@@ -326,29 +389,30 @@ befriend.me = {
                 befriend.me.events.onSelectAvailableSection();
 
                 resolve();
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
                 reject();
             }
         });
     },
     setActive: function () {
-        if(befriend.me.data.sections.active) {
-            for(let key in befriend.me.data.sections.active) {
+        if (befriend.me.data.sections.active) {
+            for (let key in befriend.me.data.sections.active) {
                 befriend.me.addSection(key, true);
             }
 
             //enable first category for each section
-            let sections = befriend.els.me.querySelector('.sections').getElementsByClassName('section');
+            let sections = befriend.els.me
+                .querySelector('.sections')
+                .getElementsByClassName('section');
 
-            for(let i = 0; i < sections.length; i++) {
+            for (let i = 0; i < sections.length; i++) {
                 let category_btns = sections[i].getElementsByClassName('category-btn');
 
-                if(category_btns && category_btns.length) {
+                if (category_btns && category_btns.length) {
                     fireClick(category_btns[0]);
                 }
             }
-
         }
     },
     setOptions: function () {
@@ -356,8 +420,8 @@ befriend.me = {
 
         let sections = befriend.me.data.sections.options;
 
-        if(sections) {
-            for(let key in sections) {
+        if (sections) {
+            for (let key in sections) {
                 let section = sections[key];
 
                 html += `<div class="option" data-key="${section.section_key}">
@@ -387,7 +451,8 @@ befriend.me = {
             }
 
             try {
-                let endpoint = befriend.me.data.sections.active[section_key].data.autoComplete.endpoint;
+                let endpoint =
+                    befriend.me.data.sections.active[section_key].data.autoComplete.endpoint;
 
                 const r = await befriend.auth.get(`${endpoint}?search=${search_value}`);
 
@@ -402,15 +467,15 @@ befriend.me = {
 
         let search_container_el = section_el.querySelector('.search-container');
 
-        if(search_container_el) {
+        if (search_container_el) {
             let list = search_container_el.querySelector('.autocomplete-list');
 
-            if(list) {
+            if (list) {
                 let section_data = befriend.me.data.sections.active[section_key];
                 let items_html = '';
 
-                for(let item of items) {
-                    if(item.token in section_data.items) {
+                for (let item of items) {
+                    if (item.token in section_data.items) {
                         continue;
                     }
 
@@ -426,7 +491,16 @@ befriend.me = {
         }
     },
     isAutoCompleteShown: function () {
-        let el = befriend.els.me.querySelector(`.search-container.${befriend.classes.autoCompleteMe}`);
+        let el = befriend.els.me.querySelector(
+            `.search-container.${befriend.classes.autoCompleteMe}`,
+        );
+
+        return !!el;
+    },
+    isAutoCompleteSelectShown: function () {
+        let el = befriend.els.me.querySelector(
+            `.search-container .select-container.open`,
+        );
 
         return !!el;
     },
@@ -434,16 +508,18 @@ befriend.me = {
         await rafAwait();
 
         //initialize height for transition
-        let section_els = befriend.els.me.querySelector('.sections').getElementsByClassName('section');
+        let section_els = befriend.els.me
+            .querySelector('.sections')
+            .getElementsByClassName('section');
 
-        for(let i = 0; i < section_els.length; i++) {
+        for (let i = 0; i < section_els.length; i++) {
             let el = section_els[i];
 
             let key = el.getAttribute('data-key');
 
             let collapse = false;
 
-            if(key in befriend.me.data.sections.collapsed) {
+            if (key in befriend.me.data.sections.collapsed) {
                 collapse = befriend.me.data.sections.collapsed[key];
             }
 
@@ -454,14 +530,14 @@ befriend.me = {
         return elHasClass(document.documentElement, befriend.classes.availableMeSections);
     },
     toggleSectionOptions: function (show) {
-        if(show) {
+        if (show) {
             addClassEl(befriend.classes.availableMeSections, document.documentElement);
         } else {
             removeClassEl(befriend.classes.availableMeSections, document.documentElement);
         }
     },
     toggleSectionActions: function (el, show) {
-        if(show) {
+        if (show) {
             addClassEl('show-menu', el);
         } else {
             removeClassEl('show-menu', el);
@@ -470,7 +546,7 @@ befriend.me = {
     transitionSecondary: function (secondary_el, show) {
         let options_el = secondary_el.querySelector('.options');
 
-        if(show) {
+        if (show) {
             addClassEl('open', secondary_el);
 
             setElHeightDynamic(options_el);
@@ -480,32 +556,33 @@ befriend.me = {
             options_el.style.removeProperty('height');
         }
     },
-    updateSectionHeightT: null,
+    updateSectionHeightT: {},
     updateSectionHeight: async function (el, collapse, no_transition, skip_save) {
         let section_container = el.querySelector('.section-container');
+        let section_key = el.getAttribute('data-key');
 
-        if(no_transition) {
+        if (no_transition) {
             section_container.style.transition = 'none';
             await rafAwait();
         }
 
-        clearTimeout(befriend.me.updateSectionHeightT);
+        clearTimeout(befriend.me.updateSectionHeightT[section_key]);
         section_container.style.removeProperty('overflow-y');
 
-        if(collapse) {
+        if (collapse) {
             addClassEl('collapsed', el);
             section_container.style.height = 0;
         } else {
             removeClassEl('collapsed', el);
             setElHeightDynamic(section_container);
 
-            befriend.me.updateSectionHeightT = setTimeout(function () {
+            befriend.me.updateSectionHeightT[section_key] = setTimeout(function () {
                 section_container.style.overflowY = 'initial';
+                console.log(section_container)
             }, 300);
         }
 
-        if(!skip_save) {
-            let section_key = el.getAttribute('data-key');
+        if (!skip_save) {
             befriend.me.data.sections.collapsed[section_key] = collapse;
 
             befriend.user.setLocal('me.sections.collapsed', befriend.me.data.sections.collapsed);
@@ -519,11 +596,13 @@ befriend.me = {
         return elHasClass(document.documentElement, befriend.classes.confirmMeAction);
     },
     toggleAutoComplete: function (el, show) {
-        if(!el) {
-            el = befriend.els.me.querySelector(`.search-container.${befriend.classes.autoCompleteMe}`);
+        if (!el) {
+            el = befriend.els.me.querySelector(
+                `.search-container.${befriend.classes.autoCompleteMe}`,
+            );
         }
 
-        if(!el) {
+        if (!el) {
             return;
         }
 
@@ -533,8 +612,28 @@ befriend.me = {
             removeClassEl(befriend.classes.autoCompleteMe, el);
         }
     },
+    toggleAutoCompleteSelect: function (el, show) {
+        if(!el) {
+            el = befriend.els.me.querySelector('.search-container .select-container.open');
+        }
+
+        let section_key = el.closest('.section').getAttribute('data-key');
+
+        if(elHasClass(el, 'open')) {
+            removeClassEl('open', el);
+        } else {
+            let input = el.querySelector('.select-input');
+            input.value = '';
+            input.focus();
+            befriend.me.updateAutoCompleteSelectList(section_key);
+            addClassEl('open', el);
+        }
+    },
+    updateAutoCompleteSelectList(section_key) {
+        console.log("update list")
+    },
     toggleConfirm: function (show) {
-        if(show) {
+        if (show) {
             addClassEl(befriend.classes.confirmMeAction, document.documentElement);
         } else {
             removeClassEl(befriend.classes.confirmMeAction, document.documentElement);
@@ -549,14 +648,14 @@ befriend.me = {
         let options = '';
 
         //current selected
-        if(section_data.data && section_data.data.secondary) {
+        if (section_data.data && section_data.data.secondary) {
             let unselected = '';
 
-            if(!item.secondary) {
+            if (!item.secondary) {
                 unselected = 'unselected';
             }
 
-            for(let option of section_data.data.secondary) {
+            for (let option of section_data.data.secondary) {
                 let selected = item.secondary === option ? 'selected' : '';
 
                 options += `<div class="option ${selected}" data-option="${option}">${option}</div>`;
@@ -592,24 +691,24 @@ befriend.me = {
             let btn_el = befriend.els.me.querySelector('.add-section-btn');
 
             btn_el.addEventListener('click', function (e) {
-                 e.preventDefault();
-                 e.stopPropagation();
+                e.preventDefault();
+                e.stopPropagation();
 
-                 if(befriend.me.isSectionOptionsShown()) {
-                     befriend.me.toggleSectionOptions(false);
-                 } else {
-                     befriend.me.toggleSectionOptions(true);
-                 }
+                if (befriend.me.isSectionOptionsShown()) {
+                    befriend.me.toggleSectionOptions(false);
+                } else {
+                    befriend.me.toggleSectionOptions(true);
+                }
             });
         },
         onSelectAvailableSection: function () {
             //add selected available section
             let options = befriend.els.meSectionOptions.getElementsByClassName('option');
 
-            for(let i = 0; i < options.length; i++) {
+            for (let i = 0; i < options.length; i++) {
                 let option = options[i];
 
-                if(option._listener) {
+                if (option._listener) {
                     continue;
                 }
 
@@ -630,10 +729,10 @@ befriend.me = {
         onSectionActions: function () {
             let actions_els = befriend.els.me.querySelectorAll('.section .actions');
 
-            for(let i = 0; i < actions_els.length; i++) {
+            for (let i = 0; i < actions_els.length; i++) {
                 let el = actions_els[i];
 
-                if(el._listener) {
+                if (el._listener) {
                     continue;
                 }
 
@@ -652,15 +751,14 @@ befriend.me = {
                     befriend.me.toggleAutoComplete(null, false);
                 });
             }
-
         },
         autoComplete: function () {
             let els = befriend.els.me.getElementsByClassName('search-input');
 
-            for(let i = 0; i < els.length; i++) {
+            for (let i = 0; i < els.length; i++) {
                 let el = els[i];
 
-                if(el._listener) {
+                if (el._listener) {
                     continue;
                 }
 
@@ -690,14 +788,58 @@ befriend.me = {
                     }
                 });
             }
+
+            befriend.me.events.autoCompleteFilterList();
+        },
+        autoCompleteFilterList: function () {
+            //open list
+            let selected_els = befriend.els.me.querySelectorAll('.search-container .selected-container');
+
+            for (let i = 0; i < selected_els.length; i++) {
+                let el = selected_els[i];
+
+                if(el._listener) {
+                    continue;
+                }
+
+                el._listener = true;
+
+                el.addEventListener('click', function (e) {
+                     let section_key = el.closest('.section').getAttribute('data-key');
+                     let parent_el = el.closest('.select-container');
+                     let input = parent_el.querySelector('input');
+
+                     befriend.me.toggleAutoCompleteSelect(parent_el, !elHasClass(parent_el, 'open'));
+                });
+            }
+
+            //search list
+            let input_els = befriend.els.me.querySelectorAll('.search-container .select-container input');
+
+            for (let i = 0; i < input_els.length; i++) {
+                let el = input_els[i];
+
+                if(el._listener) {
+                    continue;
+                }
+
+                el._listener = true;
+
+                el.addEventListener('input', function (e) {
+                    let section_key = el.closest('.section').getAttribute('data-key');
+
+                    befriend.me.updateAutoCompleteSelectList(section_key);
+                });
+            }
+
         },
         onActionSelect: function () {
             let actions_els = befriend.els.me.querySelectorAll('.menu .action');
 
-            for(let i = 0; i < actions_els.length; i++) {
+            for (let i = 0; i < actions_els.length; i++) {
                 let el = actions_els[i];
 
-                if(el._listener) {
+                if (el._listener) {
                     continue;
                 }
 
@@ -710,10 +852,12 @@ befriend.me = {
                     let section_key = section.getAttribute('data-key');
                     let section_data = befriend.me.data.sections.all[section_key];
 
-                    if(action === 'delete') {
+                    if (action === 'delete') {
                         befriend.me.actions.delete.section = section_key;
-                        befriend.els.confirmMeAction.querySelector('.main').innerHTML = 'Confirm Delete';
-                        befriend.els.confirmMeAction.querySelector('.details').innerHTML = section_data.section_name;
+                        befriend.els.confirmMeAction.querySelector('.main').innerHTML =
+                            'Confirm Delete';
+                        befriend.els.confirmMeAction.querySelector('.details').innerHTML =
+                            section_data.section_name;
 
                         befriend.me.toggleConfirm(true);
                     }
@@ -723,41 +867,44 @@ befriend.me = {
         onUpdateSectionHeight: function () {
             let top_els = befriend.els.me.getElementsByClassName('section-top');
 
-            for(let i = 0; i < top_els.length; i++) {
+            for (let i = 0; i < top_els.length; i++) {
                 let el = top_els[i];
 
-                if(el._listener) {
+                if (el._listener) {
                     continue;
                 }
 
                 el._listener = true;
 
                 el.addEventListener('click', (e) => {
-                     e.preventDefault();
-                     e.stopPropagation();
+                    // e.preventDefault();
+                    // e.stopPropagation();
 
-                     if(e.target.closest('.actions')) {
-                         return false;
-                     }
+                    if (e.target.closest('.actions')) {
+                        return false;
+                    }
 
-                     let section_el = el.closest('.section');
+                    let section_el = el.closest('.section');
 
-                     //hide actions if shown
-                    if(elHasClass(section_el, 'show-menu')) {
+                    //hide actions if shown
+                    if (elHasClass(section_el, 'show-menu')) {
                         return befriend.me.toggleSectionActions(section_el, false);
                     }
 
-                     befriend.me.updateSectionHeight(section_el, !elHasClass(section_el, 'collapsed'));
+                    befriend.me.updateSectionHeight(
+                        section_el,
+                        !elHasClass(section_el, 'collapsed'),
+                    );
                 });
             }
         },
         onSectionCategory: function () {
             let category_btns = befriend.els.me.getElementsByClassName('category-btn');
 
-            for(let i = 0; i < category_btns.length; i++) {
+            for (let i = 0; i < category_btns.length; i++) {
                 let btn = category_btns[i];
 
-                if(!btn._listener) {
+                if (!btn._listener) {
                     btn._listener = true;
 
                     btn.addEventListener('click', function (e) {
@@ -775,25 +922,24 @@ befriend.me = {
                         let section_data = befriend.me.data.sections.active[section_key];
                         let category_items_html = ``;
 
-                        if(category === 'mine') {
-                            if(!(Object.keys(section_data.items).length)) {
+                        if (category === 'mine') {
+                            if (!Object.keys(section_data.items).length) {
                                 //no-items
                                 addClassEl('no-items', section.querySelector('.items'));
                             } else {
-                                for(let token in section_data.items) {
+                                for (let token in section_data.items) {
                                     let item_html = befriend.me.sectionItemHtml(section_key, token);
 
                                     category_items_html += item_html;
                                 }
                             }
-
                         } else {
                             //remove no-items
                             removeClassEl('no-items', section.querySelector('.items'));
 
-                            for(let item of section_data.data.options) {
-                                if(item.category === category) {
-                                    if(!(item.token in section_data.items)) {
+                            for (let item of section_data.data.options) {
+                                if (item.category === category) {
+                                    if (!(item.token in section_data.items)) {
                                         category_items_html += `<div class="item" data-token="${item.token}">
                                                             ${item.name}
                                                         </div>`;
@@ -819,17 +965,18 @@ befriend.me = {
         onSelectItem: function () {
             let items = befriend.els.me.querySelector('.sections').getElementsByClassName('item');
 
-            for(let i = 0; i < items.length; i++) {
+            for (let i = 0; i < items.length; i++) {
                 let item = items[i];
 
-                if(!item._listener) {
+                if (!item._listener) {
                     item._listener = true;
 
                     item.addEventListener('click', function (e) {
-                        if(elHasClass(item, 'mine')) {
-                            let open_secondary_el = befriend.els.me.querySelector('.secondary.open');
+                        if (elHasClass(item, 'mine')) {
+                            let open_secondary_el =
+                                befriend.els.me.querySelector('.secondary.open');
 
-                            if(open_secondary_el && !e.target.closest('.secondary')) {
+                            if (open_secondary_el && !e.target.closest('.secondary')) {
                                 befriend.me.transitionSecondary(open_secondary_el, false);
                             }
 
@@ -842,13 +989,11 @@ befriend.me = {
 
                         try {
                             item.parentNode.removeChild(item);
-                        } catch(e) {
-
-                        }
+                        } catch (e) {}
 
                         try {
                             befriend.me.addSectionItem(section_key, token);
-                        } catch(e) {
+                        } catch (e) {
                             console.error(e);
                         }
                     });
@@ -858,12 +1003,12 @@ befriend.me = {
         onRemoveItem: function () {
             let items = befriend.els.me.querySelector('.sections').getElementsByClassName('item');
 
-            for(let i = 0; i < items.length; i++) {
+            for (let i = 0; i < items.length; i++) {
                 let item = items[i];
-                
+
                 let remove_el = item.querySelector('.remove');
-                
-                if(!remove_el || remove_el._listener) {
+
+                if (!remove_el || remove_el._listener) {
                     continue;
                 }
 
@@ -878,7 +1023,7 @@ befriend.me = {
                     //dom
                     try {
                         item.parentNode.removeChild(item);
-                    } catch(e) {
+                    } catch (e) {
                         console.error(e);
                     }
 
@@ -888,7 +1033,7 @@ befriend.me = {
                     //ui
                     let section_data = befriend.me.data.sections.active[section_key];
 
-                    if(!Object.keys(section_data.items).length) {
+                    if (!Object.keys(section_data.items).length) {
                         addClassEl('no-items', section.querySelector('.items'));
                     }
 
@@ -899,30 +1044,30 @@ befriend.me = {
         onOpenSecondary: function () {
             let secondaries = befriend.els.me.getElementsByClassName('secondary');
 
-            for(let i = 0; i < secondaries.length; i++) {
+            for (let i = 0; i < secondaries.length; i++) {
                 let el = secondaries[i];
 
-                if(!el._listener) {
+                if (!el._listener) {
                     el._listener = true;
 
                     el.addEventListener('click', function (e) {
                         e.preventDefault();
                         e.stopPropagation();
 
-                        if(e.target.closest('.options')) {
+                        if (e.target.closest('.options')) {
                             return false;
                         }
 
                         //hide all except current
-                        for(let i2 = 0; i2 < secondaries.length; i2++) {
+                        for (let i2 = 0; i2 < secondaries.length; i2++) {
                             let secondary_2 = secondaries[i2];
 
-                            if(el !== secondary_2) {
+                            if (el !== secondary_2) {
                                 befriend.me.transitionSecondary(secondary_2, false);
                             }
                         }
 
-                        if(elHasClass(el, 'open')) {
+                        if (elHasClass(el, 'open')) {
                             befriend.me.transitionSecondary(el, false);
                         } else {
                             befriend.me.transitionSecondary(el, true);
@@ -934,15 +1079,15 @@ befriend.me = {
         onSelectSecondary: function () {
             let secondaries = befriend.els.me.getElementsByClassName('secondary');
 
-            for(let i = 0; i < secondaries.length; i++) {
+            for (let i = 0; i < secondaries.length; i++) {
                 let secondary = secondaries[i];
 
                 let options = secondary.getElementsByClassName('option');
 
-                for(let i2 = 0; i2 < options.length; i2++) {
+                for (let i2 = 0; i2 < options.length; i2++) {
                     let option = options[i2];
 
-                    if(!option._listener) {
+                    if (!option._listener) {
                         option._listener = true;
 
                         option.addEventListener('click', async function (e) {
@@ -974,7 +1119,7 @@ befriend.me = {
 
                             let prev_option_value = item.secondary;
 
-                            if(prev_option_value !== option_value) {
+                            if (prev_option_value !== option_value) {
                                 item.secondary = option_value;
 
                                 //server
@@ -982,9 +1127,9 @@ befriend.me = {
                                     await befriend.auth.put(`/me/sections/item`, {
                                         section_key: section_key,
                                         section_item_id: item.id,
-                                        secondary: option_value
+                                        secondary: option_value,
                                     });
-                                } catch(e) {
+                                } catch (e) {
                                     console.error(e);
                                 }
                             }
@@ -996,7 +1141,7 @@ befriend.me = {
         confirmAction: function () {
             let buttons = befriend.els.confirmMeAction.getElementsByClassName('button');
 
-            for(let i = 0; i < buttons.length; i++) {
+            for (let i = 0; i < buttons.length; i++) {
                 let button = buttons[i];
 
                 button.addEventListener('click', (e) => {
@@ -1005,9 +1150,9 @@ befriend.me = {
 
                     let action = button.getAttribute('data-action');
 
-                    if(action === 'no') {
+                    if (action === 'no') {
                         befriend.me.toggleConfirm(false);
-                    } else if(action === 'yes') {
+                    } else if (action === 'yes') {
                         befriend.me.deleteSection(befriend.me.actions.delete.section);
                     }
                 });
@@ -1016,10 +1161,10 @@ befriend.me = {
         onSelectAutoCompleteItem: function () {
             let els = befriend.els.me.querySelectorAll(`.autocomplete-list .item`);
 
-            for(let i = 0; i < els.length; i++) {
+            for (let i = 0; i < els.length; i++) {
                 let el = els[i];
 
-                if(el._listener) {
+                if (el._listener) {
                     continue;
                 }
 
@@ -1040,6 +1185,6 @@ befriend.me = {
                     el.closest('.search-container').querySelector('.search-input').value = '';
                 });
             }
-        }
-    }
+        },
+    },
 };
