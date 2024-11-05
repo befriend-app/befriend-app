@@ -15,6 +15,11 @@ befriend.me = {
     },
     autoComplete: {
         minChars: 2,
+        selected: {
+            filterList: { //by section
+
+            }
+        }
     },
     init: function () {
         return new Promise(async (resolve, reject) => {
@@ -127,13 +132,13 @@ befriend.me = {
                 emoji = `<div class="emoji">${item.emoji}</div>`;
             }
 
-            list_html += `<div class="item">
+            list_html += `<div class="item" data-id="${item.id}">
                             ${emoji}
                             <div class="name">${item.name}</div>
                         </div>`;
         }
 
-        let html = `<div class="select-container">
+        return `<div class="select-container">
                         <div class="selected-container">
                           <span class="selected-name">Select a country</span>
                           <div class="select-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448.569 256.5604"><g id="Layer_1-2"><path d="M441.9533,40.728l-193.176,205.2496c-13.28,14.1104-35.704,14.1104-48.984,0L6.6157,40.728C-7.8979,25.3056,3.0349,0,24.2125,0h400.1424c21.1792,0,32.112,25.3056,17.5984,40.728h0Z"/></g></svg></div>
@@ -148,8 +153,35 @@ befriend.me = {
                           <div class="no-results">${data.filterNoResults}</div>
                         </div>
                       </div>`;
+    },
+    selectAutoCompleteFilterItem: function (section_key, item_id) {
+        let section_data = befriend.me.data.sections.active[section_key]?.data?.autoComplete;
 
-        return html;
+        if(!section_data) {
+            return;
+        }
+
+        item_id = parseInt(item_id);
+
+        let selected_item = section_data.filterList.find(item => item.id === item_id);
+
+        if(!selected_item) {
+            throw new Error("Select item not found");
+        }
+
+        //data
+        befriend.me.autoComplete.selected.filterList[section_key] = {
+            item: selected_item,
+            needsReset: true
+        };
+
+        //ui
+        let section_el = befriend.me.getSectionElByKey(section_key);
+        let select_container = section_el.querySelector('.select-container');
+        let selected_name_el = select_container.querySelector('.selected-name');
+        selected_name_el.innerHTML = selected_item.name;
+
+        removeClassEl('open', select_container);
     },
     addSection: async function (key, skip_save) {
         let option_data = befriend.me.data.sections.all[key];
@@ -620,20 +652,37 @@ befriend.me = {
 
         let section_key = el.closest('.section').getAttribute('data-key');
 
-        if (elHasClass(el, 'open')) {
-            removeClassEl('open', el);
-        } else {
+        if (show) {
             let input = el.querySelector('.select-input');
             input.value = '';
             input.focus();
             befriend.me.updateAutoCompleteSelectList(section_key);
+
+            //show el
             addClassEl('open', el);
+        } else {
+            removeClassEl('open', el);
         }
     },
     updateAutoCompleteSelectList(section_key) {
         function filterSort(items, search) {
             if (!search) {
-                return items;
+                //show selected country at top of list
+                let selectedItem = befriend.me.autoComplete.selected.filterList[section_key]?.item;
+
+                if(selectedItem) {
+                    let updated_items = [selectedItem];
+
+                    for(let item of items) {
+                        if(item.id !== selectedItem.id) {
+                            updated_items.push(item);
+                        }
+                    }
+
+                    return updated_items;
+                } else {
+                    return items;
+                }
             }
 
             search = search.toLowerCase();
@@ -693,7 +742,7 @@ befriend.me = {
                     emoji = `<div class="emoji">${item.emoji}</div>`;
                 }
 
-                list_html += `<div class="item">
+                list_html += `<div class="item" data-id="${item.id}">
                             ${emoji}
                             <div class="name">${item.name}</div>
                         </div>`;
@@ -864,7 +913,7 @@ befriend.me = {
         autoCompleteFilterList: function () {
             //open list
             let selected_els = befriend.els.me.querySelectorAll(
-                '.search-container .selected-container',
+                '.search-container .selected-container'
             );
 
             for (let i = 0; i < selected_els.length; i++) {
@@ -878,14 +927,26 @@ befriend.me = {
 
                 el.addEventListener('click', function (e) {
                     let parent_el = el.closest('.select-container');
+                    let section_key = el.closest('.section').getAttribute('data-key');
 
                     befriend.me.toggleAutoCompleteSelect(parent_el, !elHasClass(parent_el, 'open'));
+
+                    //reset scroll to top after selection
+                    if(befriend.me.autoComplete.selected.filterList[section_key]?.needsReset) {
+                        let list = parent_el.querySelector('.select-list');
+
+                        requestAnimationFrame(function () {
+                            list.scrollTop = 0;
+                        });
+
+                        befriend.me.autoComplete.selected.filterList[section_key].needsReset = false;
+                    }
                 });
             }
 
             //search list
             let input_els = befriend.els.me.querySelectorAll(
-                '.select-container input',
+                '.select-container input'
             );
 
             for (let i = 0; i < input_els.length; i++) {
@@ -901,6 +962,32 @@ befriend.me = {
                     let section_key = el.closest('.section').getAttribute('data-key');
 
                     befriend.me.updateAutoCompleteSelectList(section_key);
+                });
+            }
+
+            //select list item
+            let item_els = befriend.els.me.querySelectorAll(
+                '.select-container .item'
+            );
+
+            for(let i = 0; i < item_els.length; i++) {
+                let el = item_els[i];
+
+                if (el._listener) {
+                    continue;
+                }
+
+                el._listener = true;
+
+                el.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    let section_key = el.closest('.section').getAttribute('data-key');
+
+                    let id = this.getAttribute('data-id');
+
+                    befriend.me.selectAutoCompleteFilterItem(section_key, id);
                 });
             }
         },
