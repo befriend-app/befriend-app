@@ -12,6 +12,7 @@ befriend.me = {
             active: null,
             collapsed: {},
         },
+        location: null
     },
     autoComplete: {
         minChars: 2,
@@ -48,6 +49,10 @@ befriend.me = {
                 befriend.me.data.sections.all = data.sections.all;
                 befriend.me.data.sections.options = data.sections.options;
                 befriend.me.data.sections.active = data.sections.active;
+
+                if(data.country) {
+                    befriend.me.data.country = data.country;
+                }
 
                 //local data
                 befriend.user.setLocal('me.me', data.me);
@@ -138,9 +143,22 @@ befriend.me = {
                         </div>`;
         }
 
+        //selected
+        let selected_str = '';
+
+        if(key === 'schools') {
+            if(befriend.me.data.country) {
+                selected_str = befriend.me.data.country.name;
+
+                befriend.me.autoComplete.selected.filterList['schools'] = {
+                    item: befriend.me.data.country
+                }
+            }
+        }
+
         return `<div class="select-container">
                         <div class="selected-container">
-                          <span class="selected-name">Select a country</span>
+                          <span class="selected-name">${selected_str}</span>
                           <div class="select-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448.569 256.5604"><g id="Layer_1-2"><path d="M441.9533,40.728l-193.176,205.2496c-13.28,14.1104-35.704,14.1104-48.984,0L6.6157,40.728C-7.8979,25.3056,3.0349,0,24.2125,0h400.1424c21.1792,0,32.112,25.3056,17.5984,40.728h0Z"/></g></svg></div>
                         </div>
                         
@@ -730,6 +748,7 @@ befriend.me = {
 
         if(!filtered_items.length) {
             addClassEl('no-items', select_container_el);
+            select_list.innerHTML = '';
         } else {
             removeClassEl('no-items', select_container_el);
 

@@ -415,7 +415,7 @@ html.#{$class_confirm_me_action} {
 
                                 .emoji {
                                     font-size: 14px;
-                                    margin-right: 8px;
+                                    margin-right: 10px;
                                 }
 
                                 .name {
@@ -426,6 +426,7 @@ html.#{$class_confirm_me_action} {
 
                         .no-results {
                             display: none;
+                            padding: 15px 0;
                         }
                     }
                 }
