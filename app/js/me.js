@@ -144,7 +144,7 @@ befriend.me = {
                             <input class="select-input" type="text" placeholder="${data.placeholders.list}">
                             <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 611.9975 612.0095"><g id="_x34_"><path d="M606.203,578.714l-158.011-155.486c41.378-44.956,66.802-104.411,66.802-169.835-.02-139.954-115.296-253.393-257.507-253.393S0,113.439,0,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0,7.747-7.613,7.747-19.971.018-27.585ZM257.487,467.8c-120.326,0-217.869-95.993-217.869-214.407S137.161,38.986,257.487,38.986s217.869,95.993,217.869,214.407-97.542,214.407-217.869,214.407Z"/></g></svg>
                           </div>
-                          <div class="list">${list_html}</div>
+                          <div class="select-list">${list_html}</div>
                           <div class="no-results">${data.filterNoResults}</div>
                         </div>
                       </div>`;
@@ -263,6 +263,7 @@ befriend.me = {
                 befriend.me.events.onSectionCategory();
                 befriend.me.events.onSectionActions();
                 befriend.me.events.autoComplete();
+                befriend.me.events.autoCompleteFilterList();
                 befriend.me.events.onActionSelect();
                 befriend.me.events.onUpdateSectionHeight();
 
@@ -579,7 +580,6 @@ befriend.me = {
 
             befriend.me.updateSectionHeightT[section_key] = setTimeout(function () {
                 section_container.style.overflowY = 'initial';
-                console.log(section_container);
             }, 300);
         }
 
@@ -631,7 +631,78 @@ befriend.me = {
         }
     },
     updateAutoCompleteSelectList(section_key) {
-        console.log('update list');
+        function filterSort(items, search) {
+            if (!search) {
+                return items;
+            }
+
+            search = search.toLowerCase();
+
+            const startsWithMatch = [];
+            const wordStartsWithMatch = [];
+            const includesMatch = [];
+
+            for(let item of items) {
+                let nameLower = item.name.toLowerCase();
+                let words = nameLower.split(' ');
+
+                if(nameLower.startsWith(search)) {
+                    startsWithMatch.push(item);
+                } else if(words.slice(1).some(word => word.startsWith(search))) {
+                    wordStartsWithMatch.push(item);
+                } else if(nameLower.includes(search)) {
+                    includesMatch.push(item);
+                }
+            }
+
+            // Combine all matches in priority order
+            return startsWithMatch.concat(wordStartsWithMatch).concat(includesMatch);
+        }
+
+        let section_el = befriend.me.getSectionElByKey(section_key);
+
+        let select_input = section_el.querySelector('.select-input');
+
+        let search_value = select_input.value;
+
+        let select_list = section_el.querySelector('.select-list');
+
+        let section_data = befriend.me.data.sections.active[section_key]?.data;
+
+        if(!section_data || !section_data.autoComplete || !section_data.autoComplete.filterList) {
+            return;
+        }
+
+        let list_items = section_data.autoComplete.filterList;
+
+        let filtered_items = filterSort(list_items, search_value);
+
+        let select_container_el = section_el.querySelector('.select-container');
+
+        if(!filtered_items.length) {
+            addClassEl('no-items', select_container_el);
+        } else {
+            removeClassEl('no-items', select_container_el);
+
+            let list_html = '';
+
+            for (let item of filtered_items) {
+                let emoji = '';
+
+                if (item.emoji) {
+                    emoji = `<div class="emoji">${item.emoji}</div>`;
+                }
+
+                list_html += `<div class="item">
+                            ${emoji}
+                            <div class="name">${item.name}</div>
+                        </div>`;
+            }
+
+            select_list.innerHTML = list_html;
+
+            befriend.me.events.autoCompleteFilterList();
+        }
     },
     toggleConfirm: function (show) {
         if (show) {
@@ -789,8 +860,6 @@ befriend.me = {
                     }
                 });
             }
-
-            befriend.me.events.autoCompleteFilterList();
         },
         autoCompleteFilterList: function () {
             //open list
@@ -808,9 +877,7 @@ befriend.me = {
                 el._listener = true;
 
                 el.addEventListener('click', function (e) {
-                    let section_key = el.closest('.section').getAttribute('data-key');
                     let parent_el = el.closest('.select-container');
-                    let input = parent_el.querySelector('input');
 
                     befriend.me.toggleAutoCompleteSelect(parent_el, !elHasClass(parent_el, 'open'));
                 });
@@ -818,7 +885,7 @@ befriend.me = {
 
             //search list
             let input_els = befriend.els.me.querySelectorAll(
-                '.search-container .select-container input',
+                '.select-container input',
             );
 
             for (let i = 0; i < input_els.length; i++) {

@@ -323,6 +323,13 @@ html.#{$class_confirm_me_action} {
                         }
                     }
 
+                    &.no-items {
+                        .no-results {
+                            display: flex !important;
+                            justify-content: center;
+                        }
+                    }
+
                     .selected-container {
                         padding: 4px 12px;
                         background: white;
@@ -391,7 +398,7 @@ html.#{$class_confirm_me_action} {
                             display: none;
                         }
 
-                        .list {
+                        .select-list {
                             //padding: 10px 0;
                             max-height: 240px;
                             overflow-y: auto;
