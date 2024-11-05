@@ -66,8 +66,8 @@ befriend.events = {
                     return false;
                 }
 
-                if(befriend.me.isAutoCompleteSelectShown()) {
-                    if(!e.target.closest('.select-container')) {
+                if (befriend.me.isAutoCompleteSelectShown()) {
+                    if (!e.target.closest('.select-container')) {
                         return befriend.me.toggleAutoCompleteSelect(null, false);
                     }
                 }

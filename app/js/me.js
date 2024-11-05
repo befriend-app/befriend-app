@@ -120,10 +120,10 @@ befriend.me = {
 
         let list_html = ``;
 
-        for(let item of data.filterList) {
+        for (let item of data.filterList) {
             let emoji = '';
 
-            if(item.emoji) {
+            if (item.emoji) {
                 emoji = `<div class="emoji">${item.emoji}</div>`;
             }
 
@@ -374,7 +374,10 @@ befriend.me = {
                 //delete in collapsed
                 delete befriend.me.data.sections.collapsed[section_key];
 
-                befriend.user.setLocal('me.sections.collapsed', befriend.me.data.sections.collapsed);
+                befriend.user.setLocal(
+                    'me.sections.collapsed',
+                    befriend.me.data.sections.collapsed,
+                );
 
                 //remove el
                 let section_el = befriend.me.getSectionElByKey(section_key);
@@ -498,9 +501,7 @@ befriend.me = {
         return !!el;
     },
     isAutoCompleteSelectShown: function () {
-        let el = befriend.els.me.querySelector(
-            `.search-container .select-container.open`,
-        );
+        let el = befriend.els.me.querySelector(`.search-container .select-container.open`);
 
         return !!el;
     },
@@ -578,7 +579,7 @@ befriend.me = {
 
             befriend.me.updateSectionHeightT[section_key] = setTimeout(function () {
                 section_container.style.overflowY = 'initial';
-                console.log(section_container)
+                console.log(section_container);
             }, 300);
         }
 
@@ -613,13 +614,13 @@ befriend.me = {
         }
     },
     toggleAutoCompleteSelect: function (el, show) {
-        if(!el) {
+        if (!el) {
             el = befriend.els.me.querySelector('.search-container .select-container.open');
         }
 
         let section_key = el.closest('.section').getAttribute('data-key');
 
-        if(elHasClass(el, 'open')) {
+        if (elHasClass(el, 'open')) {
             removeClassEl('open', el);
         } else {
             let input = el.querySelector('.select-input');
@@ -630,7 +631,7 @@ befriend.me = {
         }
     },
     updateAutoCompleteSelectList(section_key) {
-        console.log("update list")
+        console.log('update list');
     },
     toggleConfirm: function (show) {
         if (show) {
@@ -793,33 +794,37 @@ befriend.me = {
         },
         autoCompleteFilterList: function () {
             //open list
-            let selected_els = befriend.els.me.querySelectorAll('.search-container .selected-container');
+            let selected_els = befriend.els.me.querySelectorAll(
+                '.search-container .selected-container',
+            );
 
             for (let i = 0; i < selected_els.length; i++) {
                 let el = selected_els[i];
 
-                if(el._listener) {
+                if (el._listener) {
                     continue;
                 }
 
                 el._listener = true;
 
                 el.addEventListener('click', function (e) {
-                     let section_key = el.closest('.section').getAttribute('data-key');
-                     let parent_el = el.closest('.select-container');
-                     let input = parent_el.querySelector('input');
+                    let section_key = el.closest('.section').getAttribute('data-key');
+                    let parent_el = el.closest('.select-container');
+                    let input = parent_el.querySelector('input');
 
-                     befriend.me.toggleAutoCompleteSelect(parent_el, !elHasClass(parent_el, 'open'));
+                    befriend.me.toggleAutoCompleteSelect(parent_el, !elHasClass(parent_el, 'open'));
                 });
             }
 
             //search list
-            let input_els = befriend.els.me.querySelectorAll('.search-container .select-container input');
+            let input_els = befriend.els.me.querySelectorAll(
+                '.search-container .select-container input',
+            );
 
             for (let i = 0; i < input_els.length; i++) {
                 let el = input_els[i];
 
-                if(el._listener) {
+                if (el._listener) {
                     continue;
                 }
 
@@ -831,7 +836,6 @@ befriend.me = {
                     befriend.me.updateAutoCompleteSelectList(section_key);
                 });
             }
-
         },
         onActionSelect: function () {
             let actions_els = befriend.els.me.querySelectorAll('.menu .action');
