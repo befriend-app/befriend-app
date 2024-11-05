@@ -147,7 +147,16 @@ befriend.me = {
         let selected_str = '';
 
         if(key === 'schools') {
-            if(befriend.me.data.country) {
+            if(befriend.user.local.data.me
+                && befriend.user.local.data.me.filterList
+                && befriend.user.local.data.me.filterList[key]
+            ) {
+                befriend.me.autoComplete.selected.filterList[key] = {
+                    item: befriend.user.local.data.me.filterList[key]
+                }
+
+                selected_str = befriend.user.local.data.me.filterList[key].name;
+            } else if(befriend.me.data.country) {
                 selected_str = befriend.me.data.country.name;
 
                 befriend.me.autoComplete.selected.filterList['schools'] = {
@@ -192,6 +201,9 @@ befriend.me = {
             item: selected_item,
             needsReset: true
         };
+
+        //save for local storage
+        befriend.user.setLocal(`me.filterList.${section_key}`, selected_item);
 
         //ui
         let section_el = befriend.me.getSectionElByKey(section_key);
