@@ -269,7 +269,7 @@ befriend.me = {
 
                 //automatically switch to first category
 
-                let category_btn_first = el.querySelector('.category-btn');
+                let category_btn_first = section_el.querySelector('.category-btn');
 
                 if(category_btn_first) {
                     fireClick(category_btn_first);
