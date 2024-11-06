@@ -121,6 +121,7 @@ html.#{$class_confirm_me_action} {
         $padding_lr_inner: 15px;
         $br: 8px;
         $section_top_h: 32px;
+        $search_br: 4px;
         display: flex;
         flex-direction: column;
         gap: 15px 0;
@@ -263,10 +264,12 @@ html.#{$class_confirm_me_action} {
                 position: relative;
 
                 &.#{$class_autocomplete_me} {
+                    $bc: lighten(black, 60%);
+
                     .autocomplete-list {
                         height: 180px;
                         overflow-y: scroll;
-                        border: 1px solid lighten(black, 50%);
+                        border: 1px solid $bc;
                         border-top: 1px transparent;
                         visibility: visible;
                         z-index: 10;
@@ -274,8 +277,18 @@ html.#{$class_confirm_me_action} {
                     }
 
                     .search-input {
-                        border-bottom: 1px solid $color_gray;
+                        //border-bottom: 1px solid $color_gray;
                         border-bottom-left-radius: 0 !important;
+                        border-bottom-right-radius: 0 !important;
+                    }
+
+                    .input-container {
+                        border-bottom-left-radius: 0 !important;
+                        border-bottom-right-radius: 0 !important;
+                        border: 1px solid $input_focus_color !important;
+                    }
+
+                    .search-icon-container {
                         border-bottom-right-radius: 0 !important;
                     }
                 }
@@ -294,13 +307,32 @@ html.#{$class_confirm_me_action} {
                     position: relative;
                     height: fit-content;
 
-                    .search-icon {
-                        position: absolute;
-                        height: 12px;
-                        right: 10px;
-                        top: 50%;
-                        transform: translateY(-50%);
+                    .input-container {
+                        width: 100%;
+                        display: flex;
+                        border-radius: $search_br;
+                        box-sizing: border-box;
+                        border: 1px solid $color_lightgray;
 
+                        &.input-focus {
+                            border: 1px solid $input_focus_color;
+                        }
+                    }
+
+                    .search-icon-container {
+                        width: 30px;
+                        height: inherit;
+                        background: lighten(black, 90%);
+                        border-top-right-radius: $search_br;
+                        border-bottom-right-radius: $search_br;
+                        border-left: .5px solid lighten(black, 60%);
+                        box-sizing: border-box;
+
+                        @include flex-center-col;
+                    }
+
+                    .search-icon {
+                        height: 14px;
                         fill: $color_gray;
                     }
                 }
@@ -436,16 +468,16 @@ html.#{$class_confirm_me_action} {
                 $plr: 10px;
                 width: calc(100%);
                 padding: 6px $plr;
-                border: 1px solid $color_lightgray;
-                box-sizing: border-box;
-                border-radius: 4px;
+                border-radius: $search_br;
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
                 font-size: 14px;
-                transition: all 200ms;
+                transition: border-radius 200ms;
+                outline: none;
+                border: 0px  transparent;
 
                 &:focus,
                 &:focus-visible {
-                    outline: none;
-                    border: 1px solid $input_focus_color;
                 }
             }
 

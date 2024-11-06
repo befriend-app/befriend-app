@@ -268,8 +268,12 @@ befriend.me = {
                         autocomplete = `
                             <div class="search-container ${select_list ? 'has-select' : ''}">
                                 <div class="autocomplete-container">
-                                    <input type="text" class="search-input" placeholder="${section_data.data.autoComplete.placeholders.main}">
-                                    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 611.9975 612.0095"><g id="_x34_"><path d="M606.203,578.714l-158.011-155.486c41.378-44.956,66.802-104.411,66.802-169.835-.02-139.954-115.296-253.393-257.507-253.393S0,113.439,0,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0,7.747-7.613,7.747-19.971.018-27.585ZM257.487,467.8c-120.326,0-217.869-95.993-217.869-214.407S137.161,38.986,257.487,38.986s217.869,95.993,217.869,214.407-97.542,214.407-217.869,214.407Z"/></g></svg>
+                                    <div class="input-container">
+                                        <input type="text" class="search-input" placeholder="${section_data.data.autoComplete.placeholders.main}">
+                                        <div class="search-icon-container">
+                                            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 611.9975 612.0095"><g id="_x34_"><path d="M606.203,578.714l-158.011-155.486c41.378-44.956,66.802-104.411,66.802-169.835-.02-139.954-115.296-253.393-257.507-253.393S0,113.439,0,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0,7.747-7.613,7.747-19.971.018-27.585ZM257.487,467.8c-120.326,0-217.869-95.993-217.869-214.407S137.161,38.986,257.487,38.986s217.869,95.993,217.869,214.407-97.542,214.407-217.869,214.407Z"/></g></svg>
+                                        </div>
+                                    </div>
 
                                     <div class="autocomplete-list"></div>
                                 </div>
@@ -934,10 +938,22 @@ befriend.me = {
                     }, 100);
                 });
 
+                //focus
                 el.addEventListener('focus', function () {
+                    addClassEl('input-focus', el.closest('.input-container'));
+
+                    //hide all other dropdowns
+                    let search_containers = befriend.els.me.getElementsByClassName('search-container');
+
+                    removeElsClass(search_containers, befriend.classes.autoCompleteMe);
+
                     if (el.value.length >= befriend.me.autoComplete.minChars) {
                         befriend.me.toggleAutoComplete(el.closest('.search-container'), true);
                     }
+                });
+
+                el.addEventListener('blur', function () {
+                    removeClassEl('input-focus', el.closest('.input-container'));
                 });
             }
         },
