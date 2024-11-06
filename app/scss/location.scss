@@ -91,12 +91,17 @@ html.#{$class_change_location} {
     }
 
     .suggestions {
+        height: calc(100% - var(--sab));
         overflow-y: scroll;
-        height: calc(100% - var(--sab) - calc($places_padding_t + $places_padding_b));
-        padding-top: $places_padding_t;
-        padding-bottom: $places_padding_b;
-        display: flex;
-        flex-direction: column;
+
+        .items {
+            display: flex;
+            flex-direction: column;
+            height: fit-content;
+            min-height: 100%;
+            padding-top: $places_padding_t;
+            padding-bottom: calc(calc($places_padding_b + var(--sab)));
+        }
 
         .suggestion-item {
             border-bottom: 1px solid $color_lightgray;

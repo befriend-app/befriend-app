@@ -185,7 +185,7 @@ befriend.html = {
                             <input type="text" class="input-text change-location-input" placeholder="City">
                             
                             <div class="suggestions">
-                                
+                                <div class="items"></div>
                             </div>
                             
                             <span class="spinner"></span>

@@ -524,7 +524,12 @@ befriend.me = {
                 let endpoint =
                     befriend.me.data.sections.active[section_key].data.autoComplete.endpoint;
 
-                const r = await befriend.auth.get(`${endpoint}?search=${search_value}`);
+                let filterId = befriend.me.autoComplete.selected.filterList[section_key]?.item?.id || null;
+
+                const r = await befriend.auth.get(endpoint, {
+                    search: search_value,
+                    filterId: filterId
+                });
 
                 befriend.me.setAutoComplete(section_key, r.data.items);
             } catch (error) {
@@ -544,12 +549,14 @@ befriend.me = {
                 let section_data = befriend.me.data.sections.active[section_key];
                 let items_html = '';
 
-                for (let item of items) {
-                    if (item.token in section_data.items) {
-                        continue;
-                    }
+                if(items) {
+                    for (let item of items) {
+                        if (item.token in section_data.items) {
+                            continue;
+                        }
 
-                    items_html += `<div class="item" data-token="${item.token}">${item.name}</div>`;
+                        items_html += `<div class="item" data-token="${item.token}">${item.name}</div>`;
+                    }
                 }
 
                 if(!items_html) {

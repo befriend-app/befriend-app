@@ -159,7 +159,7 @@ befriend.location = {
         },
         autoComplete: function () {
             function clearSuggestions() {
-                suggestions_el.innerHTML = '';
+                suggestions_items_el.innerHTML = '';
             }
 
             function displaySuggestions(cities) {
@@ -188,12 +188,12 @@ befriend.location = {
                         befriend.location.setCustomLocation(city);
                     });
 
-                    suggestions_el.appendChild(el);
+                    suggestions_items_el.appendChild(el);
                 }
             }
 
             let input_el = befriend.els.changeLocation.querySelector('.change-location-input');
-            let suggestions_el = befriend.els.changeLocation.querySelector('.suggestions');
+            let suggestions_items_el = befriend.els.changeLocation.querySelector('.suggestions').querySelector('.items');
 
             let debounceTimer = null;
 
