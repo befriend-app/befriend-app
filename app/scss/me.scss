@@ -267,7 +267,8 @@ html.#{$class_confirm_me_action} {
                     $bc: lighten(black, 60%);
 
                     .autocomplete-list {
-                        height: 180px;
+                        max-height: 180px;
+                        height: fit-content;
                         overflow-y: scroll;
                         border: 1px solid $bc;
                         border-top: 1px transparent;
@@ -497,6 +498,12 @@ html.#{$class_confirm_me_action} {
                 //visibility: hidden;
                 display: none;
                 flex-direction: column;
+
+                .no-results {
+                    font-size: 16px;
+                    padding: 12px 0;
+                    @include flex-center;
+                }
 
                 .item {
                     padding: 4px 16px;

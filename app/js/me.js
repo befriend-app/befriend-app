@@ -552,6 +552,10 @@ befriend.me = {
                     items_html += `<div class="item" data-token="${item.token}">${item.name}</div>`;
                 }
 
+                if(!items_html) {
+                    items_html = `<div class="no-results">No results</div>`;
+                }
+
                 list.innerHTML = items_html;
 
                 befriend.me.toggleAutoComplete(search_container_el, true);
