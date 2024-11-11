@@ -193,7 +193,9 @@ befriend.location = {
             }
 
             let input_el = befriend.els.changeLocation.querySelector('.change-location-input');
-            let suggestions_items_el = befriend.els.changeLocation.querySelector('.suggestions').querySelector('.items');
+            let suggestions_items_el = befriend.els.changeLocation
+                .querySelector('.suggestions')
+                .querySelector('.items');
 
             let debounceTimer = null;
 

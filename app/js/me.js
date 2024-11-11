@@ -12,15 +12,15 @@ befriend.me = {
             active: null,
             collapsed: {},
         },
-        location: null
+        location: null,
     },
     autoComplete: {
         minChars: 2,
         selected: {
-            filterList: { //by section
-
-            }
-        }
+            filterList: {
+                //by section
+            },
+        },
     },
     init: function () {
         return new Promise(async (resolve, reject) => {
@@ -50,7 +50,7 @@ befriend.me = {
                 befriend.me.data.sections.options = data.sections.options;
                 befriend.me.data.sections.active = data.sections.active;
 
-                if(data.country) {
+                if (data.country) {
                     befriend.me.data.country = data.country;
                 }
 
@@ -146,22 +146,25 @@ befriend.me = {
         //selected
         let selected_str = '';
 
-        if(key === 'schools') {
-            if(befriend.user.local.data.me
-                && befriend.user.local.data.me.filterList
-                && befriend.user.local.data.me.filterList[key]
-            ) {
-                befriend.me.autoComplete.selected.filterList[key] = {
-                    item: befriend.user.local.data.me.filterList[key]
-                }
+        let filterListObj =  befriend.me.autoComplete.selected.filterList;
 
-                selected_str = befriend.user.local.data.me.filterList[key].name;
-            } else if(befriend.me.data.country) {
+        if (key === 'schools') {
+            if (befriend.me.data.country) {
                 selected_str = befriend.me.data.country.name;
 
-                befriend.me.autoComplete.selected.filterList['schools'] = {
-                    item: befriend.me.data.country
-                }
+               filterListObj[key] = {
+                    item: befriend.me.data.country,
+                };
+            } else if (
+                befriend.user.local.data.me &&
+                befriend.user.local.data.me.filterList &&
+                befriend.user.local.data.me.filterList[key]
+            ) {
+                filterListObj[key] = {
+                    item: befriend.user.local.data.me.filterList[key],
+                };
+
+                selected_str = befriend.user.local.data.me.filterList[key].name;
             }
         }
 
@@ -184,22 +187,22 @@ befriend.me = {
     selectAutoCompleteFilterItem: function (section_key, item_id) {
         let section_data = befriend.me.data.sections.active[section_key]?.data?.autoComplete;
 
-        if(!section_data) {
+        if (!section_data) {
             return;
         }
 
         item_id = parseInt(item_id);
 
-        let selected_item = section_data.filterList.find(item => item.id === item_id);
+        let selected_item = section_data.filterList.find((item) => item.id === item_id);
 
-        if(!selected_item) {
-            throw new Error("Select item not found");
+        if (!selected_item) {
+            throw new Error('Select item not found');
         }
 
         //data
         befriend.me.autoComplete.selected.filterList[section_key] = {
             item: selected_item,
-            needsReset: true
+            needsReset: true,
         };
 
         //save for local storage
@@ -301,7 +304,7 @@ befriend.me = {
                     section_height = '0';
                 }
 
-                let html = `<div class="section ${section_collapsed}" data-key="${key}" style="${section_height}">
+                let html = `<div class="section ${key} ${section_collapsed}" data-key="${key}" style="${section_height}">
                                 <div class="section-top">
                                     <div class="icon">${option_data.icon}</div>
                                     <div class="title">${option_data.section_name}</div>
@@ -524,11 +527,13 @@ befriend.me = {
                 let endpoint =
                     befriend.me.data.sections.active[section_key].data.autoComplete.endpoint;
 
-                let filterId = befriend.me.autoComplete.selected.filterList[section_key]?.item?.id || null;
+                let filterId =
+                    befriend.me.autoComplete.selected.filterList[section_key]?.item?.id || null;
 
                 const r = await befriend.auth.get(endpoint, {
                     search: search_value,
-                    filterId: filterId
+                    filterId: filterId,
+                    location: befriend.location.device || null
                 });
 
                 befriend.me.setAutoComplete(section_key, r.data.items);
@@ -547,19 +552,60 @@ befriend.me = {
 
             if (list) {
                 let section_data = befriend.me.data.sections.active[section_key];
+                let auto_compete_data = section_data.data.autoComplete;
                 let items_html = '';
 
-                if(items) {
-                    for (let item of items) {
-                        if (item.token in section_data.items) {
-                            continue;
-                        }
+                if(auto_compete_data.groups && Object.keys(auto_compete_data.groups).length) {
+                    for(let k in auto_compete_data.groups) {
+                        let group = auto_compete_data.groups[k];
 
-                        items_html += `<div class="item" data-token="${item.token}">${item.name}</div>`;
+                        let group_html = '';
+
+                        let groupItems = items[k];
+
+                        if(groupItems && groupItems.length) {
+                            for(let item of groupItems) {
+                                if (item.token in section_data.items) {
+                                    continue;
+                                }
+
+                                let location_html = '';
+
+                                if(item.city) {
+                                    if(item.state) {
+                                        location_html = `<div class="location">${item.city}, ${item.state}</div>`;
+                                    } else {
+                                        location_html = `<div class="location">${item.city}</div>`;
+                                    }
+                                }
+
+                                group_html += `<div class="item" data-token="${item.token}">
+                                                   ${location_html}
+                                                   <div class="name">${item.name}</div>
+                                              </div>`;
+                            }
+
+                            if(group_html) {
+                                items_html += `<div class="group">
+                                            <div class="group-name">${group.name}</div>
+                                            <div class="group-list">${group_html}</div>
+                                        </div>`;
+                            }
+                        }
+                    }
+                } else {
+                    if (items) {
+                        for (let item of items) {
+                            if (item.token in section_data.items) {
+                                continue;
+                            }
+
+                            items_html += `<div class="item" data-token="${item.token}">${item.name}</div>`;
+                        }
                     }
                 }
 
-                if(!items_html) {
+                if (!items_html) {
                     items_html = `<div class="no-results">No results</div>`;
                 }
 
@@ -686,8 +732,10 @@ befriend.me = {
 
         if (show) {
             addClassEl(befriend.classes.autoCompleteMe, el);
+            addClassEl('autocomplete-shown', befriend.els.me);
         } else {
             removeClassEl(befriend.classes.autoCompleteMe, el);
+            removeClassEl('autocomplete-shown', befriend.els.me);
         }
     },
     toggleAutoCompleteSelect: function (el, show) {
@@ -715,11 +763,11 @@ befriend.me = {
                 //show selected country at top of list
                 let selectedItem = befriend.me.autoComplete.selected.filterList[section_key]?.item;
 
-                if(selectedItem) {
+                if (selectedItem) {
                     let updated_items = [selectedItem];
 
-                    for(let item of items) {
-                        if(item.id !== selectedItem.id) {
+                    for (let item of items) {
+                        if (item.id !== selectedItem.id) {
                             updated_items.push(item);
                         }
                     }
@@ -736,15 +784,15 @@ befriend.me = {
             const wordStartsWithMatch = [];
             const includesMatch = [];
 
-            for(let item of items) {
+            for (let item of items) {
                 let nameLower = item.name.toLowerCase();
                 let words = nameLower.split(' ');
 
-                if(nameLower.startsWith(search)) {
+                if (nameLower.startsWith(search)) {
                     startsWithMatch.push(item);
-                } else if(words.slice(1).some(word => word.startsWith(search))) {
+                } else if (words.slice(1).some((word) => word.startsWith(search))) {
                     wordStartsWithMatch.push(item);
-                } else if(nameLower.includes(search)) {
+                } else if (nameLower.includes(search)) {
                     includesMatch.push(item);
                 }
             }
@@ -763,7 +811,7 @@ befriend.me = {
 
         let section_data = befriend.me.data.sections.active[section_key]?.data;
 
-        if(!section_data || !section_data.autoComplete || !section_data.autoComplete.filterList) {
+        if (!section_data || !section_data.autoComplete || !section_data.autoComplete.filterList) {
             return;
         }
 
@@ -773,7 +821,7 @@ befriend.me = {
 
         let select_container_el = section_el.querySelector('.select-container');
 
-        if(!filtered_items.length) {
+        if (!filtered_items.length) {
             addClassEl('no-items', select_container_el);
             select_list.innerHTML = '';
         } else {
@@ -954,7 +1002,8 @@ befriend.me = {
                     addClassEl('input-focus', el.closest('.input-container'));
 
                     //hide all other dropdowns
-                    let search_containers = befriend.els.me.getElementsByClassName('search-container');
+                    let search_containers =
+                        befriend.els.me.getElementsByClassName('search-container');
 
                     removeElsClass(search_containers, befriend.classes.autoCompleteMe);
 
@@ -971,7 +1020,7 @@ befriend.me = {
         autoCompleteFilterList: function () {
             //open list
             let selected_els = befriend.els.me.querySelectorAll(
-                '.search-container .selected-container'
+                '.search-container .selected-container',
             );
 
             for (let i = 0; i < selected_els.length; i++) {
@@ -990,22 +1039,21 @@ befriend.me = {
                     befriend.me.toggleAutoCompleteSelect(parent_el, !elHasClass(parent_el, 'open'));
 
                     //reset scroll to top after selection
-                    if(befriend.me.autoComplete.selected.filterList[section_key]?.needsReset) {
+                    if (befriend.me.autoComplete.selected.filterList[section_key]?.needsReset) {
                         let list = parent_el.querySelector('.select-list');
 
                         requestAnimationFrame(function () {
                             list.scrollTop = 0;
                         });
 
-                        befriend.me.autoComplete.selected.filterList[section_key].needsReset = false;
+                        befriend.me.autoComplete.selected.filterList[section_key].needsReset =
+                            false;
                     }
                 });
             }
 
             //search list
-            let input_els = befriend.els.me.querySelectorAll(
-                '.select-container input'
-            );
+            let input_els = befriend.els.me.querySelectorAll('.select-container input');
 
             for (let i = 0; i < input_els.length; i++) {
                 let el = input_els[i];
@@ -1024,11 +1072,9 @@ befriend.me = {
             }
 
             //select list item
-            let item_els = befriend.els.me.querySelectorAll(
-                '.select-container .item'
-            );
+            let item_els = befriend.els.me.querySelectorAll('.select-container .item');
 
-            for(let i = 0; i < item_els.length; i++) {
+            for (let i = 0; i < item_els.length; i++) {
                 let el = item_els[i];
 
                 if (el._listener) {

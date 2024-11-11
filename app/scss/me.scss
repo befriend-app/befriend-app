@@ -34,6 +34,10 @@ html.#{$class_confirm_me_action} {
     padding-bottom: calc(var(--footer_full_h) + 60px) !important;
     min-height: calc(100vh - var(--footer_full_h) - var(--view-top));
 
+    &.autocomplete-shown {
+        min-height: max(1000px, 100vh);
+    }
+
     .top {
         @include flex-center;
 
@@ -326,7 +330,7 @@ html.#{$class_confirm_me_action} {
                         background: lighten(black, 90%);
                         border-top-right-radius: $search_br;
                         border-bottom-right-radius: $search_br;
-                        border-left: .5px solid lighten(black, 60%);
+                        border-left: 0.5px solid lighten(black, 60%);
                         box-sizing: border-box;
 
                         @include flex-center-col;
@@ -475,7 +479,7 @@ html.#{$class_confirm_me_action} {
                 font-size: 14px;
                 transition: border-radius 200ms;
                 outline: none;
-                border: 0px  transparent;
+                border: 0px transparent;
 
                 &:focus,
                 &:focus-visible {
@@ -506,8 +510,8 @@ html.#{$class_confirm_me_action} {
                 }
 
                 .item {
-                    padding: 4px 16px;
-                    font-size: 15px;
+                    padding: 5px 16px;
+                    font-size: 14px;
                     border-bottom: 1px solid $color_lightgray;
 
                     &:last-of-type {
@@ -648,6 +652,44 @@ html.#{$class_confirm_me_action} {
                                 background: darken($brand_color_c, 5%);
                                 color: white;
                             }
+                        }
+                    }
+                }
+            }
+
+            &.schools {
+                .autocomplete-list {
+                    $bc: $brand_color_a;
+                    max-height: fit-content !important;
+                    //overflow-y: initial !important;
+
+                    .group {
+                        max-height: $autocomplete_group_max_h;
+                        border-top: 1px solid $bc;
+                        overflow-y: hidden;
+
+                        &:first-of-type {
+                            border-top: 0;
+                        }
+
+                        .group-list {
+                            overflow-y: scroll;
+                            height: calc(100% - #{$autocomplete_group_header_h});
+                        }
+
+                        .group-name {
+                            height: $autocomplete_group_header_h;
+                            line-height: $autocomplete_group_header_h;
+                            font-weight: 300;
+                            text-align: center;
+                            background: lighten($brand_color_a, 40%);
+                            border-bottom: 1px solid $bc;
+                            @include flex-center-col;
+                        }
+
+                        .location {
+                            font-weight: 600;
+                            font-size: 12px;
                         }
                     }
                 }
