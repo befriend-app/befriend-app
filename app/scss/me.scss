@@ -682,7 +682,7 @@ html.#{$class_confirm_me_action} {
                             line-height: $autocomplete_group_header_h;
                             font-weight: 300;
                             text-align: center;
-                            background: lighten($brand_color_a, 40%);
+                            background: lighten($brand_color_a, 48%);
                             border-bottom: 1px solid $bc;
                             @include flex-center-col;
                         }

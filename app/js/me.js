@@ -107,6 +107,7 @@ befriend.me = {
     saveSection: function (key) {
         return new Promise(async (resolve, reject) => {
             try {
+                befriend.toggleSpinner(true);
                 let location = befriend.location.device;
                 let r = await befriend.auth.post('/me/sections', { key, location });
 
@@ -114,6 +115,8 @@ befriend.me = {
             } catch (e) {
                 console.error(e);
             }
+
+            befriend.toggleSpinner(false);
 
             resolve();
         });

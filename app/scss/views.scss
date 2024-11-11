@@ -10,7 +10,9 @@
     animation: rotation 1s linear infinite;
 
     left: calc(50% - calc($view_spinner_dim / 2));
-    top: calc(50% - calc($view_spinner_dim / 2 + $places_header_h / 2));
+    top: calc(50% - calc($view_spinner_dim / 2));
+
+    z-index: 1000;
 
     &.show {
         display: inline-block;
