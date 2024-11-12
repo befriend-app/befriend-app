@@ -127,13 +127,15 @@ befriend.me = {
         return sections_el.querySelector(`.section[data-key="${key}"]`);
     },
     buildSelectFilterList: function (key, data) {
-        if (!data.filterList || data.filterList.length === 0) {
+        let items = data?.filter?.list;
+
+        if (!items || !items.length) {
             return '';
         }
 
         let list_html = ``;
 
-        for (let item of data.filterList) {
+        for (let item of items) {
             let emoji = '';
 
             if (item.emoji) {
@@ -183,7 +185,7 @@ befriend.me = {
                             <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 611.9975 612.0095"><g id="_x34_"><path d="M606.203,578.714l-158.011-155.486c41.378-44.956,66.802-104.411,66.802-169.835-.02-139.954-115.296-253.393-257.507-253.393S0,113.439,0,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0,7.747-7.613,7.747-19.971.018-27.585ZM257.487,467.8c-120.326,0-217.869-95.993-217.869-214.407S137.161,38.986,257.487,38.986s217.869,95.993,217.869,214.407-97.542,214.407-217.869,214.407Z"/></g></svg>
                           </div>
                           <div class="select-list">${list_html}</div>
-                          <div class="no-results">${data.filterNoResults}</div>
+                          <div class="no-results">${data.filter.noResults}</div>
                         </div>
                       </div>`;
     },
@@ -196,7 +198,7 @@ befriend.me = {
 
         item_id = parseInt(item_id);
 
-        let selected_item = section_data.filterList.find((item) => item.id === item_id);
+        let selected_item = section_data.filter.list.find((item) => item.id === item_id);
 
         if (!selected_item) {
             throw new Error('Select item not found');
@@ -222,6 +224,7 @@ befriend.me = {
     addSection: async function (key, skip_save) {
         let option_data = befriend.me.data.sections.all[key];
         let sections_el = befriend.els.me.querySelector('.about-me').querySelector('.sections');
+        let section_els = sections_el.getElementsByClassName('section');
 
         let section_el = befriend.me.getSectionElByKey(key);
 
@@ -229,49 +232,62 @@ befriend.me = {
         let section_height = '';
 
         if (option_data) {
-            if (!section_el) {
-                delete befriend.me.data.sections.options[key];
+            let prev_index;
 
-                if (!(key in befriend.me.data.sections.active)) {
-                    if (!skip_save) {
-                        //save to server
-                        try {
-                            await befriend.me.saveSection(key);
-                        } catch (e) {
-                            console.error(e);
-                        }
+            //delete section if prev, re-insert at same position
+            if(section_el) {
+                for(let i = 0; i < section_els.length; i++) {
+                    if(section_els[i] === section_el) {
+                        prev_index = i;
+                        break;
                     }
                 }
 
-                let section_data = befriend.me.data.sections.active[key];
+                section_el.parentNode.removeChild(section_el);
+            }
 
-                let autocomplete = '';
-                let categories = '';
-                let secondary = '';
-                let items = '';
+            delete befriend.me.data.sections.options[key];
 
-                if (section_data.data) {
-                    if (section_data.data.categories) {
-                        categories = `<div class="category-btn active" data-category="mine">
+            if (!(key in befriend.me.data.sections.active)) {
+                if (!skip_save) {
+                    //save to server
+                    try {
+                        await befriend.me.saveSection(key);
+                    } catch (e) {
+                        console.error(e);
+                    }
+                }
+            }
+
+            let section_data = befriend.me.data.sections.active[key];
+
+            let autocomplete = '';
+            let categories = '';
+            let secondary = '';
+            let items = '';
+
+            if (section_data.data) {
+                if (section_data.data.categories) {
+                    categories = `<div class="category-btn active" data-category="mine">
                                                 My ${option_data.section_name}
                                         </div>`;
 
-                        for (let category of section_data.data.categories) {
-                            categories += `<div class="category-btn" data-category="${category}">
+                    for (let category of section_data.data.categories) {
+                        categories += `<div class="category-btn" data-category="${category}">
                                                 ${category}
                                         </div>`;
-                        }
-
-                        categories = `<div class="category-filters">${categories}</div>`;
                     }
 
-                    if (section_data.data.autoComplete) {
-                        let select_list = befriend.me.buildSelectFilterList(
-                            key,
-                            section_data.data.autoComplete,
-                        );
+                    categories = `<div class="category-filters">${categories}</div>`;
+                }
 
-                        autocomplete = `
+                if (section_data.data.autoComplete) {
+                    let select_list = befriend.me.buildSelectFilterList(
+                        key,
+                        section_data.data.autoComplete,
+                    );
+
+                    autocomplete = `
                             <div class="search-container ${select_list ? 'has-select' : ''}">
                                 <div class="autocomplete-container">
                                     <div class="input-container">
@@ -287,27 +303,26 @@ befriend.me = {
                                 ${select_list}
                             </div>
                         `;
-                    }
+                }
 
-                    if (section_data.items) {
-                        for (let token in section_data.items) {
-                            let item = section_data.items[token];
+                if (section_data.items) {
+                    for (let token in section_data.items) {
+                        let item = section_data.items[token];
 
-                            items += `<div class="item" data-token="${token}">
+                        items += `<div class="item" data-token="${token}">
                                         ${item.name}
                                     </div>`;
-                        }
                     }
                 }
+            }
 
-                //initialize collapsed if saved
+            //initialize collapsed if saved
+            if (befriend.me.data.sections.collapsed[key]) {
+                section_collapsed = 'collapsed';
+                section_height = '0';
+            }
 
-                if (befriend.me.data.sections.collapsed[key]) {
-                    section_collapsed = 'collapsed';
-                    section_height = '0';
-                }
-
-                let html = `<div class="section ${key} ${section_collapsed}" data-key="${key}" style="${section_height}">
+            let html = `<div class="section ${key} ${section_collapsed}" data-key="${key}" style="${section_height}">
                                 <div class="section-top">
                                     <div class="icon">${option_data.icon}</div>
                                     <div class="title">${option_data.section_name}</div>
@@ -330,20 +345,30 @@ befriend.me = {
                                 </div>
                             </div>`;
 
-                sections_el.insertAdjacentHTML('beforeend', html);
+            //re-insert section at prev index
+            if(isNumeric(prev_index) && section_els.length) {
+                if(prev_index === 0) {
+                    sections_el.insertAdjacentHTML('afterbegin', html);
+                } else {
+                    let insert_after_el = section_els[prev_index - 1];
 
-                befriend.me.events.onSectionCategory();
-                befriend.me.events.onSectionActions();
-                befriend.me.events.autoComplete();
-                befriend.me.events.autoCompleteFilterList();
-                befriend.me.events.onActionSelect();
-                befriend.me.events.onUpdateSectionHeight();
-
-                section_el = befriend.me.getSectionElByKey(key);
-
-                if (!section_collapsed) {
-                    befriend.me.updateSectionHeight(section_el, false, true, true);
+                    insert_after_el.insertAdjacentHTML('afterend', html);
                 }
+            } else {
+                sections_el.insertAdjacentHTML('beforeend', html);
+            }
+
+            befriend.me.events.onSectionCategory();
+            befriend.me.events.onSectionActions();
+            befriend.me.events.autoComplete();
+            befriend.me.events.autoCompleteFilterList();
+            befriend.me.events.onActionSelect();
+            befriend.me.events.onUpdateSectionHeight();
+
+            section_el = befriend.me.getSectionElByKey(key);
+
+            if (!section_collapsed) {
+                befriend.me.updateSectionHeight(section_el, false, true, true);
             }
         }
     },
@@ -356,37 +381,31 @@ befriend.me = {
                     section_data.items = {};
                 }
 
+                let filterKey = section_data.data?.autoComplete?.filter?.hashKey;
+                let hash_token = null;
+
+                if(filterKey) {
+                    hash_token = befriend.me.autoComplete.selected.filterList[section_key].item[filterKey];
+                }
+
                 let r = await befriend.auth.post(`/me/sections/item`, {
                     section_key: section_key,
                     item_token: item_token,
+                    hash_token: hash_token || null,
                 });
 
                 section_data.items[item_token] = r.data;
 
                 //add unique selection to options if not exists
-                let option = section_data.data.options.find((item) => item.token === item_token);
+                if(section_data.data.options) {
+                    let option = section_data.data.options.find((item) => item.token === item_token);
 
-                if (!option) {
-                    section_data.data.options.push(r.data);
-                }
-
-                if (r.data.secondary) {
-                    let secondary_el = befriend.els.me.querySelector(
-                        `.item[data-token="${item_token}"] .secondary`,
-                    );
-
-                    if (secondary_el) {
-                        secondary_el.querySelector('.current-selected').innerHTML =
-                            r.data.secondary;
-
-                        let selected_el = secondary_el.querySelector(
-                            `.option[data-option="${r.data.secondary}"]`,
-                        );
-
-                        if (selected_el) {
-                            addClassEl('selected', selected_el);
-                        }
+                    if (!option) {
+                        section_data.data.options.push(r.data);
                     }
+                } else {
+                    //add item
+                    befriend.me.addSection(section_key, true);
                 }
             } catch (e) {
                 console.error(e);
@@ -515,11 +534,7 @@ befriend.me = {
     },
     searchItems: function (section_key, search_value) {
         return new Promise(async (resolve, reject) => {
-            if (!search_value) {
-                return resolve();
-            }
-
-            search_value = search_value.trim();
+            search_value = search_value ? search_value.trim() : '';
 
             if (search_value.length < befriend.me.autoComplete.minChars) {
                 befriend.me.toggleAutoComplete(false);

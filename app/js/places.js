@@ -252,11 +252,7 @@ befriend.places = {
     },
     searchPlace: function (search_str, skip_dropdown) {
         return new Promise(async (resolve, reject) => {
-            if (!search_str) {
-                return resolve();
-            }
-
-            search_str = search_str.trim();
+            search_str = search_str ? search_str.trim() : '';
 
             if (search_str.length < befriend.places.autoComplete.minChars) {
                 befriend.places.toggleAutoComplete(false);
