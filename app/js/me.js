@@ -307,11 +307,9 @@ befriend.me = {
 
                 if (section_data.items) {
                     for (let token in section_data.items) {
-                        let item = section_data.items[token];
+                        let item_html = befriend.me.sectionItemHtml(key, token);
 
-                        items += `<div class="item" data-token="${token}">
-                                        ${item.name}
-                                    </div>`;
+                        items += item_html;
                     }
                 }
             }
@@ -341,7 +339,7 @@ befriend.me = {
                                     ${categories}
                                     ${autocomplete}
                                     ${secondary}
-                                    <div class="items ${!items ? 'no-items' : ''}">${items}</div>
+                                    <div class="items ${!items ? 'no-items' : ''} ${section_data?.data?.styles?.rowCols || ''}">${items}</div>
                                 </div>
                             </div>`;
 
@@ -403,10 +401,10 @@ befriend.me = {
                     if (!option) {
                         section_data.data.options.push(r.data);
                     }
-                } else {
-                    //add item
-                    befriend.me.addSection(section_key, true);
                 }
+
+                //re-add section
+                befriend.me.addSection(section_key, true);
             } catch (e) {
                 console.error(e);
             }

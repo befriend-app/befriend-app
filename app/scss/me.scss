@@ -150,6 +150,10 @@ html.#{$class_confirm_me_action} {
                 }
             }
 
+            &:last-of-type {
+                margin-bottom: 200px;
+            }
+
             &.show-menu {
                 .menu {
                     $pt: 5px;
@@ -522,9 +526,23 @@ html.#{$class_confirm_me_action} {
 
             .items {
                 display: grid;
-                grid-template-columns: repeat(2, 1fr);
                 gap: 10px;
                 margin-top: $padding_tb;
+
+                &.cols-2 {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+
+                &.cols-1 {
+                    grid-template-columns: repeat(1, 1fr);
+
+                    .name {
+                        padding-left: 10px;
+                        padding-right: 20px;
+                        text-align: left;
+                    }
+
+                }
 
                 &.no-items {
                     margin-top: 0;
