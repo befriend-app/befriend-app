@@ -780,8 +780,8 @@ html.#{$class_confirm_me_action} {
 
 #me-section-options {
     $min-w: 160px;
-    $max-w: 220px;
-    $preferred-w: 50vw;
+    $max-w: 300px;
+    $preferred-w: 60vw;
     position: fixed;
     right: calc(-1 * clamp($min-w, $preferred-w, $max-w));
     top: var(--sbh);

@@ -9,6 +9,7 @@ befriend.when = {
         future: 5,
     },
     options: [
+        { id: 'schedule', name: 'Schedule', is_schedule: true },
         { id: 'now', value: 'Now', name: 'Now', is_now: true, mins: 5 },
         { id: 15, value: '15', unit: 'mins', mins: 15 },
         { id: 30, value: '30', unit: 'mins', mins: 30 },
@@ -16,9 +17,9 @@ befriend.when = {
         { id: 60, value: '1', unit: 'hr', mins: 60 },
         { id: 90, value: '1.5', unit: 'hrs', mins: 90 },
         { id: 120, value: '2', unit: 'hrs', mins: 120 },
+        { id: 150, value: '2.5', unit: 'hrs', mins: 150 },
         { id: 180, value: '3', unit: 'hrs', mins: 180 },
         { id: 240, value: '4', unit: 'hrs', mins: 240 },
-        { id: 'schedule', name: 'Schedule', is_schedule: true },
     ],
     colors: [
         '#FFF7A1', // Light Yellow
@@ -147,10 +148,31 @@ befriend.when = {
 
         befriend.activities.draft.update('when', befriend.when.selected.main);
     },
+    updateArrowsVisibility: function () {
+        let containerEl = befriend.els.when.querySelector('.when-options-container');
+        let arrowLeft = befriend.els.when.querySelector('.arrow-left');
+        let arrowRight = befriend.els.when.querySelector('.arrow-right');
+        
+        const scrollLeft = containerEl.scrollLeft;
+        const scrollWidth = containerEl.scrollWidth;
+        const clientWidth = containerEl.clientWidth;
+
+        // Check if content is wider than container
+        const hasOverflow = scrollWidth > clientWidth;
+
+        // Show/hide left arrow based on scroll position
+        hasOverflow && scrollLeft > 0 ? addClassEl('show', arrowLeft) : removeClassEl('show', arrowLeft);
+
+        // Show/hide right arrow based on remaining scroll and overflow
+        const lastItemVisible = scrollLeft + clientWidth >= scrollWidth;
+
+        !lastItemVisible ? addClassEl('show', arrowRight) : removeClassEl('show', arrowRight);
+    },
     events: {
         init: function () {
             return new Promise(async (resolve, reject) => {
                 try {
+                    befriend.when.events.onScroll();
                     await befriend.when.events.whenOptions();
                 } catch (e) {
                     console.error(e);
@@ -161,10 +183,15 @@ befriend.when = {
         },
         whenOptions: function () {
             return new Promise(async (resolve, reject) => {
+                let now_el = null;
                 let when_els = befriend.els.when.getElementsByClassName('when-option');
 
                 for (let i = 0; i < when_els.length; i++) {
                     let el = when_els[i];
+
+                    if(el.getAttribute('data-id') === 'now') {
+                        now_el = el;
+                    }
 
                     el.addEventListener('click', (e) => {
                         e.preventDefault();
@@ -174,13 +201,52 @@ befriend.when = {
                     });
                 }
 
-                //select first option by default
-                if (when_els.length) {
-                    fireClick(when_els[0]);
+                //select now option by default
+                if (now_el) {
+                    befriend.when.selectOptionIndex(now_el.getAttribute('data-index'));
                 }
 
                 resolve();
             });
         },
+        onScroll: function () {
+            function scrollDirection(direction) {
+                const itemWidth = befriend.variables.when_option_width + befriend.variables.when_option_gap_lr;
+                const scrollAmount = itemWidth * 3;
+
+                const currentScroll = container.scrollLeft;
+
+                const newScroll = direction === 'left'
+                    ? currentScroll - scrollAmount
+                    : currentScroll + scrollAmount;
+
+                container.scrollTo({
+                    left: newScroll,
+                    behavior: 'smooth'
+                });
+            }
+
+            // Debounce resize handler
+            let resizeTimeout;
+            let container = befriend.els.when.querySelector('.when-options-container');
+            let arrowLeft = befriend.els.when.querySelector('.arrow-left');
+            let arrowRight = befriend.els.when.querySelector('.arrow-right');
+
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => befriend.when.updateArrowsVisibility(), 150);
+            });
+
+            // Scroll handler
+            container.addEventListener('scroll', () => {
+                befriend.when.updateArrowsVisibility();
+            });
+
+            // Arrow click handlers
+            arrowLeft.addEventListener('click', () => scrollDirection('left'));
+            arrowRight.addEventListener('click', () => scrollDirection('right'));
+
+            befriend.when.updateArrowsVisibility();
+        }
     },
 };
