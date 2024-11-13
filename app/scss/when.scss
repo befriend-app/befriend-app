@@ -65,7 +65,7 @@
             width: $when_option_width;
             display: flex;
             flex-direction: column;
-            border: $bw solid $color_lightgray;
+            border: $bw solid darken($color_lightgray, 15%);
             box-sizing: border-box;
             border-radius: $br;
             overflow: hidden;

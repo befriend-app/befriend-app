@@ -711,7 +711,7 @@ befriend.activities = {
         if (when.is_schedule) {
             // Handle scheduled times if needed
         } else {
-            if (mins_to > when.mins + befriend.when.thresholds.future) {
+            if (mins_to > when.in_mins + befriend.when.thresholds.future) {
                 needs_update = true;
             } else {
                 // Restore original time if within threshold
@@ -726,7 +726,7 @@ befriend.activities = {
             for (let i = 0; i < befriend.when.options.length; i++) {
                 let option = befriend.when.options[i];
 
-                if (option.mins && mins_to < option.mins) {
+                if (option.in_mins && mins_to < option.in_mins) {
                     // Auto select when button
                     befriend.when.selectOptionIndex(i);
 
