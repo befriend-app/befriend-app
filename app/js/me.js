@@ -292,12 +292,12 @@ befriend.me = {
                                         </div>`;
 
                     for (let category of section_data.data.categories) {
-                        categories += `<div class="category-btn" data-category="${category}">
-                                                ${category}
+                        categories += `<div class="category-btn" data-category="${category.name}" ${category.token ? `data-category-token="${category.token}"` : ''}>
+                                            ${category.name}
                                         </div>`;
                     }
 
-                    categories = `<div class="category-filters">${categories}</div>`;
+                    categories = `<div class="categories-container"><div class="category-filters">${categories}</div></div>`;
                 }
 
                 if (section_data.data.autoComplete) {
@@ -339,7 +339,12 @@ befriend.me = {
                 section_height = '0';
             }
 
-            let html = `<div class="section ${key} ${section_collapsed}" data-key="${key}" data-table-key="${table_key ? table_key : ''}" style="${section_height}">
+            let has_categories = '';
+            if(categories) {
+                has_categories = 'w-categories';
+            }
+
+            let html = `<div class="section ${key} ${section_collapsed} ${has_categories}" data-key="${key}" data-table-key="${table_key ? table_key : ''}" style="${section_height}">
                                 <div class="section-top">
                                     <div class="icon">${option_data.icon}</div>
                                     <div class="title">${option_data.section_name}</div>

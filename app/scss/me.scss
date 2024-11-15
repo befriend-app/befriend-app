@@ -136,6 +136,12 @@ html.#{$class_confirm_me_action} {
             padding: 0;
             border-radius: $br;
 
+            &.w-categories {
+                .section-container {
+                    margin-top: 0 !important;
+                }
+            }
+
             &.collapsed {
                 border-bottom: 1px transparent;
 
@@ -181,7 +187,7 @@ html.#{$class_confirm_me_action} {
                 .icon {
                     @include flex-center-col;
 
-                    margin-right: 6px;
+                    margin-right: 10px;
 
                     svg {
                         height: 20px;
@@ -242,6 +248,13 @@ html.#{$class_confirm_me_action} {
                 margin-bottom: $padding_tb;
                 overflow-y: hidden;
                 transition: all 300ms;
+            }
+
+            .categories-container {
+                //margin-top: -$padding_tb;
+                padding-top: $padding_tb;
+                max-height: 100px;
+                overflow-y: scroll;
             }
 
             .category-filters {
