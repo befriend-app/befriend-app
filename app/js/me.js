@@ -381,6 +381,7 @@ befriend.me = {
             befriend.me.events.autoCompleteFilterList();
             befriend.me.events.onActionSelect();
             befriend.me.events.onUpdateSectionHeight();
+            befriend.me.events.onRemoveItem();
 
             section_el = befriend.me.getSectionElByKey(key);
 
