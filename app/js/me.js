@@ -126,6 +126,11 @@ befriend.me = {
 
         return sections_el.querySelector(`.section[data-key="${key}"]`);
     },
+    getSectionTableKey: function (key) {
+        let section_el = this.getSectionElByKey(key);
+
+        return section_el.getAttribute('data-table-key');
+    },
     getActiveSection: function (key) {
         return befriend.me.data.sections.active?.[key];
     },
@@ -273,6 +278,8 @@ befriend.me = {
 
             let section_data = befriend.me.getActiveSection(key);
 
+            let table_key = section_data.data.tables ? section_data.data.tables[0] : null;
+
             let autocomplete = '';
             let categories = '';
             let secondary = '';
@@ -332,7 +339,7 @@ befriend.me = {
                 section_height = '0';
             }
 
-            let html = `<div class="section ${key} ${section_collapsed}" data-key="${key}" style="${section_height}">
+            let html = `<div class="section ${key} ${section_collapsed}" data-key="${key}" data-table-key="${table_key ? table_key : ''}" style="${section_height}">
                                 <div class="section-top">
                                     <div class="icon">${option_data.icon}</div>
                                     <div class="title">${option_data.section_name}</div>
@@ -400,6 +407,7 @@ befriend.me = {
 
                 let r = await befriend.auth.post(`/me/sections/item`, {
                     section_key: section_key,
+                    table_key: befriend.me.getSectionTableKey(section_key),
                     item_token: item_token,
                     hash_token: hash_token || null,
                 });
@@ -449,6 +457,7 @@ befriend.me = {
             try {
                 await befriend.auth.put(`/me/sections/item`, {
                     section_key: section_key,
+                    table_key: befriend.me.getSectionTableKey(section_key),
                     section_item_id: item.id,
                     is_delete: true,
                 });
@@ -565,7 +574,7 @@ befriend.me = {
                 const r = await befriend.auth.get(endpoint, {
                     search: search_value,
                     filterId: filterId,
-                    location: befriend.location.device || null
+                    location: befriend.location.device || null,
                 });
 
                 befriend.me.setAutoComplete(section_key, r.data.items);
@@ -1428,6 +1437,7 @@ befriend.me = {
                                 try {
                                     await befriend.auth.put(`/me/sections/item`, {
                                         section_key: section_key,
+                                        table_key: befriend.me.getSectionTableKey(section_key),
                                         section_item_id: item.id,
                                         secondary: option_value,
                                     });
