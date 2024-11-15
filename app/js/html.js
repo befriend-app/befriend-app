@@ -76,7 +76,7 @@ befriend.html = {
                                             <div class="section-title">Place</div>
                                             <div class="near">
                                                 <div class="near-wrapper">
-                                                    <div class="near-location">Near <span class="near-text">Me</span></div>
+                                                    <div class="near-location"><span class="near-text">Near Me</span></div>
                                                 </div>
                                             </div>
                                         </div>

@@ -240,7 +240,7 @@ befriend.location = {
 
                     befriend.location.current = befriend.location.device;
 
-                    befriend.els.activities.querySelector('.near-text').innerHTML = 'Me';
+                    befriend.els.activities.querySelector('.near-text').innerHTML = 'Near Me';
 
                     befriend.maps.removeMarkers([
                         befriend.maps.markers.me,

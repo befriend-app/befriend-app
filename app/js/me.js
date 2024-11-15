@@ -126,6 +126,18 @@ befriend.me = {
 
         return sections_el.querySelector(`.section[data-key="${key}"]`);
     },
+    getActiveSection: function (key) {
+        return befriend.me.data.sections.active?.[key];
+    },
+    getSectionAutoComplete: function (key) {
+        let section = this.getActiveSection(key);
+
+        if(section) {
+            return section.data?.autoComplete;
+        }
+
+        return null;
+    },
     buildSelectFilterList: function (key, data) {
         let items = data?.filter?.list;
 
@@ -190,7 +202,7 @@ befriend.me = {
                       </div>`;
     },
     selectAutoCompleteFilterItem: function (section_key, item_id) {
-        let section_data = befriend.me.data.sections.active[section_key]?.data?.autoComplete;
+        let section_data = befriend.me.getSectionAutoComplete(section_key);
 
         if (!section_data) {
             return;
@@ -259,7 +271,7 @@ befriend.me = {
                 }
             }
 
-            let section_data = befriend.me.data.sections.active[key];
+            let section_data = befriend.me.getActiveSection(key);
 
             let autocomplete = '';
             let categories = '';
@@ -373,7 +385,7 @@ befriend.me = {
     addSectionItem: function (section_key, item_token) {
         return new Promise(async (resolve, reject) => {
             try {
-                let section_data = befriend.me.data.sections.active[section_key];
+                let section_data = befriend.me.getActiveSection(section_key);
 
                 if (!('items' in section_data)) {
                     section_data.items = {};
@@ -428,7 +440,7 @@ befriend.me = {
     },
     removeSectionItem: function (section_key, item_token) {
         return new Promise(async (resolve, reject) => {
-            let section_data = befriend.me.data.sections.active[section_key];
+            let section_data = befriend.me.getActiveSection(section_key);
 
             let item = section_data.items[item_token];
 
@@ -534,14 +546,18 @@ befriend.me = {
         return new Promise(async (resolve, reject) => {
             search_value = search_value ? search_value.trim() : '';
 
-            if (search_value.length < befriend.me.autoComplete.minChars) {
+            let sectionAutocomplete = befriend.me.getSectionAutoComplete(section_key);
+
+            let minChars = isNumeric(sectionAutocomplete.minChars) ? sectionAutocomplete.minChars : befriend.me.autoComplete.minChars;
+
+            if (search_value.length < minChars) {
                 befriend.me.toggleAutoComplete(false);
                 return resolve();
             }
 
             try {
                 let endpoint =
-                    befriend.me.data.sections.active[section_key].data.autoComplete.endpoint;
+                    befriend.me.getSectionAutoComplete(section_key).endpoint;
 
                 let filterId =
                     befriend.me.autoComplete.selected.filterList[section_key]?.item?.id || null;
@@ -567,7 +583,7 @@ befriend.me = {
             let list = search_container_el.querySelector('.autocomplete-list');
 
             if (list) {
-                let section_data = befriend.me.data.sections.active[section_key];
+                let section_data = befriend.me.getActiveSection(section_key);
                 let auto_compete_data = section_data.data.autoComplete;
                 let items_html = '';
 
@@ -825,7 +841,7 @@ befriend.me = {
 
         let select_list = section_el.querySelector('.select-list');
 
-        let section_data = befriend.me.data.sections.active[section_key]?.data;
+        let section_data = befriend.me.getActiveSection(section_key);
 
         if (!section_data || !section_data.autoComplete || !section_data.autoComplete.filterList) {
             return;
@@ -871,7 +887,7 @@ befriend.me = {
         }
     },
     sectionItemHtml: function (section_key, token) {
-        let section_data = befriend.me.data.sections.active[section_key];
+        let section_data = befriend.me.getActiveSection(section_key);
 
         let item = section_data.items[token];
 
@@ -1023,7 +1039,13 @@ befriend.me = {
 
                     removeElsClass(search_containers, befriend.classes.autoCompleteMe);
 
-                    if (el.value.length >= befriend.me.autoComplete.minChars) {
+                    let section_key = el.closest('.section').getAttribute('data-key');
+
+                    let sectionAutocomplete = befriend.me.getSectionAutoComplete(section_key);
+
+                    let minChars = isNumeric(sectionAutocomplete.minChars) ? sectionAutocomplete.minChars : befriend.me.autoComplete.minChars;
+
+                    if (el.value.length >= minChars) {
                         befriend.me.toggleAutoComplete(el.closest('.search-container'), true);
                     }
                 });
@@ -1197,7 +1219,7 @@ befriend.me = {
                         addClassEl('active', this);
 
                         let section_key = section.getAttribute('data-key');
-                        let section_data = befriend.me.data.sections.active[section_key];
+                        let section_data = befriend.me.getActiveSection(section_key);
                         let category_items_html = ``;
 
                         if (category === 'mine') {
@@ -1309,7 +1331,7 @@ befriend.me = {
                     befriend.me.removeSectionItem(section_key, token);
 
                     //ui
-                    let section_data = befriend.me.data.sections.active[section_key];
+                    let section_data = befriend.me.getActiveSection(section_key);
 
                     if (!Object.keys(section_data.items).length) {
                         addClassEl('no-items', section.querySelector('.items'));
@@ -1391,7 +1413,7 @@ befriend.me = {
                             current_selected_el.innerHTML = option_value;
 
                             //data
-                            let active_section = befriend.me.data.sections.active[section_key];
+                            let active_section = befriend.me.getActiveSection(section_key);
 
                             let item = active_section.items[item_token];
 
