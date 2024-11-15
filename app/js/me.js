@@ -281,7 +281,7 @@ befriend.me = {
             if (section_data.data) {
                 if (section_data.data.categories) {
                     categories = `<div class="category-btn active" data-category="mine">
-                                                My ${option_data.section_name}
+                                                ${section_data.data.myStr}
                                         </div>`;
 
                     for (let category of section_data.data.categories) {
@@ -894,22 +894,24 @@ befriend.me = {
         let secondary = '';
         let options = '';
 
+        let secondary_options = section_data.data?.secondary?.options;
+
         //current selected
-        if (section_data.data && section_data.data.secondary) {
+        if (secondary_options) {
             let unselected = '';
 
             if (!item.secondary) {
                 unselected = 'unselected';
             }
 
-            for (let option of section_data.data.secondary) {
+            for (let option of secondary_options) {
                 let selected = item.secondary === option ? 'selected' : '';
 
                 options += `<div class="option ${selected}" data-option="${option}">${option}</div>`;
             }
 
             secondary = `<div class="secondary ${unselected}" data-value="${item.secondary ? item.secondary : ''}">
-                                                    <div class="current-selected">${item.secondary ? item.secondary : section_data.data.unselectedStr}</div>
+                                                    <div class="current-selected">${item.secondary ? item.secondary : section_data.data?.secondary?.unselectedStr}</div>
                                                     <svg class="arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 82.1 43.2"><path d="M41.1,43.2L0,2.2,2.1,0l39,39L80,0l2.1,2.2-41,41Z"/></svg>
                                                     <div class="options">${options}</div>
                                                 </div>`;
