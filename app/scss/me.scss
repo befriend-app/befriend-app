@@ -141,6 +141,14 @@ html.#{$class_confirm_me_action} {
                 }
             }
 
+            &.my-items {
+                .items-container {
+                    .tabs {
+                        display: flex !important;
+                    }
+                }
+            }
+
             &.no-items {
                 .section-container {
                 }
@@ -599,8 +607,28 @@ html.#{$class_confirm_me_action} {
             .items-container {
                 position: relative;
                 max-height: 240px;
-                padding: 0 $padding_lr_inner;
+                padding: 0 0;
                 overflow-y: scroll;
+
+                .tabs {
+                    display: none;
+                    border-bottom: 1px solid $color_lightgray;
+
+                    .tab {
+                        padding: 6px 0;
+                        flex-basis: 50%;
+                        @include flex-center-col;
+                        transition: all 200ms;
+                        background: lighten(black, 95%);
+                        font-size: 14px;
+                        font-weight: 500;
+
+                        &.active {
+                            background: $brand_color_a;
+                            color: white;
+                        }
+                    }
+                }
 
                 .no-items {
                     display: none;
@@ -617,6 +645,8 @@ html.#{$class_confirm_me_action} {
                 gap: 10px;
                 margin-top: $padding_tb;
                 padding-bottom: $padding_tb;
+                padding-left: $padding_lr_inner;
+                padding-right: $padding_lr_inner;
 
                 &.cols-2 {
                     grid-template-columns: repeat(2, 1fr);

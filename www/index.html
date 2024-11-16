@@ -81,7 +81,7 @@
                 return resolve();
             }
 
-            console.log('load cordova');
+            console.log("Load Cordova");
 
             let file_name = 'cordova.js';
 
@@ -107,8 +107,6 @@
             if (!is_app) {
                 return resolve();
             }
-
-            console.log('wait device ready');
 
             if (typeof cordova === 'undefined') {
                 document.addEventListener(

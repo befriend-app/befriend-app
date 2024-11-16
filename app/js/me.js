@@ -295,13 +295,40 @@ befriend.me = {
 
             let table_key = section_data.data.tables ? section_data.data.tables[0] : null;
 
-            let autocomplete = '';
-            let categories = '';
-            let items = '';
+            let autocomplete_html = '';
+            let categories_html = '';
+            let tabs_html = '';
+            let items_html = '';
 
             if (section_data.data) {
+                //autocomplete
+                if (section_data.data.autoComplete) {
+                    let select_list = befriend.me.buildSelectFilterList(
+                        key,
+                        section_data.data.autoComplete,
+                    );
+
+                    autocomplete_html = `
+                            <div class="search-container ${select_list ? 'has-select' : ''}">
+                                <div class="autocomplete-container">
+                                    <div class="input-container">
+                                        <input type="text" class="search-input" placeholder="${section_data.data.autoComplete.placeholders.main}">
+                                        <div class="search-icon-container">
+                                            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 611.9975 612.0095"><g id="_x34_"><path d="M606.203,578.714l-158.011-155.486c41.378-44.956,66.802-104.411,66.802-169.835-.02-139.954-115.296-253.393-257.507-253.393S0,113.439,0,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0,7.747-7.613,7.747-19.971.018-27.585ZM257.487,467.8c-120.326,0-217.869-95.993-217.869-214.407S137.161,38.986,257.487,38.986s217.869,95.993,217.869,214.407-97.542,214.407-217.869,214.407Z"/></g></svg>
+                                        </div>
+                                    </div>
+
+                                    <div class="autocomplete-list"></div>
+                                </div>
+                                
+                                ${select_list}
+                            </div>
+                        `;
+                }
+
+                //categories
                 if (section_data.data?.categories?.options) {
-                    categories = `<div class="category-btn mine active" data-category="mine">
+                    categories_html = `<div class="category-btn mine active" data-category="mine">
                                                 ${section_data.data.myStr}
                                         </div>`;
 
@@ -322,46 +349,45 @@ befriend.me = {
                             data_table_key = `data-category-table="${category.table_key}"`;
                         }
 
-                        categories += `<div class="category-btn ${heading_html ? 'w-heading' : ''}" ${data_category} ${data_table_key} ${data_category_token}>
+                        categories_html += `<div class="category-btn ${heading_html ? 'w-heading' : ''}" ${data_category} ${data_table_key} ${data_category_token}>
                                             ${heading_html}
                                             <div class="name">${category.name}</div>
                                         </div>`;
                     }
 
-                    categories = `<div class="categories-container">
-                                        <div class="category-filters">${categories}</div>
+                    categories_html = `<div class="categories-container">
+                                        <div class="category-filters">${categories_html}</div>
                                     </div>`;
                 }
 
-                if (section_data.data.autoComplete) {
-                    let select_list = befriend.me.buildSelectFilterList(
-                        key,
-                        section_data.data.autoComplete,
-                    );
+                //tabs
+                if(section_data.data?.tabs?.length) {
+                    for(let i = 0; i < section_data.data.tabs.length; i++) {
+                        let tab = section_data.data.tabs[i];
 
-                    autocomplete = `
-                            <div class="search-container ${select_list ? 'has-select' : ''}">
-                                <div class="autocomplete-container">
-                                    <div class="input-container">
-                                        <input type="text" class="search-input" placeholder="${section_data.data.autoComplete.placeholders.main}">
-                                        <div class="search-icon-container">
-                                            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 611.9975 612.0095"><g id="_x34_"><path d="M606.203,578.714l-158.011-155.486c41.378-44.956,66.802-104.411,66.802-169.835-.02-139.954-115.296-253.393-257.507-253.393S0,113.439,0,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0,7.747-7.613,7.747-19.971.018-27.585ZM257.487,467.8c-120.326,0-217.869-95.993-217.869-214.407S137.161,38.986,257.487,38.986s217.869,95.993,217.869,214.407-97.542,214.407-217.869,214.407Z"/></g></svg>
-                                        </div>
-                                    </div>
+                        tabs_html += `<div class="tab ${i === 0 ? 'active': ''}" data-key="${tab.key}">${tab.name}</div>`
+                    }
 
-                                    <div class="autocomplete-list"></div>
-                                </div>
-                                
-                                ${select_list}
-                            </div>
-                        `;
+                    tabs_html = `<div class="tabs">${tabs_html}</div>`;
                 }
 
+                //items
                 if (section_data.items) {
                     for (let token in section_data.items) {
-                        let item_html = befriend.me.sectionItemHtml(key, section_data.items[token]);
+                        //filter by tab
+                        let item = section_data.items[token];
 
-                        items += item_html;
+                        if(tabs_html) {
+                            let active_tab = section_data.data.tabs[0];
+
+                            if(active_tab && item.table_key !== active_tab.key) {
+                                continue;
+                            }
+                        }
+
+                        let item_html = befriend.me.sectionItemHtml(key, item);
+
+                        items_html += item_html;
                     }
                 }
             }
@@ -376,15 +402,15 @@ befriend.me = {
 
             let has_categories = '';
 
-            if(section_data.data.tabs && section_data.data.tabs.length) {
+            if(tabs_html) {
                 has_tabs = 'w-tabs';
             }
 
-            if(categories) {
+            if(categories_html) {
                 has_categories = 'w-categories';
             }
 
-            let html = `<div class="section ${key} ${section_collapsed} ${has_categories} ${has_tabs}" data-key="${key}" data-table-key="${table_key ? table_key : ''}" style="${section_height}">
+            let html = `<div class="section my-items ${key} ${section_collapsed} ${has_categories} ${has_tabs}" data-key="${key}" data-table-key="${table_key ? table_key : ''}" style="${section_height}">
                                 <div class="section-top">
                                     <div class="icon">${option_data.icon}</div>
                                     <div class="title">${option_data.section_name}</div>
@@ -400,11 +426,12 @@ befriend.me = {
                                 </div>
                                 
                                 <div class="section-container">
-                                    ${autocomplete}
-                                    ${categories}
+                                    ${autocomplete_html}
+                                    ${categories_html}
                                     <div class="items-container">
+                                        ${tabs_html}
                                         <div class="items ${section_data?.data?.styles?.rowCols || ''}">
-                                            ${items }
+                                            ${items_html }
                                         </div>
                                         <div class="no-items">No Items</div>
                                     </div>
@@ -425,6 +452,7 @@ befriend.me = {
             }
 
             befriend.me.events.onSectionCategory();
+            befriend.me.events.onSectionTabs();
             befriend.me.events.onSectionActions();
             befriend.me.events.autoComplete();
             befriend.me.events.autoCompleteFilterList();
@@ -476,10 +504,25 @@ befriend.me = {
                     }
                 }
 
+                //select first category
                 let category_btn_first = section_el.querySelector('.category-btn');
 
                 if (category_btn_first) {
                     fireClick(category_btn_first);
+                }
+
+                //select corresponding tab if
+                let tab_els = section_el.querySelectorAll('.items-container .tab');
+
+                if(tab_els && r.data.table_key) {
+                    for(let i = 0; i < tab_els.length; i++) {
+                        let tab_el = tab_els[i];
+
+                        if(tab_el.getAttribute('data-key') === r.data.table_key) {
+                            fireClick(tab_el);
+                            break;
+                        }
+                    }
                 }
             } catch (e) {
                 console.error(e);
@@ -1004,6 +1047,117 @@ befriend.me = {
                                                             </div>
                                                         </div>`;
     },
+    updateSectionItems: function(section_el, filter_params = {}) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let section_key = section_el.getAttribute('data-key');
+                let section_data = befriend.me.getActiveSection(section_key);
+                let items_html = '';
+
+                // Extract filter parameters
+                const {
+                    category = '',
+                    category_token = null,
+                    category_table_key = '',
+                    tab_key = null
+                } = filter_params;
+
+                // Update table key if provided
+                if(category_table_key) {
+                    section_el.setAttribute('data-table-key', category_table_key);
+                }
+
+                // Handle "my items" view
+                if (category === 'mine' || !category) {
+                    addClassEl('my-items', section_el);
+
+                    let items_filtered = [];
+
+                    for (let token in section_data.items) {
+                        let item = section_data.items[token];
+
+                        // Filter by tab if exists
+                        if (tab_key && item.table_key && item.table_key !== tab_key) {
+                            continue;
+                        }
+
+                        items_filtered.push(item);
+                    }
+
+                    if(!items_filtered.length) {
+                        addClassEl('no-items', section_el);
+                    } else {
+                        for (let item of items_filtered) {
+                            items_html += befriend.me.sectionItemHtml(section_key, item);
+                        }
+
+                        removeClassEl('no-items', section_el);
+                    }
+                } else {
+                    removeClassEl('my-items', section_el);
+                    removeClassEl('no-items', section_el);
+
+                    // Handle category-based options
+                    if (category_token) {
+                        let category_options = befriend.me.data.categories[category_token];
+
+                        try {
+                            if (!category_options) {
+                                befriend.toggleSpinner(true);
+                                category_options = await befriend.me.getCategoryOptions(
+                                    section_data.data.categories.endpoint,
+                                    category_token
+                                );
+
+                                befriend.toggleSpinner(false);
+
+                                befriend.me.data.categories[category_token] = category_options;
+                            }
+
+                            for (let item of category_options.items) {
+                                if (!(item.token in section_data.items)) {
+                                    items_html += `<div class="item" data-token="${item.token}">
+                                                ${item.name}
+                                            </div>`;
+                                }
+                            }
+                        } catch(e) {
+                            console.error('Error fetching category options:', e);
+                        }
+                    } else {
+                        // Filter options by category
+                        for (let item of section_data.data.options) {
+                            if (item.category?.toLowerCase() === category.toLowerCase() &&
+                                !(item.token in section_data.items)) {
+                                items_html += `<div class="item" data-token="${item.token}">
+                                                ${item.name}
+                                            </div>`;
+                            }
+                        }
+                    }
+                }
+
+                // Update DOM
+                section_el.querySelector('.items').innerHTML = items_html;
+
+                // Reattach event handlers
+                befriend.me.events.onSelectItem();
+                befriend.me.events.onRemoveItem();
+                befriend.me.events.onOpenSecondary();
+                befriend.me.events.onSelectSecondary();
+
+                // Update UI height
+                befriend.me.updateSectionHeight(section_el, elHasClass(section_el, 'collapsed'));
+
+                resolve();
+            } catch(e) {
+                console.error('Error updating section items:', e);
+                reject(e);
+            } finally {
+                befriend.toggleSpinner(false);
+            }
+        });
+    },
     events: {
         init: function () {
             return new Promise(async (resolve, reject) => {
@@ -1279,7 +1433,7 @@ befriend.me = {
                 });
             }
         },
-        onSectionCategory: function () {
+        onSectionCategory: function() {
             let category_btns = befriend.els.me.getElementsByClassName('category-btn');
 
             for (let i = 0; i < category_btns.length; i++) {
@@ -1288,90 +1442,65 @@ befriend.me = {
                 if (!btn._listener) {
                     btn._listener = true;
 
-                    btn.addEventListener('click', async function (e) {
-                        let category = this.getAttribute('data-category') || '';
-                        let category_token = this.getAttribute('data-category-token');
-                        let category_table_key = this.getAttribute('data-category-table') || '';
+                    btn.addEventListener('click', async function(e) {
+                        let section_el = this.closest('.section');
 
-                        let section = this.closest('.section');
-
-                        let section_btns = section.getElementsByClassName('category-btn');
-
+                        // Update active state
+                        let section_btns = section_el.getElementsByClassName('category-btn');
                         removeElsClass(section_btns, 'active');
-
                         addClassEl('active', this);
 
-                        let section_key = section.getAttribute('data-key');
-                        let section_data = befriend.me.getActiveSection(section_key);
-                        let categories_data = section_data.data?.categories;
-                        let category_items_html = ``;
+                        // Get filter parameters
+                        const filter_params = {
+                            category: this.getAttribute('data-category') || '',
+                            category_token: this.getAttribute('data-category-token'),
+                            category_table_key: this.getAttribute('data-category-table') || '',
+                            tab_key: section_el.querySelector('.tab.active')?.getAttribute('data-key')
+                        };
 
-                        //set table key if
-                        if(category_table_key) {
-                            section.setAttribute('data-table-key', category_table_key);
+                        // Update items
+                        try {
+                            await befriend.me.updateSectionItems(section_el, filter_params);
+                        } catch(e) {
+                            console.error(e)
                         }
+                    });
+                }
+            }
+        },
+        onSectionTabs: function() {
+            let tab_els = befriend.els.me.querySelectorAll('.items-container .tab');
 
-                        if (category === 'mine') {
-                            if (!Object.keys(section_data.items).length) {
-                                //no-items
-                                addClassEl('no-items', section);
-                            } else {
-                                for (let token in section_data.items) {
-                                    let item_html = befriend.me.sectionItemHtml(section_key, section_data.items[token]);
+            for (let i = 0; i < tab_els.length; i++) {
+                let el = tab_els[i];
 
-                                    category_items_html += item_html;
-                                }
-                            }
-                        } else {
-                            //remove no-items
-                            removeClassEl('no-items', section);
+                if (!el._listener) {
+                    el._listener = true;
 
-                            //dynamically retrieve options if category-token
-                            if(category_token) {
-                                let category_options = befriend.me.data.categories[category_token];
+                    el.addEventListener('click', async function(e) {
+                        let section_el = this.closest('.section');
 
-                                try {
-                                    if(!category_options) {
-                                        befriend.toggleSpinner(true);
-                                        category_options = await befriend.me.getCategoryOptions(categories_data.endpoint, category_token);
-                                        befriend.me.data.categories[category_token] = category_options;
-                                    }
+                        // Update active state
+                        let section_tabs = section_el.querySelectorAll('.items-container .tab');
+                        removeElsClass(section_tabs, 'active');
+                        addClassEl('active', this);
 
-                                    for (let item of category_options.items) {
-                                        if(!(item.token in section_data.items)) {
-                                            category_items_html += `<div class="item" data-token="${item.token}">
-                                                            ${item.name}
-                                                        </div>`;
-                                        }
-                                    }
-                                } catch(e) {
+                        // Get current category filter parameters
+                        let active_category = section_el.querySelector('.category-btn.active');
 
-                                }
-                            } else {
-                                for (let item of section_data.data.options) {
-                                    if(item.category?.toLowerCase() === category.toLowerCase()) {
-                                        if(!(item.token in section_data.items)) {
-                                            category_items_html += `<div class="item" data-token="${item.token}">
-                                                            ${item.name}
-                                                        </div>`;
-                                        }
-                                    }
-                                }
-                            }
+                        const filter_params = {
+                            category: active_category?.getAttribute('data-category') || '',
+                            category_token: active_category?.getAttribute('data-category-token'),
+                            category_table_key: active_category?.getAttribute('data-category-table') || '',
+                            tab_key: this.getAttribute('data-key')
+                        };
+
+                        // Update items
+                        try {
+                            await befriend.me.updateSectionItems(section_el, filter_params);
+                        } catch(e) {
+                            console.error(e)
                         }
-
-                        section.querySelector('.items').innerHTML = category_items_html;
-
-                        //events
-                        befriend.me.events.onSelectItem();
-                        befriend.me.events.onRemoveItem();
-                        befriend.me.events.onOpenSecondary();
-                        befriend.me.events.onSelectSecondary();
-
-                        //ui
-                        befriend.me.updateSectionHeight(section, elHasClass(section, 'collapsed'));
-
-                        befriend.toggleSpinner(false);
                     });
                 }
             }
@@ -1429,29 +1558,44 @@ befriend.me = {
                 remove_el._listener = true;
 
                 remove_el.addEventListener('click', function (e) {
-                    let section = this.closest('.section');
-                    let section_key = section.getAttribute('data-key');
-                    let item = this.closest('.item');
-                    let token = item.getAttribute('data-token');
+                    let section_el = this.closest('.section');
+                    let section_key = section_el.getAttribute('data-key');
+                    let item_el = this.closest('.item');
+                    let token = item_el.getAttribute('data-token');
 
                     //dom
                     try {
-                        item.parentNode.removeChild(item);
+                        item_el.parentNode.removeChild(item_el);
                     } catch (e) {
                         console.error(e);
                     }
 
                     //data/server
+                    let section_data = befriend.me.getActiveSection(section_key);
+
                     befriend.me.removeSectionItem(section_key, token);
 
                     //ui
-                    let section_data = befriend.me.getActiveSection(section_key);
+                    let items_filtered = [];
 
-                    if (!Object.keys(section_data.items).length) {
-                        addClassEl('no-items', section);
+                    for (let token in section_data.items) {
+                        let item = section_data.items[token];
+
+                        // Filter by tab if exists
+                        let active_tab = section_el.querySelector('.items-container .tab.active');
+
+                        if (active_tab && item.table_key && item.table_key !== active_tab.getAttribute('data-key')) {
+                            continue;
+                        }
+
+                        items_filtered.push(item);
                     }
 
-                    befriend.me.updateSectionHeight(section, elHasClass(section, 'collapsed'));
+                    if (!items_filtered.length) {
+                        addClassEl('no-items', section_el);
+                    }
+
+                    befriend.me.updateSectionHeight(section_el, elHasClass(section_el, 'collapsed'));
                 });
             }
         },
