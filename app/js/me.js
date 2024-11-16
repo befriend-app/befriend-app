@@ -12,6 +12,7 @@ befriend.me = {
             active: null,
             collapsed: {},
         },
+        categories: {},
         location: null,
     },
     autoComplete: {
@@ -252,7 +253,7 @@ befriend.me = {
 
         removeClassEl('open', select_container);
     },
-    addSection: async function (key, skip_save) {
+    addSection: async function (key, on_update, skip_save) {
         let option_data = befriend.me.data.sections.all[key];
         let sections_el = befriend.els.me.querySelector('.about-me').querySelector('.sections');
         let section_els = sections_el.getElementsByClassName('section');
@@ -435,6 +436,7 @@ befriend.me = {
         return new Promise(async (resolve, reject) => {
             try {
                 let section_data = befriend.me.getActiveSection(section_key);
+                let section_el = befriend.me.getSectionElByKey(section_key);
 
                 if (!('items' in section_data)) {
                     section_data.items = {};
@@ -465,24 +467,9 @@ befriend.me = {
                     }
                 }
 
-                //re-add section
-                befriend.me.addSection(section_key, true);
+                befriend.me.updateSectionHeight(section_el, false);
             } catch (e) {
                 console.error(e);
-            }
-
-            let section_el = befriend.me.getSectionElByKey(section_key);
-
-            if (section_el) {
-                removeClassEl('no-items', section_el);
-
-                //automatically switch to first category
-
-                let category_btn_first = section_el.querySelector('.category-btn');
-
-                if (category_btn_first) {
-                    fireClick(category_btn_first);
-                }
             }
 
             resolve();
@@ -493,8 +480,6 @@ befriend.me = {
             let section_data = befriend.me.getActiveSection(section_key);
 
             let item = section_data.items[item_token];
-
-            debugger;
 
             let table_key = item.table_key || befriend.me.getSectionTableKey(section_key);
 
@@ -558,7 +543,7 @@ befriend.me = {
     setActive: function () {
         if (befriend.me.data.sections.active) {
             for (let key in befriend.me.data.sections.active) {
-                befriend.me.addSection(key, true);
+                befriend.me.addSection(key, false, true);
             }
 
             //enable first category for each section
@@ -1313,10 +1298,14 @@ befriend.me = {
 
                             //dynamically retrieve options if category-token
                             if(category_token) {
-                                befriend.toggleSpinner(true);
+                                let category_options = befriend.me.data.categories[category_token];
 
                                 try {
-                                    let category_options = await befriend.me.getCategoryOptions(categories_data.endpoint, category_token);
+                                    if(!category_options) {
+                                        befriend.toggleSpinner(true);
+                                        category_options = await befriend.me.getCategoryOptions(categories_data.endpoint, category_token);
+                                        befriend.me.data.categories[category_token] = category_options;
+                                    }
 
                                     for (let item of category_options.items) {
                                         if(!(item.token in section_data.items)) {
@@ -1517,11 +1506,13 @@ befriend.me = {
                             if (prev_option_value !== option_value) {
                                 item.secondary = option_value;
 
+                                let table_key = item.table_key || befriend.me.getSectionTableKey(section_key);
+
                                 //server
                                 try {
                                     await befriend.auth.put(`/me/sections/item`, {
                                         section_key: section_key,
-                                        table_key: befriend.me.getSectionTableKey(section_key),
+                                        table_key: table_key,
                                         section_item_id: item.id,
                                         secondary: option_value,
                                     });
