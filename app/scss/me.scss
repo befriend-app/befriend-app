@@ -660,7 +660,6 @@ html.#{$class_confirm_me_action} {
                         padding-right: 20px;
                         text-align: left;
                     }
-
                 }
 
                 .item {
@@ -674,6 +673,30 @@ html.#{$class_confirm_me_action} {
                     background: lighten(black, 97%);
                     position: relative;
                     @include flex-center-col;
+
+                    &.favorable {
+                        .name {
+                            padding: 0 !important;
+                        }
+                    }
+
+                    .name-favorite {
+                        @include flex-center;
+
+                        .favorite {
+                            margin-right: 12px;
+                        }
+                    }
+
+                    .favorite {
+                        @include flex-center-col;
+
+                        svg {
+                            $dim: 18px;
+                            width: $dim;
+                            height: $dim;
+                        }
+                    }
 
                     .name {
                         font-size: 13px;

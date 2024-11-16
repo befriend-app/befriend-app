@@ -141,10 +141,15 @@ befriend.me = {
 
         return sections_el.querySelector(`.section[data-key="${key}"]`);
     },
-    getSectionTableKey: function (key) {
-        let section_el = this.getSectionElByKey(key);
+    getSectionTableKey: function (section_key) {
+        let section_el = this.getSectionElByKey(section_key);
 
         return section_el.getAttribute('data-table-key');
+    },
+    getSectionTableData: function (section_key) {
+        let section_data = this.getActiveSection(section_key);
+
+        return section_data?.data?.tables;
     },
     getActiveSection: function (key) {
         return befriend.me.data.sections.active?.[key];
@@ -293,7 +298,7 @@ befriend.me = {
 
             let section_data = befriend.me.getActiveSection(key);
 
-            let table_key = section_data.data.tables ? section_data.data.tables[0] : null;
+            let table_data = section_data.data.tables ? section_data.data.tables[0] : null;
 
             let autocomplete_html = '';
             let categories_html = '';
@@ -385,7 +390,7 @@ befriend.me = {
                             }
                         }
 
-                        let item_html = befriend.me.sectionItemHtml(key, item);
+                        let item_html = befriend.me.sectionItemHtml(key, table_data?.name, item);
 
                         items_html += item_html;
                     }
@@ -410,7 +415,7 @@ befriend.me = {
                 has_categories = 'w-categories';
             }
 
-            let html = `<div class="section my-items ${key} ${section_collapsed} ${has_categories} ${has_tabs}" data-key="${key}" data-table-key="${table_key ? table_key : ''}" style="${section_height}">
+            let html = `<div class="section my-items ${key} ${section_collapsed} ${has_categories} ${has_tabs}" data-key="${key}" data-table-key="${table_data?.name ? table_data.name : ''}" style="${section_height}">
                                 <div class="section-top">
                                     <div class="icon">${option_data.icon}</div>
                                     <div class="title">${option_data.section_name}</div>
@@ -1010,15 +1015,26 @@ befriend.me = {
             removeClassEl(befriend.classes.confirmMeAction, document.documentElement);
         }
     },
-    sectionItemHtml: function (section_key, item) {
+    sectionItemHtml: function (section_key, table_key, item) {
         let section_data = befriend.me.getActiveSection(section_key);
+        let table_data = section_data.data.tables?.find(item => item.name === table_key);
 
-        let secondary = '';
-        let options = '';
+        let favorite_html = '';
+        let secondary_html = '';
+        let secondary_options_html = '';
 
         let secondary_options = section_data.data?.secondary?.options;
 
-        //current selected
+        let isFavorable = table_data?.isFavorable;
+
+        //favorable
+        if(isFavorable) {
+            favorite_html = `<div class="favorite heart">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 439.9961"><path d="M348,0c-43,.0664-83.2812,21.0391-108,56.2227C215.2812,21.0391,175,.0664,132,0,61.6797,0,0,65.4258,0,140c0,72.6797,41.0391,147.5352,118.6875,216.4805,35.9766,31.8828,75.4414,59.5977,117.6406,82.625,2.3047,1.1875,5.0391,1.1875,7.3438,0,42.1836-23.0273,81.6367-50.7461,117.6016-82.625,77.6875-68.9453,118.7266-143.8008,118.7266-216.4805C480,65.4258,418.3203,0,348,0ZM240,422.9023c-29.3828-16.2148-224-129.4961-224-282.9023,0-66.0547,54.1992-124,116-124,41.8672.0742,80.4609,22.6602,101.0312,59.1289,1.5391,2.3516,4.1602,3.7656,6.9688,3.7656s5.4297-1.4141,6.9688-3.7656c20.5703-36.4688,59.1641-59.0547,101.0312-59.1289,61.8008,0,116,57.9453,116,124,0,153.4062-194.6172,266.6875-224,282.9023Z"/></svg>
+                            </div>`;
+        }
+
+        //secondary
         if (secondary_options) {
             let unselected = '';
 
@@ -1029,19 +1045,23 @@ befriend.me = {
             for (let option of secondary_options) {
                 let selected = item.secondary === option ? 'selected' : '';
 
-                options += `<div class="option ${selected}" data-option="${option}">${option}</div>`;
+                secondary_options_html += `<div class="option ${selected}" data-option="${option}">${option}</div>`;
             }
 
-            secondary = `<div class="secondary ${unselected}" data-value="${item.secondary ? item.secondary : ''}">
+            secondary_html = `<div class="secondary ${unselected}" data-value="${item.secondary ? item.secondary : ''}">
                                                     <div class="current-selected">${item.secondary ? item.secondary : section_data.data?.secondary?.unselectedStr}</div>
                                                     <svg class="arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 82.1 43.2"><path d="M41.1,43.2L0,2.2,2.1,0l39,39L80,0l2.1,2.2-41,41Z"/></svg>
-                                                    <div class="options">${options}</div>
+                                                    <div class="options">${secondary_options_html}</div>
                                                 </div>`;
         }
 
-        return `<div class="item mine" data-token="${item.token}" data-table-key="${item.table_key ? item.table_key : ''}">
-                                                            <div class="name">${item.name}</div>
-                                                            ${secondary}
+        return `<div class="item mine ${isFavorable ? 'favorable': ''}" data-token="${item.token}" data-table-key="${item.table_key ? item.table_key : ''}">
+                                                            <div class="name-favorite">
+                                                                ${favorite_html}
+                                                                <div class="name">${item.name}</div>
+                                                            </div>
+                                                            
+                                                            ${secondary_html}
                                                             <div class="remove">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 121.805 14.619"><path d="M7.308,14.619h107.188c4.037,0,7.309-3.272,7.309-7.31s-3.271-7.309-7.309-7.309H7.308C3.272.001,0,3.273,0,7.31s3.272,7.309,7.308,7.309Z"/></svg>
                                                             </div>
@@ -1052,6 +1072,7 @@ befriend.me = {
             try {
                 let section_key = section_el.getAttribute('data-key');
                 let section_data = befriend.me.getActiveSection(section_key);
+                let table_key = befriend.me.getSectionTableKey(section_key);
                 let items_html = '';
 
                 // Extract filter parameters
@@ -1088,7 +1109,7 @@ befriend.me = {
                         addClassEl('no-items', section_el);
                     } else {
                         for (let item of items_filtered) {
-                            items_html += befriend.me.sectionItemHtml(section_key, item);
+                            items_html += befriend.me.sectionItemHtml(section_key, table_key, item);
                         }
 
                         removeClassEl('no-items', section_el);
