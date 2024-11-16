@@ -600,16 +600,33 @@ befriend.me = {
             }
 
             try {
+                let category_name = null, category_token = null, table_key = null;
+
+                let section_el = befriend.me.getSectionElByKey(section_key);
+
                 let endpoint =
                     befriend.me.getSectionAutoComplete(section_key).endpoint;
 
                 let filterId =
                     befriend.me.autoComplete.selected.filterList[section_key]?.item?.id || null;
 
+                let active_category = section_el.querySelector('.category-btn.active');
+
+                if(active_category) {
+                    category_name = active_category.getAttribute('data-category') || null;
+                    category_token = active_category.getAttribute('data-category-token');
+                    table_key = active_category.getAttribute('data-category-table') || befriend.me.getSectionTableKey(section_key) || null;
+                }
+
                 const r = await befriend.auth.get(endpoint, {
                     search: search_value,
                     filterId: filterId,
                     location: befriend.location.device || null,
+                    category: {
+                        name: category_name,
+                        token: category_token,
+                        table: table_key
+                    }
                 });
 
                 befriend.me.setAutoComplete(section_key, r.data.items);
