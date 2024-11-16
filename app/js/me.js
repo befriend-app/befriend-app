@@ -358,7 +358,7 @@ befriend.me = {
 
                 if (section_data.items) {
                     for (let token in section_data.items) {
-                        let item_html = befriend.me.sectionItemHtml(key, token);
+                        let item_html = befriend.me.sectionItemHtml(key, section_data.items[token]);
 
                         items += item_html;
                     }
@@ -494,12 +494,16 @@ befriend.me = {
 
             let item = section_data.items[item_token];
 
+            debugger;
+
+            let table_key = item.table_key || befriend.me.getSectionTableKey(section_key);
+
             delete section_data.items[item_token];
 
             try {
                 await befriend.auth.put(`/me/sections/item`, {
                     section_key: section_key,
-                    table_key: befriend.me.getSectionTableKey(section_key),
+                    table_key: table_key,
                     section_item_id: item.id,
                     is_delete: true,
                 });
@@ -948,10 +952,8 @@ befriend.me = {
             removeClassEl(befriend.classes.confirmMeAction, document.documentElement);
         }
     },
-    sectionItemHtml: function (section_key, token) {
+    sectionItemHtml: function (section_key, item) {
         let section_data = befriend.me.getActiveSection(section_key);
-
-        let item = section_data.items[token];
 
         let secondary = '';
         let options = '';
@@ -979,7 +981,7 @@ befriend.me = {
                                                 </div>`;
         }
 
-        return `<div class="item mine" data-token="${token}">
+        return `<div class="item mine" data-token="${item.token}" data-table-key="${item.table_key ? item.table_key : ''}">
                                                             <div class="name">${item.name}</div>
                                                             ${secondary}
                                                             <div class="remove">
@@ -1300,7 +1302,7 @@ befriend.me = {
                                 addClassEl('no-items', section);
                             } else {
                                 for (let token in section_data.items) {
-                                    let item_html = befriend.me.sectionItemHtml(section_key, token);
+                                    let item_html = befriend.me.sectionItemHtml(section_key, section_data.items[token]);
 
                                     category_items_html += item_html;
                                 }
