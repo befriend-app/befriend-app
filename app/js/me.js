@@ -72,6 +72,20 @@ befriend.me = {
             resolve();
         });
     },
+    getCategoryOptions: function (endpoint, category_token) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                 let r = await befriend.auth.get(endpoint, {
+                     category_token
+                 });
+
+                 resolve(r.data);
+            } catch(e) {
+                console.error(e);
+                return reject();
+            }
+        });
+    },
     setMe: function () {
         if (!befriend.me.data.me) {
             return;
@@ -285,12 +299,12 @@ befriend.me = {
             let items = '';
 
             if (section_data.data) {
-                if (section_data.data.categories) {
+                if (section_data.data?.categories?.options) {
                     categories = `<div class="category-btn mine active" data-category="mine">
                                                 ${section_data.data.myStr}
                                         </div>`;
 
-                    for (let category of section_data.data.categories) {
+                    for (let category of section_data.data.categories.options) {
                         let heading_html = category.heading ? `<div class="heading">${category.heading}</div>` : '';
 
                         categories += `<div class="category-btn ${heading_html ? 'w-heading' : ''}" data-category="${category.name}" ${category.token ? `data-category-token="${category.token}"` : ''}>
@@ -1241,8 +1255,9 @@ befriend.me = {
                 if (!btn._listener) {
                     btn._listener = true;
 
-                    btn.addEventListener('click', function (e) {
+                    btn.addEventListener('click', async function (e) {
                         let category = this.getAttribute('data-category') || '';
+                        let category_token = this.getAttribute('data-category-token');
 
                         let section = this.closest('.section');
 
@@ -1254,6 +1269,7 @@ befriend.me = {
 
                         let section_key = section.getAttribute('data-key');
                         let section_data = befriend.me.getActiveSection(section_key);
+                        let categories_data = section_data.data?.categories;
                         let category_items_html = ``;
 
                         if (category === 'mine') {
@@ -1271,12 +1287,31 @@ befriend.me = {
                             //remove no-items
                             removeClassEl('no-items', section);
 
-                            for (let item of section_data.data.options) {
-                                if (item.category?.toLowerCase() === category.toLowerCase()) {
-                                    if (!(item.token in section_data.items)) {
-                                        category_items_html += `<div class="item" data-token="${item.token}">
+                            //dynamically retrieve options if category-token
+                            if(category_token) {
+                                befriend.toggleSpinner(true);
+
+                                try {
+                                    let category_options = await befriend.me.getCategoryOptions(categories_data.endpoint, category_token);
+
+                                    for (let item of category_options.items) {
+                                        if(!(item.token in section_data.items)) {
+                                            category_items_html += `<div class="item" data-token="${item.token}">
                                                             ${item.name}
                                                         </div>`;
+                                        }
+                                    }
+                                } catch(e) {
+
+                                }
+                            } else {
+                                for (let item of section_data.data.options) {
+                                    if(item.category?.toLowerCase() === category.toLowerCase()) {
+                                        if(!(item.token in section_data.items)) {
+                                            category_items_html += `<div class="item" data-token="${item.token}">
+                                                            ${item.name}
+                                                        </div>`;
+                                        }
                                     }
                                 }
                             }
@@ -1292,6 +1327,8 @@ befriend.me = {
 
                         //ui
                         befriend.me.updateSectionHeight(section, elHasClass(section, 'collapsed'));
+
+                        befriend.toggleSpinner(false);
                     });
                 }
             }

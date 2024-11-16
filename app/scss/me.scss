@@ -154,6 +154,7 @@ html.#{$class_confirm_me_action} {
 
                 .categories-container {
                     border-bottom-color: transparent !important;
+                    transition: border-bottom-color 300ms 300ms;
                 }
             }
 
@@ -290,6 +291,7 @@ html.#{$class_confirm_me_action} {
                 overflow-y: scroll;
                 position: relative;
                 border-bottom: 1px solid $color_lightgray;
+                transition: border-bottom-color 300ms;
             }
 
             .category-filters {
