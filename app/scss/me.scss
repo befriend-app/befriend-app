@@ -630,6 +630,7 @@ html.#{$class_confirm_me_action} {
                     font-size: 12px;
                     background: lighten(black, 97%);
                     position: relative;
+                    @include flex-center-col;
 
                     .name {
                         font-size: 13px;

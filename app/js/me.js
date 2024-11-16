@@ -407,6 +407,8 @@ befriend.me = {
             befriend.me.events.onActionSelect();
             befriend.me.events.onUpdateSectionHeight();
             befriend.me.events.onRemoveItem();
+            befriend.me.events.onOpenSecondary();
+            befriend.me.events.onSelectSecondary();
 
             section_el = befriend.me.getSectionElByKey(key);
 
