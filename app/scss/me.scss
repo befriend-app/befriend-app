@@ -150,11 +150,15 @@ html.#{$class_confirm_me_action} {
                         margin-top: 0 !important;
                         padding-bottom: 0 !important;
                     }
+
+                    .no-items {
+                        display: flex !important;
+                    }
                 }
 
                 .categories-container {
-                    border-bottom-color: transparent !important;
-                    transition: border-bottom-color 300ms 300ms;
+                    //border-bottom-color: transparent !important;
+                    //transition: border-bottom-color 300ms 300ms;
                 }
             }
 
@@ -597,6 +601,15 @@ html.#{$class_confirm_me_action} {
                 max-height: 240px;
                 padding: 0 $padding_lr_inner;
                 overflow-y: scroll;
+
+                .no-items {
+                    display: none;
+                    text-align: center;
+                    padding: 8px 0;
+                    justify-content: center;
+                    font-size: 14px;
+                    color: lighten(black, 40%);
+                }
             }
 
             .items {

@@ -372,13 +372,19 @@ befriend.me = {
                 section_height = '0';
             }
 
+            let has_tabs = '';
+
             let has_categories = '';
+
+            if(section_data.data.tabs && section_data.data.tabs.length) {
+                has_tabs = 'w-tabs';
+            }
 
             if(categories) {
                 has_categories = 'w-categories';
             }
 
-            let html = `<div class="section ${key} ${section_collapsed} ${has_categories} ${!items ? 'no-items' : ''} " data-key="${key}" data-table-key="${table_key ? table_key : ''}" style="${section_height}">
+            let html = `<div class="section ${key} ${section_collapsed} ${has_categories} ${has_tabs}" data-key="${key}" data-table-key="${table_key ? table_key : ''}" style="${section_height}">
                                 <div class="section-top">
                                     <div class="icon">${option_data.icon}</div>
                                     <div class="title">${option_data.section_name}</div>
@@ -397,7 +403,10 @@ befriend.me = {
                                     ${autocomplete}
                                     ${categories}
                                     <div class="items-container">
-                                        <div class="items ${section_data?.data?.styles?.rowCols || ''}">${items}</div>
+                                        <div class="items ${section_data?.data?.styles?.rowCols || ''}">
+                                            ${items }
+                                        </div>
+                                        <div class="no-items">No Items</div>
                                     </div>
                                 </div>
                             </div>`;
