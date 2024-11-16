@@ -467,7 +467,11 @@ befriend.me = {
                     }
                 }
 
-                befriend.me.updateSectionHeight(section_el, false);
+                let category_btn_first = section_el.querySelector('.category-btn');
+
+                if (category_btn_first) {
+                    fireClick(category_btn_first);
+                }
             } catch (e) {
                 console.error(e);
             }
