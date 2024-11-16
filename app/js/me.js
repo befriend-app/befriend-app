@@ -307,7 +307,21 @@ befriend.me = {
                     for (let category of section_data.data.categories.options) {
                         let heading_html = category.heading ? `<div class="heading">${category.heading}</div>` : '';
 
-                        categories += `<div class="category-btn ${heading_html ? 'w-heading' : ''}" data-category="${category.name}" ${category.token ? `data-category-token="${category.token}"` : ''}>
+                        let data_category = `data-category="${category.name}"`;
+
+                        let data_category_token = '';
+
+                        if(category.token) {
+                            data_category_token = `data-category-token="${category.token}"`;
+                        }
+
+                        let data_table_key = '';
+
+                        if(category.table_key) {
+                            data_table_key = `data-category-table="${category.table_key}"`;
+                        }
+
+                        categories += `<div class="category-btn ${heading_html ? 'w-heading' : ''}" ${data_category} ${data_table_key} ${data_category_token}>
                                             ${heading_html}
                                             <div class="name">${category.name}</div>
                                         </div>`;
@@ -1260,6 +1274,7 @@ befriend.me = {
                     btn.addEventListener('click', async function (e) {
                         let category = this.getAttribute('data-category') || '';
                         let category_token = this.getAttribute('data-category-token');
+                        let category_table_key = this.getAttribute('data-category-table') || '';
 
                         let section = this.closest('.section');
 
@@ -1273,6 +1288,11 @@ befriend.me = {
                         let section_data = befriend.me.getActiveSection(section_key);
                         let categories_data = section_data.data?.categories;
                         let category_items_html = ``;
+
+                        //set table key if
+                        if(category_table_key) {
+                            section.setAttribute('data-table-key', category_table_key);
+                        }
 
                         if (category === 'mine') {
                             if (!Object.keys(section_data.items).length) {
