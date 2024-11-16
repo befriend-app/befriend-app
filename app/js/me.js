@@ -282,22 +282,26 @@ befriend.me = {
 
             let autocomplete = '';
             let categories = '';
-            let secondary = '';
             let items = '';
 
             if (section_data.data) {
                 if (section_data.data.categories) {
-                    categories = `<div class="category-btn active" data-category="mine">
+                    categories = `<div class="category-btn mine active" data-category="mine">
                                                 ${section_data.data.myStr}
                                         </div>`;
 
                     for (let category of section_data.data.categories) {
-                        categories += `<div class="category-btn" data-category="${category.name}" ${category.token ? `data-category-token="${category.token}"` : ''}>
-                                            ${category.name}
+                        let heading_html = category.heading ? `<div class="heading">${category.heading}</div>` : '';
+
+                        categories += `<div class="category-btn ${heading_html ? 'w-heading' : ''}" data-category="${category.name}" ${category.token ? `data-category-token="${category.token}"` : ''}>
+                                            ${heading_html}
+                                            <div class="name">${category.name}</div>
                                         </div>`;
                     }
 
-                    categories = `<div class="categories-container"><div class="category-filters">${categories}</div></div>`;
+                    categories = `<div class="categories-container">
+                                        <div class="category-filters">${categories}</div>
+                                    </div>`;
                 }
 
                 if (section_data.data.autoComplete) {
@@ -340,11 +344,12 @@ befriend.me = {
             }
 
             let has_categories = '';
+
             if(categories) {
                 has_categories = 'w-categories';
             }
 
-            let html = `<div class="section ${key} ${section_collapsed} ${has_categories}" data-key="${key}" data-table-key="${table_key ? table_key : ''}" style="${section_height}">
+            let html = `<div class="section ${key} ${section_collapsed} ${has_categories} ${!items ? 'no-items' : ''} " data-key="${key}" data-table-key="${table_key ? table_key : ''}" style="${section_height}">
                                 <div class="section-top">
                                     <div class="icon">${option_data.icon}</div>
                                     <div class="title">${option_data.section_name}</div>
@@ -360,10 +365,11 @@ befriend.me = {
                                 </div>
                                 
                                 <div class="section-container">
-                                    ${categories}
                                     ${autocomplete}
-                                    ${secondary}
-                                    <div class="items ${!items ? 'no-items' : ''} ${section_data?.data?.styles?.rowCols || ''}">${items}</div>
+                                    ${categories}
+                                    <div class="items-container">
+                                        <div class="items ${section_data?.data?.styles?.rowCols || ''}">${items}</div>
+                                    </div>
                                 </div>
                             </div>`;
 
@@ -438,7 +444,7 @@ befriend.me = {
             let section_el = befriend.me.getSectionElByKey(section_key);
 
             if (section_el) {
-                removeClassEl('no-items', section_el.querySelector('.items'));
+                removeClassEl('no-items', section_el);
 
                 //automatically switch to first category
 
@@ -715,18 +721,29 @@ befriend.me = {
             removeClassEl('show-menu', el);
         }
     },
+    transitionSecondaryT: null,
     transitionSecondary: function (secondary_el, show) {
+        clearTimeout(this.transitionSecondaryT);
+
         let options_el = secondary_el.querySelector('.options');
 
+        let items_container_el = secondary_el.closest('.items-container');
+
+        items_container_el.style.setProperty('overflow-y', 'initial');
+
         if (show) {
-            addClassEl('open', secondary_el);
+            addClassEl('secondary-open', secondary_el.closest('.section'));
 
             setElHeightDynamic(options_el);
         } else {
-            removeClassEl('open', secondary_el);
+            removeClassEl('secondary-open', secondary_el.closest('.section'));
 
             options_el.style.removeProperty('height');
         }
+
+        this.transitionSecondaryT = setTimeout(function () {
+            items_container_el.style.removeProperty('overflowY');
+        }, 300);
     },
     updateSectionHeightT: {},
     updateSectionHeight: async function (el, collapse, no_transition, skip_save) {
@@ -1225,7 +1242,7 @@ befriend.me = {
                     btn._listener = true;
 
                     btn.addEventListener('click', function (e) {
-                        let category = this.getAttribute('data-category');
+                        let category = this.getAttribute('data-category') || '';
 
                         let section = this.closest('.section');
 
@@ -1242,7 +1259,7 @@ befriend.me = {
                         if (category === 'mine') {
                             if (!Object.keys(section_data.items).length) {
                                 //no-items
-                                addClassEl('no-items', section.querySelector('.items'));
+                                addClassEl('no-items', section);
                             } else {
                                 for (let token in section_data.items) {
                                     let item_html = befriend.me.sectionItemHtml(section_key, token);
@@ -1252,10 +1269,10 @@ befriend.me = {
                             }
                         } else {
                             //remove no-items
-                            removeClassEl('no-items', section.querySelector('.items'));
+                            removeClassEl('no-items', section);
 
                             for (let item of section_data.data.options) {
-                                if (item.category === category) {
+                                if (item.category?.toLowerCase() === category.toLowerCase()) {
                                     if (!(item.token in section_data.items)) {
                                         category_items_html += `<div class="item" data-token="${item.token}">
                                                             ${item.name}
@@ -1351,7 +1368,7 @@ befriend.me = {
                     let section_data = befriend.me.getActiveSection(section_key);
 
                     if (!Object.keys(section_data.items).length) {
-                        addClassEl('no-items', section.querySelector('.items'));
+                        addClassEl('no-items', section);
                     }
 
                     befriend.me.updateSectionHeight(section, elHasClass(section, 'collapsed'));
