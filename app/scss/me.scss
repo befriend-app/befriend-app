@@ -675,16 +675,22 @@ html.#{$class_confirm_me_action} {
                     @include flex-center-col;
 
                     &.favorable {
+                        .name-favorite {
+                            display: flex;
+                            align-items: center;
+                            padding-left: 15px;
+                        }
+
                         .name {
                             padding: 0 !important;
                         }
                     }
 
                     .name-favorite {
-                        @include flex-center;
+                        width: 100%;
 
                         .favorite {
-                            margin-right: 12px;
+                            margin-right: 10px;
                         }
                     }
 
@@ -804,7 +810,7 @@ html.#{$class_confirm_me_action} {
 
             &.schools {
                 .section-container {
-                    margin-bottom: $padding_tb;
+                    //margin-bottom: $padding_tb;
                 }
 
                 .autocomplete-list {
@@ -840,6 +846,15 @@ html.#{$class_confirm_me_action} {
                             font-weight: 600;
                             font-size: 12px;
                         }
+                    }
+                }
+
+                .items-container {
+                    .items {
+                        //padding-bottom: 0 !important;
+                    }
+                    .no-items {
+                        //display: none !important;
                     }
                 }
             }

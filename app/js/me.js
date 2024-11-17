@@ -377,7 +377,7 @@ befriend.me = {
                 }
 
                 //items
-                if (section_data.items) {
+                if (Object.keys(section_data.items).length) {
                     for (let token in section_data.items) {
                         //filter by tab
                         let item = section_data.items[token];
@@ -415,7 +415,7 @@ befriend.me = {
                 has_categories = 'w-categories';
             }
 
-            let html = `<div class="section my-items ${key} ${section_collapsed} ${has_categories} ${has_tabs}" data-key="${key}" data-table-key="${table_data?.name ? table_data.name : ''}" style="${section_height}">
+            let html = `<div class="section my-items ${key} ${section_collapsed} ${has_categories} ${has_tabs} ${items_html ? '' : 'no-items'}" data-key="${key}" data-table-key="${table_data?.name ? table_data.name : ''}" style="${section_height}">
                                 <div class="section-top">
                                     <div class="icon">${option_data.icon}</div>
                                     <div class="title">${option_data.section_name}</div>
@@ -528,6 +528,11 @@ befriend.me = {
                             break;
                         }
                     }
+                }
+
+                //re-add section if no categories
+                if(!category_btn_first) {
+                    befriend.me.addSection(section_key, true);
                 }
             } catch (e) {
                 console.error(e);
