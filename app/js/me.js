@@ -1227,6 +1227,7 @@ befriend.me = {
         // Get all favorited items for this table
         for (let token in section_data.items) {
             let item = section_data.items[token];
+
             if (item.table_key === table_key && item.is_favorite) {
                 reorderedItems.push(item);
             }
@@ -1770,6 +1771,7 @@ befriend.me = {
                         } else {
                             // Removing favorite - reorder remaining favorites
                             item.favorite_position = null;
+                            favorite_data.position = null;
                             favorite_data.reorder = updatedPositions = befriend.me.reorderFavoritePositions(section_key, table_key);
                         }
 
