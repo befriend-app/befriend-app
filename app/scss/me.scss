@@ -142,10 +142,12 @@ html.#{$class_confirm_me_action} {
             }
 
             &.my-items {
+                .tabs {
+                    display: flex !important;
+                }
+
                 .items-container {
-                    .tabs {
-                        display: flex !important;
-                    }
+
                 }
 
                 &.w-tabs {
@@ -610,45 +612,45 @@ html.#{$class_confirm_me_action} {
                 }
             }
 
+            .tabs {
+                $br: 16px;
+                display: none;
+                border-bottom: 1px solid $color_lightgray;
+                border-top-left-radius: $br;
+                border-top-right-radius: $br;
+
+                .tab {
+                    padding: 6px 0;
+                    flex-basis: 50%;
+                    @include flex-center-col;
+                    transition: all 200ms;
+                    background: lighten(black, 95%);
+                    font-size: 14px;
+                    font-weight: 500;
+                    border-top: 1px solid $color_lightgray;
+                    box-sizing: border-box;
+
+                    &:first-of-type {
+                        border-top-left-radius: $br;
+                    }
+
+                    &:last-of-type {
+                        border-top-right-radius: $br;
+                    }
+
+                    &.active {
+                        background: $brand_color_a;
+                        color: white;
+                        border-bottom-color: $brand_color_a;
+                    }
+                }
+            }
+
             .items-container {
                 position: relative;
                 max-height: 240px;
                 padding: 0 0;
                 overflow-y: scroll;
-
-                .tabs {
-                    $br: 16px;
-                    display: none;
-                    border-bottom: 1px solid $color_lightgray;
-                    border-top-left-radius: $br;
-                    border-top-right-radius: $br;
-
-                    .tab {
-                        padding: 6px 0;
-                        flex-basis: 50%;
-                        @include flex-center-col;
-                        transition: all 200ms;
-                        background: lighten(black, 95%);
-                        font-size: 14px;
-                        font-weight: 500;
-                        border-top: 1px solid $color_lightgray;
-                        box-sizing: border-box;
-
-                        &:first-of-type {
-                            border-top-left-radius: $br;
-                        }
-
-                        &:last-of-type {
-                            border-top-right-radius: $br;
-                        }
-
-                        &.active {
-                            background: $brand_color_a;
-                            color: white;
-                            border-bottom-color: $brand_color_a;
-                        }
-                    }
-                }
 
                 .no-items {
                     display: none;
@@ -662,7 +664,7 @@ html.#{$class_confirm_me_action} {
 
             .items {
                 display: grid;
-                gap: 10px;
+                gap: $me_items_gap_tb;
                 margin-top: $padding_tb;
                 padding-bottom: $padding_tb;
                 padding-left: $padding_lr_inner;
