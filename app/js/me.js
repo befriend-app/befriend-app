@@ -2177,6 +2177,12 @@ befriend.me = {
                 }
             }
 
+            const TOUCH_DELAY = 150; // ms to wait before initiating drag
+            const MOVE_THRESHOLD = 10; // pixels of movement to consider it a scroll
+            let touchTimeout;
+            let initialTouchY;
+            let hasMoved;
+
             let item_els = befriend.els.me.getElementsByClassName('item');
 
             for (let i = 0; i < item_els.length; i++) {
@@ -2192,6 +2198,29 @@ befriend.me = {
 
                 item_el._reorder_listener = true;
 
+                // Track touch move before drag starts
+                item_el.addEventListener('touchmove', function(e) {
+                    if (meReorder.ip) {
+                        e.preventDefault();
+                        return;
+                    }
+
+                    if(!initialTouchY) {
+                        return;
+                    }
+
+                    const touch = e.touches[0];
+                    const moveDistance = Math.abs(touch.clientY - initialTouchY);
+
+                    if (moveDistance > MOVE_THRESHOLD) {
+                        hasMoved = true;
+                        clearTimeout(touchTimeout);
+                        initialTouchY = null;
+                    }
+                }, {
+                    passive: false,
+                });
+
                 item_el.addEventListener('touchstart', function(e) {
                     if (!elHasClass(item_el, 'is-favorite')) return;
 
@@ -2199,21 +2228,31 @@ befriend.me = {
                     const target = e.target;
                     if (target.closest('.heart')) return;
 
-                    e.preventDefault();
-                    e.stopPropagation();
+                    // Reset tracking variables
+                    hasMoved = false;
+                    initialTouchY = e.touches[0].clientY;
 
-                    const coords = getEventCoords(e);
-                    meReorder.start.x = coords.x;
-                    meReorder.start.y = coords.y;
-                    meReorder.el = item_el;
-                    meReorder.ip = true;
+                    // Clear any existing timeout
+                    clearTimeout(touchTimeout);
 
-                    const idleItems = meReorder.getIdleItems(item_el.parentElement);
-                    meReorder.setItemsGap(idleItems);
-                    meReorder.initReorderItem(item_el);
-                    meReorder.initItemsState(item_el, idleItems);
+                    touchTimeout = setTimeout(function() {
+                        if(!hasMoved) {
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            const coords = getEventCoords(e);
+                            meReorder.start.x = coords.x;
+                            meReorder.start.y = coords.y;
+                            meReorder.el = item_el;
+                            meReorder.ip = true;
+
+                            const idleItems = meReorder.getIdleItems(item_el.parentElement);
+                            meReorder.setItemsGap(idleItems);
+                            meReorder.initReorderItem(item_el);
+                            meReorder.initItemsState(item_el, idleItems);
+                        }
+                    }, TOUCH_DELAY);
                 });
-
             }
         },
         onSelectSecondary: function () {
