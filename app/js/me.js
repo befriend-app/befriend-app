@@ -1026,6 +1026,7 @@ befriend.me = {
         let table_data = section_data.data.tables?.find(item => item.name === table_key);
 
         let favorite_html = '';
+        let rank_html = '';
         let secondary_html = '';
         let secondary_options_html = '';
 
@@ -1035,7 +1036,7 @@ befriend.me = {
 
         //favorable
         if(isFavorable) {
-            favorite_html = `<div class="favorite heart ${item.is_favorite ? 'active' : ''}">
+            favorite_html = `<div class="favorite heart">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 439.9961">
                                   <path class="outline" d="M240,422.9023c-29.3828-16.2148-224-129.4961-224-282.9023,0-66.0547,54.1992-124,116-124,41.8672.0742,80.4609,22.6602,101.0312,59.1289,1.5391,2.3516,4.1602,3.7656,6.9688,3.7656s5.4297-1.4141,6.9688-3.7656c20.5703-36.4688,59.1641-59.0547,101.0312-59.1289,61.8008,0,116,57.9453,116,124,0,153.4062-194.6172,266.6875-224,282.9023Z"/>
                                 </svg>
@@ -1063,7 +1064,8 @@ befriend.me = {
                                                 </div>`;
         }
 
-        return `<div class="item mine ${isFavorable ? 'favorable': ''}" data-token="${item.token}" data-table-key="${item.table_key ? item.table_key : ''}">
+        return `<div class="item mine ${isFavorable ? 'favorable': ''} ${item.is_favorite ? 'is-favorite' : ''}" data-token="${item.token}" data-table-key="${item.table_key ? item.table_key : ''}">
+                                                            <div class="rank">${isNumeric(item.favorite_position) ? item.favorite_position : ''}</div>
                                                             <div class="name-favorite">
                                                                 ${favorite_html}
                                                                 <div class="name">${item.name}</div>
@@ -1187,6 +1189,24 @@ befriend.me = {
                 befriend.toggleSpinner(false);
             }
         });
+    },
+    getFavoriteHighestPosition: function(section_key, table_key) {
+        let section_data = this.getActiveSection(section_key);
+        let highest = 0;
+
+        if (!section_data?.items) {
+            return highest;
+        }
+
+        for (let token in section_data.items) {
+            let item = section_data.items[token];
+
+            if (item.table_key === table_key && item.is_favorite && item.favorite_position) {
+                highest = Math.max(highest, item.favorite_position);
+            }
+        }
+
+        return highest;
     },
     events: {
         init: function () {
@@ -1678,21 +1698,30 @@ befriend.me = {
                         e.stopPropagation();
 
                         //el
-                        toggleElClass(this, 'active');
+                        toggleElClass(this.closest('.item'), 'is-favorite');
 
                         //data
                         let section_el = this.closest('.section');
                         let item_el = this.closest('.item');
-
                         let section_key = section_el.getAttribute('data-key');
                         let item_token = item_el.getAttribute('data-token');
 
                         let active_section = befriend.me.getActiveSection(section_key);
                         let item = active_section.items[item_token];
-
-                        item.is_favorite = elHasClass(this, 'active');
-
                         let table_key = item.table_key || befriend.me.getSectionTableKey(section_key);
+
+                        //toggle favorite state
+                        item.is_favorite = !item.is_favorite;
+
+                        let rank_el = item_el.querySelector('.rank');
+
+                        if(item.is_favorite) {
+                            let highest = befriend.me.getFavoriteHighestPosition(section_key, table_key);
+                            item.favorite_position = highest + 1;
+                            rank_el.innerHTML = item.favorite_position;
+                        } else if(rank_el) {
+                            item.favorite_position = null;
+                        }
 
                         //server
                         try {
@@ -1700,7 +1729,10 @@ befriend.me = {
                                 section_key: section_key,
                                 table_key: table_key,
                                 section_item_id: item.id,
-                                favorite: item.is_favorite,
+                                favorite: {
+                                    active: item.is_favorite,
+                                    position: item.favorite_position,
+                                },
                             });
                         } catch (e) {
                             console.error(e);
