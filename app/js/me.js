@@ -1208,6 +1208,35 @@ befriend.me = {
 
         return highest;
     },
+    reorderFavoritePositions: function(section_key, table_key) {
+        let section_data = this.getActiveSection(section_key);
+        let reorderedItems = [];
+        let positions = new Map();
+
+        // Get all favorited items for this table
+        for (let token in section_data.items) {
+            let item = section_data.items[token];
+            if (item.table_key === table_key && item.is_favorite) {
+                reorderedItems.push(item);
+            }
+        }
+
+        // Sort by current positions
+        reorderedItems.sort((a, b) => a.favorite_position - b.favorite_position);
+
+        // Reassign positions sequentially
+        for(let index = 0; index < reorderedItems.length; index++) {
+            let item = reorderedItems[index];
+            let newPosition = index + 1;
+
+            if (item.favorite_position !== newPosition) {
+                item.favorite_position = newPosition;
+                positions.set(item.token, newPosition);
+            }
+        }
+
+        return positions;
+    },
     events: {
         init: function () {
             return new Promise(async (resolve, reject) => {
@@ -1713,14 +1742,38 @@ befriend.me = {
                         //toggle favorite state
                         item.is_favorite = !item.is_favorite;
 
-                        let rank_el = item_el.querySelector('.rank');
+                        let updatedPositions;
+                        let favorite_data = {
+                            active: item.is_favorite
+                        };
 
                         if(item.is_favorite) {
+                            // Adding favorite - get highest position and add 1
                             let highest = befriend.me.getFavoriteHighestPosition(section_key, table_key);
                             item.favorite_position = highest + 1;
-                            rank_el.innerHTML = item.favorite_position;
-                        } else if(rank_el) {
+                            favorite_data.position = item.favorite_position;
+                        } else {
+                            // Removing favorite - reorder remaining favorites
                             item.favorite_position = null;
+                            updatedPositions = befriend.me.reorderFavoritePositions(section_key, table_key);
+                            favorite_data.reorder = Array.from(updatedPositions.entries()).map(([token, position]) => ({
+                                token,
+                                position
+                            }));
+                        }
+
+                        // Update rank display
+                        let rank_el = item_el.querySelector('.rank');
+                        rank_el.innerHTML = item.favorite_position || '';
+
+                        // Update other ranks if positions were reordered
+                        if (updatedPositions?.size) {
+                            for (let [token, position] of updatedPositions) {
+                                let item_el = section_el.querySelector(`.item[data-token="${token}"]`);
+                                if (item_el) {
+                                    item_el.querySelector('.rank').innerHTML = position;
+                                }
+                            }
                         }
 
                         //server
