@@ -1265,6 +1265,12 @@ befriend.me = {
             itemsGap: 0,
             prevRect: null,
             items: [],
+            autoScroll: {
+                active: false,
+                speed: 8, // pixels per frame
+                threshold: 60, // pixels from edge to start scrolling
+                animationFrame: null
+            },
             isItemAbove: function (item) {
                 return item.hasAttribute('data-is-above');
             },
@@ -2245,6 +2251,12 @@ befriend.me = {
                             meReorder.start.y = coords.y;
                             meReorder.el = item_el;
                             meReorder.ip = true;
+
+                            // Disable scrolling when drag starts
+                            const scrollContainer = item_el.closest('.items-container');
+                            if (scrollContainer) {
+                                scrollContainer.style.overflow = 'hidden';
+                            }
 
                             const idleItems = meReorder.getIdleItems(item_el.parentElement);
                             meReorder.setItemsGap(idleItems);

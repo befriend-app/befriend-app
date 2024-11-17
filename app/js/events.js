@@ -176,14 +176,72 @@ befriend.events = {
 
             meReorder.el.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
             meReorder.updateIdleItemsStateAndPosition(meReorder.el);
+
+            // Check for auto-scrolling
+            const container = meReorder.el.closest('.items-container');
+            const containerRect = container.getBoundingClientRect();
+            const touchY = coords.y;
+
+            // Clear any existing animation frame
+            if (meReorder.autoScroll.animationFrame) {
+                cancelAnimationFrame(meReorder.autoScroll.animationFrame);
+                meReorder.autoScroll.animationFrame = null;
+            }
+
+            // Check if we're near the edges
+            if (touchY < containerRect.top + meReorder.autoScroll.threshold) {
+                // Near top - scroll up
+                const scrollUp = () => {
+                    const scrollAmount = container.scrollTop - meReorder.autoScroll.speed;
+                    container.scrollTop = Math.max(0, scrollAmount);
+
+                    // Update positions of other items
+                    meReorder.updateIdleItemsStateAndPosition(meReorder.el);
+
+                    // Continue animation if still dragging and near edge
+                    if (meReorder.ip && touchY < containerRect.top + meReorder.autoScroll.threshold) {
+                        meReorder.autoScroll.animationFrame = requestAnimationFrame(scrollUp);
+                    }
+                };
+                // scrollUp();
+            }
+            else if (touchY > containerRect.bottom - meReorder.autoScroll.threshold) {
+                // Near bottom - scroll down
+                const scrollDown = () => {
+                    const scrollAmount = container.scrollTop + meReorder.autoScroll.speed;
+                    const maxScroll = container.scrollHeight - container.clientHeight;
+                    container.scrollTop = Math.min(maxScroll, scrollAmount);
+
+                    // Update positions of other items
+                    meReorder.updateIdleItemsStateAndPosition(meReorder.el);
+
+                    // Continue animation if still dragging and near edge
+                    if (meReorder.ip && touchY > containerRect.bottom - meReorder.autoScroll.threshold) {
+                        meReorder.autoScroll.animationFrame = requestAnimationFrame(scrollDown);
+                    }
+                };
+                // scrollDown();
+            }
         });
 
         document.addEventListener(deviceEvents.end, function(e) {
             if (!meReorder.ip) return;
 
+            // Cancel any ongoing auto-scroll
+            if (meReorder.autoScroll.animationFrame) {
+                cancelAnimationFrame(meReorder.autoScroll.animationFrame);
+                meReorder.autoScroll.animationFrame = null;
+            }
+
             meReorder.ip = false;
             const reorderEl = meReorder.el;
             if (!reorderEl) return;
+
+            // Re-enable scrolling when drag ends
+            const scrollContainer = reorderEl.closest('.items-container');
+            if (scrollContainer) {
+                scrollContainer.style.removeProperty('overflow');
+            }
 
             const section_el = reorderEl.closest('.section');
             const section_key = section_el.getAttribute('data-key');
