@@ -147,6 +147,12 @@ html.#{$class_confirm_me_action} {
                         display: flex !important;
                     }
                 }
+
+                &.w-tabs {
+                    .categories-container {
+                        border-bottom: 0px !important;
+                    }
+                }
             }
 
             &.no-items {
@@ -303,7 +309,7 @@ html.#{$class_confirm_me_action} {
                 overflow-y: scroll;
                 position: relative;
                 border-bottom: 1px solid $color_lightgray;
-                transition: border-bottom-color 300ms;
+                //transition: border-bottom-color 300ms;
             }
 
             .category-filters {
@@ -611,8 +617,11 @@ html.#{$class_confirm_me_action} {
                 overflow-y: scroll;
 
                 .tabs {
+                    $br: 16px;
                     display: none;
                     border-bottom: 1px solid $color_lightgray;
+                    border-top-left-radius: $br;
+                    border-top-right-radius: $br;
 
                     .tab {
                         padding: 6px 0;
@@ -622,10 +631,21 @@ html.#{$class_confirm_me_action} {
                         background: lighten(black, 95%);
                         font-size: 14px;
                         font-weight: 500;
+                        border-top: 1px solid $color_lightgray;
+                        box-sizing: border-box;
+
+                        &:first-of-type {
+                            border-top-left-radius: $br;
+                        }
+
+                        &:last-of-type {
+                            border-top-right-radius: $br;
+                        }
 
                         &.active {
                             background: $brand_color_a;
                             color: white;
+                            border-bottom-color: $brand_color_a;
                         }
                     }
                 }
@@ -675,6 +695,7 @@ html.#{$class_confirm_me_action} {
                     @include flex-center-col;
 
                     &.favorable {
+                        padding: 4px 8px;
                         .name-favorite {
                             display: flex;
                             align-items: center;
@@ -690,17 +711,37 @@ html.#{$class_confirm_me_action} {
                         width: 100%;
 
                         .favorite {
-                            margin-right: 10px;
+                            margin-right: 5px;
                         }
                     }
 
                     .favorite {
                         @include flex-center-col;
+                        width: 26px;
+                        height: 26px;
+
+                        &.active {
+                            svg {
+                                fill: $brand_color_a;
+                                stroke: transparent;
+                            }
+                        }
 
                         svg {
                             $dim: 18px;
                             width: $dim;
                             height: $dim;
+
+                            fill: transparent;
+                            stroke: lighten(black, 40%);
+                            stroke-width: $dim;
+
+                            transition: all 300ms;
+
+                            .fill {
+                                opacity: 0;
+                                transition: opacity 150ms;
+                            }
                         }
                     }
 

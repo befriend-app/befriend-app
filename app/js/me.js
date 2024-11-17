@@ -464,6 +464,7 @@ befriend.me = {
             befriend.me.events.onActionSelect();
             befriend.me.events.onUpdateSectionHeight();
             befriend.me.events.onRemoveItem();
+            befriend.me.events.onFavorite();
             befriend.me.events.onOpenSecondary();
             befriend.me.events.onSelectSecondary();
 
@@ -1034,8 +1035,10 @@ befriend.me = {
 
         //favorable
         if(isFavorable) {
-            favorite_html = `<div class="favorite heart">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 439.9961"><path d="M348,0c-43,.0664-83.2812,21.0391-108,56.2227C215.2812,21.0391,175,.0664,132,0,61.6797,0,0,65.4258,0,140c0,72.6797,41.0391,147.5352,118.6875,216.4805,35.9766,31.8828,75.4414,59.5977,117.6406,82.625,2.3047,1.1875,5.0391,1.1875,7.3438,0,42.1836-23.0273,81.6367-50.7461,117.6016-82.625,77.6875-68.9453,118.7266-143.8008,118.7266-216.4805C480,65.4258,418.3203,0,348,0ZM240,422.9023c-29.3828-16.2148-224-129.4961-224-282.9023,0-66.0547,54.1992-124,116-124,41.8672.0742,80.4609,22.6602,101.0312,59.1289,1.5391,2.3516,4.1602,3.7656,6.9688,3.7656s5.4297-1.4141,6.9688-3.7656c20.5703-36.4688,59.1641-59.0547,101.0312-59.1289,61.8008,0,116,57.9453,116,124,0,153.4062-194.6172,266.6875-224,282.9023Z"/></svg>
+            favorite_html = `<div class="favorite heart ${item.is_favorite ? 'active' : ''}">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 439.9961">
+                                  <path class="outline" d="M240,422.9023c-29.3828-16.2148-224-129.4961-224-282.9023,0-66.0547,54.1992-124,116-124,41.8672.0742,80.4609,22.6602,101.0312,59.1289,1.5391,2.3516,4.1602,3.7656,6.9688,3.7656s5.4297-1.4141,6.9688-3.7656c20.5703-36.4688,59.1641-59.0547,101.0312-59.1289,61.8008,0,116,57.9453,116,124,0,153.4062-194.6172,266.6875-224,282.9023Z"/>
+                                </svg>
                             </div>`;
         }
 
@@ -1169,6 +1172,7 @@ befriend.me = {
                 // Reattach event handlers
                 befriend.me.events.onSelectItem();
                 befriend.me.events.onRemoveItem();
+                befriend.me.events.onFavorite();
                 befriend.me.events.onOpenSecondary();
                 befriend.me.events.onSelectSecondary();
 
@@ -1655,6 +1659,51 @@ befriend.me = {
                             befriend.me.transitionSecondary(el, false);
                         } else {
                             befriend.me.transitionSecondary(el, true);
+                        }
+                    });
+                }
+            }
+        },
+        onFavorite: function () {
+            let favorite_els = befriend.els.me.getElementsByClassName('favorite');
+
+            for (let i = 0; i < favorite_els.length; i++) {
+                let favorite_el = favorite_els[i];
+
+                if(!favorite_el._listener) {
+                    favorite_el._listener = true;
+
+                    favorite_el.addEventListener('click', async function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        //el
+                        toggleElClass(this, 'active');
+
+                        //data
+                        let section_el = this.closest('.section');
+                        let item_el = this.closest('.item');
+
+                        let section_key = section_el.getAttribute('data-key');
+                        let item_token = item_el.getAttribute('data-token');
+
+                        let active_section = befriend.me.getActiveSection(section_key);
+                        let item = active_section.items[item_token];
+
+                        item.is_favorite = elHasClass(this, 'active');
+
+                        let table_key = item.table_key || befriend.me.getSectionTableKey(section_key);
+
+                        //server
+                        try {
+                            await befriend.auth.put(`/me/sections/item`, {
+                                section_key: section_key,
+                                table_key: table_key,
+                                section_item_id: item.id,
+                                favorite: item.is_favorite,
+                            });
+                        } catch (e) {
+                            console.error(e);
                         }
                     });
                 }
