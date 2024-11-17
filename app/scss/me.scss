@@ -683,8 +683,6 @@ html.#{$class_confirm_me_action} {
                 }
 
                 .item {
-                    $transition_ms: 220ms;
-
                     border: 1px solid $color_lightgray;
                     border-radius: 8px;
                     padding: 8px;
@@ -694,9 +692,13 @@ html.#{$class_confirm_me_action} {
                     font-size: 12px;
                     background: lighten(black, 97%);
                     position: relative;
+                    z-index: 1;
+                    will-change: transform;
                     @include flex-center-col;
 
                     &.is-favorite {
+                        z-index: 2;
+
                         .favorite {
                             svg {
                                 fill: $brand_color_a;
@@ -708,6 +710,10 @@ html.#{$class_confirm_me_action} {
                             visibility: visible;
                             opacity: 1;
                         }
+                    }
+
+                    &.animating {
+                        z-index: 3;
                     }
 
                     &.favorable {
@@ -744,7 +750,8 @@ html.#{$class_confirm_me_action} {
                         font-weight: 600;
                         border: 1px solid $color_lightgray;
                         opacity: 0;
-                        transition: all $transition_ms;
+                        visibility: hidden;
+                        transition: all $me_items_transition_ms;
                     }
 
                     .favorite {
@@ -761,7 +768,7 @@ html.#{$class_confirm_me_action} {
                             stroke: lighten(black, 40%);
                             stroke-width: $dim;
 
-                            transition: all $transition_ms;
+                            transition: all $me_items_transition_ms;
                         }
                     }
 

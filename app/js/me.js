@@ -1742,21 +1742,33 @@ befriend.me = {
                         e.preventDefault();
                         e.stopPropagation();
 
-                        //el
-                        toggleElClass(this.closest('.item'), 'is-favorite');
-
                         //data
                         let section_el = this.closest('.section');
+                        let items_container_el = section_el.querySelector('.items-container .items');
+                        let item_els = items_container_el.getElementsByClassName('item');
                         let item_el = this.closest('.item');
+
                         let section_key = section_el.getAttribute('data-key');
                         let item_token = item_el.getAttribute('data-token');
-
                         let active_section = befriend.me.getActiveSection(section_key);
                         let item = active_section.items[item_token];
                         let table_key = item.table_key || befriend.me.getSectionTableKey(section_key);
 
                         //toggle favorite state
                         item.is_favorite = !item.is_favorite;
+                        toggleElClass(this.closest('.item'), 'is-favorite');
+
+                        let initialPositions = {};
+
+                        for(let item of Array.from(item_els)) {
+                            let rect = item.getBoundingClientRect();
+                            initialPositions[item.getAttribute('data-token')] = {
+                                top: rect.top,
+                                height: rect.height,
+                                left: rect.left,
+                                width: rect.width
+                            };
+                        }
 
                         let updatedPositions;
                         let favorite_data = {
@@ -1789,6 +1801,68 @@ befriend.me = {
                                 }
                             }
                         }
+
+                        console.log(favorite_data);
+
+                        // Reorder DOM elements based on new positions
+                        let itemsArray = Array.from(item_els);
+
+                        itemsArray.sort((a, b) => {
+                            let aItem = active_section.items[a.getAttribute('data-token')];
+                            let bItem = active_section.items[b.getAttribute('data-token')];
+
+                            if (aItem.is_favorite && !bItem.is_favorite) return -1;
+                            if (!aItem.is_favorite && bItem.is_favorite) return 1;
+                            if (aItem.is_favorite && bItem.is_favorite) {
+                                return (aItem.favorite_position || 0) - (bItem.favorite_position || 0);
+                            }
+                            return 0;
+                        });
+
+                        // Remove transition temporarily
+                        itemsArray.forEach(item => {
+                            item.style.transition = 'none';
+                        });
+
+                        // Reposition items in DOM
+                        itemsArray.forEach(item => {
+                            items_container_el.appendChild(item);
+                        });
+
+                        // Force reflow to ensure transitions will work
+                        void items_container_el.offsetHeight;
+
+                        // Apply transitions from old positions to new positions
+                        requestAnimationFrame(() => {
+                            itemsArray.forEach(item => {
+                                const token = item.getAttribute('data-token');
+                                const oldPos = initialPositions[token];
+                                const newPos = item.getBoundingClientRect();
+
+                                if (oldPos && (oldPos.top !== newPos.top || oldPos.left !== newPos.left)) {
+                                    const deltaY = oldPos.top - newPos.top;
+                                    const deltaX = oldPos.left - newPos.left;
+
+                                    // Apply the initial offset
+                                    item.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+
+                                    requestAnimationFrame(() => {
+                                        // Enable transitions
+                                        item.style.transition = 'transform 300ms ease-out';
+                                        // Move to final position
+                                        item.style.transform = '';
+                                    });
+                                }
+                            });
+                        });
+
+                        // Clean up transitions after animation
+                        setTimeout(() => {
+                            itemsArray.forEach(item => {
+                                item.style.transition = '';
+                                item.style.transform = '';
+                            });
+                        }, 300);
 
                         //server
                         try {
