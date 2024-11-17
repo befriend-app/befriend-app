@@ -7,6 +7,8 @@ befriend.events = {
                 befriend.events.bodyClickHandler();
                 befriend.events.footerNavigation();
 
+                befriend.events.onDrag();
+
                 befriend.events.onAppState();
                 befriend.events.resizeHandler();
 
@@ -144,6 +146,51 @@ befriend.events = {
                 }
             });
         }
+    },
+    onDrag: function () {
+        const events = {
+            touch: {
+                start: 'touchstart',
+                move: 'touchmove',
+                end: 'touchend'
+            },
+            mouse: {
+                start: 'mousedown',
+                move: 'mousemove',
+                end: 'mouseup'
+            }
+        };
+
+        const deviceType = isTouchDevice() ? 'touch' : 'mouse';
+        const deviceEvents = events[deviceType];
+
+        let meReorder = befriend.me.events.reorder;
+
+        document.addEventListener(deviceEvents.move, function(e) {
+            if (!meReorder.ip || !meReorder.el) return;
+
+            e.preventDefault();
+            const coords = getEventCoords(e);
+            const offsetX = coords.x - meReorder.start.x;
+            const offsetY = coords.y - meReorder.start.y;
+
+            meReorder.el.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+            meReorder.updateIdleItemsStateAndPosition(meReorder.el);
+        });
+
+        document.addEventListener(deviceEvents.end, function(e) {
+            if (!meReorder.ip) return;
+
+            meReorder.ip = false;
+            const reorderEl = meReorder.el;
+            if (!reorderEl) return;
+
+            const section_el = reorderEl.closest('.section');
+            const section_key = section_el.getAttribute('data-key');
+
+            meReorder.applyNewItemOrder(reorderEl, section_el, section_key);
+            meReorder.el = null;
+        });
     },
     resizeHandler: function () {
         window.addEventListener('resize', function () {

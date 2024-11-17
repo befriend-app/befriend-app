@@ -696,10 +696,18 @@ html.#{$class_confirm_me_action} {
                     position: relative;
                     z-index: 1;
                     will-change: transform;
-                    @include flex-center-col;
+
+                    .content {
+                        @include flex-center-col;
+                    }
 
                     &.is-favorite {
                         z-index: 2;
+                        cursor: grab;
+                        opacity: 1;
+                        transition: transform $me_items_transition_ms ease-out,
+                                    opacity $me_items_transition_ms ease-out,
+                                    background-color $me_items_transition_ms ease-out;
 
                         .favorite {
                             svg {
@@ -711,6 +719,24 @@ html.#{$class_confirm_me_action} {
                         .rank {
                             visibility: visible;
                             opacity: 1;
+                        }
+
+                        &.is-draggable {
+                            cursor: grabbing;
+                            z-index: 10;
+                            opacity: 0.8;
+                            background: lighten($brand_color_a, 40%);
+                            transition: transform 100ms ease-out,
+                                        background-color $me_items_transition_ms ease-out,
+                                        opacity $me_items_transition_ms ease-out;
+                        }
+
+                        &.is-drag-ending {
+                            opacity: 0.8;
+                            transition: transform $me_items_transition_ms ease-out,
+                                        background-color 500ms $me_items_transition_ms ease-out,
+                                        opacity $me_items_transition_ms ease-out;
+
                         }
                     }
 

@@ -221,6 +221,33 @@ function removeElsClass(els, cls) {
     }
 }
 
+function getEventCoords(e) {
+    if (e.touches) {
+        return {
+            x: e.touches[0].clientX,
+            y: e.touches[0].clientY
+        };
+    }
+    return {
+        x: e.clientX,
+        y: e.clientY
+    };
+}
+
+function isTouchDevice() {
+    let prefixes = ' -webkit- -moz- -o- -ms- '.split(' ');
+    let mq = function(query) {
+        return window.matchMedia(query).matches;
+    };
+
+    if (('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch) {
+        return true;
+    }
+
+    let query = ['(', prefixes.join('touch-enabled),('), 'heartz', ')'].join('');
+    return mq(query);
+}
+
 function roundTimeMinutes(time, minutes) {
     let timeToReturn = new Date(time);
 

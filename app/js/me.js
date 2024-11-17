@@ -1026,7 +1026,6 @@ befriend.me = {
         let table_data = section_data.data.tables?.find(item => item.name === table_key);
 
         let favorite_html = '';
-        let rank_html = '';
         let secondary_html = '';
         let secondary_options_html = '';
 
@@ -1065,15 +1064,17 @@ befriend.me = {
         }
 
         return `<div class="item mine ${isFavorable ? 'favorable': ''} ${item.is_favorite ? 'is-favorite' : ''}" data-token="${item.token}" data-table-key="${item.table_key ? item.table_key : ''}">
-                                                            <div class="rank">${isNumeric(item.favorite_position) ? item.favorite_position : ''}</div>
-                                                            <div class="name-favorite">
-                                                                ${favorite_html}
-                                                                <div class="name">${item.name}</div>
-                                                            </div>
-                                                            
-                                                            ${secondary_html}
-                                                            <div class="remove">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 121.805 14.619"><path d="M7.308,14.619h107.188c4.037,0,7.309-3.272,7.309-7.31s-3.271-7.309-7.309-7.309H7.308C3.272.001,0,3.273,0,7.31s3.272,7.309,7.308,7.309Z"/></svg>
+                                                            <div class="content">
+                                                                    <div class="rank">${isNumeric(item.favorite_position) ? item.favorite_position : ''}</div>
+                                                                    <div class="name-favorite">
+                                                                        ${favorite_html}
+                                                                        <div class="name">${item.name}</div>
+                                                                    </div>
+                                                                
+                                                                    ${secondary_html}
+                                                                    <div class="remove">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 121.805 14.619"><path d="M7.308,14.619h107.188c4.037,0,7.309-3.272,7.309-7.31s-3.271-7.309-7.309-7.309H7.308C3.272.001,0,3.273,0,7.31s3.272,7.309,7.308,7.309Z"/></svg>
+                                                                    </div>
                                                             </div>
                                                         </div>`;
     },
@@ -1254,6 +1255,229 @@ befriend.me = {
         return positions;
     },
     events: {
+        reorder: {
+            ip: false,
+            start: {
+                x: null,
+                y: null,
+            },
+            el: null,
+            itemsGap: 0,
+            prevRect: null,
+            items: [],
+            isItemAbove: function (item) {
+                return item.hasAttribute('data-is-above');
+            },
+            isItemToggled: function (item) {
+                return item.hasAttribute('data-is-toggled');
+            },
+            getIdleItems: function (itemsContainer) {
+                let allItems = Array.from(itemsContainer.querySelectorAll('.item.is-favorite'));
+
+                return allItems.filter(el => !elHasClass(el, 'is-draggable'));
+            },
+            setItemsGap: function (idleItems) {
+                if (idleItems.length <= 1) {
+                    this.itemsGap = 0;
+                    return;
+                }
+
+                const item1Rect = idleItems[0].getBoundingClientRect();
+                const item2Rect = idleItems[1].getBoundingClientRect();
+                this.itemsGap = Math.abs(item1Rect.bottom - item2Rect.top);
+            },
+            initReorderItem: function (item) {
+                // removeClassEl('is-idle', item);
+                addClassEl('is-draggable', item);
+            },
+            initItemsState: function (reorderEl, idleItems) {
+                for(let i = 0; i < idleItems.length; i++) {
+                    let item = idleItems[i];
+
+                    if (Array.from(reorderEl.parentElement.children).indexOf(reorderEl) > i) {
+                        item.dataset.isAbove = '';
+                    }
+                }
+            },
+            updateIdleItemsStateAndPosition: function (reorderEl) {
+                const reorderElRect = reorderEl.getBoundingClientRect();
+                const reorderElY = reorderElRect.top + reorderElRect.height / 2;
+
+                // Update state
+                for(let item of this.getIdleItems(reorderEl.parentElement)) {
+                    const itemRect = item.getBoundingClientRect();
+                    const itemY = itemRect.top + itemRect.height / 2;
+                    if (this.isItemAbove(item)) {
+                        if (reorderElY <= itemY) {
+                            item.dataset.isToggled = '';
+                        } else {
+                            delete item.dataset.isToggled;
+                        }
+                    } else {
+                        if (reorderElY >= itemY) {
+                            item.dataset.isToggled = '';
+                        } else {
+                            delete item.dataset.isToggled;
+                        }
+                    }
+                }
+
+                // Update position
+                for(let item of this.getIdleItems(reorderEl.parentElement)) {
+                    if (this.isItemToggled(item)) {
+                        const direction = this.isItemAbove(item) ? 1 : -1;
+                        item.style.transform = `translateY(${
+                            direction * (reorderElRect.height + this.itemsGap)
+                        }px)`;
+                    } else {
+                        item.style.transform = '';
+                    }
+                }
+            },
+            applyNewItemOrder: async function (reorderEl, section_el, section_key) {
+                const reorderedItems = [];
+                const itemsContainer = reorderEl.parentElement;
+                const allItems = Array.from(itemsContainer.children);
+
+                let prevIndex = allItems.indexOf(reorderEl);
+                let skipUpdate = false;
+
+                for(let i = 0; i < allItems.length; i++) {
+                    let item = allItems[i];
+
+                    if (item === reorderEl) {
+                        continue;
+                    }
+
+                    if (!this.isItemToggled(item)) {
+                        reorderedItems[i] = item;
+                        continue;
+                    }
+
+                    const newIndex = this.isItemAbove(item) ? i + 1 : i - 1;
+                    reorderedItems[newIndex] = item;
+                }
+
+                // Fill in the dragged item
+                for (let index = 0; index < allItems.length; index++) {
+                    if (typeof reorderedItems[index] === 'undefined') {
+                        if(prevIndex === index) {
+                            skipUpdate = true;
+                            break;
+                        }
+                        reorderedItems[index] = reorderEl;
+                    }
+                }
+
+                // Clean up temporary attributes
+                for(let item of this.getIdleItems(itemsContainer)) {
+                    delete item.dataset.isAbove;
+                    delete item.dataset.isToggled;
+                    item.style.transition = 'none';
+                    item.style.transform = '';
+
+                    requestAnimationFrame(() => {
+                        item.style.removeProperty('transition');
+                    });
+                }
+
+                if(skipUpdate) {
+                    return requestAnimationFrame(() => {
+                        removeClassEl('is-draggable', reorderEl);
+                        reorderEl.style.transform = '';
+                    });
+                }
+
+                // Update DOM and positions
+                const reorderTransform = reorderEl.style.transform;
+                const transformValues = reorderTransform.replace('translate(', '').replace(')', '').split(',');
+                const prevTransform = {
+                    x: parseInt(transformValues[0]),
+                    y: parseInt(transformValues[1])
+                };
+
+                const reorderedBoxBefore = reorderEl.getBoundingClientRect();
+
+                // Reorder items in DOM
+                for(let item of reorderedItems) {
+                    itemsContainer.appendChild(item);
+                }
+
+                const reorderedBoxAfter = reorderEl.getBoundingClientRect();
+
+                //remove animation
+                reorderEl.style.transition = 'none';
+
+                await rafAwait();
+
+                // Update final position
+                const xDiff = reorderedBoxBefore.left - reorderedBoxAfter.left;
+                const yDiff = reorderedBoxBefore.top - reorderedBoxAfter.top;
+                const tX = prevTransform.x + xDiff;
+                const tY = prevTransform.y + yDiff;
+                reorderEl.style.transform = `translate(${tX}px, ${tY}px)`;
+
+                await rafAwait();
+
+                reorderEl.style.removeProperty('transition');
+
+                // Update positions in data model
+                this.updateFavoritePositions(section_key, section_el);
+
+                requestAnimationFrame(() => {
+                    addClassEl('is-drag-ending', reorderEl);
+                    removeClassEl('is-draggable', reorderEl);
+                    reorderEl.style.transform = '';
+                    setTimeout(function () {
+                        removeClassEl('is-drag-ending', reorderEl);
+                    }, 1000);
+                });
+            },
+            updateFavoritePositions: async function (section_key, section_el) {
+                const active_section = befriend.me.getActiveSection(section_key);
+                const items_el = section_el.querySelector('.items');
+                const item_els = items_el.querySelectorAll('.item.is-favorite');
+                let positions = {};
+
+                for(let i = 0; i < item_els.length; i++) {
+                    let item_el = item_els[i];
+
+                    const token = item_el.getAttribute('data-token');
+                    const item = active_section.items[token];
+                    const newPosition = i + 1;
+
+                    if (item.favorite_position !== newPosition) {
+                        item.favorite_position = newPosition;
+                        positions[token] = {
+                            id: item.id,
+                            token: token,
+                            favorite_position: newPosition
+                        };
+                    }
+
+                    const rank_el = item_el.querySelector('.rank');
+
+                    if (rank_el) {
+                        rank_el.innerHTML = newPosition;
+                    }
+                }
+
+                if (Object.keys(positions).length) {
+                    try {
+                        // await befriend.auth.put(`/me/sections/item`, {
+                        //     section_key: section_key,
+                        //     table_key: section_el.getAttribute('data-table-key'),
+                        //     section_item_id: Object.values(positions)[0].id,
+                        //     favorite: {
+                        //         reorder: positions
+                        //     }
+                        // });
+                    } catch (e) {
+                        console.error('Error updating favorite positions:', e);
+                    }
+                }
+            }
+        },
         init: function () {
             return new Promise(async (resolve, reject) => {
                 befriend.me.events.onAddSectionBtn();
@@ -1874,6 +2098,8 @@ befriend.me = {
                 }, 300);
             };
 
+            let meReorder = befriend.me.events.reorder;
+
             let favorite_els = befriend.els.me.getElementsByClassName('favorite');
 
             for (let i = 0; i < favorite_els.length; i++) {
@@ -1883,6 +2109,8 @@ befriend.me = {
                     favorite_el._listener = true;
 
                     favorite_el.addEventListener('click', async function (e) {
+                        if (meReorder.ip) return;
+
                         e.preventDefault();
                         e.stopPropagation();
 
@@ -1947,6 +2175,45 @@ befriend.me = {
                         }
                     });
                 }
+            }
+
+            let item_els = befriend.els.me.getElementsByClassName('item');
+
+            for (let i = 0; i < item_els.length; i++) {
+                let item_el = item_els[i];
+
+                if(!elHasClass(item_el, 'favorable')) {
+                    continue;
+                }
+
+                if(item_el._reorder_listener) {
+                    continue;
+                }
+
+                item_el._reorder_listener = true;
+
+                item_el.addEventListener('touchstart', function(e) {
+                    if (!elHasClass(item_el, 'is-favorite')) return;
+
+                    // Don't start drag if clicking the heart icon
+                    const target = e.target;
+                    if (target.closest('.heart')) return;
+
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const coords = getEventCoords(e);
+                    meReorder.start.x = coords.x;
+                    meReorder.start.y = coords.y;
+                    meReorder.el = item_el;
+                    meReorder.ip = true;
+
+                    const idleItems = meReorder.getIdleItems(item_el.parentElement);
+                    meReorder.setItemsGap(idleItems);
+                    meReorder.initReorderItem(item_el);
+                    meReorder.initItemsState(item_el, idleItems);
+                });
+
             }
         },
         onSelectSecondary: function () {
