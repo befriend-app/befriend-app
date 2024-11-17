@@ -1464,14 +1464,14 @@ befriend.me = {
 
                 if (Object.keys(positions).length) {
                     try {
-                        // await befriend.auth.put(`/me/sections/item`, {
-                        //     section_key: section_key,
-                        //     table_key: section_el.getAttribute('data-table-key'),
-                        //     section_item_id: Object.values(positions)[0].id,
-                        //     favorite: {
-                        //         reorder: positions
-                        //     }
-                        // });
+                        await befriend.auth.put(`/me/sections/item`, {
+                            section_key: section_key,
+                            table_key: section_el.getAttribute('data-table-key'),
+                            section_item_id: Object.values(positions)[0].id,
+                            favorite: {
+                                reorder: positions
+                            }
+                        });
                     } catch (e) {
                         console.error('Error updating favorite positions:', e);
                     }
