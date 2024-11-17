@@ -1115,14 +1115,25 @@ befriend.me = {
                         items_filtered.push(item);
                     }
 
-                    if(!items_filtered.length) {
-                        addClassEl('no-items', section_el);
-                    } else {
+                    if(items_filtered.length) {
+                        // Sort favorite items first by position, then default
+                        items_filtered.sort((a, b) => {
+                            if (a.is_favorite && !b.is_favorite) return -1;
+                            if (!a.is_favorite && b.is_favorite) return 1;
+                            if (a.is_favorite && b.is_favorite) {
+                                return (a.favorite_position || 0) - (b.favorite_position || 0);
+                            }
+
+                            return 0;
+                        });
+
                         for (let item of items_filtered) {
                             items_html += befriend.me.sectionItemHtml(section_key, table_key, item);
                         }
 
                         removeClassEl('no-items', section_el);
+                    } else {
+                        addClassEl('no-items', section_el);
                     }
                 } else {
                     removeClassEl('my-items', section_el);
@@ -1211,7 +1222,7 @@ befriend.me = {
     reorderFavoritePositions: function(section_key, table_key) {
         let section_data = this.getActiveSection(section_key);
         let reorderedItems = [];
-        let positions = new Map();
+        let positions = {};
 
         // Get all favorited items for this table
         for (let token in section_data.items) {
@@ -1231,7 +1242,11 @@ befriend.me = {
 
             if (item.favorite_position !== newPosition) {
                 item.favorite_position = newPosition;
-                positions.set(item.token, newPosition);
+                positions[item.token] = {
+                    id: item.id,
+                    token: item.token,
+                    favorite_position: newPosition,
+                };
             }
         }
 
@@ -1755,11 +1770,7 @@ befriend.me = {
                         } else {
                             // Removing favorite - reorder remaining favorites
                             item.favorite_position = null;
-                            updatedPositions = befriend.me.reorderFavoritePositions(section_key, table_key);
-                            favorite_data.reorder = Array.from(updatedPositions.entries()).map(([token, position]) => ({
-                                token,
-                                position
-                            }));
+                            favorite_data.reorder = updatedPositions = befriend.me.reorderFavoritePositions(section_key, table_key);
                         }
 
                         // Update rank display
@@ -1767,11 +1778,12 @@ befriend.me = {
                         rank_el.innerHTML = item.favorite_position || '';
 
                         // Update other ranks if positions were reordered
-                        if (updatedPositions?.size) {
-                            for (let [token, position] of updatedPositions) {
+                        if (updatedPositions && Object.keys(updatedPositions).length) {
+                            for (let token in updatedPositions) {
                                 let item_el = section_el.querySelector(`.item[data-token="${token}"]`);
+
                                 if (item_el) {
-                                    item_el.querySelector('.rank').innerHTML = position;
+                                    item_el.querySelector('.rank').innerHTML = updatedPositions[token].favorite_position;
                                 }
                             }
                         }
@@ -1782,10 +1794,7 @@ befriend.me = {
                                 section_key: section_key,
                                 table_key: table_key,
                                 section_item_id: item.id,
-                                favorite: {
-                                    active: item.is_favorite,
-                                    position: item.favorite_position,
-                                },
+                                favorite: favorite_data,
                             });
                         } catch (e) {
                             console.error(e);
