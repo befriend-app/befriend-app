@@ -1266,11 +1266,14 @@ befriend.me = {
             prevRect: null,
             items: [],
             autoScroll: {
-                active: false,
-                speed: 8, // pixels per frame
-                threshold: 60, // pixels from edge to start scrolling
-                animationFrame: null
+                animationFrame: null,
+                scrolling: false,
+                startPosition: null,
+                targetPosition: null,
+                startTime: null,
+                duration: 200 // ms for scroll animation
             },
+            dragStarted: false,
             isItemAbove: function (item) {
                 return item.hasAttribute('data-is-above');
             },
@@ -2183,7 +2186,7 @@ befriend.me = {
                 }
             }
 
-            const TOUCH_DELAY = 150; // ms to wait before initiating drag
+            const TOUCH_DELAY = 80; // ms to wait before initiating drag
             const MOVE_THRESHOLD = 10; // pixels of movement to consider it a scroll
             let touchTimeout;
             let initialTouchY;
@@ -2251,6 +2254,7 @@ befriend.me = {
                             meReorder.start.y = coords.y;
                             meReorder.el = item_el;
                             meReorder.ip = true;
+                            meReorder.dragStarted = false;
 
                             // Disable scrolling when drag starts
                             const scrollContainer = item_el.closest('.items-container');

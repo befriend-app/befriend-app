@@ -174,70 +174,52 @@ befriend.events = {
             const offsetX = coords.x - meReorder.start.x;
             const offsetY = coords.y - meReorder.start.y;
 
+            // Only start repositioning other items after some movement
+            if (!meReorder.dragStarted && (Math.abs(offsetX) > 5 || Math.abs(offsetY) > 5)) {
+                meReorder.dragStarted = true;
+                const idleItems = meReorder.getIdleItems(meReorder.el.parentElement);
+                meReorder.setItemsGap(idleItems);
+                meReorder.initItemsState(meReorder.el, idleItems);
+            }
+
             meReorder.el.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-            meReorder.updateIdleItemsStateAndPosition(meReorder.el);
 
-            // Check for auto-scrolling
-            const container = meReorder.el.closest('.items-container');
-            const containerRect = container.getBoundingClientRect();
-            const touchY = coords.y;
+            if (meReorder.dragStarted) {
+                meReorder.updateIdleItemsStateAndPosition(meReorder.el);
 
-            // Clear any existing animation frame
-            if (meReorder.autoScroll.animationFrame) {
-                cancelAnimationFrame(meReorder.autoScroll.animationFrame);
-                meReorder.autoScroll.animationFrame = null;
-            }
+                // Check for scroll needed
+                const container = meReorder.el.closest('.items-container');
+                const containerRect = container.getBoundingClientRect();
+                const itemRect = meReorder.el.getBoundingClientRect();
+                const itemHeight = itemRect.height;
+                const itemGap = meReorder.itemsGap;
+                const scrollAmount = itemHeight + itemGap;
 
-            // Check if we're near the edges
-            if (touchY < containerRect.top + meReorder.autoScroll.threshold) {
-                // Near top - scroll up
-                const scrollUp = () => {
-                    const scrollAmount = container.scrollTop - meReorder.autoScroll.speed;
-                    container.scrollTop = Math.max(0, scrollAmount);
-
-                    // Update positions of other items
-                    meReorder.updateIdleItemsStateAndPosition(meReorder.el);
-
-                    // Continue animation if still dragging and near edge
-                    if (meReorder.ip && touchY < containerRect.top + meReorder.autoScroll.threshold) {
-                        meReorder.autoScroll.animationFrame = requestAnimationFrame(scrollUp);
+                if (!meReorder.autoScroll.scrolling) {
+                    if (itemRect.top < containerRect.top) {
+                        startSmoothScroll(container, container.scrollTop - scrollAmount);
                     }
-                };
-                // scrollUp();
-            }
-            else if (touchY > containerRect.bottom - meReorder.autoScroll.threshold) {
-                // Near bottom - scroll down
-                const scrollDown = () => {
-                    const scrollAmount = container.scrollTop + meReorder.autoScroll.speed;
-                    const maxScroll = container.scrollHeight - container.clientHeight;
-                    container.scrollTop = Math.min(maxScroll, scrollAmount);
-
-                    // Update positions of other items
-                    meReorder.updateIdleItemsStateAndPosition(meReorder.el);
-
-                    // Continue animation if still dragging and near edge
-                    if (meReorder.ip && touchY > containerRect.bottom - meReorder.autoScroll.threshold) {
-                        meReorder.autoScroll.animationFrame = requestAnimationFrame(scrollDown);
+                    else if (itemRect.bottom > containerRect.bottom) {
+                        startSmoothScroll(container, container.scrollTop + scrollAmount);
                     }
-                };
-                // scrollDown();
+                }
             }
         });
 
         document.addEventListener(deviceEvents.end, function(e) {
             if (!meReorder.ip) return;
 
-            // Cancel any ongoing auto-scroll
             if (meReorder.autoScroll.animationFrame) {
                 cancelAnimationFrame(meReorder.autoScroll.animationFrame);
                 meReorder.autoScroll.animationFrame = null;
             }
+            meReorder.autoScroll.scrolling = false;
 
             meReorder.ip = false;
+            meReorder.dragStarted = false;
             const reorderEl = meReorder.el;
             if (!reorderEl) return;
 
-            // Re-enable scrolling when drag ends
             const scrollContainer = reorderEl.closest('.items-container');
             if (scrollContainer) {
                 scrollContainer.style.removeProperty('overflow');
@@ -249,6 +231,49 @@ befriend.events = {
             meReorder.applyNewItemOrder(reorderEl, section_el, section_key);
             meReorder.el = null;
         });
+
+        function startSmoothScroll(container, targetPosition) {
+            // Bound target position
+            targetPosition = Math.max(0, Math.min(
+                targetPosition,
+                container.scrollHeight - container.clientHeight
+            ));
+
+            // Don't scroll if we're already at target
+            if (container.scrollTop === targetPosition) return;
+
+            meReorder.autoScroll.scrolling = true;
+            meReorder.autoScroll.startPosition = container.scrollTop;
+            meReorder.autoScroll.targetPosition = targetPosition;
+            meReorder.autoScroll.startTime = performance.now();
+
+            // Cancel any existing animation
+            if (meReorder.autoScroll.animationFrame) {
+                cancelAnimationFrame(meReorder.autoScroll.animationFrame);
+            }
+
+            function animate(currentTime) {
+                const elapsed = currentTime - meReorder.autoScroll.startTime;
+                const progress = Math.min(elapsed / meReorder.autoScroll.duration, 1);
+
+                // Ease out cubic function
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+
+                const currentPosition = meReorder.autoScroll.startPosition +
+                    (meReorder.autoScroll.targetPosition - meReorder.autoScroll.startPosition) * easeOut;
+
+                container.scrollTop = currentPosition;
+
+                if (progress < 1) {
+                    meReorder.autoScroll.animationFrame = requestAnimationFrame(animate);
+                } else {
+                    meReorder.autoScroll.scrolling = false;
+                    meReorder.autoScroll.animationFrame = null;
+                }
+            }
+
+            meReorder.autoScroll.animationFrame = requestAnimationFrame(animate);
+        }
     },
     resizeHandler: function () {
         window.addEventListener('resize', function () {
