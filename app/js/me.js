@@ -1271,7 +1271,7 @@ befriend.me = {
                 startPosition: null,
                 targetPosition: null,
                 startTime: null,
-                duration: 200 // ms for scroll animation
+                duration: 250 // ms for scroll animation
             },
             dragStarted: false,
             isItemAbove: function (item) {
