@@ -1254,6 +1254,142 @@ befriend.me = {
 
         return positions;
     },
+    getInitialPositions: (item_els) => {
+        let positions = {};
+        for(let item of Array.from(item_els)) {
+            let rect = item.getBoundingClientRect();
+            positions[item.getAttribute('data-token')] = {
+                top: rect.top,
+                height: rect.height,
+                left: rect.left,
+                width: rect.width
+            };
+        }
+        return positions;
+    },
+    sortItemsByFavorite: (itemsArray, active_section) => {
+        return itemsArray.sort((a, b) => {
+            let aItem = active_section.items[a.getAttribute('data-token')];
+            let bItem = active_section.items[b.getAttribute('data-token')];
+
+            if (aItem.is_favorite && !bItem.is_favorite) return -1;
+            if (!aItem.is_favorite && bItem.is_favorite) return 1;
+            if (aItem.is_favorite && bItem.is_favorite) {
+                return (aItem.favorite_position || 0) - (bItem.favorite_position || 0);
+            }
+            return 0;
+        });
+    },
+    updateRankDisplays: (section_el, item_el, item, updatedPositions) => {
+        // Update current item rank
+        let rank_el = item_el.querySelector('.rank');
+        rank_el.innerHTML = item.favorite_position || '';
+
+        // Update other ranks if positions were reordered
+        if (updatedPositions && Object.keys(updatedPositions).length) {
+            for (let token in updatedPositions) {
+                let item_el = section_el.querySelector(`.item[data-token="${token}"]`);
+                if (item_el) {
+                    item_el.querySelector('.rank').innerHTML = updatedPositions[token].favorite_position;
+                }
+            }
+        }
+    },
+    calculateTargetPosition: (item_el, items_el, oldPositions, newOrder) => {
+        // Find item's position in new order
+        const itemToken = item_el.getAttribute('data-token');
+        const itemIndex = newOrder.findIndex(el => el.getAttribute('data-token') === itemToken);
+
+        const scrollContainer = items_el.closest('.items-container');
+
+        // Get container dimensions
+        const containerRect = scrollContainer.getBoundingClientRect();
+        const containerScrollTop = scrollContainer.scrollTop;
+
+        // Calculate new position based on grid layout
+        const itemHeight = oldPositions[itemToken].height;
+        const gridGap = befriend.variables.me_items_gap_tb;
+        const targetTop = (itemIndex * (itemHeight + gridGap));
+
+        // Determine if scroll is needed
+        const containerVisibleHeight = containerRect.height;
+        const scrollNeeded = targetTop < containerScrollTop ||
+            (targetTop + itemHeight) > (containerScrollTop + containerVisibleHeight);
+
+        if (scrollNeeded) {
+            return {
+                element: scrollContainer,
+                scrollTop: targetTop - (containerVisibleHeight - itemHeight) / 2
+            }
+        }
+
+        return null;
+    },
+    animateItemTransitions: (itemsArray, items_el, initialPositions, favorited_item_el) => {
+        // Remove transition temporarily
+        itemsArray.forEach(item => {
+            item.style.transition = 'none';
+        });
+
+        // Calculate target scroll position before reordering
+        let scrollTarget = null;
+        if (favorited_item_el) {
+            scrollTarget = befriend.me.calculateTargetPosition(
+                favorited_item_el,
+                items_el,
+                initialPositions,
+                itemsArray
+            );
+        }
+
+        // Reposition items in DOM
+        itemsArray.forEach(item => {
+            items_el.appendChild(item);
+        });
+
+        // Force reflow to ensure transitions will work
+        void items_el.offsetHeight;
+
+        // Apply transitions from old positions to new positions
+        requestAnimationFrame(() => {
+            itemsArray.forEach(item => {
+                const token = item.getAttribute('data-token');
+                const oldPos = initialPositions[token];
+                const newPos = item.getBoundingClientRect();
+
+                if (oldPos && (oldPos.top !== newPos.top || oldPos.left !== newPos.left)) {
+                    const deltaY = oldPos.top - newPos.top;
+                    const deltaX = oldPos.left - newPos.left;
+
+                    // Apply the initial offset
+                    item.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+
+                    requestAnimationFrame(() => {
+                        // Enable transitions
+                        item.style.transition = 'transform 300ms ease-out';
+                        // Move to final position
+                        item.style.transform = '';
+                    });
+                }
+            });
+
+            // make sure favorited item is visible
+            if (scrollTarget) {
+                scrollTarget.element.scrollTo({
+                    top: scrollTarget.scrollTop,
+                    behavior: 'smooth'
+                });
+            }
+        });
+
+        // Clean up transitions after animation
+        setTimeout(() => {
+            itemsArray.forEach(item => {
+                item.style.transition = '';
+                item.style.transform = '';
+            });
+        }, 300);
+    },
     events: {
         reorder: {
             ip: false,
@@ -1885,43 +2021,92 @@ befriend.me = {
 
                 remove_el._listener = true;
 
-                remove_el.addEventListener('click', function (e) {
+                remove_el.addEventListener('click', async function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
                     let section_el = this.closest('.section');
                     let section_key = section_el.getAttribute('data-key');
                     let item_el = this.closest('.item');
                     let token = item_el.getAttribute('data-token');
 
-                    //dom
+                    let section_data = befriend.me.getActiveSection(section_key);
+                    let item = section_data.items[token];
+                    let table_key = item.table_key;
+
+                    // Get initial positions for animation
+                    let items_el = section_el.querySelector('.items-container .items');
+                    let item_els = items_el.getElementsByClassName('item');
+                    let initialPositions = befriend.me.getInitialPositions(item_els);
+
+                    // Handle reordering if this was a favorited item
+                    let updatedPositions;
+                    let favorite_data = {
+                        active: false,
+                        position: null
+                    };
+
+                    if (item.is_favorite) {
+                        // Remove favorite and reorder remaining favorites
+                        item.is_favorite = false;
+                        item.favorite_position = null;
+                        favorite_data.reorder = updatedPositions = befriend.me.reorderFavoritePositions(section_key, table_key);
+                    }
+
+                    // Update server with both delete and reorder
                     try {
-                        item_el.parentNode.removeChild(item_el);
+                        await befriend.auth.put(`/me/sections/item`, {
+                            section_key: section_key,
+                            table_key: table_key,
+                            section_item_id: item.id,
+                            is_delete: true,
+                            favorite: favorite_data
+                        });
                     } catch (e) {
                         console.error(e);
                     }
 
-                    //data/server
-                    let section_data = befriend.me.getActiveSection(section_key);
-
-                    befriend.me.removeSectionItem(section_key, token);
-
-                    //ui
+                    // Get filtered items and sort
                     let items_filtered = [];
-
                     for (let token in section_data.items) {
                         let item = section_data.items[token];
 
                         // Filter by tab if exists
                         let active_tab = section_el.querySelector('.section-container .tab.active');
-
                         if (active_tab && item.table_key && item.table_key !== active_tab.getAttribute('data-key')) {
                             continue;
                         }
 
-                        items_filtered.push(item);
+                        items_filtered.push(section_el.querySelector(`.item[data-token="${token}"]`));
                     }
 
-                    if (!items_filtered.length) {
+                    // Sort and animate remaining items
+                    if (items_filtered.length) {
+                        let itemsArray = befriend.me.sortItemsByFavorite(items_filtered, section_data);
+                        befriend.me.animateItemTransitions(itemsArray, items_el, initialPositions, null);
+
+                        // Update rank displays for remaining favorites
+                        if (updatedPositions) {
+                            for (let token in updatedPositions) {
+                                let remaining_el = section_el.querySelector(`.item[data-token="${token}"]`);
+                                if (remaining_el) {
+                                    let rank_el = remaining_el.querySelector('.rank');
+                                    rank_el.innerHTML = updatedPositions[token].favorite_position;
+                                }
+                            }
+                        }
+                    } else {
                         addClassEl('no-items', section_el);
                     }
+
+                    // Remove item from DOM after animation
+                    setTimeout(() => {
+                        try {
+                            item_el.parentNode.removeChild(item_el);
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    }, 300);
 
                     befriend.me.updateSectionHeight(section_el, elHasClass(section_el, 'collapsed'));
                 });
@@ -1963,150 +2148,6 @@ befriend.me = {
             }
         },
         onFavorite: function () {
-            // Animation helper functions
-            const getInitialPositions = (item_els) => {
-                let positions = {};
-                for(let item of Array.from(item_els)) {
-                    let rect = item.getBoundingClientRect();
-                    positions[item.getAttribute('data-token')] = {
-                        top: rect.top,
-                        height: rect.height,
-                        left: rect.left,
-                        width: rect.width
-                    };
-                }
-                return positions;
-            };
-
-            const sortItemsByFavorite = (itemsArray, active_section) => {
-                return itemsArray.sort((a, b) => {
-                    let aItem = active_section.items[a.getAttribute('data-token')];
-                    let bItem = active_section.items[b.getAttribute('data-token')];
-
-                    if (aItem.is_favorite && !bItem.is_favorite) return -1;
-                    if (!aItem.is_favorite && bItem.is_favorite) return 1;
-                    if (aItem.is_favorite && bItem.is_favorite) {
-                        return (aItem.favorite_position || 0) - (bItem.favorite_position || 0);
-                    }
-                    return 0;
-                });
-            };
-
-            const updateRankDisplays = (section_el, item_el, item, updatedPositions) => {
-                // Update current item rank
-                let rank_el = item_el.querySelector('.rank');
-                rank_el.innerHTML = item.favorite_position || '';
-
-                // Update other ranks if positions were reordered
-                if (updatedPositions && Object.keys(updatedPositions).length) {
-                    for (let token in updatedPositions) {
-                        let item_el = section_el.querySelector(`.item[data-token="${token}"]`);
-                        if (item_el) {
-                            item_el.querySelector('.rank').innerHTML = updatedPositions[token].favorite_position;
-                        }
-                    }
-                }
-            };
-
-            const calculateTargetPosition = (item_el, items_el, oldPositions, newOrder) => {
-                // Find item's position in new order
-                const itemToken = item_el.getAttribute('data-token');
-                const itemIndex = newOrder.findIndex(el => el.getAttribute('data-token') === itemToken);
-
-                const scrollContainer = items_el.closest('.items-container');
-
-                // Get container dimensions
-                const containerRect = scrollContainer.getBoundingClientRect();
-                const containerScrollTop = scrollContainer.scrollTop;
-
-                // Calculate new position based on grid layout
-                const itemHeight = oldPositions[itemToken].height;
-                const gridGap = befriend.variables.me_items_gap_tb;
-                const targetTop = (itemIndex * (itemHeight + gridGap));
-
-                // Determine if scroll is needed
-                const containerVisibleHeight = containerRect.height;
-                const scrollNeeded = targetTop < containerScrollTop ||
-                    (targetTop + itemHeight) > (containerScrollTop + containerVisibleHeight);
-
-                if (scrollNeeded) {
-                    console.log("Scroll needed");
-
-                    return {
-                        element: scrollContainer,
-                        scrollTop: targetTop - (containerVisibleHeight - itemHeight) / 2
-                    }
-                }
-
-                return null;
-            };
-
-            const animateItemTransitions = (itemsArray, items_el, initialPositions, favorited_item_el) => {
-                // Remove transition temporarily
-                itemsArray.forEach(item => {
-                    item.style.transition = 'none';
-                });
-
-                // Calculate target scroll position before reordering
-                let scrollTarget = null;
-                if (favorited_item_el) {
-                    scrollTarget = calculateTargetPosition(
-                        favorited_item_el,
-                        items_el,
-                        initialPositions,
-                        itemsArray
-                    );
-                }
-
-                // Reposition items in DOM
-                itemsArray.forEach(item => {
-                    items_el.appendChild(item);
-                });
-
-                // Force reflow to ensure transitions will work
-                void items_el.offsetHeight;
-
-                // Apply transitions from old positions to new positions
-                requestAnimationFrame(() => {
-                    itemsArray.forEach(item => {
-                        const token = item.getAttribute('data-token');
-                        const oldPos = initialPositions[token];
-                        const newPos = item.getBoundingClientRect();
-
-                        if (oldPos && (oldPos.top !== newPos.top || oldPos.left !== newPos.left)) {
-                            const deltaY = oldPos.top - newPos.top;
-                            const deltaX = oldPos.left - newPos.left;
-
-                            // Apply the initial offset
-                            item.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
-
-                            requestAnimationFrame(() => {
-                                // Enable transitions
-                                item.style.transition = 'transform 300ms ease-out';
-                                // Move to final position
-                                item.style.transform = '';
-                            });
-                        }
-                    });
-
-                    // make sure favorited item is visible
-                    if (scrollTarget) {
-                        scrollTarget.element.scrollTo({
-                            top: scrollTarget.scrollTop,
-                            behavior: 'smooth'
-                        });
-                    }
-                });
-
-                // Clean up transitions after animation
-                setTimeout(() => {
-                    itemsArray.forEach(item => {
-                        item.style.transition = '';
-                        item.style.transform = '';
-                    });
-                }, 300);
-            };
-
             let meReorder = befriend.me.events.reorder;
 
             let favorite_els = befriend.els.me.getElementsByClassName('favorite');
@@ -2140,7 +2181,7 @@ befriend.me = {
                         toggleElClass(this.closest('.item'), 'is-favorite');
 
                         // Get initial positions before any changes
-                        let initialPositions = getInitialPositions(item_els);
+                        let initialPositions = befriend.me.getInitialPositions(item_els);
 
                         // Handle favorite data updates
                         let updatedPositions;
@@ -2161,13 +2202,13 @@ befriend.me = {
                         }
 
                         // Update rank displays
-                        updateRankDisplays(section_el, item_el, item, updatedPositions);
+                        befriend.me.updateRankDisplays(section_el, item_el, item, updatedPositions);
 
                         // Sort and animate items
                         let itemsArray = Array.from(item_els);
-                        itemsArray = sortItemsByFavorite(itemsArray, active_section);
+                        itemsArray = befriend.me.sortItemsByFavorite(itemsArray, active_section);
 
-                        animateItemTransitions(itemsArray, items_el, initialPositions,
+                        befriend.me.animateItemTransitions(itemsArray, items_el, initialPositions,
                             item.is_favorite ? item_el : null
                             );
 
@@ -2235,7 +2276,9 @@ befriend.me = {
 
                     // Don't start drag if clicking the heart icon
                     const target = e.target;
-                    if (target.closest('.heart')) return;
+                    if (target.closest('.heart') || target.closest('.remove')) {
+                        return;
+                    }
 
                     // Reset tracking variables
                     hasMoved = false;
