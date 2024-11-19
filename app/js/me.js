@@ -2120,10 +2120,10 @@ befriend.me = {
                         }
 
                         // Animate out the deleted item
-                        item_el.style.transition = 'opacity 0.3s ease-out';
+                        item_el.style.transition = `opacity ${befriend.variables.me_remove_item_transition_ms}ms ease-out`;
                         item_el.style.opacity = '0';
 
-                        await timeoutAwait(300);
+                        await timeoutAwait(befriend.variables.me_remove_item_transition_ms);
 
                         // Remove the element after fade out
                         item_el.parentNode.removeChild(item_el);
