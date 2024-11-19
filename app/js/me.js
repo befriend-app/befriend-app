@@ -2054,90 +2054,109 @@ befriend.me = {
                     e.preventDefault();
                     e.stopPropagation();
 
-                    let section_el = this.closest('.section');
-                    let section_key = section_el.getAttribute('data-key');
-                    let item_el = this.closest('.item');
-                    let token = item_el.getAttribute('data-token');
-
-                    let section_data = befriend.me.getActiveSection(section_key);
-                    let item = section_data.items[token];
-                    let table_key = item.table_key;
-
-                    // Get initial positions for animation
-                    let items_el = section_el.querySelector('.items-container .items');
-                    let item_els = items_el.getElementsByClassName('item');
-                    let initialPositions = befriend.me.getInitialPositions(item_els);
-
-                    // Handle reordering if this was a favorited item
-                    let updatedPositions;
-                    let favorite_data = {
-                        active: false,
-                        position: null
-                    };
-
-                    if (item.is_favorite) {
-                        // Remove favorite and reorder remaining favorites
-                        item.is_favorite = false;
-                        item.favorite_position = null;
-                        favorite_data.reorder = updatedPositions = befriend.me.reorderFavoritePositions(section_key, table_key);
-                    }
-
-                    // Update server with both delete and reorder
                     try {
-                        await befriend.auth.put(`/me/sections/item`, {
-                            section_key: section_key,
-                            table_key: table_key,
-                            section_item_id: item.id,
-                            is_delete: true,
-                            favorite: favorite_data
-                        });
-                    } catch (e) {
-                        console.error(e);
-                    }
+                        befriend.toggleSpinner(true);
 
-                    // Get filtered items and sort
-                    let items_filtered = [];
-                    for (let token in section_data.items) {
-                        let item = section_data.items[token];
+                        let section_el = this.closest('.section');
+                        let section_key = section_el.getAttribute('data-key');
+                        let item_el = this.closest('.item');
+                        let delete_token = item_el.getAttribute('data-token');
 
-                        // Filter by tab if exists
-                        let active_tab = section_el.querySelector('.section-container .tab.active');
-                        if (active_tab && item.table_key && item.table_key !== active_tab.getAttribute('data-key')) {
-                            continue;
+                        let section_data = befriend.me.getActiveSection(section_key);
+                        let item = section_data.items[delete_token];
+                        let table_key = item.table_key;
+
+                        // Get initial positions for animation
+                        let items_el = section_el.querySelector('.items-container .items');
+                        let item_els = items_el.getElementsByClassName('item');
+                        let initialPositions = befriend.me.getInitialPositions(item_els);
+
+                        // Handle reordering if this was a favorited item
+                        let updatedPositions;
+                        let favorite_data = {
+                            active: false,
+                            position: null
+                        };
+
+                        if (item.is_favorite) {
+                            // Remove favorite and reorder remaining favorites
+                            item.is_favorite = false;
+                            item.favorite_position = null;
+                            favorite_data.reorder = updatedPositions = befriend.me.reorderFavoritePositions(section_key, table_key);
                         }
 
-                        items_filtered.push(section_el.querySelector(`.item[data-token="${token}"]`));
-                    }
-
-                    // Sort and animate remaining items
-                    if (items_filtered.length) {
-                        let itemsArray = befriend.me.sortItemsByFavorite(items_filtered, section_data);
-                        befriend.me.animateItemTransitions(itemsArray, items_el, initialPositions, null);
-
-                        // Update rank displays for remaining favorites
-                        if (updatedPositions) {
-                            for (let token in updatedPositions) {
-                                let remaining_el = section_el.querySelector(`.item[data-token="${token}"]`);
-                                if (remaining_el) {
-                                    let rank_el = remaining_el.querySelector('.rank');
-                                    rank_el.innerHTML = updatedPositions[token].favorite_position;
-                                }
-                            }
-                        }
-                    } else {
-                        addClassEl('no-items', section_el);
-                    }
-
-                    // Remove item from DOM after animation
-                    setTimeout(() => {
+                        // Update server with both delete and reorder
                         try {
-                            item_el.parentNode.removeChild(item_el);
+                            await befriend.auth.put(`/me/sections/item`, {
+                                section_key: section_key,
+                                table_key: table_key,
+                                section_item_id: item.id,
+                                is_delete: true,
+                                favorite: favorite_data
+                            });
                         } catch (e) {
                             console.error(e);
+                            return; // Don't proceed with UI updates if server update failed
                         }
-                    }, 300);
 
-                    befriend.me.updateSectionHeight(section_el, elHasClass(section_el, 'collapsed'));
+                        // Remove from data
+                        delete section_data.items[delete_token];
+
+                        // Get remaining filtered items
+                        let items_filtered = [];
+                        for (let token in section_data.items) {
+                            let item = section_data.items[token];
+
+                            // Filter by tab if exists
+                            let active_tab = section_el.querySelector('.section-container .tab.active');
+                            if (active_tab && item.table_key && item.table_key !== active_tab.getAttribute('data-key')) {
+                                continue;
+                            }
+
+                            let remaining_el = section_el.querySelector(`.item[data-token="${token}"]`);
+                            if (remaining_el) {
+                                items_filtered.push(remaining_el);
+                            }
+                        }
+
+                        // Animate out the deleted item
+                        item_el.style.transition = 'opacity 0.3s ease-out';
+                        item_el.style.opacity = '0';
+
+                        await timeoutAwait(300);
+
+                        // Remove the element after fade out
+                        item_el.parentNode.removeChild(item_el);
+
+                        // Handle animations and DOM updates
+                        if (items_filtered.length > 0) {
+                            // Sort and animate remaining items
+                            let itemsArray = befriend.me.sortItemsByFavorite(items_filtered, section_data);
+                            befriend.me.animateItemTransitions(itemsArray, items_el, initialPositions, null);
+
+                            // Update rank displays for remaining favorites
+                            if (updatedPositions) {
+                                for (let token in updatedPositions) {
+                                    let remaining_el = section_el.querySelector(`.item[data-token="${token}"]`);
+                                    if (remaining_el) {
+                                        let rank_el = remaining_el.querySelector('.rank');
+                                        rank_el.innerHTML = updatedPositions[token].favorite_position;
+                                    }
+                                }
+                            }
+
+                            removeClassEl('no-items', section_el);
+                        } else {
+                            addClassEl('no-items', section_el);
+                        }
+
+                        // Update section height after removing the last item
+                        befriend.me.updateSectionHeight(section_el, elHasClass(section_el, 'collapsed'));
+                    } catch(e) {
+                        console.error(e);
+                    } finally {
+                        befriend.toggleSpinner(false);
+                    }
                 });
             }
         },
