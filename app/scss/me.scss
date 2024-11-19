@@ -672,6 +672,12 @@ html.#{$class_confirm_me_action} {
 
                 &.cols-2 {
                     grid-template-columns: repeat(2, 1fr);
+
+                    .item {
+                        &:not(.mine) {
+                            @include flex-center-col;
+                        }
+                    }
                 }
 
                 &.cols-1 {

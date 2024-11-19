@@ -258,6 +258,17 @@ befriend.me = {
 
         removeClassEl('open', select_container);
     },
+    getRowColsClass: function (section_data, category) {
+        if (section_data?.data?.styles?.rowCols) {
+            if (typeof section_data.data.styles.rowCols === 'object') {
+                return category === 'mine' ?
+                    section_data.data.styles.rowCols.my || section_data.data.styles.rowCols.default :
+                    section_data.data.styles.rowCols.default;
+            }
+            return section_data.data.styles.rowCols;
+        }
+        return '';
+    },
     addSection: async function (key, on_update, skip_save) {
         let option_data = befriend.me.data.sections.all[key];
         let sections_el = befriend.els.me.querySelector('.about-me').querySelector('.sections');
@@ -435,7 +446,7 @@ befriend.me = {
                                     ${categories_html}
                                     ${tabs_html}
                                     <div class="items-container">
-                                        <div class="items ${section_data?.data?.styles?.rowCols || ''}">
+                                        <div class="items ${befriend.me.getRowColsClass(section_data, 'mine')}">
                                             ${items_html }
                                         </div>
                                         <div class="no-items">No Items</div>
@@ -1184,7 +1195,22 @@ befriend.me = {
                 }
 
                 // Update DOM
-                section_el.querySelector('.items').innerHTML = items_html;
+                let section_items_el = section_el.querySelector('.items');
+                section_items_el.innerHTML = items_html;
+
+                //update row-cols class
+                let rowColCls = befriend.me.getRowColsClass(section_data, category);
+
+                //remove previous cls
+                for(let i = 0; i < section_items_el.classList.length; i++) {
+                    let cls = section_items_el.classList[i];
+
+                    if(cls.startsWith('col')) {
+                        removeClassEl(cls, section_items_el);
+                    }
+                }
+
+                addClassEl(rowColCls, section_items_el);
 
                 // Reattach event handlers
                 befriend.me.events.onSelectItem();
