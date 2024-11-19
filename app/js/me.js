@@ -658,7 +658,7 @@ befriend.me = {
             let minChars = isNumeric(sectionAutocomplete.minChars) ? sectionAutocomplete.minChars : befriend.me.autoComplete.minChars;
 
             if (search_value.length < minChars) {
-                befriend.me.toggleAutoComplete(false);
+                befriend.me.toggleAutoComplete(null);
                 return resolve();
             }
 
@@ -698,7 +698,7 @@ befriend.me = {
             }
         });
     },
-    setAutoComplete: function (section_key, items) {
+    setAutoComplete: async function (section_key, items) {
         let section_el = befriend.me.getSectionElByKey(section_key);
 
         let search_container_el = section_el.querySelector('.search-container');
@@ -768,6 +768,9 @@ befriend.me = {
                 list.innerHTML = items_html;
 
                 befriend.me.toggleAutoComplete(search_container_el, true);
+
+                //reset scroll
+                list.scrollTop = 0;
 
                 befriend.me.events.onSelectAutoCompleteItem();
             }
