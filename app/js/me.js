@@ -767,7 +767,16 @@ befriend.me = {
                                 continue;
                             }
 
-                            items_html += `<div class="item" data-token="${item.token}">${item.name}</div>`;
+                            let meta = '';
+
+                            if(item.meta) {
+                                meta = `<div class="meta">${item.meta}</div>`;
+                            }
+
+                            items_html += `<div class="item" data-token="${item.token}">
+                                                <div class="name">${item.name}</div>
+                                                ${meta}
+                                            </div>`;
                         }
                     }
                 }

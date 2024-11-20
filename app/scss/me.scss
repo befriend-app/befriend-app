@@ -618,6 +618,10 @@ html.#{$class_confirm_me_action} {
                     &:last-of-type {
                         border-bottom: 0;
                     }
+
+                    .meta {
+                        font-size: 11px;
+                    }
                 }
             }
 
