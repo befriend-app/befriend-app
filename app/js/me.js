@@ -1173,8 +1173,15 @@ befriend.me = {
 
                             for (let item of category_options.items) {
                                 if (!(item.token in section_data.items)) {
+                                    let label = '';
+
+                                    if(item.label) {
+                                        label = `<div class="label">${item.label}</div>`;
+                                    }
+
                                     items_html += `<div class="item" data-token="${item.token}">
-                                                ${item.name}
+                                                ${label}
+                                                <div class="name">${item.name}</div>
                                             </div>`;
                                 }
                             }

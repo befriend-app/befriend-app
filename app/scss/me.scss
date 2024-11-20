@@ -693,8 +693,6 @@ html.#{$class_confirm_me_action} {
                     grid-template-columns: repeat(1, 1fr);
 
                     .name {
-                        padding-left: 10px;
-                        padding-right: 20px;
                         text-align: left;
                     }
                 }
@@ -721,7 +719,9 @@ html.#{$class_confirm_me_action} {
                     }
 
                     &:not(.mine) {
-                        @include flex-center-col;
+                        display: flex;
+                        justify-content: center;
+                        flex-direction: column;
                     }
 
                     &.is-favorite {
