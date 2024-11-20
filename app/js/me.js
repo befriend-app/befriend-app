@@ -1113,6 +1113,17 @@ befriend.me = {
                     section_el.setAttribute('data-table-key', category_table_key);
                 }
 
+                // Get container to handle scroll
+                let container_el = section_el.querySelector('.items-container');
+
+                // Cancel any ongoing smooth scroll
+                if (container_el) {
+                    container_el.style.scrollBehavior = 'auto';
+                    container_el.style.overflowY = 'hidden';
+                }
+
+                let resetScroll = false;
+
                 // Handle "my items" view
                 if (category === 'mine' || !category) {
                     addClassEl('my-items', section_el);
@@ -1169,6 +1180,8 @@ befriend.me = {
                                 befriend.toggleSpinner(false);
 
                                 befriend.me.data.categories[category_token] = category_options;
+
+                                resetScroll = true;
                             }
 
                             for (let item of category_options.items) {
@@ -1228,6 +1241,17 @@ befriend.me = {
 
                 // Update UI height
                 befriend.me.updateSectionHeight(section_el, elHasClass(section_el, 'collapsed'));
+
+                //reset scroll to top
+                if(resetScroll) {
+                    container_el.scrollTop = 0;
+                }
+
+                //reset scroll properties
+                requestAnimationFrame(() => {
+                    container_el.style.removeProperty('scroll-behavior');
+                    container_el.style.removeProperty('overflow-y');
+                });
 
                 resolve();
             } catch(e) {
