@@ -2062,6 +2062,8 @@ befriend.me = {
                     item._listener = true;
 
                     item.addEventListener('click', function (e) {
+                        let section_el = this.closest('.section');
+
                         if (elHasClass(item, 'mine')) {
                             let open_secondary_el =
                                 befriend.els.me.querySelector('.secondary.open');
@@ -2073,7 +2075,7 @@ befriend.me = {
                             return false;
                         }
 
-                        let section_key = section.getAttribute('data-key');
+                        let section_key = section_el.getAttribute('data-key');
                         let token = this.getAttribute('data-token');
 
                         try {
@@ -2098,22 +2100,47 @@ befriend.me = {
                 if (!item._listener) {
                     item._listener = true;
 
-                    item.addEventListener('click', function (e) {
-                        if(elHasClass(item, 'selected')) {
+                    item.addEventListener('click', async function (e) {
+                        if(item._request_ip) {
                             return false;
                         }
 
-                        let section = this.closest('.section');
+                        item._request_ip = true;
 
-                        let section_buttons = section.getElementsByClassName('button-option');
+                        try {
+                            let section_el = this.closest('.section');
+                            let section_buttons = section_el.getElementsByClassName('button-option');
+                            let section_key = section_el.getAttribute('data-key');
+                            let table_key = befriend.me.getSectionTableKey(section_key);
+                            let token = this.getAttribute('data-token');
 
-                        removeElsClass(section_buttons, 'selected');
+                            // If already selected, we're deselecting
+                            let isDeselecting = elHasClass(item, 'selected');
 
-                        addClassEl('selected', item);
+                            removeElsClass(section_buttons, 'selected');
 
-                        let section_key = section.getAttribute('data-key');
-                        let table_key = befriend.me.getSectionTableKey(section_key);
-                        let token = this.getAttribute('data-token');
+                            if (!isDeselecting) {
+                                addClassEl('selected', item);
+                            }
+
+                            let r = await befriend.auth.put(`/me/sections/selection`, {
+                                section_key: section_key,
+                                table_key: table_key,
+                                item_token: !isDeselecting ? token : null,
+                            });
+
+                            // Update section data with new selection
+                            let section_data = befriend.me.getActiveSection(section_key);
+                            section_data.items = {};
+
+                            if (r.data) {
+                                section_data.items[token] = r.data;
+                            }
+                        } catch(e) {
+                            console.error(e);
+                        }
+
+                        item._request_ip = false;
                     });
                 }
             }
