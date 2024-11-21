@@ -308,9 +308,7 @@ befriend.me = {
             }
 
             let section_data = befriend.me.getActiveSection(key);
-
             let section_type = section_data.data?.type?.name;
-
             let table_data = section_data.data.tables ? section_data.data.tables[0] : null;
 
             let autocomplete_html = '';
@@ -392,7 +390,17 @@ befriend.me = {
                 //options/items
                 if(['buttons'].includes(section_type)) {
                     if(section_data.data?.options?.length) {
-                        for(let option of section_data.data.options) {
+                        let options = [...section_data.data.options];
+
+                        options.sort((a, b) => {
+                            const aSelected = Object.values(section_data.items).some(item => item.token === a.token);
+                            const bSelected = Object.values(section_data.items).some(item => item.token === b.token);
+                            if (aSelected && !bSelected) return -1;
+                            if (!aSelected && bSelected) return 1;
+                            return 0;
+                        });
+
+                        for(let option of options) {
                             let item_html = befriend.me.sectionItemHtml(key, table_data?.name, option);
 
                             items_html += item_html;
