@@ -478,6 +478,8 @@ befriend.me = {
             befriend.me.events.autoCompleteFilterList();
             befriend.me.events.onActionSelect();
             befriend.me.events.onUpdateSectionHeight();
+            befriend.me.events.onSelectItem();
+            befriend.me.events.onSelectOptionItem();
             befriend.me.events.onRemoveItem();
             befriend.me.events.onFavorite();
             befriend.me.events.onOpenSecondary();
@@ -1094,8 +1096,8 @@ befriend.me = {
         if (section_type?.name === 'buttons') {
             let is_selected = false;
 
-            // For single-select button groups, check if this is the selected option
-            if (section_type.single && section_data.items) {
+            //select previously selected options
+            if (section_type.name === 'buttons' && section_data.items) {
                 is_selected = Object.values(section_data.items).some(
                     selected_item => selected_item.token === item.token
                 );
@@ -2062,6 +2064,8 @@ befriend.me = {
                     item._listener = true;
 
                     item.addEventListener('click', function (e) {
+                        console.log("On select item");
+
                         let section_el = this.closest('.section');
 
                         if (elHasClass(item, 'mine')) {
@@ -2101,6 +2105,8 @@ befriend.me = {
                     item._listener = true;
 
                     item.addEventListener('click', async function (e) {
+                        console.log("on select option item");
+
                         if(item._request_ip) {
                             return false;
                         }
@@ -2113,28 +2119,59 @@ befriend.me = {
                             let section_key = section_el.getAttribute('data-key');
                             let table_key = befriend.me.getSectionTableKey(section_key);
                             let token = this.getAttribute('data-token');
+                            let sectionData = befriend.me.getActiveSection(section_key).data;
 
-                            // If already selected, we're deselecting
-                            let isDeselecting = elHasClass(item, 'selected');
+                            let isSelect = !(elHasClass(item, 'selected'));
+                            let exclusiveToken = sectionData?.type?.exclusive?.token;
+                            let isExclusive = exclusiveToken === token;
+                            let exclusiveButton = section_el.querySelector(`.button-option[data-token="${exclusiveToken}"]`);
+                            let isExclusiveSelected = exclusiveButton && elHasClass(exclusiveButton, 'selected');
 
-                            removeElsClass(section_buttons, 'selected');
+                            // If section is single-select or this is the exclusive token, deselect all others
+                            if (!sectionData?.type?.multi || isExclusive) {
+                                removeElsClass(section_buttons, 'selected');
+                            }
 
-                            if (!isDeselecting) {
+                            // Toggle current item selection
+                            if(isSelect) {
+                                // If selecting non-exclusive and exclusive is selected, deselect exclusive
+                                if (!isExclusive && isExclusiveSelected) {
+                                    removeClassEl('selected', exclusiveButton);
+                                }
+
                                 addClassEl('selected', item);
+                            } else {
+                                removeClassEl('selected', item);
                             }
 
                             let r = await befriend.auth.put(`/me/sections/selection`, {
                                 section_key: section_key,
                                 table_key: table_key,
-                                item_token: !isDeselecting ? token : null,
+                                item_token: token,
+                                is_select: isSelect
                             });
 
-                            // Update section data with new selection
+                            // Update section data
                             let section_data = befriend.me.getActiveSection(section_key);
-                            section_data.items = {};
-
-                            if (r.data) {
+                            if (!isSelect) {
+                                delete section_data.items[token];
+                            } else {
+                                if (!isExclusive && isExclusiveSelected) {
+                                    delete section_data.items[exclusiveToken];
+                                }
                                 section_data.items[token] = r.data;
+                            }
+
+                            // If exclusive item is selected, deselect all others
+                            if (isExclusive && isSelect) {
+                                for (let i = 0; i < section_buttons.length; i++) {
+                                    let btn = section_buttons[i];
+                                    if (btn !== item) {
+                                        removeClassEl('selected', btn);
+                                        let btnToken = btn.getAttribute('data-token');
+                                        delete section_data.items[btnToken];
+                                    }
+                                }
                             }
                         } catch(e) {
                             console.error(e);
