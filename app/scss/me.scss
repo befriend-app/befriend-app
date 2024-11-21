@@ -136,6 +136,16 @@ html.#{$class_confirm_me_action} {
             padding: 0;
             border-radius: $br;
 
+            &.buttons {
+                .section-container {
+                    margin-top: 0 !important;
+                }
+
+                .no-items {
+                    display: none !important;
+                }
+            }
+
             &.w-categories {
                 .section-container {
                 }
@@ -177,7 +187,7 @@ html.#{$class_confirm_me_action} {
                     }
 
                     .no-items {
-                        display: flex !important;
+                        display: flex;
                     }
                 }
 
@@ -781,6 +791,15 @@ html.#{$class_confirm_me_action} {
 
                         .name {
                             padding: 0 !important;
+                        }
+                    }
+
+                    &.button-option {
+                        transition: all 300ms;
+
+                        &.selected {
+                            background: $brand_color_a;
+                            color: white;
                         }
                     }
 

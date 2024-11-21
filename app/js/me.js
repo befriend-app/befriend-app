@@ -309,6 +309,8 @@ befriend.me = {
 
             let section_data = befriend.me.getActiveSection(key);
 
+            let section_type = section_data.data?.type?.name;
+
             let table_data = section_data.data.tables ? section_data.data.tables[0] : null;
 
             let autocomplete_html = '';
@@ -387,8 +389,16 @@ befriend.me = {
                     tabs_html = `<div class="tabs">${tabs_html}</div>`;
                 }
 
-                //items
-                if (Object.keys(section_data.items).length) {
+                //options/items
+                if(['buttons'].includes(section_type)) {
+                    if(section_data.data?.options?.length) {
+                        for(let option of section_data.data.options) {
+                            let item_html = befriend.me.sectionItemHtml(key, table_data?.name, option);
+
+                            items_html += item_html;
+                        }
+                    }
+                } else if (Object.keys(section_data.items).length) {
                     for (let token in section_data.items) {
                         //filter by tab
                         let item = section_data.items[token];
@@ -414,19 +424,13 @@ befriend.me = {
                 section_height = '0';
             }
 
-            let has_tabs = '';
+            // Build section classes
+            let has_type = section_type || '';
+            let has_tabs = tabs_html ? 'w-tabs' : '';
+            let has_categories = categories_html ? 'w-categories' : '';
+            let row_cols_class = befriend.me.getRowColsClass(section_data, 'mine');
 
-            let has_categories = '';
-
-            if(tabs_html) {
-                has_tabs = 'w-tabs';
-            }
-
-            if(categories_html) {
-                has_categories = 'w-categories';
-            }
-
-            let html = `<div class="section my-items ${key} ${section_collapsed} ${has_categories} ${has_tabs} ${items_html ? '' : 'no-items'}" data-key="${key}" data-table-key="${table_data?.name ? table_data.name : ''}" style="${section_height}">
+            let html = `<div class="section my-items ${key} ${section_collapsed} ${has_type} ${has_categories} ${has_tabs} ${items_html ? '' : 'no-items'}" data-key="${key}" data-table-key="${table_data?.name ? table_data.name : ''}" style="${section_height}">
                                 <div class="section-top">
                                     <div class="icon">${option_data.icon}</div>
                                     <div class="title">${option_data.section_name}</div>
@@ -446,7 +450,7 @@ befriend.me = {
                                     ${categories_html}
                                     ${tabs_html}
                                     <div class="items-container">
-                                        <div class="items ${befriend.me.getRowColsClass(section_data, 'mine')}">
+                                        <div class="items ${row_cols_class}">
                                             ${items_html }
                                         </div>
                                         <div class="no-items">No Items</div>
@@ -454,7 +458,7 @@ befriend.me = {
                                 </div>
                             </div>`;
 
-            //re-insert section at prev index
+            // Insert section at correct position
             if(isNumeric(prev_index) && section_els.length) {
                 if(prev_index === 0) {
                     sections_el.insertAdjacentHTML('afterbegin', html);
@@ -479,6 +483,7 @@ befriend.me = {
             befriend.me.events.onOpenSecondary();
             befriend.me.events.onSelectSecondary();
 
+            // Initialize section height
             section_el = befriend.me.getSectionElByKey(key);
 
             if (!section_collapsed) {
@@ -546,30 +551,6 @@ befriend.me = {
                 if(!category_btn_first) {
                     befriend.me.addSection(section_key, true);
                 }
-            } catch (e) {
-                console.error(e);
-            }
-
-            resolve();
-        });
-    },
-    removeSectionItem: function (section_key, item_token) {
-        return new Promise(async (resolve, reject) => {
-            let section_data = befriend.me.getActiveSection(section_key);
-
-            let item = section_data.items[item_token];
-
-            let table_key = item.table_key || befriend.me.getSectionTableKey(section_key);
-
-            delete section_data.items[item_token];
-
-            try {
-                await befriend.auth.put(`/me/sections/item`, {
-                    section_key: section_key,
-                    table_key: table_key,
-                    section_item_id: item.id,
-                    is_delete: true,
-                });
             } catch (e) {
                 console.error(e);
             }
@@ -1047,6 +1028,11 @@ befriend.me = {
     sectionItemHtml: function (section_key, table_key, item) {
         let section_data = befriend.me.getActiveSection(section_key);
         let table_data = section_data.data.tables?.find(item => item.name === table_key);
+        let section_type = section_data.data?.type?.name;
+
+        if(['buttons'].includes(section_type)) {
+            return befriend.me.sectionItemOptionHtml(section_key, table_key, item);
+        }
 
         let favorite_html = '';
         let secondary_html = '';
@@ -1100,6 +1086,29 @@ befriend.me = {
                                                                     </div>
                                                             </div>
                                                         </div>`;
+    },
+    sectionItemOptionHtml: function (section_key, table_key, item) {
+        let section_data = befriend.me.getActiveSection(section_key);
+        let section_type = section_data.data?.type;
+
+        if (section_type?.name === 'buttons') {
+            let is_selected = false;
+
+            // For single-select button groups, check if this is the selected option
+            if (section_type.single && section_data.items) {
+                is_selected = Object.values(section_data.items).some(
+                    selected_item => selected_item.token === item.token
+                );
+            }
+
+            return `<div class="item button-option ${is_selected ? 'selected' : ''}" 
+                     data-token="${item.token}" 
+                     data-table-key="${table_key}">
+                    <div class="content">
+                        <div class="name">${item.name}</div>
+                    </div>
+                </div>`;
+        }
     },
     updateSectionItems: function(section_el, filter_params = {}) {
         return new Promise(async (resolve, reject) => {
@@ -1243,6 +1252,7 @@ befriend.me = {
 
                 // Reattach event handlers
                 befriend.me.events.onSelectItem();
+                befriend.me.events.onSelectOptionItem();
                 befriend.me.events.onRemoveItem();
                 befriend.me.events.onFavorite();
                 befriend.me.events.onOpenSecondary();
@@ -2044,6 +2054,10 @@ befriend.me = {
             for (let i = 0; i < items.length; i++) {
                 let item = items[i];
 
+                if(elHasClass(item,'button-option')) {
+                    continue;
+                }
+
                 if (!item._listener) {
                     item._listener = true;
 
@@ -2059,7 +2073,6 @@ befriend.me = {
                             return false;
                         }
 
-                        let section = this.closest('.section');
                         let section_key = section.getAttribute('data-key');
                         let token = this.getAttribute('data-token');
 
@@ -2072,6 +2085,35 @@ befriend.me = {
                         } catch (e) {
                             console.error(e);
                         }
+                    });
+                }
+            }
+        },
+        onSelectOptionItem: function () {
+            let items = befriend.els.me.querySelector('.sections').querySelectorAll('.item.button-option');
+
+            for (let i = 0; i < items.length; i++) {
+                let item = items[i];
+
+                if (!item._listener) {
+                    item._listener = true;
+
+                    item.addEventListener('click', function (e) {
+                        if(elHasClass(item, 'selected')) {
+                            return false;
+                        }
+
+                        let section = this.closest('.section');
+
+                        let section_buttons = section.getElementsByClassName('button-option');
+
+                        removeElsClass(section_buttons, 'selected');
+
+                        addClassEl('selected', item);
+
+                        let section_key = section.getAttribute('data-key');
+                        let table_key = befriend.me.getSectionTableKey(section_key);
+                        let token = this.getAttribute('data-token');
                     });
                 }
             }
