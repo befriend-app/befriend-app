@@ -2072,8 +2072,6 @@ befriend.me = {
                     item._listener = true;
 
                     item.addEventListener('click', function (e) {
-                        console.log("On select item");
-
                         let section_el = this.closest('.section');
 
                         if (elHasClass(item, 'mine')) {
