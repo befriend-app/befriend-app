@@ -27,19 +27,22 @@ html.#{$class_confirm_me_action} {
 }
 
 #me {
+    $section_br: 8px;
     padding-left: 30px !important;
     padding-right: 30px !important;
-    margin-top: 20px;
     gap: initial !important;
     padding-bottom: calc(var(--footer_full_h) + 60px) !important;
     min-height: calc(100vh - var(--footer_full_h) - var(--view-top));
+    margin-top: 10px;
 
     &.autocomplete-shown {
         min-height: max(1000px, 100vh);
     }
 
     .top {
-        @include flex-center;
+        display: flex;
+        justify-content: center;
+        align-items: end;
 
         .first-name {
             @include flex-center-col;
@@ -83,28 +86,23 @@ html.#{$class_confirm_me_action} {
         }
     }
 
-    .about-me {
+    .me-container {
         margin-top: 25px;
-        .heading-row {
-            @include flex-center;
-
-            .add-section-btn {
-                margin-left: auto;
-            }
-        }
     }
 
     .add-section-btn {
         $color: white;
         background-color: lighten($brand_color_a, 0%);
-        padding: 4px 12px;
-        width: fit-content;
+        padding: 7px 0;
+        width: 100%;
         border-radius: 6px;
         color: $color;
         display: flex;
         align-items: center;
         //border: .5px solid black;
         font-size: 13px;
+        margin-top: 15px;
+        @include flex-center;
 
         .icons {
             gap: 0 6px;
@@ -116,6 +114,148 @@ html.#{$class_confirm_me_action} {
         svg {
             height: 12px;
             fill: $color;
+        }
+    }
+
+    .#{$class_modes_section} {
+        $tab_h: 30px;
+
+        .tab {
+            top: calc((#{-$tab_h - 1}));
+            width: fit-content;
+            height: $tab_h;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            background-color: $brand_color_b;
+            border-top-right-radius: $section_br;
+            border-top-left-radius: $section_br;
+            border: .5px solid lighten(black, 50%);
+            border-bottom-color: transparent;
+
+            .title {
+                font-size: 12px;
+                font-weight: 500;
+                text-transform: uppercase;
+            }
+        }
+
+        .mode-options {
+            $gap_lr: 6px;
+            display: flex;
+            padding: 6px 8px;
+            gap: 0 $gap_lr;
+            border: 1px solid $color_lightgray;
+            border-radius: $section_br;
+            background-color: white;
+            position: relative;
+            border-top-left-radius: 0;
+            box-sizing: border-box;
+
+            .mode-option {
+                flex-basis: 33.333%;
+                background: white;
+                transition: all 0.2s ease-out;
+                border: 1px solid $color_lightgray;
+                border-radius: 8px;
+                padding: 8px;
+                cursor: pointer;
+
+                &[data-mode="solo"] {
+                    flex-basis: 70px;
+                }
+
+                &[data-mode="plus-one"] {
+                    flex-basis: 120px;
+                }
+
+                &:hover {
+                    border-color: $brand_color_a;
+                }
+
+                &.selected {
+                    $fill_color: darken($brand_color_a, 10%);
+                    //color: white;
+                    border-color: darken($brand_color_a, 10%);
+                    fill: $fill_color !important;
+
+                    svg {
+                        .outline {
+                            //opacity: 0 !important;
+                            fill: $fill_color !important;
+                        }
+                        .filled {
+                            //fill: $brand_color_a !important;
+                        }
+                    }
+
+                    .name {
+                        color: darken($brand_color_a, 20%);
+
+                        .plus {
+                            fill: darken($brand_color_a, 20%) !important;
+                        }
+                    }
+                }
+
+                .icon {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    svg {
+                        height: 24px;
+                        //fill: transparent;
+                        //stroke: black;
+                        //stroke-width: 4px;
+                        .outline {
+                            fill: black;
+                            opacity: 1;
+                            transition: fill 0.2s ease-out;
+                        }
+                        .filled {
+                            fill: transparent;
+                            transition: fill 0.2s ease-out;
+                        }
+                    }
+                }
+
+                .content {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                }
+
+                .name {
+                    font-weight: 500;
+                    font-size: 16px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    transition: all 200ms;
+                    margin-top: 6px;
+
+
+                    .plus {
+                        $dim: 15px;
+                        fill: lighten(black, 5%);
+                        width: $dim;
+                        height: $dim;
+                        @include flex-center-col;
+                        margin-right: 6px;
+                        box-sizing: border-box;
+                        transition: all 200ms;
+                        transform: translateY(1px);
+                    }
+                }
+
+                .description {
+                    font-size: 12px;
+                    opacity: .8;
+                    text-align: center;
+                    margin-top: 3px;
+                }
+            }
         }
     }
 
@@ -135,7 +275,7 @@ html.#{$class_confirm_me_action} {
         .section {
             border: 1px solid $color_lightgray;
             padding: 0;
-            border-radius: $br;
+            border-radius: $section_br;
             background-color: white;
             position: relative;
             transition: transform 300ms ease-out;
@@ -229,8 +369,8 @@ html.#{$class_confirm_me_action} {
                 border-bottom: 1px transparent;
 
                 .section-top {
-                    border-bottom-left-radius: $br;
-                    border-bottom-right-radius: $br;
+                    border-bottom-left-radius: $section_br;
+                    border-bottom-right-radius: $section_br;
                 }
 
                 .section-container {
@@ -486,10 +626,10 @@ html.#{$class_confirm_me_action} {
                 }
 
                 .select-container {
+                    $br: 6px;
                     position: relative;
                     margin: 0 auto;
                     width: 100%;
-                    $br: 6px;
 
                     &.open {
                         .select-dropdown {
