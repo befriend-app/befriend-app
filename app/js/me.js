@@ -1516,9 +1516,7 @@ befriend.me = {
                     return;
                 }
 
-                const section1Rect = idleSections[0].getBoundingClientRect();
-                const section2Rect = idleSections[1].getBoundingClientRect();
-                this.itemsGap = Math.abs(section1Rect.bottom - section2Rect.top);
+                this.itemsGap = befriend.variables.me_sections_gap_h;
             },
             initReorderSection: function (section) {
                 addClassEl('is-draggable', section);
@@ -1535,29 +1533,35 @@ befriend.me = {
                 }
             },
             updateIdleSectionsStateAndPosition: function (reorderEl) {
-                console.log("update idle sections");
-
                 const reorderElRect = reorderEl.getBoundingClientRect();
                 const reorderElY = reorderElRect.top + reorderElRect.height / 2;
-                let previousSectionIndex = null; // Store previous section index
+                const reorderIndex = Array.from(reorderEl.parentElement.children).indexOf(reorderEl);
+
+                // Get idle sections and their original positions
+                const idleSections = this.getIdleSections(reorderEl.parentElement);
+                const sectionPositions = new Map(
+                    idleSections.map(section => [
+                        section,
+                        Array.from(section.parentElement.children).indexOf(section)
+                    ])
+                );
 
                 // Update state
-                for (let section of this.getIdleSections(reorderEl.parentElement)) {
+                for (let section of idleSections) {
                     const sectionRect = section.getBoundingClientRect();
                     const sectionY = sectionRect.top + sectionRect.height / 2;
-                    const sectionIndex = Array.from(section.parentElement.children).indexOf(section);
+                    const sectionIndex = sectionPositions.get(section);
 
-                    if (this.isItemAbove(section)) {
+                    // Determine if section should be above based on original position
+                    if (sectionIndex < reorderIndex) {
+                        section.dataset.isAbove = '';
                         if (reorderElY <= sectionY) {
                             section.dataset.isToggled = '';
                         } else {
                             delete section.dataset.isToggled;
                         }
                     } else {
-                        console.log({
-                            section,
-                            below: true
-                        })
+                        delete section.dataset.isAbove;
                         if (reorderElY >= sectionY) {
                             section.dataset.isToggled = '';
                         } else {
@@ -1566,21 +1570,18 @@ befriend.me = {
                     }
                 }
 
-                // Update position
-                let idleSections = this.getIdleSections(reorderEl.parentElement);
+                // Update positions
                 for (let section of idleSections) {
-                    let itemToggled = this.isItemToggled(section);
-
-                    console.log({
-                        section,
-                        itemToggled
-                    });
-
-                    if (itemToggled) {
+                    if (this.isItemToggled(section)) {
                         const direction = this.isItemAbove(section) ? 1 : -1;
-                        section.style.transform = `translateY(${
-                            direction * (reorderElRect.height + this.itemsGap)
-                        }px)`;
+                        let transformY = direction * (reorderElRect.height + this.itemsGap);
+                        console.log({
+                            transformY
+                        });
+                        if(transformY === -114) {
+                            debugger;
+                        }
+                        section.style.transform = `translateY(${transformY}px)`;
                     } else {
                         section.style.transform = '';
                     }
@@ -1750,9 +1751,8 @@ befriend.me = {
                     return;
                 }
 
-                const item1Rect = idleItems[0].getBoundingClientRect();
-                const item2Rect = idleItems[1].getBoundingClientRect();
-                this.itemsGap = Math.abs(item1Rect.bottom - item2Rect.top);
+                this.itemsGap = befriend.variables.me_items_gap_tb;
+
             },
             initReorderItem: function (item) {
                 // removeClassEl('is-idle', item);

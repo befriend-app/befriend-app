@@ -128,7 +128,7 @@ html.#{$class_confirm_me_action} {
         $search_br: 4px;
         display: flex;
         flex-direction: column;
-        gap: 15px 0;
+        gap: $me_sections_gap_h 0;
         margin-top: 20px;
         position: relative;
 
