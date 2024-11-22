@@ -402,3 +402,27 @@ function rafAwait() {
         requestAnimationFrame(resolve);
     });
 }
+
+function sortObj(obj, key, desc) {
+    if(typeof obj !== 'object') {
+        return obj;
+    }
+
+    let newObj = {};
+
+    let keys = Object.keys(obj);
+
+    keys.sort(function (a, b) {
+        if(desc) {
+            return obj[b][key] - obj[a][key];
+        } else {
+            return obj[a][key] - obj[b][key];
+        }
+    });
+
+    for(let key of keys) {
+        newObj[key] = obj[key];
+    }
+
+    return newObj;
+}

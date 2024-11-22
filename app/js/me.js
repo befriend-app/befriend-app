@@ -49,7 +49,7 @@ befriend.me = {
                 befriend.me.data.me = data.me;
                 befriend.me.data.sections.all = data.sections.all;
                 befriend.me.data.sections.options = data.sections.options;
-                befriend.me.data.sections.active = data.sections.active;
+                befriend.me.data.sections.active = sortObj(data.sections.active, 'position');
 
                 if (data.country) {
                     befriend.me.data.country = data.country;
@@ -1706,9 +1706,9 @@ befriend.me = {
                 // Update server
                 if (Object.keys(updates).length) {
                     try {
-                        // await befriend.auth.put('/me/sections/positions', {
-                        //     positions: updates
-                        // });
+                        await befriend.auth.put('/me/sections/positions', {
+                            positions: updates
+                        });
                     } catch (e) {
                         console.error('Error updating section positions:', e);
                     }
@@ -1755,7 +1755,6 @@ befriend.me = {
 
             },
             initReorderItem: function (item) {
-                // removeClassEl('is-idle', item);
                 addClassEl('is-draggable', item);
             },
             initItemsState: function (reorderEl, idleItems) {
