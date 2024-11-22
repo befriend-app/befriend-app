@@ -130,11 +130,39 @@ html.#{$class_confirm_me_action} {
         flex-direction: column;
         gap: 15px 0;
         margin-top: 20px;
+        position: relative;
 
         .section {
             border: 1px solid $color_lightgray;
             padding: 0;
             border-radius: $br;
+            background-color: white;
+            position: relative;
+            transition: transform 300ms ease-out;
+            transform: translate(0, 0);
+            will-change: transform;
+            touch-action: none;
+
+            &.is-draggable {
+                z-index: 100;
+                transition: none;
+                cursor: grabbing;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                opacity: 0.95;
+
+                & ~ .section {
+                    transition: transform 300ms ease-out;
+                }
+            }
+
+            &.is-drag-ending {
+                transition: transform 300ms ease-out;
+            }
+
+            &[data-is-toggled] {
+                transition: transform 300ms ease-out;
+                z-index: 1;
+            }
 
             &.buttons {
                 .section-container {

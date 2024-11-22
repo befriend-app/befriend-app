@@ -482,6 +482,7 @@ befriend.me = {
             befriend.me.events.onSectionCategory();
             befriend.me.events.onSectionTabs();
             befriend.me.events.onSectionActions();
+            befriend.me.events.onSectionReorder();
             befriend.me.events.autoComplete();
             befriend.me.events.autoCompleteFilterList();
             befriend.me.events.onActionSelect();
@@ -1480,7 +1481,226 @@ befriend.me = {
         }, 300);
     },
     events: {
+        sectionReorder: {
+            ip: false,
+            start: {
+                x: null,
+                y: null,
+            },
+            el: null,
+            itemsGap: 0,
+            prevRect: null,
+            sections: [],
+            dragStarted: false,
+            autoScroll: {
+                animationFrame: null,
+                scrolling: false,
+                startPosition: null,
+                targetPosition: null,
+                startTime: null,
+                duration: 250 // ms for scroll animation
+            },
+            isItemAbove: function (item) {
+                return item.hasAttribute('data-is-above');
+            },
+            isItemToggled: function (item) {
+                return item.hasAttribute('data-is-toggled');
+            },
+            getIdleSections: function (sectionsContainer) {
+                let allSections = Array.from(sectionsContainer.querySelectorAll('.section'));
+                return allSections.filter(el => !elHasClass(el, 'is-draggable'));
+            },
+            setSectionsGap: function (idleSections) {
+                if (idleSections.length <= 1) {
+                    this.itemsGap = 0;
+                    return;
+                }
 
+                const section1Rect = idleSections[0].getBoundingClientRect();
+                const section2Rect = idleSections[1].getBoundingClientRect();
+                this.itemsGap = Math.abs(section1Rect.bottom - section2Rect.top);
+            },
+            initReorderSection: function (section) {
+                addClassEl('is-draggable', section);
+            },
+            initSectionsState: function (reorderEl, idleSections) {
+                const reorderIndex = Array.from(reorderEl.parentElement.children).indexOf(reorderEl);
+
+                for(let section of idleSections) {
+                    const sectionIndex = Array.from(section.parentElement.children).indexOf(section);
+                    // Mark items as above only if they come before the dragged item
+                    if (sectionIndex < reorderIndex) {
+                        section.dataset.isAbove = '';
+                    }
+                }
+            },
+            updateIdleSectionsStateAndPosition: function (reorderEl) {
+                const reorderElRect = reorderEl.getBoundingClientRect();
+                const reorderElY = reorderElRect.top + reorderElRect.height / 2;
+
+                // Update state
+                for (let section of this.getIdleSections(reorderEl.parentElement)) {
+                    const sectionRect = section.getBoundingClientRect();
+                    const sectionY = sectionRect.top + sectionRect.height / 2;
+
+                    if (this.isItemAbove(section)) {
+                        if (reorderElY <= sectionY) {
+                            section.dataset.isToggled = '';
+                        } else {
+                            delete section.dataset.isToggled;
+                        }
+                    } else {
+                        if (reorderElY >= sectionY) {
+                            section.dataset.isToggled = '';
+                        } else {
+                            delete section.dataset.isToggled;
+                        }
+                    }
+                }
+
+                // Update position
+                for (let section of this.getIdleSections(reorderEl.parentElement)) {
+                    if (this.isItemToggled(section)) {
+                        const direction = this.isItemAbove(section) ? 1 : -1;
+                        section.style.transform = `translateY(${
+                            direction * (reorderElRect.height + this.itemsGap)
+                        }px)`;
+                    } else {
+                        section.style.transform = '';
+                    }
+                }
+            },
+            applyNewSectionOrder: async function (reorderEl) {
+                const reorderedSections = [];
+                const sectionsContainer = reorderEl.parentElement;
+                const allSections = Array.from(sectionsContainer.children);
+                let prevIndex = allSections.indexOf(reorderEl);
+                let skipUpdate = false;
+
+                // Build new order
+                for (let i = 0; i < allSections.length; i++) {
+                    let section = allSections[i];
+                    if (section === reorderEl) continue;
+
+                    if (!this.isItemToggled(section)) {
+                        reorderedSections[i] = section;
+                        continue;
+                    }
+
+                    const newIndex = this.isItemAbove(section) ? i + 1 : i - 1;
+                    reorderedSections[newIndex] = section;
+                }
+
+                // Fill in dragged section
+                for (let index = 0; index < allSections.length; index++) {
+                    if (typeof reorderedSections[index] === 'undefined') {
+                        if (prevIndex === index) {
+                            skipUpdate = true;
+                            break;
+                        }
+                        reorderedSections[index] = reorderEl;
+                    }
+                }
+
+                // Clean up temp attributes
+                for (let section of this.getIdleSections(sectionsContainer)) {
+                    delete section.dataset.isAbove;
+                    delete section.dataset.isToggled;
+                    section.style.transition = 'none';
+                    section.style.transform = '';
+
+                    requestAnimationFrame(() => {
+                        section.style.removeProperty('transition');
+                    });
+                }
+
+                if (skipUpdate) {
+                    return requestAnimationFrame(() => {
+                        removeClassEl('is-draggable', reorderEl);
+                        reorderEl.style.transform = '';
+                    });
+                }
+
+                // Animate transition
+                const reorderTransform = reorderEl.style.transform;
+                const transformValues = reorderTransform.replace('translate(', '').replace(')', '').split(',');
+                const prevTransform = {
+                    x: parseInt(transformValues[0]),
+                    y: parseInt(transformValues[1])
+                };
+
+                const reorderedBoxBefore = reorderEl.getBoundingClientRect();
+
+                // Reorder in DOM
+                for (let section of reorderedSections) {
+                    sectionsContainer.appendChild(section);
+                }
+
+                const reorderedBoxAfter = reorderEl.getBoundingClientRect();
+
+                // Remove animation temporarily
+                reorderEl.style.transition = 'none';
+                await rafAwait();
+
+                // Update final position
+                const xDiff = reorderedBoxBefore.left - reorderedBoxAfter.left;
+                const yDiff = reorderedBoxBefore.top - reorderedBoxAfter.top;
+                const tX = prevTransform.x + xDiff;
+                const tY = prevTransform.y + yDiff;
+                reorderEl.style.transform = `translate(${tX}px, ${tY}px)`;
+
+                await rafAwait();
+                reorderEl.style.removeProperty('transition');
+
+                // Update positions in data and server
+                this.updateSectionPositions(reorderedSections);
+
+                requestAnimationFrame(() => {
+                    addClassEl('is-drag-ending', reorderEl);
+                    removeClassEl('is-draggable', reorderEl);
+                    reorderEl.style.transform = '';
+                    setTimeout(function () {
+                        removeClassEl('is-drag-ending', reorderEl);
+                    }, 300);
+                });
+            },
+            updateSectionPositions: async function (sections) {
+                let positions = {};
+                let updates = {};
+
+                // Get section keys and build position updates
+                for (let i = 0; i < sections.length; i++) {
+                    let section = sections[i];
+                    let key = section.getAttribute('data-key');
+
+                    if (befriend.me.data.sections.active[key]) {
+                        positions[key] = i;
+                        updates[key] = {
+                            key: key,
+                            position: i
+                        };
+                    }
+                }
+
+                // Update local data
+                for (let key in positions) {
+                    if (befriend.me.data.sections.active[key]) {
+                        befriend.me.data.sections.active[key].position = positions[key];
+                    }
+                }
+
+                // Update server
+                if (Object.keys(updates).length) {
+                    try {
+                        // await befriend.auth.put('/me/sections/positions', {
+                        //     positions: updates
+                        // });
+                    } catch (e) {
+                        console.error('Error updating section positions:', e);
+                    }
+                }
+            },
+        },
         itemReorder: {
             ip: false,
             start: {
@@ -1785,6 +2005,83 @@ befriend.me = {
                     befriend.me.toggleSectionActions(section_el, true);
 
                     befriend.me.toggleAutoComplete(null, false);
+                });
+            }
+        },
+        onSectionReorder: function() {
+            const TOUCH_DELAY = 80;
+            const MOVE_THRESHOLD = 10;
+            let touchTimeout;
+            let initialTouchY;
+            let hasMoved;
+
+            const sectionReorder = befriend.me.events.sectionReorder;
+            const sections = befriend.els.me.getElementsByClassName('section');
+
+            for(let i = 0; i < sections.length; i++) {
+                let section = sections[i];
+
+                if(section._reorder_listener) continue;
+                section._reorder_listener = true;
+
+                // Track touch move before drag starts
+                section.addEventListener('touchmove', function(e) {
+                    if (sectionReorder.ip) {
+                        e.preventDefault();
+                        return;
+                    }
+
+                    if(!initialTouchY) return;
+
+                    const touch = e.touches[0];
+                    const moveDistance = Math.abs(touch.clientY - initialTouchY);
+
+                    if (moveDistance > MOVE_THRESHOLD) {
+                        hasMoved = true;
+                        clearTimeout(touchTimeout);
+                        initialTouchY = null;
+                    }
+                }, {
+                    passive: false
+                });
+
+                section.addEventListener('touchstart', function(e) {
+                    // Only handle drag start from section top area
+                    const target = e.target;
+                    const sectionTop = section.querySelector('.section-top');
+                    if (!sectionTop.contains(target)) return;
+
+                    if (target.closest('.actions') || target.closest('.menu')) return;
+
+                    // Reset tracking variables
+                    hasMoved = false;
+                    initialTouchY = e.touches[0].clientY;
+
+                    clearTimeout(touchTimeout);
+                    touchTimeout = setTimeout(function() {
+                        if(!hasMoved) {
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            const coords = getEventCoords(e);
+                            sectionReorder.start.x = coords.x;
+                            sectionReorder.start.y = coords.y;
+                            sectionReorder.el = section;
+                            sectionReorder.ip = true;
+                            sectionReorder.dragStarted = false;
+
+                            // Disable scrolling
+                            const scrollContainer = section.closest('.view-me');
+                            if (scrollContainer) {
+                                scrollContainer.style.overflow = 'hidden';
+                            }
+
+                            const idleSections = sectionReorder.getIdleSections(section.parentElement);
+                            sectionReorder.setSectionsGap(idleSections);
+                            sectionReorder.initReorderSection(section);
+                            sectionReorder.initSectionsState(section, idleSections);
+                        }
+                    }, TOUCH_DELAY);
                 });
             }
         },

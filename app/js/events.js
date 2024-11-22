@@ -147,7 +147,7 @@ befriend.events = {
             });
         }
     },
-    onDrag: function () {
+    onDrag: function() {
         const events = {
             touch: {
                 start: 'touchstart',
@@ -164,75 +164,138 @@ befriend.events = {
         const deviceType = isTouchDevice() ? 'touch' : 'mouse';
         const deviceEvents = events[deviceType];
 
-        let meReorder = befriend.me.events.itemReorder;
+        let itemReorder = befriend.me.events.itemReorder;
+        let sectionReorder = befriend.me.events.sectionReorder;
 
         document.addEventListener(deviceEvents.move, function(e) {
-            if (!meReorder.ip || !meReorder.el) return;
+            // Handle item reordering
+            if (itemReorder.ip && itemReorder.el) {
+                e.preventDefault();
+                const coords = getEventCoords(e);
+                const offsetX = coords.x - itemReorder.start.x;
+                const offsetY = coords.y - itemReorder.start.y;
 
-            e.preventDefault();
-            const coords = getEventCoords(e);
-            const offsetX = coords.x - meReorder.start.x;
-            const offsetY = coords.y - meReorder.start.y;
+                // Only start repositioning other items after some movement
+                if (!itemReorder.dragStarted && (Math.abs(offsetX) > 5 || Math.abs(offsetY) > 5)) {
+                    itemReorder.dragStarted = true;
+                    const idleItems = itemReorder.getIdleItems(itemReorder.el.parentElement);
+                    itemReorder.setItemsGap(idleItems);
+                    itemReorder.initItemsState(itemReorder.el, idleItems);
+                }
 
-            // Only start repositioning other items after some movement
-            if (!meReorder.dragStarted && (Math.abs(offsetX) > 5 || Math.abs(offsetY) > 5)) {
-                meReorder.dragStarted = true;
-                const idleItems = meReorder.getIdleItems(meReorder.el.parentElement);
-                meReorder.setItemsGap(idleItems);
-                meReorder.initItemsState(meReorder.el, idleItems);
+                itemReorder.el.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+
+                if (itemReorder.dragStarted) {
+                    itemReorder.updateIdleItemsStateAndPosition(itemReorder.el);
+
+                    // Check for scroll needed
+                    const container = itemReorder.el.closest('.items-container');
+                    const containerRect = container.getBoundingClientRect();
+                    const itemRect = itemReorder.el.getBoundingClientRect();
+                    const itemHeight = itemRect.height;
+                    const itemGap = itemReorder.itemsGap;
+                    const scrollAmount = itemHeight + itemGap;
+
+                    if (!itemReorder.autoScroll.scrolling) {
+                        if (itemRect.top < containerRect.top) {
+                            startSmoothScroll(container, container.scrollTop - scrollAmount, itemReorder.autoScroll);
+                        }
+                        else if (itemRect.bottom > containerRect.bottom) {
+                            startSmoothScroll(container, container.scrollTop + scrollAmount, itemReorder.autoScroll);
+                        }
+                    }
+                }
             }
 
-            meReorder.el.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+            // Handle section reordering
+            if (sectionReorder.ip && sectionReorder.el) {
+                e.preventDefault();
+                const coords = getEventCoords(e);
+                const offsetX = coords.x - sectionReorder.start.x;
+                const offsetY = coords.y - sectionReorder.start.y;
 
-            if (meReorder.dragStarted) {
-                meReorder.updateIdleItemsStateAndPosition(meReorder.el);
+                // Only start repositioning other sections after some movement
+                if (!sectionReorder.dragStarted && (Math.abs(offsetX) > 5 || Math.abs(offsetY) > 5)) {
+                    sectionReorder.dragStarted = true;
+                    const idleSections = sectionReorder.getIdleSections(sectionReorder.el.parentElement);
+                    sectionReorder.setSectionsGap(idleSections);
+                    sectionReorder.initSectionsState(sectionReorder.el, idleSections);
+                }
 
-                // Check for scroll needed
-                const container = meReorder.el.closest('.items-container');
-                const containerRect = container.getBoundingClientRect();
-                const itemRect = meReorder.el.getBoundingClientRect();
-                const itemHeight = itemRect.height;
-                const itemGap = meReorder.itemsGap;
-                const scrollAmount = itemHeight + itemGap;
+                sectionReorder.el.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
 
-                if (!meReorder.autoScroll.scrolling) {
-                    if (itemRect.top < containerRect.top) {
-                        startSmoothScroll(container, container.scrollTop - scrollAmount);
-                    }
-                    else if (itemRect.bottom > containerRect.bottom) {
-                        startSmoothScroll(container, container.scrollTop + scrollAmount);
+                if (sectionReorder.dragStarted) {
+                    sectionReorder.updateIdleSectionsStateAndPosition(sectionReorder.el);
+
+                    // Check for scroll needed
+                    const container = sectionReorder.el.closest('.view-me');
+                    const containerRect = container.getBoundingClientRect();
+                    const sectionRect = sectionReorder.el.getBoundingClientRect();
+                    const sectionHeight = sectionRect.height;
+                    const sectionGap = sectionReorder.itemsGap;
+                    const scrollAmount = sectionHeight + sectionGap;
+
+                    if (!sectionReorder.autoScroll.scrolling) {
+                        if (sectionRect.top < containerRect.top) {
+                            startSmoothScroll(container, container.scrollTop - scrollAmount, sectionReorder.autoScroll);
+                        } else if (sectionRect.bottom > containerRect.bottom) {
+                            startSmoothScroll(container, container.scrollTop + scrollAmount, sectionReorder.autoScroll);
+                        }
                     }
                 }
             }
         });
 
         document.addEventListener(deviceEvents.end, function(e) {
-            if (!meReorder.ip) return;
+            // Handle item reorder end
+            if (itemReorder.ip) {
+                if (itemReorder.autoScroll.animationFrame) {
+                    cancelAnimationFrame(itemReorder.autoScroll.animationFrame);
+                    itemReorder.autoScroll.animationFrame = null;
+                }
+                itemReorder.autoScroll.scrolling = false;
+                itemReorder.ip = false;
+                itemReorder.dragStarted = false;
 
-            if (meReorder.autoScroll.animationFrame) {
-                cancelAnimationFrame(meReorder.autoScroll.animationFrame);
-                meReorder.autoScroll.animationFrame = null;
+                const reorderEl = itemReorder.el;
+                if (!reorderEl) return;
+
+                const scrollContainer = reorderEl.closest('.items-container');
+                if (scrollContainer) {
+                    scrollContainer.style.removeProperty('overflow');
+                }
+
+                const section_el = reorderEl.closest('.section');
+                const section_key = section_el.getAttribute('data-key');
+
+                itemReorder.applyNewItemOrder(reorderEl, section_el, section_key);
+                itemReorder.el = null;
             }
-            meReorder.autoScroll.scrolling = false;
 
-            meReorder.ip = false;
-            meReorder.dragStarted = false;
-            const reorderEl = meReorder.el;
-            if (!reorderEl) return;
+            // Handle section reorder end
+            if (sectionReorder.ip) {
+                if (sectionReorder.autoScroll.animationFrame) {
+                    cancelAnimationFrame(sectionReorder.autoScroll.animationFrame);
+                    sectionReorder.autoScroll.animationFrame = null;
+                }
+                sectionReorder.autoScroll.scrolling = false;
+                sectionReorder.ip = false;
+                sectionReorder.dragStarted = false;
 
-            const scrollContainer = reorderEl.closest('.items-container');
-            if (scrollContainer) {
-                scrollContainer.style.removeProperty('overflow');
+                const reorderEl = sectionReorder.el;
+                if (!reorderEl) return;
+
+                const scrollContainer = reorderEl.closest('.view-me');
+                if (scrollContainer) {
+                    scrollContainer.style.removeProperty('overflow');
+                }
+
+                sectionReorder.applyNewSectionOrder(reorderEl);
+                sectionReorder.el = null;
             }
-
-            const section_el = reorderEl.closest('.section');
-            const section_key = section_el.getAttribute('data-key');
-
-            meReorder.applyNewItemOrder(reorderEl, section_el, section_key);
-            meReorder.el = null;
         });
 
-        function startSmoothScroll(container, targetPosition) {
+        function startSmoothScroll(container, targetPosition, autoScrollState) {
             // Bound target position
             targetPosition = Math.max(0, Math.min(
                 targetPosition,
@@ -242,37 +305,37 @@ befriend.events = {
             // Don't scroll if we're already at target
             if (container.scrollTop === targetPosition) return;
 
-            meReorder.autoScroll.scrolling = true;
-            meReorder.autoScroll.startPosition = container.scrollTop;
-            meReorder.autoScroll.targetPosition = targetPosition;
-            meReorder.autoScroll.startTime = performance.now();
+            autoScrollState.scrolling = true;
+            autoScrollState.startPosition = container.scrollTop;
+            autoScrollState.targetPosition = targetPosition;
+            autoScrollState.startTime = performance.now();
 
             // Cancel any existing animation
-            if (meReorder.autoScroll.animationFrame) {
-                cancelAnimationFrame(meReorder.autoScroll.animationFrame);
+            if (autoScrollState.animationFrame) {
+                cancelAnimationFrame(autoScrollState.animationFrame);
             }
 
             function animate(currentTime) {
-                const elapsed = currentTime - meReorder.autoScroll.startTime;
-                const progress = Math.min(elapsed / meReorder.autoScroll.duration, 1);
+                const elapsed = currentTime - autoScrollState.startTime;
+                const progress = Math.min(elapsed / autoScrollState.duration, 1);
 
                 // Ease out cubic function
                 const easeOut = 1 - Math.pow(1 - progress, 3);
 
-                const currentPosition = meReorder.autoScroll.startPosition +
-                    (meReorder.autoScroll.targetPosition - meReorder.autoScroll.startPosition) * easeOut;
+                const currentPosition = autoScrollState.startPosition +
+                    (autoScrollState.targetPosition - autoScrollState.startPosition) * easeOut;
 
                 container.scrollTop = currentPosition;
 
                 if (progress < 1) {
-                    meReorder.autoScroll.animationFrame = requestAnimationFrame(animate);
+                    autoScrollState.animationFrame = requestAnimationFrame(animate);
                 } else {
-                    meReorder.autoScroll.scrolling = false;
-                    meReorder.autoScroll.animationFrame = null;
+                    autoScrollState.scrolling = false;
+                    autoScrollState.animationFrame = null;
                 }
             }
 
-            meReorder.autoScroll.animationFrame = requestAnimationFrame(animate);
+            autoScrollState.animationFrame = requestAnimationFrame(animate);
         }
     },
     resizeHandler: function () {
