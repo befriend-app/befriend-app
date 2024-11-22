@@ -164,7 +164,7 @@ befriend.events = {
         const deviceType = isTouchDevice() ? 'touch' : 'mouse';
         const deviceEvents = events[deviceType];
 
-        let meReorder = befriend.me.events.reorder;
+        let meReorder = befriend.me.events.itemReorder;
 
         document.addEventListener(deviceEvents.move, function(e) {
             if (!meReorder.ip || !meReorder.el) return;

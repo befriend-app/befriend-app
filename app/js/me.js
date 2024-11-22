@@ -1480,7 +1480,8 @@ befriend.me = {
         }, 300);
     },
     events: {
-        reorder: {
+
+        itemReorder: {
             ip: false,
             start: {
                 x: null,
@@ -2348,7 +2349,7 @@ befriend.me = {
             }
         },
         onFavorite: function () {
-            let meReorder = befriend.me.events.reorder;
+            let meReorder = befriend.me.events.itemReorder;
 
             let favorite_els = befriend.els.me.getElementsByClassName('favorite');
 
