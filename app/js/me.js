@@ -1598,47 +1598,37 @@ befriend.me = {
                 addClassEl('is-draggable', section);
             },
             initSectionsState: function (reorderEl, idleSections) {
-                const reorderIndex = Array.from(reorderEl.parentElement.children).indexOf(reorderEl);
+                const reorderRect = reorderEl.getBoundingClientRect();
+                const reorderTop = reorderRect.top;
 
-                for(let section of idleSections) {
-                    const sectionIndex = Array.from(section.parentElement.children).indexOf(section);
-                    // Mark items as above only if they come before the dragged item
-                    if (sectionIndex < reorderIndex) {
+                for (let section of idleSections) {
+                    const sectionRect = section.getBoundingClientRect();
+                    if (sectionRect.top < reorderTop) {
                         section.dataset.isAbove = '';
                     }
                 }
             },
             updateIdleSectionsStateAndPosition: function (reorderEl) {
                 const reorderElRect = reorderEl.getBoundingClientRect();
-                const reorderElY = reorderElRect.top + reorderElRect.height / 2;
-                const reorderIndex = Array.from(reorderEl.parentElement.children).indexOf(reorderEl);
+                const reorderElTop = reorderElRect.top;
 
-                // Get idle sections and their original positions
+                // Get idle sections and update their states based on position
                 const idleSections = this.getIdleSections(reorderEl.parentElement);
-                const sectionPositions = new Map(
-                    idleSections.map(section => [
-                        section,
-                        Array.from(section.parentElement.children).indexOf(section)
-                    ])
-                );
 
-                // Update state
                 for (let section of idleSections) {
                     const sectionRect = section.getBoundingClientRect();
-                    const sectionY = sectionRect.top + sectionRect.height / 2;
-                    const sectionIndex = sectionPositions.get(section);
+                    const sectionTop = sectionRect.top;
 
-                    // Determine if section should be above based on original position
-                    if (sectionIndex < reorderIndex) {
-                        section.dataset.isAbove = '';
-                        if (reorderElY <= sectionY) {
+                    if (this.isItemAbove(section)) {
+                        // Section is above the dragged section
+                        if (reorderElTop <= sectionTop) {
                             section.dataset.isToggled = '';
                         } else {
                             delete section.dataset.isToggled;
                         }
                     } else {
-                        delete section.dataset.isAbove;
-                        if (reorderElY >= sectionY) {
+                        // Section is below the dragged section
+                        if (reorderElTop >= sectionTop) {
                             section.dataset.isToggled = '';
                         } else {
                             delete section.dataset.isToggled;
@@ -1650,13 +1640,7 @@ befriend.me = {
                 for (let section of idleSections) {
                     if (this.isItemToggled(section)) {
                         const direction = this.isItemAbove(section) ? 1 : -1;
-                        let transformY = direction * (reorderElRect.height + this.itemsGap);
-                        console.log({
-                            transformY
-                        });
-                        if(transformY === -114) {
-                            debugger;
-                        }
+                        const transformY = direction * (reorderElRect.height + this.itemsGap);
                         section.style.transform = `translateY(${transformY}px)`;
                     } else {
                         section.style.transform = '';
@@ -1664,39 +1648,23 @@ befriend.me = {
                 }
             },
             applyNewSectionOrder: async function (reorderEl) {
-                console.log("apply new section order");
-                const reorderedSections = [];
                 const sectionsContainer = reorderEl.parentElement;
                 const allSections = Array.from(sectionsContainer.children);
-                let prevIndex = allSections.indexOf(reorderEl);
-                let skipUpdate = false;
 
-                // Build new order
-                for (let i = 0; i < allSections.length; i++) {
-                    let section = allSections[i];
-                    if (section === reorderEl) continue;
+                // Get current positions of all sections
+                const sectionPositions = new Map();
 
-                    if (!this.isItemToggled(section)) {
-                        reorderedSections[i] = section;
-                        continue;
-                    }
-
-                    const newIndex = this.isItemAbove(section) ? i + 1 : i - 1;
-                    reorderedSections[newIndex] = section;
+                for(let section of allSections) {
+                    const rect = section.getBoundingClientRect();
+                    sectionPositions.set(section, rect.top);
                 }
 
-                // Fill in dragged section
-                for (let index = 0; index < allSections.length; index++) {
-                    if (typeof reorderedSections[index] === 'undefined') {
-                        if (prevIndex === index) {
-                            skipUpdate = true;
-                            break;
-                        }
-                        reorderedSections[index] = reorderEl;
-                    }
-                }
+                // Sort sections by their vertical position
+                const sortedSections = Array.from(sectionPositions.entries())
+                    .sort((a, b) => a[1] - b[1])
+                    .map(entry => entry[0]);
 
-                // Clean up temp attributes
+                // Clean up temporary attributes
                 for (let section of this.getIdleSections(sectionsContainer)) {
                     delete section.dataset.isAbove;
                     delete section.dataset.isToggled;
@@ -1705,13 +1673,6 @@ befriend.me = {
 
                     requestAnimationFrame(() => {
                         section.style.removeProperty('transition');
-                    });
-                }
-
-                if (skipUpdate) {
-                    return requestAnimationFrame(() => {
-                        removeClassEl('is-draggable', reorderEl);
-                        reorderEl.style.transform = '';
                     });
                 }
 
@@ -1725,8 +1686,8 @@ befriend.me = {
 
                 const reorderedBoxBefore = reorderEl.getBoundingClientRect();
 
-                // Reorder in DOM
-                for (let section of reorderedSections) {
+                // Reorder in DOM based on vertical positions
+                for (let section of sortedSections) {
                     sectionsContainer.appendChild(section);
                 }
 
@@ -1747,7 +1708,7 @@ befriend.me = {
                 reorderEl.style.removeProperty('transition');
 
                 // Update positions in data and server
-                this.updateSectionPositions(reorderedSections);
+                this.updateSectionPositions(sortedSections);
 
                 requestAnimationFrame(() => {
                     removeClassEl('is-draggable', reorderEl);
