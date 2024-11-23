@@ -1611,6 +1611,7 @@ befriend.me = {
             updateIdleSectionsStateAndPosition: function (reorderEl, sectionY) {
                 const reorderElRect = reorderEl.getBoundingClientRect();
                 const reorderElTop = reorderElRect.top;
+                const reorderElBottom = reorderElRect.bottom;
 
                 // Get idle sections and update their states based on position
                 const idleSections = this.getIdleSections(reorderEl.parentElement);
@@ -1638,17 +1639,12 @@ befriend.me = {
                                 delete section.dataset.isToggled;
                             }
                         }
-                    } else {
+                    } else { //dragging down
                         if (this.isItemAbove(section)) {
-                            // Section is above the dragged section
-                            if (reorderElTop <= sectionTop) {
-                                section.dataset.isToggled = '';
-                            } else {
-                                delete section.dataset.isToggled;
-                            }
+                            delete section.dataset.isToggled;
                         } else {
-                            // Section is below the dragged section
-                            if (reorderElTop >= sectionTop) {
+                            // dragged section is below bottom of top bar
+                            if (reorderElBottom > topElBottom) {
                                 section.dataset.isToggled = '';
                             } else {
                                 delete section.dataset.isToggled;
