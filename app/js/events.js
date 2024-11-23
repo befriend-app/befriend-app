@@ -225,7 +225,7 @@ befriend.events = {
                 sectionReorder.el.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
 
                 if (sectionReorder.dragStarted) {
-                    sectionReorder.updateIdleSectionsStateAndPosition(sectionReorder.el);
+                    sectionReorder.updateIdleSectionsStateAndPosition(sectionReorder.el, coords.y);
 
                     // Check for scroll needed
                     const container = sectionReorder.el.closest('.view-me');

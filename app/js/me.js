@@ -1608,30 +1608,51 @@ befriend.me = {
                     }
                 }
             },
-            updateIdleSectionsStateAndPosition: function (reorderEl) {
+            updateIdleSectionsStateAndPosition: function (reorderEl, sectionY) {
                 const reorderElRect = reorderEl.getBoundingClientRect();
                 const reorderElTop = reorderElRect.top;
 
                 // Get idle sections and update their states based on position
                 const idleSections = this.getIdleSections(reorderEl.parentElement);
+                const draggingUp = sectionY < this.start.y;
 
                 for (let section of idleSections) {
                     const sectionRect = section.getBoundingClientRect();
                     const sectionTop = sectionRect.top;
+                    const topEl = section.querySelector('.section-top');
+                    const topElBottom = topEl.getBoundingClientRect().bottom;
 
-                    if (this.isItemAbove(section)) {
-                        // Section is above the dragged section
-                        if (reorderElTop <= sectionTop) {
-                            section.dataset.isToggled = '';
+                    if(draggingUp) {
+                        if (this.isItemAbove(section)) {
+                            // Section is above the dragged section
+                            if (reorderElTop <= sectionTop) {
+                                section.dataset.isToggled = '';
+                            } else {
+                                delete section.dataset.isToggled;
+                            }
                         } else {
-                            delete section.dataset.isToggled;
+                            // Section is below the dragged section
+                            if (reorderElTop >= sectionTop) {
+                                section.dataset.isToggled = '';
+                            } else {
+                                delete section.dataset.isToggled;
+                            }
                         }
                     } else {
-                        // Section is below the dragged section
-                        if (reorderElTop >= sectionTop) {
-                            section.dataset.isToggled = '';
+                        if (this.isItemAbove(section)) {
+                            // Section is above the dragged section
+                            if (reorderElTop <= sectionTop) {
+                                section.dataset.isToggled = '';
+                            } else {
+                                delete section.dataset.isToggled;
+                            }
                         } else {
-                            delete section.dataset.isToggled;
+                            // Section is below the dragged section
+                            if (reorderElTop >= sectionTop) {
+                                section.dataset.isToggled = '';
+                            } else {
+                                delete section.dataset.isToggled;
+                            }
                         }
                     }
                 }
