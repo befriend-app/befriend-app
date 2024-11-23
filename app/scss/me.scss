@@ -141,9 +141,9 @@ html.#{$class_confirm_me_action} {
         }
 
         .mode-options {
-            $gap_lr: 6px;
+            $gap_lr: 8px;
             display: flex;
-            padding: 6px 8px;
+            padding: 10px 8px;
             gap: 0 $gap_lr;
             border: 1px solid $color_lightgray;
             border-radius: $section_br;
