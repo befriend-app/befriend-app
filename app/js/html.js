@@ -155,8 +155,12 @@ befriend.html = {
                     </div>
                     
                     <div id="me-section-options">
-                        <div class="title">Add Section</div>
-                        <div class="options"></div>
+                        <div class="container">
+                            <div class="title">Add Section</div>
+                            <div class="scrollable">
+                                <div class="options"></div>
+                            </div>
+                        </div>
                     </div>
                     
                     <div id="places">
