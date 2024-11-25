@@ -103,7 +103,7 @@ html.#{$class_confirm_me_action} {
         align-items: center;
         //border: .5px solid black;
         font-size: 13px;
-        margin-top: 15px;
+        margin-top: $me_add_btn_tb;
         @include flex-center;
 
         .icons {
@@ -271,7 +271,7 @@ html.#{$class_confirm_me_action} {
         display: flex;
         flex-direction: column;
         gap: $me_sections_gap_h 0;
-        margin-top: 20px;
+        margin-top: $me_add_btn_tb;
         position: relative;
 
         .section {
@@ -862,6 +862,13 @@ html.#{$class_confirm_me_action} {
                 padding-bottom: $padding_tb;
                 padding-left: $padding_lr_inner;
                 padding-right: $padding_lr_inner;
+
+                &.cols-3 {
+                    grid-template-columns: repeat(3, 1fr);
+
+                    .item {
+                    }
+                }
 
                 &.cols-2 {
                     grid-template-columns: repeat(2, 1fr);

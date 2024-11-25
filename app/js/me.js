@@ -333,7 +333,7 @@ befriend.me = {
         }
         return '';
     },
-    addSection: async function (key, on_update, skip_save) {
+    addSection: async function (key, add_to_top, on_update, skip_save) {
         let option_data = befriend.me.data.sections.all[key];
         let sections_el = befriend.els.me.querySelector('.me-container').querySelector('.sections');
         let section_els = sections_el.getElementsByClassName('section');
@@ -535,8 +535,9 @@ befriend.me = {
                                 </div>
                             </div>`;
 
-            // Insert section at correct position
-            if(isNumeric(prev_index) && section_els.length) {
+            if(add_to_top) {
+                sections_el.insertAdjacentHTML('afterbegin', html);
+            } else if(isNumeric(prev_index) && section_els.length) { // Insert section at correct position
                 if(prev_index === 0) {
                     sections_el.insertAdjacentHTML('afterbegin', html);
                 } else {
@@ -629,7 +630,7 @@ befriend.me = {
 
                 //re-add section if no categories
                 if(!category_btn_first) {
-                    befriend.me.addSection(section_key, true);
+                    befriend.me.addSection(section_key, false, true);
                 }
             } catch (e) {
                 console.error(e);
@@ -682,7 +683,7 @@ befriend.me = {
     setActive: function () {
         if (befriend.me.data.sections.active) {
             for (let key in befriend.me.data.sections.active) {
-                befriend.me.addSection(key, false, true);
+                befriend.me.addSection(key, false, false, true);
             }
 
             //enable first category for each section
@@ -2050,15 +2051,41 @@ befriend.me = {
 
                 option._listener = true;
 
-                option.addEventListener('click', function (e) {
+                option.addEventListener('click', async function (e) {
                     e.preventDefault();
                     e.stopPropagation();
 
                     let key = this.getAttribute('data-key');
 
-                    befriend.me.addSection(key);
+                    befriend.me.addSection(key, true);
 
                     this.parentNode.removeChild(this);
+
+                    //hide overlay, scroll to section
+                    befriend.me.toggleSectionOptions(false);
+
+                    for(let i = 0; i < 10; i++) {
+                        await rafAwait();
+
+                        let sectionEl = befriend.els.me.querySelector(`.section[data-key="${key}"]`);
+
+                        if(sectionEl) {
+                            let scrollBarHeight = await befriend.styles.getStatusBarHeight();
+                            const sectionRect = sectionEl.getBoundingClientRect();
+                            const sectionTop = sectionRect.top - scrollBarHeight - 10;
+
+                            try {
+                                window.scrollTo({
+                                    top: sectionTop,
+                                    behavior: 'smooth'
+                                });
+                            } catch(e) {
+                                console.error('Window scroll failed:', e);
+                            }
+
+                            break;
+                        }
+                    }
                 });
             }
         },
