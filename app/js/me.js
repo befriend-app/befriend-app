@@ -1,6 +1,7 @@
 befriend.me = {
     data: {
         me: null,
+        genders: null,
         sections: {
             all: null,
             options: null,
@@ -61,9 +62,8 @@ befriend.me = {
     init: function () {
         return new Promise(async (resolve, reject) => {
             try {
-                befriend.me.setModes();
-
                 await befriend.me.getMe();
+
                 befriend.me.setMe();
                 befriend.me.setActive();
                 befriend.me.setOptions();
@@ -73,33 +73,6 @@ befriend.me = {
 
             resolve();
         });
-    },
-    setModes: function () {
-        const modesHtml = `
-            <div class="${befriend.variables.class_modes_section}">
-                <div class="tab">
-                    <div class="title">Mode</div>
-                </div>
-                <div class="mode-options">
-                    ${befriend.me.modes.options.map(option => `
-                        <div class="mode-option ${option.id === befriend.me.modes.selected ? 'selected' : ''}" data-mode="${option.id}">
-                            <div class="content">
-                                <div class="icon">${option.icon}</div>
-                                <div class="name">${option.name}</div>
-                                <div class="description">${option.description}</div>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `;
-
-        // Insert at the beginning of sections
-        const sectionsEl = befriend.els.me.querySelector('.me-container');
-        sectionsEl.insertAdjacentHTML('afterbegin', modesHtml);
-
-        // Initialize event handlers
-        befriend.me.events.onModeSelect();
     },
     getMe: function () {
         return new Promise(async (resolve, reject) => {
@@ -164,7 +137,6 @@ befriend.me = {
         //birthday
         let birthday_el = befriend.els.me.querySelector('.birthday');
 
-        //set
         if (me_obj.first_name) {
             first_name_el.innerHTML = me_obj.first_name;
         }
@@ -181,6 +153,28 @@ befriend.me = {
             }
 
             // birthday_el.querySelector('.date').innerHTML = date;
+        }
+
+        //mode
+        if(me_obj.mode) {
+            this.selectMode(me_obj.mode, true);
+        }
+    },
+    selectMode: async function (mode, skip_server) {
+        const modeOptions = befriend.els.me.querySelectorAll('.mode-option');
+
+        removeElsClass(modeOptions, 'selected');
+
+        let selectedModeEl = Array.from(modeOptions).find(el => el.getAttribute('data-mode') === mode);
+
+        addClassEl('selected', selectedModeEl);
+
+        befriend.me.modes.selected = mode;
+
+        if(!skip_server) {
+            await befriend.auth.put(`/me/mode`, {
+                mode: befriend.me.modes.selected
+            });
         }
     },
     saveSection: function (key) {
@@ -2001,6 +1995,7 @@ befriend.me = {
         },
         init: function () {
             return new Promise(async (resolve, reject) => {
+                befriend.me.events.onModeSelect();
                 befriend.me.events.onAddSectionBtn();
                 befriend.me.events.onSelectAvailableSection();
                 befriend.me.events.confirmAction();
@@ -2030,11 +2025,8 @@ befriend.me = {
                 if(option._listener) continue;
                 option._listener = true;
 
-                option.addEventListener('click', function() {
-                    removeElsClass(modeOptions, 'selected');
-                    addClassEl('selected', this);
-
-                    befriend.me.modes.selected = this.getAttribute('data-mode');
+                option.addEventListener('click', async function() {
+                    befriend.me.selectMode(this.getAttribute('data-mode'));
                 });
             }
         },
