@@ -2210,6 +2210,8 @@ befriend.me = {
                         // Add kid on server
                         let r = await befriend.auth.post('/me/mode/kids');
 
+                        befriend.me.data.modes.data.kids[r.data.token] = r.data;
+
                         // Add to UI with token from response
                         befriend.me.addKidHtml({
                             token: r.data.token
