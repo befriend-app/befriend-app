@@ -223,6 +223,12 @@ befriend.me = {
             if (mode === 'plus-one') {
                 befriend.me.events.onPartnerGenderSelect();
             } else if (mode === 'plus-kids') {
+                if(befriend.me.data?.modes?.data?.kids) {
+                    for (let kid of Object.values(befriend.me.data.modes.data.kids)) {
+                        befriend.me.addKidHtml(kid);
+                    }
+                }
+
                 befriend.me.events.onKids();
             }
 
@@ -241,55 +247,64 @@ befriend.me = {
             });
         }
     },
-    addKidHtml: function () {
-        //age
+    addKidHtml: function (kid = {}) {
+        let kid_els = befriend.els.me.querySelector('.kids').getElementsByClassName('kid');
+        let count = kid_els.length + 1;
+
         let age_options = '';
+        let gender_options = '';
+        let current_age = null;
 
         if(befriend.me.data?.modes?.options?.kids) {
-            age_options = Object.values(befriend.me.data?.modes?.options?.kids)
-                .map(age => `<div class="option" data-token="${age.token}">${age.name}</div>`).join('');
-        }
+            for(let k in befriend.me.data.modes.options.kids) {
+                let age = befriend.me.data.modes.options.kids[k];
 
-        let kid_els = befriend.els.me.querySelector('.kids').getElementsByClassName('kid');
+                let selected = '';
 
-        //gender
-        let gender_options = ``;
+                if(kid?.age_id === age.id) {
+                    selected = 'selected';
+                    current_age = age;
+                }
 
-        for(let gender of befriend.me.data.genders) {
-            let gender_name = '';
-
-            if(gender.token === 'male') {
-                gender_name = 'Boy';
-            } else if(gender.token === 'female') {
-                gender_name = 'Girl';
-            } else {
-                gender_name = gender.name;
+                age_options += `<div class="option ${selected}" 
+                    data-token="${age.token}">${age.name}</div>`;
             }
-
-            gender_options += `<div class="option" data-token="${gender.token}">${gender_name}</div>`;
         }
 
-        //active
-        let html = `<div class="kid">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="remove"><path d="M256,512C114.8359,512,0,397.1641,0,256S114.8359,0,256,0s256,114.8359,256,256-114.8359,256-256,256ZM256,32c-123.5195,0-224,100.4805-224,224s100.4805,224,224,224,224-100.4805,224-224S379.5195,32,256,32Z"/><path d="M368,272h-224c-8.832,0-16-7.168-16-16s7.168-16,16-16h224c8.832,0,16,7.168,16,16s-7.168,16-16,16Z"/></svg>
-                        <div class="child-number">Child #${kid_els.length + 1}</div>
-                        <div class="age">
-                            <div class="select-list unselected">
-                                <div class="current-selected">Select Age</div>
-                                <svg class="arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 82.1 43.2">
-                                    <path d="M41.1,43.2L0,2.2,2.1,0l39,39L80,0l2.1,2.2-41,41Z"/>
-                                </svg>
-                                <div class="options">${age_options}</div>
-                            </div>
-                        </div>
-                        <div class="gender">${gender_options}</div>
-                    </div>`;
+        for (let gender of befriend.me.data.genders) {
+            let gender_name = gender.token === 'male' ? 'Boy' :
+                gender.token === 'female' ? 'Girl' :
+                    gender.name;
+
+            gender_options += `
+                <div class="option ${kid.gender_id === gender.id ? 'selected' : ''}" 
+                    data-token="${gender.token}">${gender_name}</div>`;
+        }
+
+        let html = `
+                <div class="kid" data-token="${kid.token || ''}">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="remove">
+                    <path d="M256,512C114.8359,512,0,397.1641,0,256S114.8359,0,256,0s256,114.8359,256,256-114.8359,256-256,256ZM256,32c-123.5195,0-224,100.4805-224,224s100.4805,224,224,224,224-100.4805,224-224S379.5195,32,256,32Z"/>
+                    <path d="M368,272h-224c-8.832,0-16-7.168-16-16s7.168-16,16-16h224c8.832,0,16,7.168,16,16s-7.168,16-16,16Z"/>
+                  </svg>
+                  <div class="child-number">Child #${count}</div>
+                  <div class="age">
+                    <div class="select-list ${!current_age ? 'unselected' : ''}" 
+                         data-value="${current_age?.age_token || ''}">
+                      <div class="current-selected">${current_age?.name || 'Select Age'}</div>
+                      <svg class="arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 82.1 43.2">
+                        <path d="M41.1,43.2L0,2.2,2.1,0l39,39L80,0l2.1,2.2-41,41Z"/>
+                      </svg>
+                      <div class="options">${age_options}</div>
+                    </div>
+                  </div>
+                  <div class="gender">${gender_options}</div>
+                </div>`;
 
         let kids_list_el = befriend.els.me.querySelector('.selected-mode-container .kids .kids-list');
-
         kids_list_el.insertAdjacentHTML('beforeend', html);
 
-        befriend.me.events.onKidsAgeSelect();
+        befriend.me.events.onKids();
 
         requestAnimationFrame(function () {
             befriend.me.updateModeHeight();
@@ -2190,7 +2205,62 @@ befriend.me = {
                     e.preventDefault();
                     e.stopPropagation();
 
-                    befriend.me.addKidHtml();
+                    try {
+                        befriend.toggleSpinner(true);
+                        // Add kid on server
+                        let r = await befriend.auth.post('/me/mode/kids');
+
+                        // Add to UI with token from response
+                        befriend.me.addKidHtml({
+                            token: r.data.token
+                        });
+
+                        befriend.toggleSpinner(false);
+                    } catch(e) {
+                        console.error('Error adding kid:', e);
+                    }
+                });
+            }
+
+            befriend.me.events.onKidsAgeSelect();
+            befriend.me.events.onKidsGenderSelect();
+            befriend.me.events.onKidsRemove();
+        },
+        onKidsRemove: function () {
+            let remove_btns = befriend.els.me.querySelectorAll('.kids .kid .remove');
+
+            for (let btn of remove_btns) {
+                if (btn._listener) continue;
+                btn._listener = true;
+
+                btn.addEventListener('click', async function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    let kid_el = this.closest('.kid');
+                    let token = kid_el.getAttribute('data-token');
+
+                    befriend.toggleSpinner(true);
+
+                    try {
+                        await befriend.auth.delete('/me/mode/kids', {
+                            kid_token: token
+                        });
+
+                        if(befriend.me.data.modes.data.kids) {
+                            delete befriend.me.data.modes.data.kids[token];
+                        }
+
+                        kid_el.parentNode.removeChild(kid_el);
+
+                        requestAnimationFrame(() => {
+                            befriend.me.updateModeHeight();
+                        });
+                    } catch (e) {
+                        console.error('Error removing kid:', e);
+                    }
+
+                    befriend.toggleSpinner(false);
                 });
             }
         },
@@ -2234,6 +2304,8 @@ befriend.me = {
 
                         let token = this.getAttribute('data-token');
                         let selected_text = this.textContent;
+                        let kid_el = this.closest('.kid');
+                        let kid_token = kid_el.getAttribute('data-token');
 
                         // Update UI
                         removeClassEl('unselected', list_el);
@@ -2249,14 +2321,63 @@ befriend.me = {
 
                         try {
                             // Update server
-                            // await befriend.auth.put('/me/mode/kids', {
-                            //     age: token
-                            // });
-                        } catch (e) {
+                            await befriend.auth.put('/me/mode/kids', {
+                                kid_token: kid_token,
+                                age_token: token
+                            });
+                        } catch(e) {
                             console.error('Error updating kid age:', e);
                         }
                     });
                 }
+            }
+        },
+        onKidsGenderSelect: function() {
+            let gender_els = befriend.els.me.querySelectorAll('.kids .kid .gender .option');
+
+            for (let el of gender_els) {
+                if (el._listener) continue;
+                el._listener = true;
+
+                el.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    let kid_el = this.closest('.kid');
+                    let kid_token = kid_el.getAttribute('data-token');
+                    let gender_token = this.getAttribute('data-token');
+
+                    try {
+                        befriend.toggleSpinner(true);
+
+                        // Update server
+                        await befriend.auth.put('/me/mode/kids', {
+                            kid_token: kid_token,
+                            gender_token: gender_token,
+                            is_select: !elHasClass(el, 'selected')
+                        });
+
+                        // Update UI
+                        let gender_options = kid_el.querySelectorAll('.gender .option');
+
+                        if(elHasClass(el, 'selected')) {
+                            removeClassEl('selected', this);
+                        } else {
+                            removeElsClass(gender_options, 'selected');
+                            addClassEl('selected', this);
+                        }
+
+                        // Update local data
+                        if(befriend.me.data.modes.data.kids?.[kid_token]) {
+                            let gender = befriend.me.data.genders.find(g => g.token === gender_token);
+                            befriend.me.data.modes.data.kids[kid_token].gender_id = gender?.id || null;
+                        }
+
+                        befriend.toggleSpinner(false);
+                    } catch(e) {
+                        console.error('Error updating kid gender:', e);
+                    }
+                });
             }
         },
         onAddSectionBtn: function () {
