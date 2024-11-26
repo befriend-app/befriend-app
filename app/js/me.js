@@ -299,6 +299,13 @@ befriend.me = {
                     </div>
                   </div>
                   <div class="gender">${gender_options}</div>
+                  <div class="active">
+                    <div class="checkbox ${kid?.is_active ? 'checked' : ''}">
+                        <div class="inner"></div>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 518.0006 376.0036"><path d="M504.5025,7.4985c-9.997-9.998-26.205-9.998-36.204,0L161.5945,314.2055l-117.892-117.892c-9.997-9.998-26.205-9.997-36.204,0-9.998,9.997-9.998,26.205,0,36.203l135.994,135.992c9.994,9.997,26.214,9.99,36.204,0L504.5025,43.7025c9.998-9.997,9.997-26.206,0-36.204Z"/></svg>
+                    </div>
+                    <div class="name">Active</div>
+                  </div>
                 </div>`;
 
         let kids_list_el = befriend.els.me.querySelector('.selected-mode-container .kids .kids-list');
@@ -2213,9 +2220,7 @@ befriend.me = {
                         befriend.me.data.modes.data.kids[r.data.token] = r.data;
 
                         // Add to UI with token from response
-                        befriend.me.addKidHtml({
-                            token: r.data.token
-                        });
+                        befriend.me.addKidHtml(r.data);
 
                         befriend.toggleSpinner(false);
                     } catch(e) {
@@ -2226,7 +2231,41 @@ befriend.me = {
 
             befriend.me.events.onKidsAgeSelect();
             befriend.me.events.onKidsGenderSelect();
+            befriend.me.events.onKidsActive();
             befriend.me.events.onKidsRemove();
+        },
+        onKidsActive: function () {
+            let active_btns = befriend.els.me.querySelectorAll('.kids .kid .active');
+
+            for (let btn of active_btns) {
+                if (btn._listener) continue;
+                btn._listener = true;
+
+                btn.addEventListener('click', async function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    let kid_el = this.closest('.kid');
+                    let token = kid_el.getAttribute('data-token');
+
+                    let checkbox_el = this.querySelector('.checkbox');
+
+                    let is_active = !elHasClass(checkbox_el, 'checked');
+
+                    toggleElClass(checkbox_el, 'checked');
+
+                    try {
+                        await befriend.auth.put('/me/mode/kids', {
+                            kid_token: token,
+                            is_active
+                        });
+
+                        befriend.me.data.modes.data.kids[token].is_active = is_active;
+                    } catch (e) {
+                        console.error('Error removing kid:', e);
+                    }
+                });
+            }
         },
         onKidsRemove: function () {
             let remove_btns = befriend.els.me.querySelectorAll('.kids .kid .remove');
@@ -2327,6 +2366,12 @@ befriend.me = {
                                 kid_token: kid_token,
                                 age_token: token
                             });
+
+                            // Update local data
+                            if(befriend.me.data.modes.data.kids?.[kid_token]) {
+                                let age = befriend.me.data.modes.options.kids[token];
+                                befriend.me.data.modes.data.kids[kid_token].age_id = age?.id || null;
+                            }
                         } catch(e) {
                             console.error('Error updating kid age:', e);
                         }

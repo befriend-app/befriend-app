@@ -69,3 +69,46 @@
         }
     }
 }
+
+.checkbox {
+    $dim: 20px;
+    width: $dim;
+    height: $dim;
+    border: 1px solid $color_lightgray;
+    outline: 0;
+    position: relative;
+    cursor: pointer;
+    transition: all 100ms;
+    border-radius: 3px;
+
+    .inner {
+        width: $dim;
+        height: $dim;
+        background: #fff;
+        transition: all 100ms;
+    }
+
+    &.checked {
+        //border-color: transparent;
+
+        .inner {
+            background: darken($brand_color_b, 0%);
+        }
+
+        svg {
+            opacity: 1;
+        }
+    }
+
+    svg {
+        display: flex;
+        //fill: #fff;
+        position: absolute;
+        top: 4px;
+        left: 3px;
+        opacity: 0;
+        width: $dim * .7;
+        transition: all 100ms;
+    }
+}
+
