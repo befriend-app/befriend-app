@@ -142,17 +142,20 @@ html.#{$class_confirm_me_action} {
             }
         }
 
+        .mode-wrapper {
+            padding: 10px 8px;
+            border-radius: $section_br;
+            border-top-left-radius: 0;
+            box-sizing: border-box;
+            border: 1px solid $color_lightgray;
+            background-color: white;
+            position: relative;
+        }
+
         .mode-options {
             $gap_lr: 8px;
             display: flex;
-            padding: 10px 8px;
             gap: 0 $gap_lr;
-            border: 1px solid $color_lightgray;
-            border-radius: $section_br;
-            background-color: white;
-            position: relative;
-            border-top-left-radius: 0;
-            box-sizing: border-box;
 
             .mode-option {
                 flex-basis: 33.333%;
@@ -256,6 +259,51 @@ html.#{$class_confirm_me_action} {
                     opacity: .8;
                     text-align: center;
                     margin-top: 3px;
+                }
+            }
+        }
+
+        .selected-mode-container {
+            overflow: hidden;
+            transition: height 300ms;
+            height: 0;
+
+            &:not(.active) {
+                height: 0 !important;
+            }
+
+            &.active {
+
+            }
+
+            .partner {
+                padding: 10px 5px;
+
+                .label {
+                    font-size: 13px;
+                    font-weight: 500;
+                }
+
+                .options {
+                    margin-top: 10px;
+                    display: grid;
+                    gap: 10px;
+                    grid-template-columns: repeat(3, 1fr);
+
+                    .option {
+                        background-color: lighten(black, 95%);
+                        @include flex-center;
+                        border-radius: 8px;
+                        padding: 5px 8px;
+                        font-size: 14px;
+                        transition: all 200ms;
+                        border: 1px solid $color_lightgray;
+
+                        &.selected {
+                            background-color: $brand_color_b;
+                            border: 1px solid darken($brand_color_a, 10%);
+                        }
+                    }
                 }
             }
         }

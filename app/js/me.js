@@ -2,6 +2,7 @@ befriend.me = {
     data: {
         me: null,
         genders: null,
+        modes: null,
         sections: {
             all: null,
             options: null,
@@ -84,6 +85,9 @@ befriend.me = {
                 let data = r.data;
 
                 befriend.me.data.me = data.me;
+                befriend.me.data.genders = data.genders;
+                befriend.me.data.modes = data.modes;
+
                 befriend.me.data.sections.all = data.sections.all;
                 befriend.me.data.sections.options = data.sections.options;
                 befriend.me.data.sections.active = sortObj(data.sections.active, 'position');
@@ -162,6 +166,7 @@ befriend.me = {
     },
     selectMode: async function (mode, skip_server) {
         const modeOptions = befriend.els.me.querySelectorAll('.mode-option');
+        const selectedModeContainer = befriend.els.me.querySelector('.selected-mode-container');
 
         removeElsClass(modeOptions, 'selected');
 
@@ -170,6 +175,65 @@ befriend.me = {
         addClassEl('selected', selectedModeEl);
 
         befriend.me.modes.selected = mode;
+
+        if (mode === 'plus-one' || mode === 'plus-kids') {
+            function genderSelected(gender) {
+                if(befriend.me.data?.modes?.data?.partner?.gender_id === gender.id) {
+                    return 'selected';
+                }
+
+                return '';
+            }
+
+            addClassEl('active', selectedModeContainer);
+
+            // Set up container content based on mode
+            let html = '';
+
+            if (mode === 'plus-one') {
+                const genders = befriend.me.data.genders;
+
+                html = `
+                <div class="partner">
+                    <div class="label">
+                            Select Gender
+                    </div>
+                    <div class="options">
+                        ${genders.map(gender => `
+                            <div class="option ${genderSelected(gender)}" data-gender="${gender.token}">${gender.name}</div>
+                        `).join('')}
+                    </div>
+                </div>`;
+            } else if (mode === 'plus-kids') {
+                html = `
+                <div class="kids">
+                    <div class="add-kid">
+                        <div class="add-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,24C5.383,24,0,18.617,0,12S5.383,0,12,0s12,5.383,12,12-5.383,12-12,12ZM12,1C5.935,1,1,5.935,1,12s4.935,11,11,11,11-4.935,11-11S18.065,1,12,1Z"/><path d="M17.5,12.5H6.5c-.276,0-.5-.224-.5-.5s.224-.5.5-.5h11c.276,0,.5.224.5.5s-.224.5-.5.5Z"/><path d="M12,18c-.276,0-.5-.224-.5-.5V6.5c0-.276.224-.5.5-.5s.5.224.5.5v11c0,.276-.224.5-.5.5Z"/></svg>
+                            Add Kid
+                        </div>
+                    </div>
+                    <div class="kids-list"></div>
+                </div>`;
+            }
+
+            selectedModeContainer.innerHTML = html;
+
+            // Initialize event handlers
+            if (mode === 'plus-one') {
+                befriend.me.events.onPartnerGenderSelect();
+            } else if (mode === 'plus-kids') {
+                befriend.me.events.onKids();
+            }
+
+            requestAnimationFrame(function () {
+                setElHeightDynamic(selectedModeContainer);
+            });
+
+        } else {
+            removeClassEl('active', selectedModeContainer);
+            selectedModeContainer.innerHTML = '';
+        }
 
         if(!skip_server) {
             await befriend.auth.put(`/me/mode`, {
@@ -2002,6 +2066,42 @@ befriend.me = {
 
                 resolve();
             });
+        },
+        onPartnerGenderSelect: function () {
+            let option_els = befriend.els.me.querySelectorAll('.selected-mode-container .partner .option');
+
+            for(let i = 0; i < option_els.length; i++) {
+                let el = option_els[i];
+
+                if(el._listener) {
+                    continue;
+                }
+
+                el._listener = true;
+
+                el.addEventListener('click', async function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    let token = this.getAttribute('data-gender');
+
+                    if(elHasClass(el, 'selected')) {
+                        removeClassEl('selected', el);
+                    } else {
+                        removeElsClass(option_els, 'selected');
+                        addClassEl('selected', el);
+                    }
+
+                    await befriend.auth.put(`/me/mode/partner`, {
+                        gender: token,
+                        isSelect: elHasClass(el, 'selected'),
+                    });
+                });
+            }
+
+        },
+        onKids: function () {
+
         },
         onAddSectionBtn: function () {
             //open available sections

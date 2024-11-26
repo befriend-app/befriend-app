@@ -147,23 +147,25 @@ befriend.html = {
                                     <div class="tab">
                                         <div class="title">Mode</div>
                                     </div>
-                                    <div class="mode-options">
-                                        ${befriend.me.modes.options.map(option => `
-                                            <div class="mode-option ${option.id === befriend.me.modes.selected ? 'selected' : ''}" data-mode="${option.id}">
-                                                <div class="content">
-                                                    <div class="icon">${option.icon}</div>
-                                                    <div class="name">${option.name}</div>
-                                                    <div class="description">${option.description}</div>
+                                    
+                                    <div class="mode-wrapper">
+                                        <div class="mode-options">
+                                            ${befriend.me.modes.options.map(option => `
+                                                <div class="mode-option ${option.id === befriend.me.modes.selected ? 'selected' : ''}" data-mode="${option.id}">
+                                                    <div class="content">
+                                                        <div class="icon">${option.icon}</div>
+                                                        <div class="name">${option.name}</div>
+                                                        <div class="description">${option.description}</div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        `).join('')}
-                                    </div>
-                                    <div class="selected-mode-container">
-                                        <div class="partner">
-                                        
+                                            `).join('')}
                                         </div>
-                                        <div class="kids">
                                         
+                                        <div class="selected-mode-container">
+                                            <div class="partner">
+                                            </div>
+                                            <div class="kids">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
