@@ -264,7 +264,7 @@ html.#{$class_confirm_me_action} {
         }
 
         .selected-mode-container {
-            overflow: hidden;
+            overflow-y: hidden;
             transition: height 300ms;
             height: 0;
 
@@ -306,6 +306,166 @@ html.#{$class_confirm_me_action} {
                     }
                 }
             }
+
+            .kids {
+                .add-kid {
+                    margin-top: 10px;
+
+                    .add-btn {
+                        background-color: lighten($brand_color_a, 10%);
+                        color: white;
+                        display: flex;
+                        width: fit-content;
+                        @include flex-center;
+                        gap: 0 5px;
+                        padding: 6px 12px;
+                        border-radius: 6px;
+                        font-size: 14px;
+
+                        svg {
+                            height: 16px;
+                            fill: white;
+                        }
+                    }
+                }
+
+                .kids-list {
+                    display: flex;
+                    flex-direction: column;
+
+                    gap: 10px 0;
+
+                    .kid {
+                        &:first-of-type {
+                            margin-top: 10px;
+                        }
+
+                        padding: 10px 10px;
+                        border: 1px solid lighten(black, 60%);
+                        border-radius: 6px;
+                        position: relative;
+
+                        .remove {
+                            position: absolute;
+                            top: 8px;
+                            right: 8px;
+                            height: 18px;
+                            width: 18px;
+                        }
+
+                        .child-number {
+                            font-size: 13px;
+                            margin-bottom: 8px;
+                        }
+
+                        .select-list {
+                            $transition_ms: 300ms;
+                            $br: 16px;
+                            position: relative;
+                            width: 120px;
+                            cursor: pointer;
+
+                            // Unselected state
+                            &.unselected {
+                                .current-selected {
+                                    font-weight: 300;
+                                }
+                            }
+
+                            // Selected display
+                            .current-selected {
+                                padding: 8px 12px;
+                                border: 1px solid lighten(black, 82%);
+                                border-radius: $br;
+                                background: white;
+                                font-size: 14px;
+                                font-weight: 400;
+                                transition: border-radius $transition_ms;
+                            }
+
+                            .arrow {
+                                $h: 5px;
+                                height: $h;
+                                position: absolute;
+                                right: 12px;
+                                top: calc(50% - calc($h / 2));
+                            }
+
+                            // Options container
+                            .options {
+                                height: 0;
+                                position: absolute;
+                                top: 100%;
+                                left: 0;
+                                right: 0;
+                                background: white;
+                                border-top: none;
+                                border-radius: 0 0 $br $br;
+                                z-index: 3;
+                                flex-direction: column;
+                                padding: 0;
+                                transition: all $transition_ms;
+                                overflow-y: hidden;
+                                box-sizing: border-box;
+                                display: flex;
+
+                                // Individual option
+                                .option {
+                                    padding: 8px 12px;
+                                    font-size: 13px;
+                                    border-radius: 0 !important;
+                                    box-sizing: border-box;
+                                    transition: all $transition_ms;
+
+                                    &:hover {
+                                        background: #f5f5f5;
+                                    }
+
+                                    &.selected {
+                                        background: darken($brand_color_c, 5%);
+                                        color: white;
+                                    }
+                                }
+                            }
+
+                            &.open {
+                                .current-selected {
+                                    border-bottom-left-radius: 0;
+                                    border-bottom-right-radius: 0;
+                                }
+
+                                .options {
+                                    border: 1px solid $color_lightgray;
+                                    border-top: 0;
+                                }
+                            }
+                        }
+
+                        .gender {
+                            margin-top: 10px;
+                            display: flex;
+                            gap: 10px;
+                            justify-content: space-between;
+
+                            .option {
+                                background-color: lighten(black, 95%);
+                                @include flex-center;
+                                border-radius: 8px;
+                                padding: 5px 12px;
+                                font-size: 14px;
+                                transition: all 200ms;
+                                border: 1px solid $color_lightgray;
+                                min-width: 60px;
+
+                                &.selected {
+                                    background-color: $brand_color_b;
+                                    border: 1px solid darken($brand_color_a, 10%);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -334,7 +494,7 @@ html.#{$class_confirm_me_action} {
             touch-action: none;
 
             &.is-draggable {
-                z-index: 100;
+                z-index: 5;
                 transition: none;
                 cursor: grabbing;
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);

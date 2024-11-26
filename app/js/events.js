@@ -86,6 +86,15 @@ befriend.events = {
                     }
                 }
 
+                //kids select
+                let open_kids_list_el = befriend.els.me.querySelector('.open.select-list');
+
+                if(open_kids_list_el && !e.target.closest('.select-list')) {
+                    befriend.me.transitionKidsAge(open_kids_list_el, false);
+                }
+
+                //secondary select
+
                 let open_secondary_section_el = befriend.els.me.querySelector('.secondary-open');
 
                 if (open_secondary_section_el && !e.target.closest('.secondary')) {
