@@ -607,19 +607,22 @@ html.#{$class_confirm_me_action} {
             &.secondary-open {
                 z-index: 3;
 
-                .secondary {
-                    .current-selected {
-                        border-bottom-left-radius: 0 !important;
-                        border-bottom-right-radius: 0 !important;
-                    }
-                    .options {
-                        border: 1px solid $color_lightgray !important;
-                        opacity: 1;
+                .item-secondary-open {
+                    .secondary {
+                        .current-selected {
+                            border-bottom-left-radius: 0 !important;
+                            border-bottom-right-radius: 0 !important;
+                        }
+                        .options {
+                            border: 1px solid $color_lightgray !important;
+                            border-top-color: transparent !important;
+                            //opacity: 1;
+                        }
                     }
                 }
 
                 .items-container {
-                    overflow-y: initial;
+                    overflow-y: initial !important;
                 }
             }
 
@@ -1140,6 +1143,10 @@ html.#{$class_confirm_me_action} {
 
                     &.mine {
 
+                    }
+
+                    &.item-secondary-open {
+                        z-index: 12 !important;
                     }
 
                     &:not(.mine) {

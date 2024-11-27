@@ -60,6 +60,9 @@ befriend.me = {
             section: null,
         },
     },
+    secondaries: {
+        activeEl: null
+    },
     init: function () {
         return new Promise(async (resolve, reject) => {
             try {
@@ -1069,29 +1072,78 @@ befriend.me = {
             removeClassEl('show-menu', el);
         }
     },
-    transitionSecondaryT: null,
-    transitionSecondary: function (secondary_el, show) {
-        clearTimeout(this.transitionSecondaryT);
+    transitionSecondary: async function (secondary_el, show, on_internal) {
+        console.log({
+            secondary_el,
+            show,
+            on_internal
+        });
 
+        console.trace();
         let options_el = secondary_el.querySelector('.options');
+        let section_el = secondary_el.closest('.section');
+        let item_el = secondary_el.closest('.item');
 
-        let items_container_el = secondary_el.closest('.items-container');
+        let activeEl = befriend.me.secondaries.activeEl;
 
-        items_container_el.style.setProperty('overflow-y', 'initial');
-
-        if (show) {
-            addClassEl('secondary-open', secondary_el.closest('.section'));
-
-            setElHeightDynamic(options_el);
-        } else {
-            removeClassEl('secondary-open', secondary_el.closest('.section'));
-
-            options_el.style.removeProperty('height');
+        if(secondary_el._transitionTimeout) {
+            clearTimeout(secondary_el._transitionTimeout);
         }
 
-        this.transitionSecondaryT = setTimeout(function () {
-            items_container_el.style.removeProperty('overflowY');
-        }, 300);
+        if (show) {
+            if(activeEl && activeEl !== secondary_el) {
+                let active_section = activeEl.closest('.section');
+                let active_item = activeEl.closest('.item');
+                let active_options = activeEl.querySelector('.options');
+
+                removeClassEl('item-secondary-open', active_item);
+                active_options.style.height = '0';
+
+                setTimeout(() => {
+                    if(active_section !== section_el) {
+                        removeClassEl('secondary-open', active_section);
+                        active_options.style.removeProperty('height');
+                    }
+                }, 300);
+            }
+
+            addClassEl('secondary-open', section_el);
+            addClassEl('item-secondary-open', item_el);
+
+            requestAnimationFrame(() => {
+                setElHeightDynamic(options_el);
+            });
+
+            befriend.me.secondaries.activeEl = secondary_el;
+        } else {
+            const currentHeight = options_el.scrollHeight;
+            options_el.style.height = `${currentHeight}px`;
+            void options_el.offsetHeight;
+
+            // Then transition to 0
+            options_el.style.height = '0';
+
+            removeClassEl('item-secondary-open', item_el);
+
+            secondary_el._transitionTimeout = setTimeout(function () {
+                removeClassEl('secondary-open', section_el);
+
+                options_el.style.removeProperty('height');
+
+                if(!on_internal) {
+                    if(secondary_el === activeEl) {
+                        befriend.me.secondaries.activeEl = null;
+                    }
+                }
+            }, 300);
+        }
+    },
+    hideActiveSecondaryIf: function (target) {
+        let open_secondary_el = befriend.me.secondaries.activeEl;
+
+        if (open_secondary_el && !target?.closest('.secondary')) {
+            befriend.me.transitionSecondary(open_secondary_el, false);
+        }
     },
     updateSectionHeightT: {},
     updateSectionHeight: async function (el, collapse, no_transition, skip_save) {
@@ -2572,6 +2624,8 @@ befriend.me = {
                 });
 
                 section.addEventListener('touchstart', function(e) {
+                    befriend.me.hideActiveSecondaryIf(e.target);
+
                     // Only handle drag start from section top area
                     const target = e.target;
                     const sectionTop = section.querySelector('.section-top');
@@ -3149,24 +3203,14 @@ befriend.me = {
                         e.preventDefault();
                         e.stopPropagation();
 
+                        let item_el = this.closest('.item');
+
                         if (e.target.closest('.options')) {
                             return false;
                         }
 
-                        //hide all except current
-                        for (let i2 = 0; i2 < secondaries.length; i2++) {
-                            let secondary_2 = secondaries[i2];
-
-                            if (el !== secondary_2) {
-                                befriend.me.transitionSecondary(secondary_2, false);
-                            }
-                        }
-
-                        if (elHasClass(el, 'open')) {
-                            befriend.me.transitionSecondary(el, false);
-                        } else {
-                            befriend.me.transitionSecondary(el, true);
-                        }
+                        let isOpen = elHasClass(item_el, 'item-secondary-open');
+                        befriend.me.transitionSecondary(el, !isOpen);
                     });
                 }
             }
@@ -3296,6 +3340,7 @@ befriend.me = {
                 });
 
                 item_el.addEventListener('touchstart', function(e) {
+                    console.log("item touch start");
                     if (!elHasClass(item_el, 'is-favorite')) return;
 
                     // Don't start drag if clicking the heart icon
@@ -3326,7 +3371,7 @@ befriend.me = {
                             // Disable scrolling when drag starts
                             const scrollContainer = item_el.closest('.items-container');
                             if (scrollContainer) {
-                                scrollContainer.style.overflow = 'hidden';
+                                scrollContainer.style.overflowY = 'hidden';
                             }
 
                             const idleItems = meReorder.getIdleItems(item_el.parentElement);

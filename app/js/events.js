@@ -94,12 +94,7 @@ befriend.events = {
                 }
 
                 //secondary select
-
-                let open_secondary_section_el = befriend.els.me.querySelector('.secondary-open');
-
-                if (open_secondary_section_el && !e.target.closest('.secondary')) {
-                    befriend.me.transitionSecondary(open_secondary_section_el.querySelector('.secondary'), false);
-                }
+                befriend.me.hideActiveSecondaryIf(e.target);
 
                 let menu_shown_el = befriend.els.me.querySelector('.section.show-menu');
 
