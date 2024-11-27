@@ -278,6 +278,7 @@ html.#{$class_confirm_me_action} {
 
             .partner {
                 padding: 10px 5px;
+                padding-bottom: 5px;
 
                 .label {
                     font-size: 13px;
@@ -604,6 +605,8 @@ html.#{$class_confirm_me_action} {
             }
 
             &.secondary-open {
+                z-index: 3;
+
                 .secondary {
                     .current-selected {
                         border-bottom-left-radius: 0 !important;
@@ -1046,6 +1049,7 @@ html.#{$class_confirm_me_action} {
                     font-weight: 500;
                     border-top: 1px solid $color_lightgray;
                     box-sizing: border-box;
+                    border-right: 1px solid $color_lightgray;
 
                     &:first-of-type {
                         border-top-left-radius: $br;
@@ -1059,6 +1063,7 @@ html.#{$class_confirm_me_action} {
                         background: $brand_color_a;
                         color: white;
                         border-bottom-color: $brand_color_a;
+                        border-right-color: transparent;
                     }
                 }
             }
