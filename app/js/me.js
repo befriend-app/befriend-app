@@ -651,7 +651,9 @@ befriend.me = {
                             }
                         }
 
-                        let item_html = befriend.me.sectionItemHtml(key, table_data?.name, item);
+                        let table_key = item.table_key || table_data?.name;
+
+                        let item_html = befriend.me.sectionItemHtml(key, table_key, item);
 
                         items_html += item_html;
                     }
@@ -1073,13 +1075,6 @@ befriend.me = {
         }
     },
     transitionSecondary: async function (secondary_el, show, on_internal) {
-        console.log({
-            secondary_el,
-            show,
-            on_internal
-        });
-
-        console.trace();
         let options_el = secondary_el.querySelector('.options');
         let section_el = secondary_el.closest('.section');
         let item_el = secondary_el.closest('.item');
@@ -1337,7 +1332,7 @@ befriend.me = {
         let secondary_html = '';
         let secondary_options_html = '';
 
-        let secondary_options = section_data.data?.secondary?.options;
+        let secondary_options = section_data.data?.secondary?.[table_key]?.options;
 
         let isFavorable = table_data?.isFavorable;
 
@@ -1365,7 +1360,7 @@ befriend.me = {
             }
 
             secondary_html = `<div class="secondary ${unselected}" data-value="${item.secondary ? item.secondary : ''}">
-                                                    <div class="current-selected">${item.secondary ? item.secondary : section_data.data?.secondary?.unselectedStr}</div>
+                                                    <div class="current-selected">${item.secondary ? item.secondary : section_data.data?.secondary?.[table_key]?.unselectedStr}</div>
                                                     <svg class="arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 82.1 43.2"><path d="M41.1,43.2L0,2.2,2.1,0l39,39L80,0l2.1,2.2-41,41Z"/></svg>
                                                     <div class="options">${secondary_options_html}</div>
                                                 </div>`;
@@ -1471,7 +1466,7 @@ befriend.me = {
                         });
 
                         for (let item of items_filtered) {
-                            items_html += befriend.me.sectionItemHtml(section_key, table_key, item);
+                            items_html += befriend.me.sectionItemHtml(section_key, item.table_key || table_key, item);
                         }
 
                         removeClassEl('no-items', section_el);

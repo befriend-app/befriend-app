@@ -1209,6 +1209,10 @@ html.#{$class_confirm_me_action} {
                         .name {
                             padding: 0 !important;
                         }
+
+                        .secondary {
+                            margin-bottom: 5px;
+                        }
                     }
 
                     &.button-option {
