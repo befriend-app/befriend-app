@@ -2624,10 +2624,16 @@ befriend.me = {
                 });
 
                 section.addEventListener('touchstart', function(e) {
-                    befriend.me.hideActiveSecondaryIf(e.target);
+                    const target = e.target;
+
+                    befriend.me.hideActiveSecondaryIf(target);
+
+                    if(target.closest('.secondary')) {
+                        return;
+                    }
 
                     // Only handle drag start from section top area
-                    const target = e.target;
+
                     const sectionTop = section.querySelector('.section-top');
                     if (!sectionTop.contains(target)) return;
 
@@ -3341,11 +3347,12 @@ befriend.me = {
 
                 item_el.addEventListener('touchstart', function(e) {
                     console.log("item touch start");
+
                     if (!elHasClass(item_el, 'is-favorite')) return;
 
-                    // Don't start drag if clicking the heart icon
+                    // Don't start drag if clicking the heart icon or secondary
                     const target = e.target;
-                    if (target.closest('.heart') || target.closest('.remove')) {
+                    if (target.closest('.heart') || target.closest('.remove') || target.closest('.secondary')) {
                         return;
                     }
 
