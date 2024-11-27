@@ -739,7 +739,7 @@ html.#{$class_confirm_me_action} {
             }
 
             .category-btn {
-                padding: 4px 10px;
+                padding: 4px 12px;
                 border: 1px solid $color_lightgray;
                 border-radius: 10px;
                 background: lighten(black, 95%);
@@ -755,11 +755,15 @@ html.#{$class_confirm_me_action} {
                 }
 
                 &.w-heading {
+                    padding: 4px 10px;
 
+                    .name {
+                        font-size: 12px;
+                    }
                 }
 
                 .name {
-                    font-size: 12px;
+                    font-size: 14px;
                 }
 
                 .heading {
@@ -1045,7 +1049,7 @@ html.#{$class_confirm_me_action} {
                     @include flex-center-col;
                     transition: all 200ms;
                     background: lighten(black, 95%);
-                    font-size: 14px;
+                    font-size: 15px;
                     font-weight: 500;
                     border-top: 1px solid $color_lightgray;
                     box-sizing: border-box;
