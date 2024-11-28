@@ -1200,10 +1200,14 @@ befriend.me = {
             return;
         }
 
+        let section_el = el.closest('.section');
+
         if (show) {
+            addClassEl(befriend.classes.autoCompleteMe, section_el);
             addClassEl(befriend.classes.autoCompleteMe, el);
             addClassEl('autocomplete-shown', befriend.els.me);
         } else {
+            removeClassEl(befriend.classes.autoCompleteMe, section_el);
             removeClassEl(befriend.classes.autoCompleteMe, el);
             removeClassEl('autocomplete-shown', befriend.els.me);
         }
@@ -1881,7 +1885,7 @@ befriend.me = {
             return allSections.filter(el => !elHasClass(el, 'is-draggable'));
         },
         setSectionsGap: function (idleSections) {
-            if (idleSections.length <= 1) {
+            if (idleSections.length < 1) {
                 this.itemsGap = 0;
                 return;
             }
@@ -3079,8 +3083,6 @@ befriend.me = {
                 item._listener = true;
 
                 item.addEventListener('click', async function (e) {
-                    console.log("on select option item");
-
                     if(item._request_ip) {
                         return false;
                     }
@@ -3430,8 +3432,6 @@ befriend.me = {
             });
 
             item_el.addEventListener('touchstart', function(e) {
-                console.log("item touch start");
-
                 if (!elHasClass(item_el, 'is-favorite')) return;
 
                 // Don't start drag if clicking the heart icon or secondary

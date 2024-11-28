@@ -583,6 +583,10 @@ html.#{$class_confirm_me_action} {
                 z-index: 1;
             }
 
+            &.#{$class_autocomplete_me} {
+                z-index: 3;
+            }
+
             &.buttons {
                 .section-container {
                     margin-top: 0 !important;
@@ -1417,8 +1421,7 @@ html.#{$class_confirm_me_action} {
                             }
 
                             &.selected {
-                                background: darken($brand_color_c, 5%);
-                                color: white;
+                                background: darken($brand_color_b, 5%);
                             }
                         }
                     }
