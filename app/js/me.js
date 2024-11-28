@@ -1,3 +1,6 @@
+//todo
+//on change country, unset data->categories
+
 befriend.me = {
     data: {
         me: null,
@@ -748,7 +751,11 @@ befriend.me = {
             }
         }
     },
-    addSectionItem: function (section_key, item_token) {
+    addSectionItem: function (section_key, item_token, table_key) {
+        console.log({
+            add_section_item: table_key
+        });
+
         return new Promise(async (resolve, reject) => {
             try {
                 let section_data = befriend.me.getActiveSection(section_key);
@@ -756,6 +763,10 @@ befriend.me = {
 
                 if (!('items' in section_data)) {
                     section_data.items = {};
+                }
+
+                if(!table_key) {
+                    table_key = befriend.me.getSectionTableKey(section_key);
                 }
 
                 let filterKey = section_data.data?.autoComplete?.filter?.hashKey;
@@ -767,7 +778,7 @@ befriend.me = {
 
                 let r = await befriend.auth.post(`/me/sections/item`, {
                     section_key: section_key,
-                    table_key: befriend.me.getSectionTableKey(section_key),
+                    table_key: table_key,
                     item_token: item_token,
                     hash_token: hash_token || null,
                 });
@@ -984,7 +995,7 @@ befriend.me = {
                                     }
                                 }
 
-                                group_html += `<div class="item" data-token="${item.token}">
+                                group_html += `<div class="item" data-token="${item.token}" data-table-key="${item.table_key || ''}">
                                                    ${location_html}
                                                    <div class="name">${item.name}</div>
                                               </div>`;
@@ -1005,15 +1016,23 @@ befriend.me = {
                                 continue;
                             }
 
+                            let label = '';
                             let meta = '';
+
+                            if(item.label) {
+                                label = `<div class="label">${item.label}</div>`;
+                            }
 
                             if(item.meta) {
                                 meta = `<div class="meta">${item.meta}</div>`;
                             }
 
-                            items_html += `<div class="item" data-token="${item.token}">
-                                                <div class="name">${item.name}</div>
-                                                ${meta}
+                            items_html += `<div class="item ${label ? 'has-label' : ''}" data-token="${item.token}" data-table-key="${item.table_key || ''}">
+                                                <div class="name-meta">
+                                                    <div class="name">${item.name}</div>
+                                                    ${meta}
+                                                </div>
+                                                ${label}
                                             </div>`;
                         }
                     }
@@ -3059,13 +3078,14 @@ befriend.me = {
 
                     let section_key = section_el.getAttribute('data-key');
                     let token = this.getAttribute('data-token');
+                    let table_key = this.getAttribute('data-table-key');
 
                     try {
                         item.parentNode.removeChild(item);
                     } catch (e) {}
 
                     try {
-                        befriend.me.addSectionItem(section_key, token);
+                        befriend.me.addSectionItem(section_key, token, table_key);
                     } catch (e) {
                         console.error(e);
                     }
@@ -3577,11 +3597,12 @@ befriend.me = {
 
                 let section = el.closest('.section');
                 let section_key = section.getAttribute('data-key');
+                let table_key = el.getAttribute('data-table-key');
                 let token = el.getAttribute('data-token');
 
                 befriend.me.toggleAutoComplete(null, false);
 
-                befriend.me.addSectionItem(section_key, token);
+                befriend.me.addSectionItem(section_key, token, table_key);
 
                 el.closest('.search-container').querySelector('.search-input').value = '';
             });
