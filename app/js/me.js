@@ -1291,11 +1291,11 @@ befriend.me = {
 
         let section_data = befriend.me.getActiveSection(section_key);
 
-        if (!section_data || !section_data.autoComplete || !section_data.autoComplete.filterList) {
+        if (!section_data?.data?.autoComplete?.filter?.list) {
             return;
         }
 
-        let list_items = section_data.autoComplete.filterList;
+        let list_items = section_data.data.autoComplete.filter.list;
 
         let filtered_items = filterSort(list_items, search_value);
 
