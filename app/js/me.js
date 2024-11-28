@@ -68,7 +68,7 @@ befriend.me = {
             try {
                 await befriend.me.getMe();
 
-                befriend.me.setMe();
+                await befriend.me.setMe();
                 befriend.me.setActive();
                 befriend.me.setOptions();
             } catch (e) {
@@ -131,22 +131,15 @@ befriend.me = {
             }
         });
     },
-    setMe: function () {
+    setMe: async function () {
         if (!befriend.me.data.me) {
             return;
         }
 
         let me_obj = befriend.me.data.me;
 
-        //first name
-        let first_name_el = befriend.els.me.querySelector('.first-name');
-
         //birthday
         let birthday_el = befriend.els.me.querySelector('.birthday');
-
-        if (me_obj.first_name) {
-            first_name_el.innerHTML = me_obj.first_name;
-        }
 
         if (me_obj.birth_date) {
             let years = dayjs().diff(dayjs(me_obj.birth_date), 'years');
@@ -160,6 +153,25 @@ befriend.me = {
             }
 
             // birthday_el.querySelector('.date').innerHTML = date;
+        }
+
+        //first name
+        let first_name_el = befriend.els.me.querySelector('.first-name');
+
+        if (me_obj.first_name) {
+            first_name_el.innerHTML = me_obj.first_name;
+        }
+
+        //email
+        let email_el = befriend.els.me.querySelector('.settings-item.email');
+
+        email_el.querySelector('.info').innerHTML = me_obj.email;
+
+        //country
+        let country_el = befriend.els.me.querySelector('.settings-item.country');
+
+        if(me_obj.country) {
+            country_el.querySelector('.info').innerHTML = me_obj.country.name;
         }
 
         //mode
@@ -350,8 +362,7 @@ befriend.me = {
         return new Promise(async (resolve, reject) => {
             try {
                 befriend.toggleSpinner(true);
-                let location = befriend.location.device;
-                let r = await befriend.auth.post('/me/sections', { key, location });
+                let r = await befriend.auth.post('/me/sections', { key });
 
                 befriend.me.data.sections.active[key] = r.data;
             } catch (e) {
@@ -1763,1740 +1774,1818 @@ befriend.me = {
             });
         }, 300);
     },
-    events: {
-        sectionReorder: {
-            ip: false,
-            start: {
-                x: null,
-                y: null,
-            },
-            el: null,
-            itemsGap: 0,
-            prevRect: null,
-            sections: [],
-            dragStarted: false,
-            autoScroll: {
-                animationFrame: null,
-                scrolling: false,
-                startPosition: null,
-                targetPosition: null,
-                startTime: null,
-                duration: 250 // ms for scroll animation
-            },
-            isItemAbove: function (item) {
-                return item.hasAttribute('data-is-above');
-            },
-            isItemToggled: function (item) {
-                return item.hasAttribute('data-is-toggled');
-            },
-            getIdleSections: function (sectionsContainer) {
-                let allSections = Array.from(sectionsContainer.querySelectorAll(`.section`));
-                return allSections.filter(el => !elHasClass(el, 'is-draggable'));
-            },
-            setSectionsGap: function (idleSections) {
-                if (idleSections.length <= 1) {
-                    this.itemsGap = 0;
-                    return;
-                }
+    account: {
+        view: 'profile', // 'profile' or 'account'
 
-                this.itemsGap = befriend.variables.me_sections_gap_h;
-            },
-            initReorderSection: function (section) {
-                addClassEl('is-draggable', section);
-            },
-            initSectionsState: function (reorderEl, idleSections) {
-                const reorderRect = reorderEl.getBoundingClientRect();
-                const reorderTop = reorderRect.top;
+        initEvents: function () {
+            let profileViewEl = befriend.els.me.querySelector('.view-profile');
+            let accountViewEl = befriend.els.me.querySelector('.view-account');
+            let accountBtn = befriend.els.me.querySelector('.account-btn');
+            let profileBtn = befriend.els.me.querySelector('.profile-btn');
 
-                for (let section of idleSections) {
-                    const sectionRect = section.getBoundingClientRect();
-                    if (sectionRect.top < reorderTop) {
-                        section.dataset.isAbove = '';
-                    }
-                }
-            },
-            updateIdleSectionsStateAndPosition: function (reorderEl, sectionY) {
-                const reorderElRect = reorderEl.getBoundingClientRect();
-                const reorderElTop = reorderElRect.top;
-                const reorderElBottom = reorderElRect.bottom;
-
-                // Get idle sections and update their states based on position
-                const idleSections = this.getIdleSections(reorderEl.parentElement);
-                const draggingUp = sectionY < this.start.y;
-
-                for (let section of idleSections) {
-                    const sectionRect = section.getBoundingClientRect();
-                    const sectionTop = sectionRect.top;
-                    const topEl = section.querySelector('.section-top');
-                    const topElBottom = topEl.getBoundingClientRect().bottom;
-
-                    if(draggingUp) {
-                        if (this.isItemAbove(section)) {
-                            // Section is above the dragged section
-                            if (reorderElTop <= sectionTop) {
-                                section.dataset.isToggled = '';
-                            } else {
-                                delete section.dataset.isToggled;
-                            }
-                        } else {
-                            // Section is below the dragged section
-                            if (reorderElTop >= sectionTop) {
-                                section.dataset.isToggled = '';
-                            } else {
-                                delete section.dataset.isToggled;
-                            }
-                        }
-                    } else { //dragging down
-                        if (this.isItemAbove(section)) {
-                            delete section.dataset.isToggled;
-                        } else {
-                            // dragged section is below bottom of top bar
-                            if (reorderElBottom > topElBottom) {
-                                section.dataset.isToggled = '';
-                            } else {
-                                delete section.dataset.isToggled;
-                            }
-                        }
-                    }
-                }
-
-                // Update positions
-                for (let section of idleSections) {
-                    if (this.isItemToggled(section)) {
-                        const direction = this.isItemAbove(section) ? 1 : -1;
-                        const transformY = direction * (reorderElRect.height + this.itemsGap);
-                        section.style.transform = `translateY(${transformY}px)`;
-                    } else {
-                        section.style.transform = '';
-                    }
-                }
-            },
-            applyNewSectionOrder: async function (reorderEl) {
-                const sectionsContainer = reorderEl.parentElement;
-                const allSections = Array.from(sectionsContainer.children);
-
-                // Get current positions of all sections
-                const sectionPositions = new Map();
-
-                for(let section of allSections) {
-                    const rect = section.getBoundingClientRect();
-                    sectionPositions.set(section, rect.top);
-                }
-
-                // Sort sections by their vertical position
-                const sortedSections = Array.from(sectionPositions.entries())
-                    .sort((a, b) => a[1] - b[1])
-                    .map(entry => entry[0]);
-
-                // Clean up temporary attributes
-                for (let section of this.getIdleSections(sectionsContainer)) {
-                    delete section.dataset.isAbove;
-                    delete section.dataset.isToggled;
-                    section.style.transition = 'none';
-                    section.style.transform = '';
-
-                    requestAnimationFrame(() => {
-                        section.style.removeProperty('transition');
-                    });
-                }
-
-                // Animate transition
-                const reorderTransform = reorderEl.style.transform;
-                const transformValues = reorderTransform.replace('translate(', '').replace(')', '').split(',');
-                const prevTransform = {
-                    x: parseInt(transformValues[0]),
-                    y: parseInt(transformValues[1])
-                };
-
-                const reorderedBoxBefore = reorderEl.getBoundingClientRect();
-
-                // Reorder in DOM based on vertical positions
-                for (let section of sortedSections) {
-                    sectionsContainer.appendChild(section);
-                }
-
-                const reorderedBoxAfter = reorderEl.getBoundingClientRect();
-
-                // Remove animation temporarily
-                reorderEl.style.transition = 'none';
-                await rafAwait();
-
-                // Update final position
-                const xDiff = reorderedBoxBefore.left - reorderedBoxAfter.left;
-                const yDiff = reorderedBoxBefore.top - reorderedBoxAfter.top;
-                const tX = prevTransform.x + xDiff;
-                const tY = prevTransform.y + yDiff;
-                reorderEl.style.transform = `translate(${tX}px, ${tY}px)`;
-
-                await rafAwait();
-                reorderEl.style.removeProperty('transition');
-
-                // Update positions in data and server
-                this.updateSectionPositions(sortedSections);
-
-                requestAnimationFrame(() => {
-                    removeClassEl('is-draggable', reorderEl);
-                    reorderEl.style.transform = '';
-                });
-            },
-            updateSectionPositions: async function (sections) {
-                let positions = {};
-                let updates = {};
-
-                // Get section keys and build position updates
-                for (let i = 0; i < sections.length; i++) {
-                    let section = sections[i];
-                    let key = section.getAttribute('data-key');
-
-                    if (befriend.me.data.sections.active[key]) {
-                        positions[key] = i;
-                        updates[key] = {
-                            key: key,
-                            position: i
-                        };
-                    }
-                }
-
-                // Update local data
-                for (let key in positions) {
-                    if (befriend.me.data.sections.active[key]) {
-                        befriend.me.data.sections.active[key].position = positions[key];
-                    }
-                }
-
-                // Update server
-                if (Object.keys(updates).length) {
-                    try {
-                        await befriend.auth.put('/me/sections/positions', {
-                            positions: updates
-                        });
-                    } catch (e) {
-                        console.error('Error updating section positions:', e);
-                    }
-                }
-            },
-        },
-        itemReorder: {
-            ip: false,
-            start: {
-                x: null,
-                y: null,
-            },
-            el: null,
-            itemsGap: 0,
-            prevRect: null,
-            items: [],
-            autoScroll: {
-                animationFrame: null,
-                scrolling: false,
-                startPosition: null,
-                targetPosition: null,
-                startTime: null,
-                duration: 250 // ms for scroll animation
-            },
-            dragStarted: false,
-            isItemAbove: function (item) {
-                return item.hasAttribute('data-is-above');
-            },
-            isItemToggled: function (item) {
-                return item.hasAttribute('data-is-toggled');
-            },
-            getIdleItems: function (itemsContainer) {
-                let allItems = Array.from(itemsContainer.querySelectorAll('.item.is-favorite'));
-
-                return allItems.filter(el => !elHasClass(el, 'is-draggable'));
-            },
-            setItemsGap: function (idleItems) {
-                if (idleItems.length <= 1) {
-                    this.itemsGap = 0;
-                    return;
-                }
-
-                this.itemsGap = befriend.variables.me_items_gap_tb;
-
-            },
-            initReorderItem: function (item) {
-                addClassEl('is-draggable', item);
-            },
-            initItemsState: function (reorderEl, idleItems) {
-                for(let i = 0; i < idleItems.length; i++) {
-                    let item = idleItems[i];
-
-                    if (Array.from(reorderEl.parentElement.children).indexOf(reorderEl) > i) {
-                        item.dataset.isAbove = '';
-                    }
-                }
-            },
-            updateIdleItemsStateAndPosition: function (reorderEl) {
-                const reorderElRect = reorderEl.getBoundingClientRect();
-                const reorderElY = reorderElRect.top + reorderElRect.height / 2;
-
-                // Update state
-                for(let item of this.getIdleItems(reorderEl.parentElement)) {
-                    const itemRect = item.getBoundingClientRect();
-                    const itemY = itemRect.top + itemRect.height / 2;
-                    if (this.isItemAbove(item)) {
-                        if (reorderElY <= itemY) {
-                            item.dataset.isToggled = '';
-                        } else {
-                            delete item.dataset.isToggled;
-                        }
-                    } else {
-                        if (reorderElY >= itemY) {
-                            item.dataset.isToggled = '';
-                        } else {
-                            delete item.dataset.isToggled;
-                        }
-                    }
-                }
-
-                // Update position
-                for(let item of this.getIdleItems(reorderEl.parentElement)) {
-                    if (this.isItemToggled(item)) {
-                        const direction = this.isItemAbove(item) ? 1 : -1;
-                        item.style.transform = `translateY(${
-                            direction * (reorderElRect.height + this.itemsGap)
-                        }px)`;
-                    } else {
-                        item.style.transform = '';
-                    }
-                }
-            },
-            applyNewItemOrder: async function (reorderEl, section_el, section_key) {
-                const reorderedItems = [];
-                const itemsContainer = reorderEl.parentElement;
-                const allItems = Array.from(itemsContainer.children);
-
-                let prevIndex = allItems.indexOf(reorderEl);
-                let skipUpdate = false;
-
-                for(let i = 0; i < allItems.length; i++) {
-                    let item = allItems[i];
-
-                    if (item === reorderEl) {
-                        continue;
-                    }
-
-                    if (!this.isItemToggled(item)) {
-                        reorderedItems[i] = item;
-                        continue;
-                    }
-
-                    const newIndex = this.isItemAbove(item) ? i + 1 : i - 1;
-                    reorderedItems[newIndex] = item;
-                }
-
-                // Fill in the dragged item
-                for (let index = 0; index < allItems.length; index++) {
-                    if (typeof reorderedItems[index] === 'undefined') {
-                        if(prevIndex === index) {
-                            skipUpdate = true;
-                            break;
-                        }
-                        reorderedItems[index] = reorderEl;
-                    }
-                }
-
-                // Clean up temporary attributes
-                for(let item of this.getIdleItems(itemsContainer)) {
-                    delete item.dataset.isAbove;
-                    delete item.dataset.isToggled;
-                    item.style.transition = 'none';
-                    item.style.transform = '';
-
-                    requestAnimationFrame(() => {
-                        item.style.removeProperty('transition');
-                    });
-                }
-
-                if(skipUpdate) {
-                    return requestAnimationFrame(() => {
-                        removeClassEl('is-draggable', reorderEl);
-                        reorderEl.style.transform = '';
-                    });
-                }
-
-                // Update DOM and positions
-                const reorderTransform = reorderEl.style.transform;
-                const transformValues = reorderTransform.replace('translate(', '').replace(')', '').split(',');
-                const prevTransform = {
-                    x: parseInt(transformValues[0]),
-                    y: parseInt(transformValues[1])
-                };
-
-                const reorderedBoxBefore = reorderEl.getBoundingClientRect();
-
-                // Reorder items in DOM
-                for(let item of reorderedItems) {
-                    itemsContainer.appendChild(item);
-                }
-
-                const reorderedBoxAfter = reorderEl.getBoundingClientRect();
-
-                //remove animation
-                reorderEl.style.transition = 'none';
-
-                await rafAwait();
-
-                // Update final position
-                const xDiff = reorderedBoxBefore.left - reorderedBoxAfter.left;
-                const yDiff = reorderedBoxBefore.top - reorderedBoxAfter.top;
-                const tX = prevTransform.x + xDiff;
-                const tY = prevTransform.y + yDiff;
-                reorderEl.style.transform = `translate(${tX}px, ${tY}px)`;
-
-                await rafAwait();
-
-                reorderEl.style.removeProperty('transition');
-
-                // Update positions in data model
-                this.updateFavoritePositions(section_key, section_el);
-
-                requestAnimationFrame(() => {
-                    addClassEl('is-drag-ending', reorderEl);
-                    removeClassEl('is-draggable', reorderEl);
-                    reorderEl.style.transform = '';
-                    setTimeout(function () {
-                        removeClassEl('is-drag-ending', reorderEl);
-                    }, 1000);
-                });
-            },
-            updateFavoritePositions: async function (section_key, section_el) {
-                const active_section = befriend.me.getActiveSection(section_key);
-                const items_el = section_el.querySelector('.items');
-                const item_els = items_el.querySelectorAll('.item.is-favorite');
-                let positions = {};
-
-                for(let i = 0; i < item_els.length; i++) {
-                    let item_el = item_els[i];
-
-                    const token = item_el.getAttribute('data-token');
-                    const item = active_section.items[token];
-                    const newPosition = i + 1;
-
-                    if (item.favorite_position !== newPosition) {
-                        item.favorite_position = newPosition;
-                        positions[token] = {
-                            id: item.id,
-                            token: token,
-                            favorite_position: newPosition
-                        };
-                    }
-
-                    const rank_el = item_el.querySelector('.rank');
-
-                    if (rank_el) {
-                        rank_el.innerHTML = newPosition;
-                    }
-                }
-
-                if (Object.keys(positions).length) {
-                    try {
-                        await befriend.auth.put(`/me/sections/item`, {
-                            section_key: section_key,
-                            table_key: section_el.getAttribute('data-table-key'),
-                            section_item_id: Object.values(positions)[0].id,
-                            favorite: {
-                                reorder: positions
-                            }
-                        });
-                    } catch (e) {
-                        console.error('Error updating favorite positions:', e);
-                    }
-                }
-            }
-        },
-        init: function () {
-            return new Promise(async (resolve, reject) => {
-                befriend.me.events.onModeSelect();
-                befriend.me.events.onAddSectionBtn();
-                befriend.me.events.onSelectAvailableSection();
-                befriend.me.events.confirmAction();
-
-                resolve();
+            accountBtn.addEventListener('click', function (e) {
+                befriend.me.account.setView('account');
             });
+
+            profileBtn.addEventListener('click', function (e) {
+                befriend.me.account.setView('profile');
+            });
+
+            // for (let btn of toggleBtns) {
+            //     btn.addEventListener('click', (e) => {
+            //         e.preventDefault();
+            //         let view = btn.getAttribute('data-view');
+            //         this.setView(view);
+            //     });
+            // }
+            //
+            // // Settings action buttons
+            // let actionBtns = this.el.querySelectorAll('.action-btn');
+            // for (let btn of actionBtns) {
+            //     btn.addEventListener('click', (e) => {
+            //         e.preventDefault();
+            //         let action = btn.getAttribute('data-action');
+            //         this.handleAction(action);
+            //     });
+            // }
         },
-        onPartnerGenderSelect: function () {
-            let option_els = befriend.els.me.querySelectorAll('.selected-mode-container .partner .option');
+        setView: function (view) {
+            this.view = view;
 
-            for(let i = 0; i < option_els.length; i++) {
-                let el = option_els[i];
+            let views = befriend.els.me.querySelectorAll('.view-section');
 
-                if(el._listener) {
-                    continue;
-                }
-
-                el._listener = true;
-
-                el.addEventListener('click', async function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    let token = this.getAttribute('data-gender');
-
-                    if(elHasClass(el, 'selected')) {
-                        removeClassEl('selected', el);
-                    } else {
-                        removeElsClass(option_els, 'selected');
-                        addClassEl('selected', el);
-                    }
-
-                    await befriend.auth.put(`/me/mode/partner`, {
-                        gender: token,
-                        isSelect: elHasClass(el, 'selected'),
-                    });
-                });
-            }
-
-        },
-        onKids: function () {
-            let add_btn = befriend.els.me.querySelector('.selected-mode-container .kids .add-btn');
-
-            if(!add_btn._listener) {
-                add_btn._listener = true;
-
-                add_btn.addEventListener('click', async function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    try {
-                        befriend.toggleSpinner(true);
-                        // Add kid on server
-                        let r = await befriend.auth.post('/me/mode/kids');
-
-                        befriend.me.data.modes.data.kids[r.data.token] = r.data;
-
-                        // Add to UI with token from response
-                        befriend.me.addKidHtml(r.data);
-
-                        befriend.toggleSpinner(false);
-                    } catch(e) {
-                        console.error('Error adding kid:', e);
-                    }
-                });
-            }
-
-            befriend.me.events.onKidsAgeSelect();
-            befriend.me.events.onKidsGenderSelect();
-            befriend.me.events.onKidsActive();
-            befriend.me.events.onKidsRemove();
-        },
-        onKidsActive: function () {
-            let active_btns = befriend.els.me.querySelectorAll('.kids .kid .active');
-
-            for (let btn of active_btns) {
-                if (btn._listener) continue;
-                btn._listener = true;
-
-                btn.addEventListener('click', async function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    let kid_el = this.closest('.kid');
-                    let token = kid_el.getAttribute('data-token');
-
-                    let checkbox_el = this.querySelector('.checkbox');
-
-                    let is_active = !elHasClass(checkbox_el, 'checked');
-
-                    toggleElClass(checkbox_el, 'checked');
-
-                    try {
-                        await befriend.auth.put('/me/mode/kids', {
-                            kid_token: token,
-                            is_active
-                        });
-
-                        befriend.me.data.modes.data.kids[token].is_active = is_active;
-                    } catch (e) {
-                        console.error('Error removing kid:', e);
-                    }
-                });
-            }
-        },
-        onKidsRemove: function () {
-            let remove_btns = befriend.els.me.querySelectorAll('.kids .kid .remove');
-
-            for (let btn of remove_btns) {
-                if (btn._listener) continue;
-                btn._listener = true;
-
-                btn.addEventListener('click', async function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    let kid_el = this.closest('.kid');
-                    let token = kid_el.getAttribute('data-token');
-
-                    befriend.toggleSpinner(true);
-
-                    try {
-                        await befriend.auth.delete('/me/mode/kids', {
-                            kid_token: token
-                        });
-
-                        if(befriend.me.data.modes.data.kids) {
-                            delete befriend.me.data.modes.data.kids[token];
-                        }
-
-                        kid_el.parentNode.removeChild(kid_el);
-
-                        requestAnimationFrame(() => {
-                            befriend.me.updateModeHeight();
-                        });
-                    } catch (e) {
-                        console.error('Error removing kid:', e);
-                    }
-
-                    befriend.toggleSpinner(false);
-                });
-            }
-        },
-        onKidsAgeSelect: function() {
-            let list_els = befriend.els.me.querySelectorAll('.kids .kid .select-list');
-
-            for (let i = 0; i < list_els.length; i++) {
-                let list_el = list_els[i];
-
-                if (list_el._listener) continue;
-                list_el._listener = true;
-
-                list_el.querySelector('.current-selected').addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    // Close any other open options
-                    let other_list_els = befriend.els.me.querySelectorAll('.kids .kid .select-list');
-
-                    for (let other of Array.from(other_list_els)) {
-                        if (other !== list_el) {
-                            other.querySelector('.options').style.height = '0';
-                            removeClassEl('open', other);
-                        }
-                    }
-
-                    befriend.me.transitionKidsAge(list_el, !elHasClass(list_el, 'open'));
-                });
-
-                // Handle option selection
-                let options = list_el.getElementsByClassName('option');
-                for (let j = 0; j < options.length; j++) {
-                    let option = options[j];
-
-                    if (option._listener) continue;
-                    option._listener = true;
-
-                    option.addEventListener('click', async function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        let token = this.getAttribute('data-token');
-                        let selected_text = this.textContent;
-                        let kid_el = this.closest('.kid');
-                        let kid_token = kid_el.getAttribute('data-token');
-
-                        // Update UI
-                        removeClassEl('unselected', list_el);
-                        list_el.querySelector('.current-selected').textContent = selected_text;
-                        list_el.setAttribute('data-value', token);
-
-                        // Close options
-                        befriend.me.transitionKidsAge(list_el, false);
-
-                        // Remove previous selection if any
-                        removeElsClass(options, 'selected');
-                        addClassEl('selected', this);
-
-                        try {
-                            // Update server
-                            await befriend.auth.put('/me/mode/kids', {
-                                kid_token: kid_token,
-                                age_token: token
-                            });
-
-                            // Update local data
-                            if(befriend.me.data.modes.data.kids?.[kid_token]) {
-                                let age = befriend.me.data.modes.options.kids[token];
-                                befriend.me.data.modes.data.kids[kid_token].age_id = age?.id || null;
-                            }
-                        } catch(e) {
-                            console.error('Error updating kid age:', e);
-                        }
-                    });
-                }
-            }
-        },
-        onKidsGenderSelect: function() {
-            let gender_els = befriend.els.me.querySelectorAll('.kids .kid .gender .option');
-
-            for (let el of gender_els) {
-                if (el._listener) continue;
-                el._listener = true;
-
-                el.addEventListener('click', async function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    let kid_el = this.closest('.kid');
-                    let kid_token = kid_el.getAttribute('data-token');
-                    let gender_token = this.getAttribute('data-token');
-
-                    try {
-                        befriend.toggleSpinner(true);
-
-                        // Update server
-                        await befriend.auth.put('/me/mode/kids', {
-                            kid_token: kid_token,
-                            gender_token: gender_token,
-                            is_select: !elHasClass(el, 'selected')
-                        });
-
-                        // Update UI
-                        let gender_options = kid_el.querySelectorAll('.gender .option');
-
-                        if(elHasClass(el, 'selected')) {
-                            removeClassEl('selected', this);
-                        } else {
-                            removeElsClass(gender_options, 'selected');
-                            addClassEl('selected', this);
-                        }
-
-                        // Update local data
-                        if(befriend.me.data.modes.data.kids?.[kid_token]) {
-                            let gender = befriend.me.data.genders.find(g => g.token === gender_token);
-                            befriend.me.data.modes.data.kids[kid_token].gender_id = gender?.id || null;
-                        }
-
-                        befriend.toggleSpinner(false);
-                    } catch(e) {
-                        console.error('Error updating kid gender:', e);
-                    }
-                });
-            }
-        },
-        onAddSectionBtn: function () {
-            //open available sections
-            let btn_el = befriend.els.me.querySelector('.add-section-btn');
-
-            btn_el.addEventListener('click', function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-
-                if (befriend.me.isSectionOptionsShown()) {
-                    befriend.me.toggleSectionOptions(false);
+            for (let viewEl of views) {
+                if (elHasClass(viewEl, `view-${view}`)) {
+                    addClassEl('active', viewEl);
                 } else {
-                    befriend.me.toggleSectionOptions(true);
+                    removeClassEl('active', viewEl);
                 }
-            });
-        },
-        onModeSelect: function () {
-            const modeOptions = befriend.els.me.querySelectorAll('.mode-option');
-
-            for(let option of modeOptions) {
-                if(option._listener) continue;
-                option._listener = true;
-
-                option.addEventListener('click', async function() {
-                    befriend.me.selectMode(this.getAttribute('data-mode'));
-                });
             }
         },
-        onSelectAvailableSection: function () {
-            //add selected available section
-            let options = befriend.els.meSectionOptions.getElementsByClassName('option');
 
-            for (let i = 0; i < options.length; i++) {
-                let option = options[i];
+        handleAction: async function (action) {
+            switch (action) {
+                case 'change-email':
+                    // Show email change modal/form
+                    break;
 
-                if (option._listener) {
-                    continue;
-                }
+                case 'change-password':
+                    // Show password change modal/form
+                    break;
 
-                option._listener = true;
+                case 'change-country':
+                    // Show country selection modal
+                    break;
 
-                option.addEventListener('click', async function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    let key = this.getAttribute('data-key');
-
-                    befriend.me.addSection(key, true);
-
-                    this.parentNode.removeChild(this);
-
-                    //hide overlay, scroll to section
-                    befriend.me.toggleSectionOptions(false);
-
-                    for(let i = 0; i < 10; i++) {
-                        await rafAwait();
-
-                        let sectionEl = befriend.els.me.querySelector(`.section[data-key="${key}"]`);
-
-                        if(sectionEl) {
-                            let scrollBarHeight = await befriend.styles.getStatusBarHeight();
-                            const sectionRect = sectionEl.getBoundingClientRect();
-                            const sectionTop = sectionRect.top - scrollBarHeight - 10;
-
-                            try {
-                                window.scrollTo({
-                                    top: sectionTop,
-                                    behavior: 'smooth'
-                                });
-                            } catch(e) {
-                                console.error('Window scroll failed:', e);
-                            }
-
-                            break;
-                        }
-                    }
-                });
-            }
-        },
-        onSectionActions: function () {
-            let actions_els = befriend.els.me.querySelectorAll('.section .actions');
-
-            for (let i = 0; i < actions_els.length; i++) {
-                let el = actions_els[i];
-
-                if (el._listener) {
-                    continue;
-                }
-
-                el._listener = true;
-
-                el.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    removeElsClass(befriend.els.me.getElementsByClassName('section'), 'show-menu');
-
-                    let section_el = this.closest('.section');
-
-                    befriend.me.toggleSectionActions(section_el, true);
-
-                    befriend.me.toggleAutoComplete(null, false);
-                });
-            }
-        },
-        onSectionReorder: function() {
-            const TOUCH_DELAY = 80;
-            const MOVE_THRESHOLD = 10;
-            let touchTimeout;
-            let initialTouchY;
-            let hasMoved;
-
-            const sectionReorder = befriend.me.events.sectionReorder;
-            const sections = befriend.els.me.getElementsByClassName('section');
-
-            for(let i = 0; i < sections.length; i++) {
-                let section = sections[i];
-
-                if(section._reorder_listener) {
-                    continue
-                };
-
-                section._reorder_listener = true;
-
-                // Track touch move before drag starts
-                section.addEventListener('touchmove', function(e) {
-                    if (sectionReorder.ip) {
-                        e.preventDefault();
-                        return;
-                    }
-
-                    if(!initialTouchY) return;
-
-                    const touch = e.touches[0];
-                    const moveDistance = Math.abs(touch.clientY - initialTouchY);
-
-                    if (moveDistance > MOVE_THRESHOLD) {
-                        hasMoved = true;
-                        clearTimeout(touchTimeout);
-                        initialTouchY = null;
-                    }
-                }, {
-                    passive: false
-                });
-
-                section.addEventListener('touchstart', function(e) {
-                    const target = e.target;
-
-                    befriend.me.hideActiveSecondaryIf(target);
-
-                    if(target.closest('.secondary')) {
-                        return;
-                    }
-
-                    // Only handle drag start from section top area
-
-                    const sectionTop = section.querySelector('.section-top');
-                    if (!sectionTop.contains(target)) return;
-
-                    if (target.closest('.actions') || target.closest('.menu')) return;
-
-                    // Reset tracking variables
-                    hasMoved = false;
-                    initialTouchY = e.touches[0].clientY;
-
-                    clearTimeout(touchTimeout);
-                    touchTimeout = setTimeout(function() {
-                        if(!hasMoved) {
-                            e.preventDefault();
-                            e.stopPropagation();
-
-                            const coords = getEventCoords(e);
-                            sectionReorder.start.x = coords.x;
-                            sectionReorder.start.y = coords.y;
-                            sectionReorder.el = section;
-                            sectionReorder.ip = true;
-                            sectionReorder.dragStarted = false;
-
-                            // Disable scrolling
-                            const scrollContainer = section.closest('.view-me');
-                            if (scrollContainer) {
-                                scrollContainer.style.overflow = 'hidden';
-                            }
-
-                            const idleSections = sectionReorder.getIdleSections(section.parentElement);
-                            sectionReorder.setSectionsGap(idleSections);
-                            sectionReorder.initReorderSection(section);
-                            sectionReorder.initSectionsState(section, idleSections);
-                        }
-                    }, TOUCH_DELAY);
-                });
-            }
-        },
-        autoComplete: function () {
-            let els = befriend.els.me.getElementsByClassName('search-input');
-
-            for (let i = 0; i < els.length; i++) {
-                let el = els[i];
-
-                if (el._listener) {
-                    continue;
-                }
-
-                el._listener = true;
-
-                let debounceTimer = null;
-
-                el.addEventListener('input', function () {
-                    clearTimeout(debounceTimer);
-
-                    debounceTimer = setTimeout(async function () {
-                        const value = el.value;
-
-                        let section_key = el.closest('.section').getAttribute('data-key');
-
+                case 'delete-account':
+                    if (confirm('Are you sure you want to delete your account? This cannot be undone.')) {
                         try {
-                            befriend.me.searchItems(section_key, value);
+                            await befriend.auth.delete('/me');
+                            // Handle successful deletion (logout, redirect, etc)
                         } catch (e) {
-                            console.error(e);
+                            console.error('Error deleting account:', e);
                         }
-                    }, 100);
-                });
-
-                //focus
-                el.addEventListener('focus', function () {
-                    addClassEl('input-focus', el.closest('.input-container'));
-
-                    //hide all other dropdowns
-                    let search_containers =
-                        befriend.els.me.getElementsByClassName('search-container');
-
-                    removeElsClass(search_containers, befriend.classes.autoCompleteMe);
-
-                    let section_key = el.closest('.section').getAttribute('data-key');
-
-                    let sectionAutocomplete = befriend.me.getSectionAutoComplete(section_key);
-
-                    let minChars = isNumeric(sectionAutocomplete.minChars) ? sectionAutocomplete.minChars : befriend.me.autoComplete.minChars;
-
-                    if (el.value.length >= minChars) {
-                        befriend.me.toggleAutoComplete(el.closest('.search-container'), true);
                     }
-                });
-
-                el.addEventListener('blur', function () {
-                    removeClassEl('input-focus', el.closest('.input-container'));
-                });
-            }
-        },
-        autoCompleteFilterList: function () {
-            //open list
-            let selected_els = befriend.els.me.querySelectorAll(
-                '.search-container .selected-container',
-            );
-
-            for (let i = 0; i < selected_els.length; i++) {
-                let el = selected_els[i];
-
-                if (el._listener) {
-                    continue;
-                }
-
-                el._listener = true;
-
-                el.addEventListener('click', function (e) {
-                    let parent_el = el.closest('.select-container');
-                    let section_key = el.closest('.section').getAttribute('data-key');
-
-                    befriend.me.toggleAutoCompleteSelect(parent_el, !elHasClass(parent_el, 'open'));
-
-                    //reset scroll to top after selection
-                    if (befriend.me.autoComplete.selected.filterList[section_key]?.needsReset) {
-                        let list = parent_el.querySelector('.select-list');
-
-                        requestAnimationFrame(function () {
-                            list.scrollTop = 0;
-                        });
-
-                        befriend.me.autoComplete.selected.filterList[section_key].needsReset =
-                            false;
-                    }
-                });
-            }
-
-            //search list
-            let input_els = befriend.els.me.querySelectorAll('.select-container input');
-
-            for (let i = 0; i < input_els.length; i++) {
-                let el = input_els[i];
-
-                if (el._listener) {
-                    continue;
-                }
-
-                el._listener = true;
-
-                el.addEventListener('input', function (e) {
-                    let section_key = el.closest('.section').getAttribute('data-key');
-
-                    befriend.me.updateAutoCompleteSelectList(section_key);
-                });
-            }
-
-            //select list item
-            let item_els = befriend.els.me.querySelectorAll('.select-container .item');
-
-            for (let i = 0; i < item_els.length; i++) {
-                let el = item_els[i];
-
-                if (el._listener) {
-                    continue;
-                }
-
-                el._listener = true;
-
-                el.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    let section_key = el.closest('.section').getAttribute('data-key');
-
-                    let id = this.getAttribute('data-id');
-
-                    befriend.me.selectAutoCompleteFilterItem(section_key, id);
-                });
-            }
-        },
-        onActionSelect: function () {
-            let actions_els = befriend.els.me.querySelectorAll('.menu .action');
-
-            for (let i = 0; i < actions_els.length; i++) {
-                let el = actions_els[i];
-
-                if (el._listener) {
-                    continue;
-                }
-
-                el._listener = true;
-
-                el.addEventListener('click', function (e) {
-                    let action = this.getAttribute('data-action');
-
-                    let section = this.closest('.section');
-                    let section_key = section.getAttribute('data-key');
-                    let section_data = befriend.me.data.sections.all[section_key];
-
-                    if (action === 'delete') {
-                        befriend.me.actions.delete.section = section_key;
-                        befriend.els.confirmMeAction.querySelector('.main').innerHTML =
-                            'Confirm Delete';
-                        befriend.els.confirmMeAction.querySelector('.details').innerHTML =
-                            section_data.section_name;
-
-                        befriend.me.toggleConfirm(true);
-                    }
-                });
-            }
-        },
-        onUpdateSectionHeight: function () {
-            let top_els = befriend.els.me.getElementsByClassName('section-top');
-
-            for (let i = 0; i < top_els.length; i++) {
-                let el = top_els[i];
-
-                if (el._listener) {
-                    continue;
-                }
-
-                el._listener = true;
-
-                el.addEventListener('click', (e) => {
-                    // e.preventDefault();
-                    // e.stopPropagation();
-
-                    if (e.target.closest('.actions')) {
-                        return false;
-                    }
-
-                    let section_el = el.closest('.section');
-
-                    //hide actions if shown
-                    if (elHasClass(section_el, 'show-menu')) {
-                        return befriend.me.toggleSectionActions(section_el, false);
-                    }
-
-                    befriend.me.updateSectionHeight(
-                        section_el,
-                        !elHasClass(section_el, 'collapsed'),
-                    );
-                });
-            }
-        },
-        onSectionCategory: function() {
-            let category_btns = befriend.els.me.getElementsByClassName('category-btn');
-
-            for (let i = 0; i < category_btns.length; i++) {
-                let btn = category_btns[i];
-
-                if (!btn._listener) {
-                    btn._listener = true;
-
-                    btn.addEventListener('click', async function(e) {
-                        let section_el = this.closest('.section');
-
-                        // Update active state
-                        let section_btns = section_el.getElementsByClassName('category-btn');
-                        removeElsClass(section_btns, 'active');
-                        addClassEl('active', this);
-
-                        // Get filter parameters
-                        const filter_params = {
-                            category: this.getAttribute('data-category') || '',
-                            category_token: this.getAttribute('data-category-token'),
-                            category_table_key: this.getAttribute('data-category-table') || '',
-                            tab_key: section_el.querySelector('.tab.active')?.getAttribute('data-key')
-                        };
-
-                        // Update items
-                        try {
-                            await befriend.me.updateSectionItems(section_el, filter_params);
-                        } catch(e) {
-                            console.error(e)
-                        }
-                    });
-                }
-            }
-        },
-        onSectionTabs: function() {
-            let tab_els = befriend.els.me.querySelectorAll('.section-container .tab');
-
-            for (let i = 0; i < tab_els.length; i++) {
-                let el = tab_els[i];
-
-                if (!el._listener) {
-                    el._listener = true;
-
-                    el.addEventListener('click', async function(e) {
-                        let section_el = this.closest('.section');
-
-                        // Update active state
-                        let section_tabs = section_el.querySelectorAll('.section-container .tab');
-                        removeElsClass(section_tabs, 'active');
-                        addClassEl('active', this);
-
-                        // Get current category filter parameters
-                        let active_category = section_el.querySelector('.category-btn.active');
-
-                        const filter_params = {
-                            category: active_category?.getAttribute('data-category') || '',
-                            category_token: active_category?.getAttribute('data-category-token'),
-                            category_table_key: active_category?.getAttribute('data-category-table') || '',
-                            tab_key: this.getAttribute('data-key')
-                        };
-
-                        // Update items
-                        try {
-                            await befriend.me.updateSectionItems(section_el, filter_params);
-                        } catch(e) {
-                            console.error(e)
-                        }
-                    });
-                }
-            }
-        },
-        onSelectItem: function () {
-            let items = befriend.els.me.querySelector('.sections').getElementsByClassName('item');
-
-            for (let i = 0; i < items.length; i++) {
-                let item = items[i];
-
-                if(elHasClass(item,'button-option')) {
-                    continue;
-                }
-
-                if (!item._listener) {
-                    item._listener = true;
-
-                    item.addEventListener('click', function (e) {
-                        let section_el = this.closest('.section');
-
-                        if (elHasClass(item, 'mine')) {
-                            let open_secondary_el =
-                                befriend.els.me.querySelector('.secondary.open');
-
-                            if (open_secondary_el && !e.target.closest('.secondary')) {
-                                befriend.me.transitionSecondary(open_secondary_el, false);
-                            }
-
-                            return false;
-                        }
-
-                        let section_key = section_el.getAttribute('data-key');
-                        let token = this.getAttribute('data-token');
-
-                        try {
-                            item.parentNode.removeChild(item);
-                        } catch (e) {}
-
-                        try {
-                            befriend.me.addSectionItem(section_key, token);
-                        } catch (e) {
-                            console.error(e);
-                        }
-                    });
-                }
-            }
-        },
-        onSelectOptionItem: function () {
-            let items = befriend.els.me.querySelector('.sections').querySelectorAll('.item.button-option');
-
-            for (let i = 0; i < items.length; i++) {
-                let item = items[i];
-
-                if (!item._listener) {
-                    item._listener = true;
-
-                    item.addEventListener('click', async function (e) {
-                        console.log("on select option item");
-
-                        if(item._request_ip) {
-                            return false;
-                        }
-
-                        item._request_ip = true;
-
-                        try {
-                            let section_el = this.closest('.section');
-                            let section_buttons = section_el.getElementsByClassName('button-option');
-                            let section_key = section_el.getAttribute('data-key');
-                            let table_key = befriend.me.getSectionTableKey(section_key);
-                            let token = this.getAttribute('data-token');
-                            let sectionData = befriend.me.getActiveSection(section_key).data;
-
-                            let isSelect = !(elHasClass(item, 'selected'));
-                            let exclusiveToken = sectionData?.type?.exclusive?.token;
-                            let isExclusive = exclusiveToken === token;
-                            let exclusiveButton = section_el.querySelector(`.button-option[data-token="${exclusiveToken}"]`);
-                            let isExclusiveSelected = exclusiveButton && elHasClass(exclusiveButton, 'selected');
-
-                            // If section is single-select or this is the exclusive token, deselect all others
-                            if (!sectionData?.type?.multi || isExclusive) {
-                                removeElsClass(section_buttons, 'selected');
-                            }
-
-                            // Toggle current item selection
-                            if(isSelect) {
-                                // If selecting non-exclusive and exclusive is selected, deselect exclusive
-                                if (!isExclusive && isExclusiveSelected) {
-                                    removeClassEl('selected', exclusiveButton);
-                                }
-
-                                addClassEl('selected', item);
-                            } else {
-                                removeClassEl('selected', item);
-                            }
-
-                            let r = await befriend.auth.put(`/me/sections/selection`, {
-                                section_key: section_key,
-                                table_key: table_key,
-                                item_token: token,
-                                is_select: isSelect
-                            });
-
-                            // Update section data
-                            let section_data = befriend.me.getActiveSection(section_key);
-                            if (!isSelect) {
-                                delete section_data.items[token];
-                            } else {
-                                if (!isExclusive && isExclusiveSelected) {
-                                    delete section_data.items[exclusiveToken];
-                                }
-                                section_data.items[token] = r.data;
-                            }
-
-                            // If exclusive item is selected, deselect all others
-                            if (isExclusive && isSelect) {
-                                for (let i = 0; i < section_buttons.length; i++) {
-                                    let btn = section_buttons[i];
-                                    if (btn !== item) {
-                                        removeClassEl('selected', btn);
-                                        let btnToken = btn.getAttribute('data-token');
-                                        delete section_data.items[btnToken];
-                                    }
-                                }
-                            }
-                        } catch(e) {
-                            console.error(e);
-                        }
-
-                        item._request_ip = false;
-                    });
-                }
-            }
-        },
-        onRemoveItem: function () {
-            let items = befriend.els.me.querySelector('.sections').getElementsByClassName('item');
-
-            for (let i = 0; i < items.length; i++) {
-                let item = items[i];
-
-                let remove_el = item.querySelector('.remove');
-
-                if (!remove_el || remove_el._listener) {
-                    continue;
-                }
-
-                remove_el._listener = true;
-
-                remove_el.addEventListener('click', async function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    try {
-                        befriend.toggleSpinner(true);
-
-                        let section_el = this.closest('.section');
-                        let section_key = section_el.getAttribute('data-key');
-                        let item_el = this.closest('.item');
-                        let delete_token = item_el.getAttribute('data-token');
-
-                        let section_data = befriend.me.getActiveSection(section_key);
-                        let item = section_data.items[delete_token];
-                        let table_key = item.table_key;
-
-                        // Get initial positions for animation
-                        let items_el = section_el.querySelector('.items-container .items');
-                        let item_els = items_el.getElementsByClassName('item');
-                        let initialPositions = befriend.me.getInitialPositions(item_els);
-
-                        // Handle reordering if this was a favorited item
-                        let updatedPositions;
-                        let favorite_data = {
-                            active: false,
-                            position: null
-                        };
-
-                        if (item.is_favorite) {
-                            // Remove favorite and reorder remaining favorites
-                            item.is_favorite = false;
-                            item.favorite_position = null;
-                            favorite_data.reorder = updatedPositions = befriend.me.reorderFavoritePositions(section_key, table_key);
-                        }
-
-                        // Update server with both delete and reorder
-                        try {
-                            await befriend.auth.put(`/me/sections/item`, {
-                                section_key: section_key,
-                                table_key: table_key,
-                                section_item_id: item.id,
-                                is_delete: true,
-                                favorite: favorite_data
-                            });
-                        } catch (e) {
-                            console.error(e);
-                            return; // Don't proceed with UI updates if server update failed
-                        }
-
-                        // Remove from data
-                        delete section_data.items[delete_token];
-
-                        // Get remaining filtered items
-                        let items_filtered = [];
-                        for (let token in section_data.items) {
-                            let item = section_data.items[token];
-
-                            // Filter by tab if exists
-                            let active_tab = section_el.querySelector('.section-container .tab.active');
-                            if (active_tab && item.table_key && item.table_key !== active_tab.getAttribute('data-key')) {
-                                continue;
-                            }
-
-                            let remaining_el = section_el.querySelector(`.item[data-token="${token}"]`);
-                            if (remaining_el) {
-                                items_filtered.push(remaining_el);
-                            }
-                        }
-
-                        // Animate out the deleted item
-                        item_el.style.transition = `opacity ${befriend.variables.me_remove_item_transition_ms}ms ease-out`;
-                        item_el.style.opacity = '0';
-
-                        await timeoutAwait(befriend.variables.me_remove_item_transition_ms);
-
-                        // Remove the element after fade out
-                        item_el.parentNode.removeChild(item_el);
-
-                        // Handle animations and DOM updates
-                        if (items_filtered.length > 0) {
-                            // Sort and animate remaining items
-                            let itemsArray = befriend.me.sortItemsByFavorite(items_filtered, section_data);
-                            befriend.me.animateItemTransitions(itemsArray, items_el, initialPositions, null);
-
-                            // Update rank displays for remaining favorites
-                            if (updatedPositions) {
-                                for (let token in updatedPositions) {
-                                    let remaining_el = section_el.querySelector(`.item[data-token="${token}"]`);
-                                    if (remaining_el) {
-                                        let rank_el = remaining_el.querySelector('.rank');
-                                        rank_el.innerHTML = updatedPositions[token].favorite_position;
-                                    }
-                                }
-                            }
-
-                            removeClassEl('no-items', section_el);
-                        } else {
-                            addClassEl('no-items', section_el);
-                        }
-
-                        // Update section height after removing the last item
-                        befriend.me.updateSectionHeight(section_el, elHasClass(section_el, 'collapsed'));
-                    } catch(e) {
-                        console.error(e);
-                    } finally {
-                        befriend.toggleSpinner(false);
-                    }
-                });
-            }
-        },
-        onOpenSecondary: function () {
-            let secondaries = befriend.els.me.getElementsByClassName('secondary');
-
-            for (let i = 0; i < secondaries.length; i++) {
-                let el = secondaries[i];
-
-                if (!el._listener) {
-                    el._listener = true;
-
-                    el.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        let item_el = this.closest('.item');
-
-                        if (e.target.closest('.options')) {
-                            return false;
-                        }
-
-                        let isOpen = elHasClass(item_el, 'item-secondary-open');
-                        befriend.me.transitionSecondary(el, !isOpen);
-                    });
-                }
-            }
-        },
-        onFavorite: function () {
-            let meReorder = befriend.me.events.itemReorder;
-
-            let favorite_els = befriend.els.me.getElementsByClassName('favorite');
-
-            for (let i = 0; i < favorite_els.length; i++) {
-                let favorite_el = favorite_els[i];
-
-                if(!favorite_el._listener) {
-                    favorite_el._listener = true;
-
-                    favorite_el.addEventListener('click', async function (e) {
-                        if (meReorder.ip) return;
-
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        //data
-                        let section_el = this.closest('.section');
-                        let items_el = section_el.querySelector('.items-container .items');
-                        let item_els = items_el.getElementsByClassName('item');
-                        let item_el = this.closest('.item');
-
-                        let section_key = section_el.getAttribute('data-key');
-                        let item_token = item_el.getAttribute('data-token');
-                        let active_section = befriend.me.getActiveSection(section_key);
-                        let item = active_section.items[item_token];
-                        let table_key = item.table_key || befriend.me.getSectionTableKey(section_key);
-
-                        //toggle favorite state
-                        item.is_favorite = !item.is_favorite;
-                        toggleElClass(this.closest('.item'), 'is-favorite');
-
-                        // Get initial positions before any changes
-                        let initialPositions = befriend.me.getInitialPositions(item_els);
-
-                        // Handle favorite data updates
-                        let updatedPositions;
-                        let favorite_data = {
-                            active: item.is_favorite
-                        };
-
-                        if(item.is_favorite) {
-                            // Adding favorite - get highest position and add 1
-                            let highest = befriend.me.getFavoriteHighestPosition(section_key, table_key);
-                            item.favorite_position = highest + 1;
-                            favorite_data.position = item.favorite_position;
-                        } else {
-                            // Removing favorite - reorder remaining favorites
-                            item.favorite_position = null;
-                            favorite_data.position = null;
-                            favorite_data.reorder = updatedPositions = befriend.me.reorderFavoritePositions(section_key, table_key);
-                        }
-
-                        // Update rank displays
-                        befriend.me.updateRankDisplays(section_el, item_el, item, updatedPositions);
-
-                        // Sort and animate items
-                        let itemsArray = Array.from(item_els);
-                        itemsArray = befriend.me.sortItemsByFavorite(itemsArray, active_section);
-
-                        befriend.me.animateItemTransitions(itemsArray, items_el, initialPositions,
-                            item.is_favorite ? item_el : null
-                            );
-
-                        //server
-                        try {
-                            await befriend.auth.put(`/me/sections/item`, {
-                                section_key: section_key,
-                                table_key: table_key,
-                                section_item_id: item.id,
-                                favorite: favorite_data,
-                            });
-                        } catch (e) {
-                            console.error(e);
-                        }
-                    });
-                }
-            }
-
-            const TOUCH_DELAY = 80; // ms to wait before initiating drag
-            const MOVE_THRESHOLD = 10; // pixels of movement to consider it a scroll
-            let touchTimeout;
-            let initialTouchY;
-            let hasMoved;
-
-            let item_els = befriend.els.me.getElementsByClassName('item');
-
-            for (let i = 0; i < item_els.length; i++) {
-                let item_el = item_els[i];
-
-                if(!elHasClass(item_el, 'favorable')) {
-                    continue;
-                }
-
-                if(item_el._reorder_listener) {
-                    continue;
-                }
-
-                item_el._reorder_listener = true;
-
-                // Track touch move before drag starts
-                item_el.addEventListener('touchmove', function(e) {
-                    if (meReorder.ip) {
-                        e.preventDefault();
-                        return;
-                    }
-
-                    if(!initialTouchY) {
-                        return;
-                    }
-
-                    const touch = e.touches[0];
-                    const moveDistance = Math.abs(touch.clientY - initialTouchY);
-
-                    if (moveDistance > MOVE_THRESHOLD) {
-                        hasMoved = true;
-                        clearTimeout(touchTimeout);
-                        initialTouchY = null;
-                    }
-                }, {
-                    passive: false,
-                });
-
-                item_el.addEventListener('touchstart', function(e) {
-                    console.log("item touch start");
-
-                    if (!elHasClass(item_el, 'is-favorite')) return;
-
-                    // Don't start drag if clicking the heart icon or secondary
-                    const target = e.target;
-                    if (target.closest('.heart') || target.closest('.remove') || target.closest('.secondary')) {
-                        return;
-                    }
-
-                    // Reset tracking variables
-                    hasMoved = false;
-                    initialTouchY = e.touches[0].clientY;
-
-                    // Clear any existing timeout
-                    clearTimeout(touchTimeout);
-
-                    touchTimeout = setTimeout(function() {
-                        if(!hasMoved) {
-                            e.preventDefault();
-                            e.stopPropagation();
-
-                            const coords = getEventCoords(e);
-                            meReorder.start.x = coords.x;
-                            meReorder.start.y = coords.y;
-                            meReorder.el = item_el;
-                            meReorder.ip = true;
-                            meReorder.dragStarted = false;
-
-                            // Disable scrolling when drag starts
-                            const scrollContainer = item_el.closest('.items-container');
-                            if (scrollContainer) {
-                                scrollContainer.style.overflowY = 'hidden';
-                            }
-
-                            const idleItems = meReorder.getIdleItems(item_el.parentElement);
-                            meReorder.setItemsGap(idleItems);
-                            meReorder.initReorderItem(item_el);
-                            meReorder.initItemsState(item_el, idleItems);
-                        }
-                    }, TOUCH_DELAY);
-                });
-            }
-        },
-        onSelectSecondary: function () {
-            let secondaries = befriend.els.me.getElementsByClassName('secondary');
-
-            for (let i = 0; i < secondaries.length; i++) {
-                let secondary = secondaries[i];
-
-                let options = secondary.getElementsByClassName('option');
-
-                for (let i2 = 0; i2 < options.length; i2++) {
-                    let option = options[i2];
-
-                    if (!option._listener) {
-                        option._listener = true;
-
-                        option.addEventListener('click', async function (e) {
-                            e.preventDefault();
-                            e.stopPropagation();
-
-                            let option_value = this.getAttribute('data-option');
-
-                            let section = this.closest('.section');
-                            let section_key = section.getAttribute('data-key');
-
-                            let item_el = this.closest('.item');
-
-                            let item_token = item_el.getAttribute('data-token');
-
-                            let current_selected_el = secondary.querySelector('.current-selected');
-
-                            //el
-                            removeElsClass(options, 'selected');
-                            addClassEl('selected', option);
-                            befriend.me.transitionSecondary(secondary, false);
-                            removeClassEl('unselected', secondary);
-                            current_selected_el.innerHTML = option_value;
-
-                            //data
-                            let active_section = befriend.me.getActiveSection(section_key);
-
-                            let item = active_section.items[item_token];
-
-                            let prev_option_value = item.secondary;
-
-                            if (prev_option_value !== option_value) {
-                                item.secondary = option_value;
-
-                                let table_key = item.table_key || befriend.me.getSectionTableKey(section_key);
-
-                                //server
-                                try {
-                                    await befriend.auth.put(`/me/sections/item`, {
-                                        section_key: section_key,
-                                        table_key: table_key,
-                                        section_item_id: item.id,
-                                        secondary: option_value,
-                                    });
-                                } catch (e) {
-                                    console.error(e);
-                                }
-                            }
-                        });
-                    }
-                }
-            }
-        },
-        confirmAction: function () {
-            let buttons = befriend.els.confirmMeAction.getElementsByClassName('button');
-
-            for (let i = 0; i < buttons.length; i++) {
-                let button = buttons[i];
-
-                button.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    let action = button.getAttribute('data-action');
-
-                    if (action === 'no') {
-                        befriend.me.toggleConfirm(false);
-                    } else if (action === 'yes') {
-                        befriend.me.deleteSection(befriend.me.actions.delete.section);
-                    }
-                });
-            }
-        },
-        onSelectAutoCompleteItem: function () {
-            let els = befriend.els.me.querySelectorAll(`.autocomplete-list .item`);
-
-            for (let i = 0; i < els.length; i++) {
-                let el = els[i];
-
-                if (el._listener) {
-                    continue;
-                }
-
-                el._listener = true;
-
-                el.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    let section = el.closest('.section');
-                    let section_key = section.getAttribute('data-key');
-                    let token = el.getAttribute('data-token');
-
-                    befriend.me.toggleAutoComplete(null, false);
-
-                    befriend.me.addSectionItem(section_key, token);
-
-                    el.closest('.search-container').querySelector('.search-input').value = '';
-                });
+                    break;
             }
         },
     },
-};
+    events: {
+    sectionReorder: {
+        ip: false,
+        start: {
+            x: null,
+            y: null,
+        },
+        el: null,
+        itemsGap: 0,
+        prevRect: null,
+        sections: [],
+        dragStarted: false,
+        autoScroll: {
+            animationFrame: null,
+            scrolling: false,
+            startPosition: null,
+            targetPosition: null,
+            startTime: null,
+            duration: 250 // ms for scroll animation
+        },
+        isItemAbove: function (item) {
+            return item.hasAttribute('data-is-above');
+        },
+        isItemToggled: function (item) {
+            return item.hasAttribute('data-is-toggled');
+        },
+        getIdleSections: function (sectionsContainer) {
+            let allSections = Array.from(sectionsContainer.querySelectorAll(`.section`));
+            return allSections.filter(el => !elHasClass(el, 'is-draggable'));
+        },
+        setSectionsGap: function (idleSections) {
+            if (idleSections.length <= 1) {
+                this.itemsGap = 0;
+                return;
+            }
+
+            this.itemsGap = befriend.variables.me_sections_gap_h;
+        },
+        initReorderSection: function (section) {
+            addClassEl('is-draggable', section);
+        },
+        initSectionsState: function (reorderEl, idleSections) {
+            const reorderRect = reorderEl.getBoundingClientRect();
+            const reorderTop = reorderRect.top;
+
+            for (let section of idleSections) {
+                const sectionRect = section.getBoundingClientRect();
+                if (sectionRect.top < reorderTop) {
+                    section.dataset.isAbove = '';
+                }
+            }
+        },
+        updateIdleSectionsStateAndPosition: function (reorderEl, sectionY) {
+            const reorderElRect = reorderEl.getBoundingClientRect();
+            const reorderElTop = reorderElRect.top;
+            const reorderElBottom = reorderElRect.bottom;
+
+            // Get idle sections and update their states based on position
+            const idleSections = this.getIdleSections(reorderEl.parentElement);
+            const draggingUp = sectionY < this.start.y;
+
+            for (let section of idleSections) {
+                const sectionRect = section.getBoundingClientRect();
+                const sectionTop = sectionRect.top;
+                const topEl = section.querySelector('.section-top');
+                const topElBottom = topEl.getBoundingClientRect().bottom;
+
+                if(draggingUp) {
+                    if (this.isItemAbove(section)) {
+                        // Section is above the dragged section
+                        if (reorderElTop <= sectionTop) {
+                            section.dataset.isToggled = '';
+                        } else {
+                            delete section.dataset.isToggled;
+                        }
+                    } else {
+                        // Section is below the dragged section
+                        if (reorderElTop >= sectionTop) {
+                            section.dataset.isToggled = '';
+                        } else {
+                            delete section.dataset.isToggled;
+                        }
+                    }
+                } else { //dragging down
+                    if (this.isItemAbove(section)) {
+                        delete section.dataset.isToggled;
+                    } else {
+                        // dragged section is below bottom of top bar
+                        if (reorderElBottom > topElBottom) {
+                            section.dataset.isToggled = '';
+                        } else {
+                            delete section.dataset.isToggled;
+                        }
+                    }
+                }
+            }
+
+            // Update positions
+            for (let section of idleSections) {
+                if (this.isItemToggled(section)) {
+                    const direction = this.isItemAbove(section) ? 1 : -1;
+                    const transformY = direction * (reorderElRect.height + this.itemsGap);
+                    section.style.transform = `translateY(${transformY}px)`;
+                } else {
+                    section.style.transform = '';
+                }
+            }
+        },
+        applyNewSectionOrder: async function (reorderEl) {
+            const sectionsContainer = reorderEl.parentElement;
+            const allSections = Array.from(sectionsContainer.children);
+
+            // Get current positions of all sections
+            const sectionPositions = new Map();
+
+            for(let section of allSections) {
+                const rect = section.getBoundingClientRect();
+                sectionPositions.set(section, rect.top);
+            }
+
+            // Sort sections by their vertical position
+            const sortedSections = Array.from(sectionPositions.entries())
+                .sort((a, b) => a[1] - b[1])
+                .map(entry => entry[0]);
+
+            // Clean up temporary attributes
+            for (let section of this.getIdleSections(sectionsContainer)) {
+                delete section.dataset.isAbove;
+                delete section.dataset.isToggled;
+                section.style.transition = 'none';
+                section.style.transform = '';
+
+                requestAnimationFrame(() => {
+                    section.style.removeProperty('transition');
+                });
+            }
+
+            // Animate transition
+            const reorderTransform = reorderEl.style.transform;
+            const transformValues = reorderTransform.replace('translate(', '').replace(')', '').split(',');
+            const prevTransform = {
+                x: parseInt(transformValues[0]),
+                y: parseInt(transformValues[1])
+            };
+
+            const reorderedBoxBefore = reorderEl.getBoundingClientRect();
+
+            // Reorder in DOM based on vertical positions
+            for (let section of sortedSections) {
+                sectionsContainer.appendChild(section);
+            }
+
+            const reorderedBoxAfter = reorderEl.getBoundingClientRect();
+
+            // Remove animation temporarily
+            reorderEl.style.transition = 'none';
+            await rafAwait();
+
+            // Update final position
+            const xDiff = reorderedBoxBefore.left - reorderedBoxAfter.left;
+            const yDiff = reorderedBoxBefore.top - reorderedBoxAfter.top;
+            const tX = prevTransform.x + xDiff;
+            const tY = prevTransform.y + yDiff;
+            reorderEl.style.transform = `translate(${tX}px, ${tY}px)`;
+
+            await rafAwait();
+            reorderEl.style.removeProperty('transition');
+
+            // Update positions in data and server
+            this.updateSectionPositions(sortedSections);
+
+            requestAnimationFrame(() => {
+                removeClassEl('is-draggable', reorderEl);
+                reorderEl.style.transform = '';
+            });
+        },
+        updateSectionPositions: async function (sections) {
+            let positions = {};
+            let updates = {};
+
+            // Get section keys and build position updates
+            for (let i = 0; i < sections.length; i++) {
+                let section = sections[i];
+                let key = section.getAttribute('data-key');
+
+                if (befriend.me.data.sections.active[key]) {
+                    positions[key] = i;
+                    updates[key] = {
+                        key: key,
+                        position: i
+                    };
+                }
+            }
+
+            // Update local data
+            for (let key in positions) {
+                if (befriend.me.data.sections.active[key]) {
+                    befriend.me.data.sections.active[key].position = positions[key];
+                }
+            }
+
+            // Update server
+            if (Object.keys(updates).length) {
+                try {
+                    await befriend.auth.put('/me/sections/positions', {
+                        positions: updates
+                    });
+                } catch (e) {
+                    console.error('Error updating section positions:', e);
+                }
+            }
+        },
+    },
+    itemReorder: {
+        ip: false,
+        start: {
+            x: null,
+            y: null,
+        },
+        el: null,
+        itemsGap: 0,
+        prevRect: null,
+        items: [],
+        autoScroll: {
+            animationFrame: null,
+            scrolling: false,
+            startPosition: null,
+            targetPosition: null,
+            startTime: null,
+            duration: 250 // ms for scroll animation
+        },
+        dragStarted: false,
+        isItemAbove: function (item) {
+            return item.hasAttribute('data-is-above');
+        },
+        isItemToggled: function (item) {
+            return item.hasAttribute('data-is-toggled');
+        },
+        getIdleItems: function (itemsContainer) {
+            let allItems = Array.from(itemsContainer.querySelectorAll('.item.is-favorite'));
+
+            return allItems.filter(el => !elHasClass(el, 'is-draggable'));
+        },
+        setItemsGap: function (idleItems) {
+            if (idleItems.length <= 1) {
+                this.itemsGap = 0;
+                return;
+            }
+
+            this.itemsGap = befriend.variables.me_items_gap_tb;
+
+        },
+        initReorderItem: function (item) {
+            addClassEl('is-draggable', item);
+        },
+        initItemsState: function (reorderEl, idleItems) {
+            for(let i = 0; i < idleItems.length; i++) {
+                let item = idleItems[i];
+
+                if (Array.from(reorderEl.parentElement.children).indexOf(reorderEl) > i) {
+                    item.dataset.isAbove = '';
+                }
+            }
+        },
+        updateIdleItemsStateAndPosition: function (reorderEl) {
+            const reorderElRect = reorderEl.getBoundingClientRect();
+            const reorderElY = reorderElRect.top + reorderElRect.height / 2;
+
+            // Update state
+            for(let item of this.getIdleItems(reorderEl.parentElement)) {
+                const itemRect = item.getBoundingClientRect();
+                const itemY = itemRect.top + itemRect.height / 2;
+                if (this.isItemAbove(item)) {
+                    if (reorderElY <= itemY) {
+                        item.dataset.isToggled = '';
+                    } else {
+                        delete item.dataset.isToggled;
+                    }
+                } else {
+                    if (reorderElY >= itemY) {
+                        item.dataset.isToggled = '';
+                    } else {
+                        delete item.dataset.isToggled;
+                    }
+                }
+            }
+
+            // Update position
+            for(let item of this.getIdleItems(reorderEl.parentElement)) {
+                if (this.isItemToggled(item)) {
+                    const direction = this.isItemAbove(item) ? 1 : -1;
+                    item.style.transform = `translateY(${
+                        direction * (reorderElRect.height + this.itemsGap)
+                    }px)`;
+                } else {
+                    item.style.transform = '';
+                }
+            }
+        },
+        applyNewItemOrder: async function (reorderEl, section_el, section_key) {
+            const reorderedItems = [];
+            const itemsContainer = reorderEl.parentElement;
+            const allItems = Array.from(itemsContainer.children);
+
+            let prevIndex = allItems.indexOf(reorderEl);
+            let skipUpdate = false;
+
+            for(let i = 0; i < allItems.length; i++) {
+                let item = allItems[i];
+
+                if (item === reorderEl) {
+                    continue;
+                }
+
+                if (!this.isItemToggled(item)) {
+                    reorderedItems[i] = item;
+                    continue;
+                }
+
+                const newIndex = this.isItemAbove(item) ? i + 1 : i - 1;
+                reorderedItems[newIndex] = item;
+            }
+
+            // Fill in the dragged item
+            for (let index = 0; index < allItems.length; index++) {
+                if (typeof reorderedItems[index] === 'undefined') {
+                    if(prevIndex === index) {
+                        skipUpdate = true;
+                        break;
+                    }
+                    reorderedItems[index] = reorderEl;
+                }
+            }
+
+            // Clean up temporary attributes
+            for(let item of this.getIdleItems(itemsContainer)) {
+                delete item.dataset.isAbove;
+                delete item.dataset.isToggled;
+                item.style.transition = 'none';
+                item.style.transform = '';
+
+                requestAnimationFrame(() => {
+                    item.style.removeProperty('transition');
+                });
+            }
+
+            if(skipUpdate) {
+                return requestAnimationFrame(() => {
+                    removeClassEl('is-draggable', reorderEl);
+                    reorderEl.style.transform = '';
+                });
+            }
+
+            // Update DOM and positions
+            const reorderTransform = reorderEl.style.transform;
+            const transformValues = reorderTransform.replace('translate(', '').replace(')', '').split(',');
+            const prevTransform = {
+                x: parseInt(transformValues[0]),
+                y: parseInt(transformValues[1])
+            };
+
+            const reorderedBoxBefore = reorderEl.getBoundingClientRect();
+
+            // Reorder items in DOM
+            for(let item of reorderedItems) {
+                itemsContainer.appendChild(item);
+            }
+
+            const reorderedBoxAfter = reorderEl.getBoundingClientRect();
+
+            //remove animation
+            reorderEl.style.transition = 'none';
+
+            await rafAwait();
+
+            // Update final position
+            const xDiff = reorderedBoxBefore.left - reorderedBoxAfter.left;
+            const yDiff = reorderedBoxBefore.top - reorderedBoxAfter.top;
+            const tX = prevTransform.x + xDiff;
+            const tY = prevTransform.y + yDiff;
+            reorderEl.style.transform = `translate(${tX}px, ${tY}px)`;
+
+            await rafAwait();
+
+            reorderEl.style.removeProperty('transition');
+
+            // Update positions in data model
+            this.updateFavoritePositions(section_key, section_el);
+
+            requestAnimationFrame(() => {
+                addClassEl('is-drag-ending', reorderEl);
+                removeClassEl('is-draggable', reorderEl);
+                reorderEl.style.transform = '';
+                setTimeout(function () {
+                    removeClassEl('is-drag-ending', reorderEl);
+                }, 1000);
+            });
+        },
+        updateFavoritePositions: async function (section_key, section_el) {
+            const active_section = befriend.me.getActiveSection(section_key);
+            const items_el = section_el.querySelector('.items');
+            const item_els = items_el.querySelectorAll('.item.is-favorite');
+            let positions = {};
+
+            for(let i = 0; i < item_els.length; i++) {
+                let item_el = item_els[i];
+
+                const token = item_el.getAttribute('data-token');
+                const item = active_section.items[token];
+                const newPosition = i + 1;
+
+                if (item.favorite_position !== newPosition) {
+                    item.favorite_position = newPosition;
+                    positions[token] = {
+                        id: item.id,
+                        token: token,
+                        favorite_position: newPosition
+                    };
+                }
+
+                const rank_el = item_el.querySelector('.rank');
+
+                if (rank_el) {
+                    rank_el.innerHTML = newPosition;
+                }
+            }
+
+            if (Object.keys(positions).length) {
+                try {
+                    await befriend.auth.put(`/me/sections/item`, {
+                        section_key: section_key,
+                        table_key: section_el.getAttribute('data-table-key'),
+                        section_item_id: Object.values(positions)[0].id,
+                        favorite: {
+                            reorder: positions
+                        }
+                    });
+                } catch (e) {
+                    console.error('Error updating favorite positions:', e);
+                }
+            }
+        }
+    },
+    init: function () {
+        return new Promise(async (resolve, reject) => {
+            befriend.me.events.onModeSelect();
+            befriend.me.events.onAddSectionBtn();
+            befriend.me.events.onSelectAvailableSection();
+            befriend.me.events.confirmAction();
+
+            befriend.me.account.initEvents();
+
+            resolve();
+        });
+    },
+    onPartnerGenderSelect: function () {
+        let option_els = befriend.els.me.querySelectorAll('.selected-mode-container .partner .option');
+
+        for(let i = 0; i < option_els.length; i++) {
+            let el = option_els[i];
+
+            if(el._listener) {
+                continue;
+            }
+
+            el._listener = true;
+
+            el.addEventListener('click', async function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                let token = this.getAttribute('data-gender');
+
+                if(elHasClass(el, 'selected')) {
+                    removeClassEl('selected', el);
+                } else {
+                    removeElsClass(option_els, 'selected');
+                    addClassEl('selected', el);
+                }
+
+                await befriend.auth.put(`/me/mode/partner`, {
+                    gender: token,
+                    isSelect: elHasClass(el, 'selected'),
+                });
+            });
+        }
+
+    },
+    onKids: function () {
+        let add_btn = befriend.els.me.querySelector('.selected-mode-container .kids .add-btn');
+
+        if(!add_btn._listener) {
+            add_btn._listener = true;
+
+            add_btn.addEventListener('click', async function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                try {
+                    befriend.toggleSpinner(true);
+                    // Add kid on server
+                    let r = await befriend.auth.post('/me/mode/kids');
+
+                    befriend.me.data.modes.data.kids[r.data.token] = r.data;
+
+                    // Add to UI with token from response
+                    befriend.me.addKidHtml(r.data);
+
+                    befriend.toggleSpinner(false);
+                } catch(e) {
+                    console.error('Error adding kid:', e);
+                }
+            });
+        }
+
+        befriend.me.events.onKidsAgeSelect();
+        befriend.me.events.onKidsGenderSelect();
+        befriend.me.events.onKidsActive();
+        befriend.me.events.onKidsRemove();
+    },
+    onKidsActive: function () {
+        let active_btns = befriend.els.me.querySelectorAll('.kids .kid .active');
+
+        for (let btn of active_btns) {
+            if (btn._listener) continue;
+            btn._listener = true;
+
+            btn.addEventListener('click', async function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                let kid_el = this.closest('.kid');
+                let token = kid_el.getAttribute('data-token');
+
+                let checkbox_el = this.querySelector('.checkbox');
+
+                let is_active = !elHasClass(checkbox_el, 'checked');
+
+                toggleElClass(checkbox_el, 'checked');
+
+                try {
+                    await befriend.auth.put('/me/mode/kids', {
+                        kid_token: token,
+                        is_active
+                    });
+
+                    befriend.me.data.modes.data.kids[token].is_active = is_active;
+                } catch (e) {
+                    console.error('Error removing kid:', e);
+                }
+            });
+        }
+    },
+    onKidsRemove: function () {
+        let remove_btns = befriend.els.me.querySelectorAll('.kids .kid .remove');
+
+        for (let btn of remove_btns) {
+            if (btn._listener) continue;
+            btn._listener = true;
+
+            btn.addEventListener('click', async function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                let kid_el = this.closest('.kid');
+                let token = kid_el.getAttribute('data-token');
+
+                befriend.toggleSpinner(true);
+
+                try {
+                    await befriend.auth.delete('/me/mode/kids', {
+                        kid_token: token
+                    });
+
+                    if(befriend.me.data.modes.data.kids) {
+                        delete befriend.me.data.modes.data.kids[token];
+                    }
+
+                    kid_el.parentNode.removeChild(kid_el);
+
+                    requestAnimationFrame(() => {
+                        befriend.me.updateModeHeight();
+                    });
+                } catch (e) {
+                    console.error('Error removing kid:', e);
+                }
+
+                befriend.toggleSpinner(false);
+            });
+        }
+    },
+    onKidsAgeSelect: function() {
+        let list_els = befriend.els.me.querySelectorAll('.kids .kid .select-list');
+
+        for (let i = 0; i < list_els.length; i++) {
+            let list_el = list_els[i];
+
+            if (list_el._listener) continue;
+            list_el._listener = true;
+
+            list_el.querySelector('.current-selected').addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                // Close any other open options
+                let other_list_els = befriend.els.me.querySelectorAll('.kids .kid .select-list');
+
+                for (let other of Array.from(other_list_els)) {
+                    if (other !== list_el) {
+                        other.querySelector('.options').style.height = '0';
+                        removeClassEl('open', other);
+                    }
+                }
+
+                befriend.me.transitionKidsAge(list_el, !elHasClass(list_el, 'open'));
+            });
+
+            // Handle option selection
+            let options = list_el.getElementsByClassName('option');
+            for (let j = 0; j < options.length; j++) {
+                let option = options[j];
+
+                if (option._listener) continue;
+                option._listener = true;
+
+                option.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    let token = this.getAttribute('data-token');
+                    let selected_text = this.textContent;
+                    let kid_el = this.closest('.kid');
+                    let kid_token = kid_el.getAttribute('data-token');
+
+                    // Update UI
+                    removeClassEl('unselected', list_el);
+                    list_el.querySelector('.current-selected').textContent = selected_text;
+                    list_el.setAttribute('data-value', token);
+
+                    // Close options
+                    befriend.me.transitionKidsAge(list_el, false);
+
+                    // Remove previous selection if any
+                    removeElsClass(options, 'selected');
+                    addClassEl('selected', this);
+
+                    try {
+                        // Update server
+                        await befriend.auth.put('/me/mode/kids', {
+                            kid_token: kid_token,
+                            age_token: token
+                        });
+
+                        // Update local data
+                        if(befriend.me.data.modes.data.kids?.[kid_token]) {
+                            let age = befriend.me.data.modes.options.kids[token];
+                            befriend.me.data.modes.data.kids[kid_token].age_id = age?.id || null;
+                        }
+                    } catch(e) {
+                        console.error('Error updating kid age:', e);
+                    }
+                });
+            }
+        }
+    },
+    onKidsGenderSelect: function() {
+        let gender_els = befriend.els.me.querySelectorAll('.kids .kid .gender .option');
+
+        for (let el of gender_els) {
+            if (el._listener) continue;
+            el._listener = true;
+
+            el.addEventListener('click', async function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                let kid_el = this.closest('.kid');
+                let kid_token = kid_el.getAttribute('data-token');
+                let gender_token = this.getAttribute('data-token');
+
+                try {
+                    befriend.toggleSpinner(true);
+
+                    // Update server
+                    await befriend.auth.put('/me/mode/kids', {
+                        kid_token: kid_token,
+                        gender_token: gender_token,
+                        is_select: !elHasClass(el, 'selected')
+                    });
+
+                    // Update UI
+                    let gender_options = kid_el.querySelectorAll('.gender .option');
+
+                    if(elHasClass(el, 'selected')) {
+                        removeClassEl('selected', this);
+                    } else {
+                        removeElsClass(gender_options, 'selected');
+                        addClassEl('selected', this);
+                    }
+
+                    // Update local data
+                    if(befriend.me.data.modes.data.kids?.[kid_token]) {
+                        let gender = befriend.me.data.genders.find(g => g.token === gender_token);
+                        befriend.me.data.modes.data.kids[kid_token].gender_id = gender?.id || null;
+                    }
+
+                    befriend.toggleSpinner(false);
+                } catch(e) {
+                    console.error('Error updating kid gender:', e);
+                }
+            });
+        }
+    },
+    onAddSectionBtn: function () {
+        //open available sections
+        let btn_el = befriend.els.me.querySelector('.add-section-btn');
+
+        btn_el.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (befriend.me.isSectionOptionsShown()) {
+                befriend.me.toggleSectionOptions(false);
+            } else {
+                befriend.me.toggleSectionOptions(true);
+            }
+        });
+    },
+    onModeSelect: function () {
+        const modeOptions = befriend.els.me.querySelectorAll('.mode-option');
+
+        for(let option of modeOptions) {
+            if(option._listener) continue;
+            option._listener = true;
+
+            option.addEventListener('click', async function() {
+                befriend.me.selectMode(this.getAttribute('data-mode'));
+            });
+        }
+    },
+    onSelectAvailableSection: function () {
+        //add selected available section
+        let options = befriend.els.meSectionOptions.getElementsByClassName('option');
+
+        for (let i = 0; i < options.length; i++) {
+            let option = options[i];
+
+            if (option._listener) {
+                continue;
+            }
+
+            option._listener = true;
+
+            option.addEventListener('click', async function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                let key = this.getAttribute('data-key');
+
+                befriend.me.addSection(key, true);
+
+                this.parentNode.removeChild(this);
+
+                //hide overlay, scroll to section
+                befriend.me.toggleSectionOptions(false);
+
+                for(let i = 0; i < 10; i++) {
+                    await rafAwait();
+
+                    let sectionEl = befriend.els.me.querySelector(`.section[data-key="${key}"]`);
+
+                    if(sectionEl) {
+                        let scrollBarHeight = await befriend.styles.getStatusBarHeight();
+                        const sectionRect = sectionEl.getBoundingClientRect();
+                        const sectionTop = sectionRect.top - scrollBarHeight - 10;
+
+                        try {
+                            window.scrollTo({
+                                top: sectionTop,
+                                behavior: 'smooth'
+                            });
+                        } catch(e) {
+                            console.error('Window scroll failed:', e);
+                        }
+
+                        break;
+                    }
+                }
+            });
+        }
+    },
+    onSectionActions: function () {
+        let actions_els = befriend.els.me.querySelectorAll('.section .actions');
+
+        for (let i = 0; i < actions_els.length; i++) {
+            let el = actions_els[i];
+
+            if (el._listener) {
+                continue;
+            }
+
+            el._listener = true;
+
+            el.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                removeElsClass(befriend.els.me.getElementsByClassName('section'), 'show-menu');
+
+                let section_el = this.closest('.section');
+
+                befriend.me.toggleSectionActions(section_el, true);
+
+                befriend.me.toggleAutoComplete(null, false);
+            });
+        }
+    },
+    onSectionReorder: function() {
+        const TOUCH_DELAY = 80;
+        const MOVE_THRESHOLD = 10;
+        let touchTimeout;
+        let initialTouchY;
+        let hasMoved;
+
+        const sectionReorder = befriend.me.events.sectionReorder;
+        const sections = befriend.els.me.getElementsByClassName('section');
+
+        for(let i = 0; i < sections.length; i++) {
+            let section = sections[i];
+
+            if(section._reorder_listener) {
+                continue
+            };
+
+            section._reorder_listener = true;
+
+            // Track touch move before drag starts
+            section.addEventListener('touchmove', function(e) {
+                if (sectionReorder.ip) {
+                    e.preventDefault();
+                    return;
+                }
+
+                if(!initialTouchY) return;
+
+                const touch = e.touches[0];
+                const moveDistance = Math.abs(touch.clientY - initialTouchY);
+
+                if (moveDistance > MOVE_THRESHOLD) {
+                    hasMoved = true;
+                    clearTimeout(touchTimeout);
+                    initialTouchY = null;
+                }
+            }, {
+                passive: false
+            });
+
+            section.addEventListener('touchstart', function(e) {
+                const target = e.target;
+
+                befriend.me.hideActiveSecondaryIf(target);
+
+                if(target.closest('.secondary')) {
+                    return;
+                }
+
+                // Only handle drag start from section top area
+
+                const sectionTop = section.querySelector('.section-top');
+                if (!sectionTop.contains(target)) return;
+
+                if (target.closest('.actions') || target.closest('.menu')) return;
+
+                // Reset tracking variables
+                hasMoved = false;
+                initialTouchY = e.touches[0].clientY;
+
+                clearTimeout(touchTimeout);
+                touchTimeout = setTimeout(function() {
+                    if(!hasMoved) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const coords = getEventCoords(e);
+                        sectionReorder.start.x = coords.x;
+                        sectionReorder.start.y = coords.y;
+                        sectionReorder.el = section;
+                        sectionReorder.ip = true;
+                        sectionReorder.dragStarted = false;
+
+                        // Disable scrolling
+                        const scrollContainer = section.closest('.view-me');
+                        if (scrollContainer) {
+                            scrollContainer.style.overflow = 'hidden';
+                        }
+
+                        const idleSections = sectionReorder.getIdleSections(section.parentElement);
+                        sectionReorder.setSectionsGap(idleSections);
+                        sectionReorder.initReorderSection(section);
+                        sectionReorder.initSectionsState(section, idleSections);
+                    }
+                }, TOUCH_DELAY);
+            });
+        }
+    },
+    autoComplete: function () {
+        let els = befriend.els.me.getElementsByClassName('search-input');
+
+        for (let i = 0; i < els.length; i++) {
+            let el = els[i];
+
+            if (el._listener) {
+                continue;
+            }
+
+            el._listener = true;
+
+            let debounceTimer = null;
+
+            el.addEventListener('input', function () {
+                clearTimeout(debounceTimer);
+
+                debounceTimer = setTimeout(async function () {
+                    const value = el.value;
+
+                    let section_key = el.closest('.section').getAttribute('data-key');
+
+                    try {
+                        befriend.me.searchItems(section_key, value);
+                    } catch (e) {
+                        console.error(e);
+                    }
+                }, 100);
+            });
+
+            //focus
+            el.addEventListener('focus', function () {
+                addClassEl('input-focus', el.closest('.input-container'));
+
+                //hide all other dropdowns
+                let search_containers =
+                    befriend.els.me.getElementsByClassName('search-container');
+
+                removeElsClass(search_containers, befriend.classes.autoCompleteMe);
+
+                let section_key = el.closest('.section').getAttribute('data-key');
+
+                let sectionAutocomplete = befriend.me.getSectionAutoComplete(section_key);
+
+                let minChars = isNumeric(sectionAutocomplete.minChars) ? sectionAutocomplete.minChars : befriend.me.autoComplete.minChars;
+
+                if (el.value.length >= minChars) {
+                    befriend.me.toggleAutoComplete(el.closest('.search-container'), true);
+                }
+            });
+
+            el.addEventListener('blur', function () {
+                removeClassEl('input-focus', el.closest('.input-container'));
+            });
+        }
+    },
+    autoCompleteFilterList: function () {
+        //open list
+        let selected_els = befriend.els.me.querySelectorAll(
+            '.search-container .selected-container',
+        );
+
+        for (let i = 0; i < selected_els.length; i++) {
+            let el = selected_els[i];
+
+            if (el._listener) {
+                continue;
+            }
+
+            el._listener = true;
+
+            el.addEventListener('click', function (e) {
+                let parent_el = el.closest('.select-container');
+                let section_key = el.closest('.section').getAttribute('data-key');
+
+                befriend.me.toggleAutoCompleteSelect(parent_el, !elHasClass(parent_el, 'open'));
+
+                //reset scroll to top after selection
+                if (befriend.me.autoComplete.selected.filterList[section_key]?.needsReset) {
+                    let list = parent_el.querySelector('.select-list');
+
+                    requestAnimationFrame(function () {
+                        list.scrollTop = 0;
+                    });
+
+                    befriend.me.autoComplete.selected.filterList[section_key].needsReset =
+                        false;
+                }
+            });
+        }
+
+        //search list
+        let input_els = befriend.els.me.querySelectorAll('.select-container input');
+
+        for (let i = 0; i < input_els.length; i++) {
+            let el = input_els[i];
+
+            if (el._listener) {
+                continue;
+            }
+
+            el._listener = true;
+
+            el.addEventListener('input', function (e) {
+                let section_key = el.closest('.section').getAttribute('data-key');
+
+                befriend.me.updateAutoCompleteSelectList(section_key);
+            });
+        }
+
+        //select list item
+        let item_els = befriend.els.me.querySelectorAll('.select-container .item');
+
+        for (let i = 0; i < item_els.length; i++) {
+            let el = item_els[i];
+
+            if (el._listener) {
+                continue;
+            }
+
+            el._listener = true;
+
+            el.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                let section_key = el.closest('.section').getAttribute('data-key');
+
+                let id = this.getAttribute('data-id');
+
+                befriend.me.selectAutoCompleteFilterItem(section_key, id);
+            });
+        }
+    },
+    onActionSelect: function () {
+        let actions_els = befriend.els.me.querySelectorAll('.menu .action');
+
+        for (let i = 0; i < actions_els.length; i++) {
+            let el = actions_els[i];
+
+            if (el._listener) {
+                continue;
+            }
+
+            el._listener = true;
+
+            el.addEventListener('click', function (e) {
+                let action = this.getAttribute('data-action');
+
+                let section = this.closest('.section');
+                let section_key = section.getAttribute('data-key');
+                let section_data = befriend.me.data.sections.all[section_key];
+
+                if (action === 'delete') {
+                    befriend.me.actions.delete.section = section_key;
+                    befriend.els.confirmMeAction.querySelector('.main').innerHTML =
+                        'Confirm Delete';
+                    befriend.els.confirmMeAction.querySelector('.details').innerHTML =
+                        section_data.section_name;
+
+                    befriend.me.toggleConfirm(true);
+                }
+            });
+        }
+    },
+    onUpdateSectionHeight: function () {
+        let top_els = befriend.els.me.getElementsByClassName('section-top');
+
+        for (let i = 0; i < top_els.length; i++) {
+            let el = top_els[i];
+
+            if (el._listener) {
+                continue;
+            }
+
+            el._listener = true;
+
+            el.addEventListener('click', (e) => {
+                // e.preventDefault();
+                // e.stopPropagation();
+
+                if (e.target.closest('.actions')) {
+                    return false;
+                }
+
+                let section_el = el.closest('.section');
+
+                //hide actions if shown
+                if (elHasClass(section_el, 'show-menu')) {
+                    return befriend.me.toggleSectionActions(section_el, false);
+                }
+
+                befriend.me.updateSectionHeight(
+                    section_el,
+                    !elHasClass(section_el, 'collapsed'),
+                );
+            });
+        }
+    },
+    onSectionCategory: function() {
+        let category_btns = befriend.els.me.getElementsByClassName('category-btn');
+
+        for (let i = 0; i < category_btns.length; i++) {
+            let btn = category_btns[i];
+
+            if (!btn._listener) {
+                btn._listener = true;
+
+                btn.addEventListener('click', async function(e) {
+                    let section_el = this.closest('.section');
+
+                    // Update active state
+                    let section_btns = section_el.getElementsByClassName('category-btn');
+                    removeElsClass(section_btns, 'active');
+                    addClassEl('active', this);
+
+                    // Get filter parameters
+                    const filter_params = {
+                        category: this.getAttribute('data-category') || '',
+                        category_token: this.getAttribute('data-category-token'),
+                        category_table_key: this.getAttribute('data-category-table') || '',
+                        tab_key: section_el.querySelector('.tab.active')?.getAttribute('data-key')
+                    };
+
+                    // Update items
+                    try {
+                        await befriend.me.updateSectionItems(section_el, filter_params);
+                    } catch(e) {
+                        console.error(e)
+                    }
+                });
+            }
+        }
+    },
+    onSectionTabs: function() {
+        let tab_els = befriend.els.me.querySelectorAll('.section-container .tab');
+
+        for (let i = 0; i < tab_els.length; i++) {
+            let el = tab_els[i];
+
+            if (!el._listener) {
+                el._listener = true;
+
+                el.addEventListener('click', async function(e) {
+                    let section_el = this.closest('.section');
+
+                    // Update active state
+                    let section_tabs = section_el.querySelectorAll('.section-container .tab');
+                    removeElsClass(section_tabs, 'active');
+                    addClassEl('active', this);
+
+                    // Get current category filter parameters
+                    let active_category = section_el.querySelector('.category-btn.active');
+
+                    const filter_params = {
+                        category: active_category?.getAttribute('data-category') || '',
+                        category_token: active_category?.getAttribute('data-category-token'),
+                        category_table_key: active_category?.getAttribute('data-category-table') || '',
+                        tab_key: this.getAttribute('data-key')
+                    };
+
+                    // Update items
+                    try {
+                        await befriend.me.updateSectionItems(section_el, filter_params);
+                    } catch(e) {
+                        console.error(e)
+                    }
+                });
+            }
+        }
+    },
+    onSelectItem: function () {
+        let items = befriend.els.me.querySelector('.sections').getElementsByClassName('item');
+
+        for (let i = 0; i < items.length; i++) {
+            let item = items[i];
+
+            if(elHasClass(item,'button-option')) {
+                continue;
+            }
+
+            if (!item._listener) {
+                item._listener = true;
+
+                item.addEventListener('click', function (e) {
+                    let section_el = this.closest('.section');
+
+                    if (elHasClass(item, 'mine')) {
+                        let open_secondary_el =
+                            befriend.els.me.querySelector('.secondary.open');
+
+                        if (open_secondary_el && !e.target.closest('.secondary')) {
+                            befriend.me.transitionSecondary(open_secondary_el, false);
+                        }
+
+                        return false;
+                    }
+
+                    let section_key = section_el.getAttribute('data-key');
+                    let token = this.getAttribute('data-token');
+
+                    try {
+                        item.parentNode.removeChild(item);
+                    } catch (e) {}
+
+                    try {
+                        befriend.me.addSectionItem(section_key, token);
+                    } catch (e) {
+                        console.error(e);
+                    }
+                });
+            }
+        }
+    },
+    onSelectOptionItem: function () {
+        let items = befriend.els.me.querySelector('.sections').querySelectorAll('.item.button-option');
+
+        for (let i = 0; i < items.length; i++) {
+            let item = items[i];
+
+            if (!item._listener) {
+                item._listener = true;
+
+                item.addEventListener('click', async function (e) {
+                    console.log("on select option item");
+
+                    if(item._request_ip) {
+                        return false;
+                    }
+
+                    item._request_ip = true;
+
+                    try {
+                        let section_el = this.closest('.section');
+                        let section_buttons = section_el.getElementsByClassName('button-option');
+                        let section_key = section_el.getAttribute('data-key');
+                        let table_key = befriend.me.getSectionTableKey(section_key);
+                        let token = this.getAttribute('data-token');
+                        let sectionData = befriend.me.getActiveSection(section_key).data;
+
+                        let isSelect = !(elHasClass(item, 'selected'));
+                        let exclusiveToken = sectionData?.type?.exclusive?.token;
+                        let isExclusive = exclusiveToken === token;
+                        let exclusiveButton = section_el.querySelector(`.button-option[data-token="${exclusiveToken}"]`);
+                        let isExclusiveSelected = exclusiveButton && elHasClass(exclusiveButton, 'selected');
+
+                        // If section is single-select or this is the exclusive token, deselect all others
+                        if (!sectionData?.type?.multi || isExclusive) {
+                            removeElsClass(section_buttons, 'selected');
+                        }
+
+                        // Toggle current item selection
+                        if(isSelect) {
+                            // If selecting non-exclusive and exclusive is selected, deselect exclusive
+                            if (!isExclusive && isExclusiveSelected) {
+                                removeClassEl('selected', exclusiveButton);
+                            }
+
+                            addClassEl('selected', item);
+                        } else {
+                            removeClassEl('selected', item);
+                        }
+
+                        let r = await befriend.auth.put(`/me/sections/selection`, {
+                            section_key: section_key,
+                            table_key: table_key,
+                            item_token: token,
+                            is_select: isSelect
+                        });
+
+                        // Update section data
+                        let section_data = befriend.me.getActiveSection(section_key);
+                        if (!isSelect) {
+                            delete section_data.items[token];
+                        } else {
+                            if (!isExclusive && isExclusiveSelected) {
+                                delete section_data.items[exclusiveToken];
+                            }
+                            section_data.items[token] = r.data;
+                        }
+
+                        // If exclusive item is selected, deselect all others
+                        if (isExclusive && isSelect) {
+                            for (let i = 0; i < section_buttons.length; i++) {
+                                let btn = section_buttons[i];
+                                if (btn !== item) {
+                                    removeClassEl('selected', btn);
+                                    let btnToken = btn.getAttribute('data-token');
+                                    delete section_data.items[btnToken];
+                                }
+                            }
+                        }
+                    } catch(e) {
+                        console.error(e);
+                    }
+
+                    item._request_ip = false;
+                });
+            }
+        }
+    },
+    onRemoveItem: function () {
+        let items = befriend.els.me.querySelector('.sections').getElementsByClassName('item');
+
+        for (let i = 0; i < items.length; i++) {
+            let item = items[i];
+
+            let remove_el = item.querySelector('.remove');
+
+            if (!remove_el || remove_el._listener) {
+                continue;
+            }
+
+            remove_el._listener = true;
+
+            remove_el.addEventListener('click', async function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                try {
+                    befriend.toggleSpinner(true);
+
+                    let section_el = this.closest('.section');
+                    let section_key = section_el.getAttribute('data-key');
+                    let item_el = this.closest('.item');
+                    let delete_token = item_el.getAttribute('data-token');
+
+                    let section_data = befriend.me.getActiveSection(section_key);
+                    let item = section_data.items[delete_token];
+                    let table_key = item.table_key;
+
+                    // Get initial positions for animation
+                    let items_el = section_el.querySelector('.items-container .items');
+                    let item_els = items_el.getElementsByClassName('item');
+                    let initialPositions = befriend.me.getInitialPositions(item_els);
+
+                    // Handle reordering if this was a favorited item
+                    let updatedPositions;
+                    let favorite_data = {
+                        active: false,
+                        position: null
+                    };
+
+                    if (item.is_favorite) {
+                        // Remove favorite and reorder remaining favorites
+                        item.is_favorite = false;
+                        item.favorite_position = null;
+                        favorite_data.reorder = updatedPositions = befriend.me.reorderFavoritePositions(section_key, table_key);
+                    }
+
+                    // Update server with both delete and reorder
+                    try {
+                        await befriend.auth.put(`/me/sections/item`, {
+                            section_key: section_key,
+                            table_key: table_key,
+                            section_item_id: item.id,
+                            is_delete: true,
+                            favorite: favorite_data
+                        });
+                    } catch (e) {
+                        console.error(e);
+                        return; // Don't proceed with UI updates if server update failed
+                    }
+
+                    // Remove from data
+                    delete section_data.items[delete_token];
+
+                    // Get remaining filtered items
+                    let items_filtered = [];
+                    for (let token in section_data.items) {
+                        let item = section_data.items[token];
+
+                        // Filter by tab if exists
+                        let active_tab = section_el.querySelector('.section-container .tab.active');
+                        if (active_tab && item.table_key && item.table_key !== active_tab.getAttribute('data-key')) {
+                            continue;
+                        }
+
+                        let remaining_el = section_el.querySelector(`.item[data-token="${token}"]`);
+                        if (remaining_el) {
+                            items_filtered.push(remaining_el);
+                        }
+                    }
+
+                    // Animate out the deleted item
+                    item_el.style.transition = `opacity ${befriend.variables.me_remove_item_transition_ms}ms ease-out`;
+                    item_el.style.opacity = '0';
+
+                    await timeoutAwait(befriend.variables.me_remove_item_transition_ms);
+
+                    // Remove the element after fade out
+                    item_el.parentNode.removeChild(item_el);
+
+                    // Handle animations and DOM updates
+                    if (items_filtered.length > 0) {
+                        // Sort and animate remaining items
+                        let itemsArray = befriend.me.sortItemsByFavorite(items_filtered, section_data);
+                        befriend.me.animateItemTransitions(itemsArray, items_el, initialPositions, null);
+
+                        // Update rank displays for remaining favorites
+                        if (updatedPositions) {
+                            for (let token in updatedPositions) {
+                                let remaining_el = section_el.querySelector(`.item[data-token="${token}"]`);
+                                if (remaining_el) {
+                                    let rank_el = remaining_el.querySelector('.rank');
+                                    rank_el.innerHTML = updatedPositions[token].favorite_position;
+                                }
+                            }
+                        }
+
+                        removeClassEl('no-items', section_el);
+                    } else {
+                        addClassEl('no-items', section_el);
+                    }
+
+                    // Update section height after removing the last item
+                    befriend.me.updateSectionHeight(section_el, elHasClass(section_el, 'collapsed'));
+                } catch(e) {
+                    console.error(e);
+                } finally {
+                    befriend.toggleSpinner(false);
+                }
+            });
+        }
+    },
+    onOpenSecondary: function () {
+        let secondaries = befriend.els.me.getElementsByClassName('secondary');
+
+        for (let i = 0; i < secondaries.length; i++) {
+            let el = secondaries[i];
+
+            if (!el._listener) {
+                el._listener = true;
+
+                el.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    let item_el = this.closest('.item');
+
+                    if (e.target.closest('.options')) {
+                        return false;
+                    }
+
+                    let isOpen = elHasClass(item_el, 'item-secondary-open');
+                    befriend.me.transitionSecondary(el, !isOpen);
+                });
+            }
+        }
+    },
+    onFavorite: function () {
+        let meReorder = befriend.me.events.itemReorder;
+
+        let favorite_els = befriend.els.me.getElementsByClassName('favorite');
+
+        for (let i = 0; i < favorite_els.length; i++) {
+            let favorite_el = favorite_els[i];
+
+            if(!favorite_el._listener) {
+                favorite_el._listener = true;
+
+                favorite_el.addEventListener('click', async function (e) {
+                    if (meReorder.ip) return;
+
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    //data
+                    let section_el = this.closest('.section');
+                    let items_el = section_el.querySelector('.items-container .items');
+                    let item_els = items_el.getElementsByClassName('item');
+                    let item_el = this.closest('.item');
+
+                    let section_key = section_el.getAttribute('data-key');
+                    let item_token = item_el.getAttribute('data-token');
+                    let active_section = befriend.me.getActiveSection(section_key);
+                    let item = active_section.items[item_token];
+                    let table_key = item.table_key || befriend.me.getSectionTableKey(section_key);
+
+                    //toggle favorite state
+                    item.is_favorite = !item.is_favorite;
+                    toggleElClass(this.closest('.item'), 'is-favorite');
+
+                    // Get initial positions before any changes
+                    let initialPositions = befriend.me.getInitialPositions(item_els);
+
+                    // Handle favorite data updates
+                    let updatedPositions;
+                    let favorite_data = {
+                        active: item.is_favorite
+                    };
+
+                    if(item.is_favorite) {
+                        // Adding favorite - get highest position and add 1
+                        let highest = befriend.me.getFavoriteHighestPosition(section_key, table_key);
+                        item.favorite_position = highest + 1;
+                        favorite_data.position = item.favorite_position;
+                    } else {
+                        // Removing favorite - reorder remaining favorites
+                        item.favorite_position = null;
+                        favorite_data.position = null;
+                        favorite_data.reorder = updatedPositions = befriend.me.reorderFavoritePositions(section_key, table_key);
+                    }
+
+                    // Update rank displays
+                    befriend.me.updateRankDisplays(section_el, item_el, item, updatedPositions);
+
+                    // Sort and animate items
+                    let itemsArray = Array.from(item_els);
+                    itemsArray = befriend.me.sortItemsByFavorite(itemsArray, active_section);
+
+                    befriend.me.animateItemTransitions(itemsArray, items_el, initialPositions,
+                        item.is_favorite ? item_el : null
+                        );
+
+                    //server
+                    try {
+                        await befriend.auth.put(`/me/sections/item`, {
+                            section_key: section_key,
+                            table_key: table_key,
+                            section_item_id: item.id,
+                            favorite: favorite_data,
+                        });
+                    } catch (e) {
+                        console.error(e);
+                    }
+                });
+            }
+        }
+
+        const TOUCH_DELAY = 80; // ms to wait before initiating drag
+        const MOVE_THRESHOLD = 10; // pixels of movement to consider it a scroll
+        let touchTimeout;
+        let initialTouchY;
+        let hasMoved;
+
+        let item_els = befriend.els.me.getElementsByClassName('item');
+
+        for (let i = 0; i < item_els.length; i++) {
+            let item_el = item_els[i];
+
+            if(!elHasClass(item_el, 'favorable')) {
+                continue;
+            }
+
+            if(item_el._reorder_listener) {
+                continue;
+            }
+
+            item_el._reorder_listener = true;
+
+            // Track touch move before drag starts
+            item_el.addEventListener('touchmove', function(e) {
+                if (meReorder.ip) {
+                    e.preventDefault();
+                    return;
+                }
+
+                if(!initialTouchY) {
+                    return;
+                }
+
+                const touch = e.touches[0];
+                const moveDistance = Math.abs(touch.clientY - initialTouchY);
+
+                if (moveDistance > MOVE_THRESHOLD) {
+                    hasMoved = true;
+                    clearTimeout(touchTimeout);
+                    initialTouchY = null;
+                }
+            }, {
+                passive: false,
+            });
+
+            item_el.addEventListener('touchstart', function(e) {
+                console.log("item touch start");
+
+                if (!elHasClass(item_el, 'is-favorite')) return;
+
+                // Don't start drag if clicking the heart icon or secondary
+                const target = e.target;
+                if (target.closest('.heart') || target.closest('.remove') || target.closest('.secondary')) {
+                    return;
+                }
+
+                // Reset tracking variables
+                hasMoved = false;
+                initialTouchY = e.touches[0].clientY;
+
+                // Clear any existing timeout
+                clearTimeout(touchTimeout);
+
+                touchTimeout = setTimeout(function() {
+                    if(!hasMoved) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const coords = getEventCoords(e);
+                        meReorder.start.x = coords.x;
+                        meReorder.start.y = coords.y;
+                        meReorder.el = item_el;
+                        meReorder.ip = true;
+                        meReorder.dragStarted = false;
+
+                        // Disable scrolling when drag starts
+                        const scrollContainer = item_el.closest('.items-container');
+                        if (scrollContainer) {
+                            scrollContainer.style.overflowY = 'hidden';
+                        }
+
+                        const idleItems = meReorder.getIdleItems(item_el.parentElement);
+                        meReorder.setItemsGap(idleItems);
+                        meReorder.initReorderItem(item_el);
+                        meReorder.initItemsState(item_el, idleItems);
+                    }
+                }, TOUCH_DELAY);
+            });
+        }
+    },
+    onSelectSecondary: function () {
+        let secondaries = befriend.els.me.getElementsByClassName('secondary');
+
+        for (let i = 0; i < secondaries.length; i++) {
+            let secondary = secondaries[i];
+
+            let options = secondary.getElementsByClassName('option');
+
+            for (let i2 = 0; i2 < options.length; i2++) {
+                let option = options[i2];
+
+                if (!option._listener) {
+                    option._listener = true;
+
+                    option.addEventListener('click', async function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        let option_value = this.getAttribute('data-option');
+
+                        let section = this.closest('.section');
+                        let section_key = section.getAttribute('data-key');
+
+                        let item_el = this.closest('.item');
+
+                        let item_token = item_el.getAttribute('data-token');
+
+                        let current_selected_el = secondary.querySelector('.current-selected');
+
+                        //el
+                        removeElsClass(options, 'selected');
+                        addClassEl('selected', option);
+                        befriend.me.transitionSecondary(secondary, false);
+                        removeClassEl('unselected', secondary);
+                        current_selected_el.innerHTML = option_value;
+
+                        //data
+                        let active_section = befriend.me.getActiveSection(section_key);
+
+                        let item = active_section.items[item_token];
+
+                        let prev_option_value = item.secondary;
+
+                        if (prev_option_value !== option_value) {
+                            item.secondary = option_value;
+
+                            let table_key = item.table_key || befriend.me.getSectionTableKey(section_key);
+
+                            //server
+                            try {
+                                await befriend.auth.put(`/me/sections/item`, {
+                                    section_key: section_key,
+                                    table_key: table_key,
+                                    section_item_id: item.id,
+                                    secondary: option_value,
+                                });
+                            } catch (e) {
+                                console.error(e);
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    },
+    confirmAction: function () {
+        let buttons = befriend.els.confirmMeAction.getElementsByClassName('button');
+
+        for (let i = 0; i < buttons.length; i++) {
+            let button = buttons[i];
+
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                let action = button.getAttribute('data-action');
+
+                if (action === 'no') {
+                    befriend.me.toggleConfirm(false);
+                } else if (action === 'yes') {
+                    befriend.me.deleteSection(befriend.me.actions.delete.section);
+                }
+            });
+        }
+    },
+    onSelectAutoCompleteItem: function () {
+        let els = befriend.els.me.querySelectorAll(`.autocomplete-list .item`);
+
+        for (let i = 0; i < els.length; i++) {
+            let el = els[i];
+
+            if (el._listener) {
+                continue;
+            }
+
+            el._listener = true;
+
+            el.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                let section = el.closest('.section');
+                let section_key = section.getAttribute('data-key');
+                let token = el.getAttribute('data-token');
+
+                befriend.me.toggleAutoComplete(null, false);
+
+                befriend.me.addSectionItem(section_key, token);
+
+                el.closest('.search-container').querySelector('.search-input').value = '';
+            });
+        }
+    },
+},
+}

@@ -147,6 +147,8 @@ befriend.events = {
                 //view specific logic
                 if (nav_name === 'me') {
                     befriend.me.updateCollapsed();
+
+                    befriend.me.account.setView('profile');
                 }
             });
         }
