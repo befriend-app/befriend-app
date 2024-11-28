@@ -3235,7 +3235,7 @@ befriend.me = {
                             continue;
                         }
 
-                        let remaining_el = section_el.querySelector(`.item[data-token="${token}"]`);
+                        let remaining_el = section_el.querySelector(`.item.mine[data-token="${token}"]`);
                         if (remaining_el) {
                             items_filtered.push(remaining_el);
                         }
