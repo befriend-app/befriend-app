@@ -596,6 +596,7 @@ befriend.me = {
 
                     for (let category of section_data.data.categories.options) {
                         let heading_html = category.heading ? `<div class="heading">${category.heading}</div>` : '';
+                        let image_html = category.image ? `<div class="image">${category.image}</div>` : '';
 
                         let data_category = `data-category="${category.name}"`;
 
@@ -612,8 +613,11 @@ befriend.me = {
                         }
 
                         categories_html += `<div class="category-btn ${heading_html ? 'w-heading' : ''}" ${data_category} ${data_table_key} ${data_category_token}>
-                                            ${heading_html}
-                                            <div class="name">${category.name}</div>
+                                            ${image_html}
+                                            <div class="heading-name">
+                                                ${heading_html}
+                                                <div class="name">${category.name}</div> 
+                                            </div>
                                         </div>`;
                     }
 
@@ -776,6 +780,8 @@ befriend.me = {
                     hash_token = befriend.me.autoComplete.selected.filterList[section_key].item[filterKey];
                 }
 
+                befriend.toggleSpinner(true);
+
                 let r = await befriend.auth.post(`/me/sections/item`, {
                     section_key: section_key,
                     table_key: table_key,
@@ -822,6 +828,8 @@ befriend.me = {
             } catch (e) {
                 console.error(e);
             }
+
+            befriend.toggleSpinner(false, 100);
 
             resolve();
         });
@@ -1020,7 +1028,9 @@ befriend.me = {
                             let meta = '';
 
                             if(item.label) {
-                                label = `<div class="label">${item.label}</div>`;
+                                label = `<div class="label">
+                                            <div class="text">${item.label}</div>
+                                        </div>`;
                             }
 
                             if(item.meta) {
@@ -1533,14 +1543,23 @@ befriend.me = {
                             for (let item of category_options.items) {
                                 if (!(item.token in section_data.items)) {
                                     let label = '';
+                                    let meta = '';
 
                                     if(item.label) {
                                         label = `<div class="label">${item.label}</div>`;
                                     }
 
+                                    if(item.meta) {
+                                        meta  = `<div class="meta">${item.meta}</div>`;
+                                    }
+
                                     items_html += `<div class="item" data-token="${item.token}">
-                                                ${label}
-                                                <div class="name">${item.name}</div>
+                                                <div class="name-label">
+                                                    <div class="name">${item.name}</div>
+                                                    ${label}
+                                                </div>
+                                                
+                                                ${meta}
                                             </div>`;
                                 }
                             }
@@ -1605,7 +1624,7 @@ befriend.me = {
                 console.error('Error updating section items:', e);
                 reject(e);
             } finally {
-                befriend.toggleSpinner(false);
+                // befriend.toggleSpinner(false);
             }
         });
     },

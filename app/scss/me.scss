@@ -391,14 +391,14 @@ html.#{$class_confirm_me_action} {
                     gap: 10px 0;
 
                     .kid {
-                        &:first-of-type {
-                            margin-top: 10px;
-                        }
-
                         padding: 10px 10px;
                         border: 1px solid lighten(black, 70%);
                         border-radius: 6px;
                         position: relative;
+
+                        &:first-of-type {
+                            margin-top: 10px;
+                        }
 
                         .remove {
                             position: absolute;
@@ -810,7 +810,7 @@ html.#{$class_confirm_me_action} {
                 font-weight: 500;
                 display: flex;
                 justify-content: center;
-                flex-direction: column;
+                align-items: center;
 
                 &.mine {
                 }
@@ -825,6 +825,30 @@ html.#{$class_confirm_me_action} {
 
                 .name {
                     font-size: 14px;
+                }
+
+                .image {
+                    margin-right: 8px;
+                    @include flex-center-col;
+
+                    svg {
+                        height: 18px;
+                        max-width: 32px;
+                        @include flex-center-col;
+
+                        &.netflix {
+                            margin-right: 2px;
+                        }
+
+                        &.amazon {
+                            width: 25px;
+                        }
+                    }
+                }
+
+                .heading-name {
+                    display: flex;
+                    flex-direction: column;
                 }
 
                 .heading {
@@ -1111,15 +1135,25 @@ html.#{$class_confirm_me_action} {
                     }
 
                     .label {
+                        display: flex;
+                        font-size: 10px;
                         background: lighten($brand_color_a, 50%);
-                        padding: 4px 10px;
-                        font-size: 13px;
+                        padding: 2px 6px;
                         border: 1px solid lighten(black, 90%);
                         border-radius: 6px;
                         font-weight: 500;
-                        flex-shrink: 0;
+                        width: fit-content;
                         height: fit-content;
-                        align-self: center;
+                        //max-width: 80px;
+
+                        .text {
+                            position: relative;
+                            width: 100%;
+                            //word-wrap: break-word;
+                            overflow-wrap: break-word;
+                            white-space: normal;
+                            word-spacing: 0;
+                        }
                     }
                 }
             }
@@ -1352,9 +1386,23 @@ html.#{$class_confirm_me_action} {
                         }
                     }
 
+                    .name-label {
+                        display: flex;
+                        align-items: center;
+                    }
+
                     .name {
-                        font-size: 13px;
+                        font-size: 14px;
                         font-weight: 500;
+                    }
+
+                    .label {
+                        border-radius: 6px;
+                        padding: 4px 8px;
+                        background: lighten($color_lightgray, 20%);
+                        border: 1px solid darken($color_lightgray, 20%);
+                        min-width: fit-content;
+                        margin-left: auto;
                     }
 
                     .remove {
@@ -1455,13 +1503,15 @@ html.#{$class_confirm_me_action} {
                 }
             }
 
-            &.movies {
+            &.movies, &.tv_shows {
                 &:not(.my-items):not([data-table-key="genres"]) {
                     .items {
                         display: grid;
 
                         .item {
                             text-align: initial;
+                            padding-left: $me_movie_item_plr;
+                            padding-right: $me_movie_item_plr;
                         }
                     }
                 }
@@ -1514,6 +1564,14 @@ html.#{$class_confirm_me_action} {
                     }
                     .no-items {
                         //display: none !important;
+                    }
+                }
+            }
+
+            &.sports {
+                .autocomplete-list {
+                    .label {
+                        max-width: initial !important;
                     }
                 }
             }

@@ -267,11 +267,17 @@ window['befriend'] = {
             });
         },
     },
-    toggleSpinner: function (show) {
+    toggleSpinner: function (show, timeout_ms) {
         if (show) {
             addClassEl('show', befriend.els.viewSpinner);
         } else {
-            removeClassEl('show', befriend.els.viewSpinner);
+            if(timeout_ms) {
+                setTimeout(function () {
+                    removeClassEl('show', befriend.els.viewSpinner);
+                }, timeout_ms);
+            } else {
+                removeClassEl('show', befriend.els.viewSpinner);
+            }
         }
     },
     isViewShown: function (view_name) {
