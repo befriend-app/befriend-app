@@ -917,6 +917,27 @@ befriend.me = {
             befriend.els.meSectionOptions.querySelector('.options').innerHTML = html;
         }
     },
+    getSectionCategoryItemOptions: function(section_key, category_token) {
+        if(!category_token) {
+            return null;
+        }
+
+        let section_data = this.getActiveSection(section_key);
+
+        if(!section_data?.data?.options?.length) {
+            return null;
+        }
+
+        let items = [];
+
+        for(let item of section_data.data.options) {
+            if(category_token === item.category_token) {
+                items.push(item);
+            }
+        }
+
+        return items.length ? { items } : null;
+    },
     searchItems: function (section_key, search_value) {
         return new Promise(async (resolve, reject) => {
             search_value = search_value ? search_value.trim() : '';
@@ -1523,7 +1544,15 @@ befriend.me = {
 
                     // Handle category-based options
                     if (category_token) {
+                        //1. find cached options
+                        //2. find from section data
+                        //3. dynamic endpoint data
+
                         let category_options = befriend.me.data.categories[category_token];
+
+                        if(!category_options) {
+                            category_options = befriend.me.getSectionCategoryItemOptions(section_key, category_token);
+                        }
 
                         try {
                             if (!category_options) {
