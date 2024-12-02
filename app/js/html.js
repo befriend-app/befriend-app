@@ -3,6 +3,7 @@ befriend.html = {
         befriend.els.app = document.getElementById('app');
         befriend.els.footer = document.querySelector('footer');
         befriend.els.views = document.getElementById('views');
+        befriend.els.filters = document.getElementById('filters');
         befriend.els.me = document.getElementById('me');
         befriend.els.viewSpinner = document.getElementById('view-spinner');
         befriend.els.activities = document.getElementById('activities');
@@ -117,19 +118,11 @@ befriend.html = {
                         <div id="friends" class="view view-friends"><h2>Friends</h2></div>
                         
                         <div id="filters" class="view view-filters">
-                            <div class="view-section">
+                            <div class="sections">
                                 <div class="section reviews">
                                     <div class="section-name">Reviews</div>
                                     
-                                    <div class="section-options">
-                                        <div class="section-option review review-safety">
-                                            <div class="section-option-name">
-                                                Safety
-                                            </div>
-                                            
-                                            <div class="stars"></div>
-                                        </div>
-                                    </div>
+                                    <div class="section-options"></div>
                                 </div>
                                 
                                 <div class="section verifications">
@@ -1111,3 +1104,10 @@ befriend.html = {
         level_2_el.innerHTML = level_2_html;
     },
 };
+
+function checkboxHtml(is_checked) {
+    return `<div class="checkbox ${is_checked ? 'checked' : ''}">
+                <div class="inner"></div>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 518.0006 376.0036"><path d="M504.5025,7.4985c-9.997-9.998-26.205-9.998-36.204,0L161.5945,314.2055l-117.892-117.892c-9.997-9.998-26.205-9.997-36.204,0-9.998,9.997-9.998,26.205,0,36.203l135.994,135.992c9.994,9.997,26.214,9.99,36.204,0L504.5025,43.7025c9.998-9.997,9.997-26.206,0-36.204Z"/></svg>
+            </div>`;
+}

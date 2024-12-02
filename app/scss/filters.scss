@@ -1,11 +1,18 @@
 #filters {
-    .view-section {
+    background-color: $app_background;
+
+    .sections {
         display: flex;
         flex-direction: column;
-        gap: 30px 0;
+        gap: 10px 0;
     }
 
     .section {
+        //border: 1px solid $color_lightgray;
+        border-radius: 16px;
+        padding: 15px 20px;
+        background: white;
+
         .section-name {
             font-size: 20px;
             font-weight: 500;
@@ -16,20 +23,71 @@
         }
 
         &.reviews {
+            padding-bottom: 20px;
+
+            .section-options {
+                display: flex;
+                flex-direction: column;
+                gap: 12px 0;
+            }
+
+            .section-option-name {
+                display: flex;
+                width: fit-content;
+                position: relative;
+
+                .name {
+                    width: fit-content;
+                }
+            }
+
+            .rating-display {
+                $dim: 27px;
+                width: $dim;
+                height: $dim;
+                border-radius: 50%;
+                border: 1px solid lighten(black, 80%);
+                font-size: 14px;
+                color: lighten(black, 30%);
+                position: absolute;
+                right: calc(#{-$dim - 10px});
+                top: -2.5px;
+
+                @include flex-center-col;
+
+                .text {
+                    font-size: 14px;
+                    display: none;
+                }
+
+                .value {
+                    font-size: 12.5px;
+                    font-weight: 500;
+                }
+            }
+
             .stars {
                 display: flex;
                 gap: 4px;
                 flex-direction: column;
             }
 
+
+            .stars-container {
+                position: relative;
+                width: fit-content;
+
+            }
+
             .star-container {
-                width: 24px;
-                height: 24px;
+                $dim: 20px;
+                width: $dim;
+                height: $dim;
                 cursor: pointer;
                 display: inline-block;
-                margin-top: 10px;
                 position: relative;
                 overflow: hidden;
+                margin-top: 8px;
 
                 svg {
                     width: 100%;
@@ -61,7 +119,7 @@
                 background: lighten($color_lightgray, 10%);
                 border-radius: 2px;
                 outline: none;
-                margin-top: 7px;
+                margin-top: 5px;
                 margin-bottom: 0px;
 
                 // Slider thumb
@@ -96,12 +154,6 @@
                         transform: scale(1.1);
                     }
                 }
-            }
-
-            .rating-display {
-                font-size: 14px;
-                color: lighten(black, 30%);
-                margin-top: 8px;
             }
         }
     }
