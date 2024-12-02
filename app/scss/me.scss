@@ -183,7 +183,8 @@ html.#{$class_confirm_me_action} {
             padding: 0 20px;
             display: flex;
             align-items: center;
-            background-color: $brand_color_b;
+            background-color: $brand_color_a;
+            color: white;
             border-top-right-radius: $section_br;
             border-top-left-radius: $section_br;
             border: .5px solid lighten(black, 50%);

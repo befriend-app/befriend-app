@@ -38,11 +38,12 @@ let js_files = {
         'app.js', //app first
         'notifications.js',
         'user.js',
-        'me.js',
         'when.js',
         'friends.js',
         'maps.js',
         'activities.js',
+        'filters.js',
+        'me.js',
         'places.js',
         'location.js',
         'html.js',

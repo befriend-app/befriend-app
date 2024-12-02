@@ -18,9 +18,10 @@ window['befriend'] = {
     styles: null,
     events: null,
     user: null,
-    me: null,
     location: null,
     activities: null,
+    filters: null,
+    me: null,
     places: null,
     friends: null,
     when: null,
@@ -98,6 +99,14 @@ window['befriend'] = {
                 console.error(e);
             }
 
+            //me
+            try {
+                await befriend.filters.init();
+            } catch (e) {
+                console.error(e);
+            }
+
+            //me
             try {
                 await befriend.me.init();
             } catch (e) {
@@ -118,7 +127,8 @@ window['befriend'] = {
                 console.error(e);
             }
 
-            fireClick(befriend.els.footer.querySelector('.nav-item.me'));
+            //todo remove
+            fireClick(befriend.els.footer.querySelector('.nav-item.filters'));
 
             resolve();
         });
