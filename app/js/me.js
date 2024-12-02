@@ -355,11 +355,10 @@ befriend.me = {
         } else {
             removeClassEl('open', list_el);
             options_el.style.removeProperty('height');
+            this.transitionKidsAgeT = setTimeout(function () {
+                container_el?.style?.removeProperty('overflow-y');
+            }, 300);
         }
-
-        this.transitionKidsAgeT = setTimeout(function () {
-            container_el?.style?.removeProperty('overflowY');
-        }, 300);
     },
     saveSection: function (key) {
         return new Promise(async (resolve, reject) => {
@@ -1557,6 +1556,7 @@ befriend.me = {
                         try {
                             if (!category_options) {
                                 befriend.toggleSpinner(true);
+
                                 category_options = await befriend.me.getCategoryOptions(
                                     section_data.data.categories.endpoint,
                                     category_token
@@ -1861,24 +1861,6 @@ befriend.me = {
             profileBtn.addEventListener('click', function (e) {
                 befriend.me.account.setView('profile');
             });
-
-            // for (let btn of toggleBtns) {
-            //     btn.addEventListener('click', (e) => {
-            //         e.preventDefault();
-            //         let view = btn.getAttribute('data-view');
-            //         this.setView(view);
-            //     });
-            // }
-            //
-            // // Settings action buttons
-            // let actionBtns = this.el.querySelectorAll('.action-btn');
-            // for (let btn of actionBtns) {
-            //     btn.addEventListener('click', (e) => {
-            //         e.preventDefault();
-            //         let action = btn.getAttribute('data-action');
-            //         this.handleAction(action);
-            //     });
-            // }
         },
         setView: function (view) {
             this.view = view;

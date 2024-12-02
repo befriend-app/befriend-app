@@ -363,8 +363,9 @@ html.#{$class_confirm_me_action} {
             }
 
             .kids {
+                padding-top: 10px;
+
                 .add-kid {
-                    margin-top: 10px;
 
                     .add-btn {
                         background-color: lighten($brand_color_a, 10%);
@@ -526,6 +527,7 @@ html.#{$class_confirm_me_action} {
                             display: flex;
                             align-items: center;
                             margin-top: 14px;
+                            width: fit-content;
 
                             .name {
                                 font-size: 12px;
