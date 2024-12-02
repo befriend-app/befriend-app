@@ -253,7 +253,6 @@ befriend.me = {
             requestAnimationFrame(function () {
                 befriend.me.updateModeHeight();
             });
-
         } else {
             removeClassEl('active', selectedModeContainer);
             selectedModeContainer.innerHTML = '';
@@ -332,8 +331,16 @@ befriend.me = {
             befriend.me.updateModeHeight();
         });
     },
-    updateModeHeight: function () {
+    updateModeHeight: function (without_transition) {
         const selectedModeContainer = befriend.els.me.querySelector('.selected-mode-container');
+
+        if(without_transition) {
+            selectedModeContainer.style.transition = 'none';
+
+            setTimeout(function () {
+                selectedModeContainer.style.removeProperty('transition');
+            }, befriend.variables.me_mode_transition_ms)
+        }
 
         setElHeightDynamic(selectedModeContainer);
     },
@@ -1092,7 +1099,7 @@ befriend.me = {
 
         return !!el;
     },
-    updateCollapsed: async function () {
+    updateCollapsed: async function (without_transition) {
         await rafAwait();
 
         //initialize height for transition
@@ -1111,7 +1118,7 @@ befriend.me = {
                 collapse = befriend.me.data.sections.collapsed[key];
             }
 
-            befriend.me.updateSectionHeight(el, collapse, false, true);
+            befriend.me.updateSectionHeight(el, collapse, without_transition, true);
         }
     },
     isSectionOptionsShown: function () {
@@ -1219,7 +1226,7 @@ befriend.me = {
 
             befriend.me.updateSectionHeightT[section_key] = setTimeout(function () {
                 section_container.style.overflowY = 'initial';
-            }, 300);
+            }, befriend.variables.me_section_transition_ms);
         }
 
         if (!skip_save) {
@@ -1230,7 +1237,13 @@ befriend.me = {
 
         await rafAwait();
 
-        section_container.style.removeProperty('transition');
+        if(no_transition) {
+            setTimeout(function () {
+                section_container.style.removeProperty('transition');
+            }, befriend.variables.me_section_transition_ms);
+        } else {
+            section_container.style.removeProperty('transition');
+        }
     },
     isConfirmActionShown: function () {
         return elHasClass(document.documentElement, befriend.classes.confirmMeAction);
