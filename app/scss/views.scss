@@ -71,6 +71,7 @@
 }
 
 .checkbox {
+    $transition_ms: 100ms;
     $dim: 20px;
     width: $dim;
     height: $dim;
@@ -78,19 +79,22 @@
     outline: 0;
     position: relative;
     cursor: pointer;
-    transition: all 100ms;
     border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     .inner {
         width: $dim;
         height: $dim;
         background: #fff;
-        transition: all 100ms;
+        transition: background-color $transition_ms;
+        position: absolute;
+        top: 0;
+        left: 0;
     }
 
     &.checked {
-        //border-color: transparent;
-
         .inner {
             background: darken($brand_color_b, 0%);
         }
@@ -101,14 +105,14 @@
     }
 
     svg {
-        display: flex;
-        //fill: #fff;
-        position: absolute;
-        top: 4px;
-        left: 3px;
-        opacity: 0;
         width: $dim * .7;
-        transition: all 100ms;
+        height: $dim * .7;
+        opacity: 0;
+        transition: opacity $transition_ms;
+        pointer-events: none;
+        z-index: 1;
+        transform: translateZ(0);
+        backface-visibility: hidden;
     }
 }
 

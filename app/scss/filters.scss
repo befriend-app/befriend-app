@@ -35,10 +35,23 @@
                 display: flex;
                 width: fit-content;
                 position: relative;
+                align-items: center;
+
+                .checkbox {
+                    margin-right: 8px;
+                }
 
                 .name {
                     width: fit-content;
                 }
+            }
+
+            .include-new {
+                margin-top: 10px;
+                border: 1px solid lighten(black, 80%);
+                padding: 8px 12px;
+                border-radius: 6px;
+                font-size: 15px;
             }
 
             .rating-display {
@@ -112,6 +125,7 @@
 
             // Slider styles
             .rating-slider {
+                $thumb_dim: 20px;
                 width: 100%;
                 height: 4px;
                 -webkit-appearance: none;
@@ -126,32 +140,36 @@
                 &::-webkit-slider-thumb {
                     -webkit-appearance: none;
                     appearance: none;
-                    width: 16px;
-                    height: 16px;
+                    width: $thumb_dim;
+                    height: $thumb_dim;
                     border-radius: 50%;
                     background: #ffffff;
+                    background: $brand_color_a;
+
                     border: 2px solid $brand_color_a;
                     cursor: pointer;
                     transition: all 0.2s ease;
 
                     &:hover {
-                        background: $brand_color_a;
-                        transform: scale(1.1);
+                        //background: $brand_color_a;
+                        //transform: scale(1.1);
                     }
                 }
 
                 &::-moz-range-thumb {
-                    width: 16px;
-                    height: 16px;
+                    width: $thumb_dim;
+                    height: $thumb_dim;
                     border-radius: 50%;
                     background: #ffffff;
+                    background: $brand_color_a;
+
                     border: 2px solid $brand_color_a;
                     cursor: pointer;
                     transition: all 0.2s ease;
 
                     &:hover {
-                        background: $brand_color_a;
-                        transform: scale(1.1);
+                        //background: $brand_color_a;
+                        //transform: scale(1.1);
                     }
                 }
             }
