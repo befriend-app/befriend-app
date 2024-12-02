@@ -116,7 +116,48 @@ befriend.html = {
                         
                         <div id="friends" class="view view-friends"><h2>Friends</h2></div>
                         
-                        <div id="filters" class="view view-filters"><h2>Filters</h2></div>
+                        <div id="filters" class="view view-filters">
+                            <div class="view-section">
+                                <div class="section reviews">
+                                    <div class="section-name">Reviews</div>
+                                    
+                                    <div class="section-options">
+                                        <div class="section-option review review-safety">
+                                            <div class="section-option-name">
+                                                Safety
+                                            </div>
+                                            
+                                            <div class="stars"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="section verifications">
+                                    <div class="section-name">Verifications</div>
+                                </div>
+                                
+                                <div class="section networks">
+                                    <div class="section-name">Networks</div>
+                                </div>
+                                
+                                <div class="section distance">
+                                    <div class="section-name">Distance</div>
+                                </div>
+                                
+                                <div class="section modes">
+                                    <div class="section-name">Modes</div>
+                                </div>
+                                
+                                <div class="section activity-types">
+                                    <div class="section-name">Activity Types</div>
+                                </div>
+                                
+                                <div class="section interests">
+                                    <div class="section-name">Interests</div>
+                                </div>
+                                
+                            </div>
+                        </div>
                         
                         <div id="me" class="view view-me">
                             <div id="confirm-me-action">
