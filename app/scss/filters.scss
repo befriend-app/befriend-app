@@ -98,7 +98,7 @@
                 border: 1px solid $border_color;
                 padding: 8px 12px;
                 font-size: 15px;
-                height: 35px;
+                height: 37px;
                 display: flex;
                 align-items: center;
 
@@ -231,6 +231,10 @@
             $slider_h: 8px;
             padding-bottom: 10px;
 
+            .filter-option-name {
+                font-size: 15px;
+            }
+
             .range-container {
                 position: relative;
                 width: calc(100% - 20px);
@@ -319,13 +323,31 @@
             font-size: 12px;
             font-weight: 500;
             transition: all 200ms;
-            width: 60px;
+            width: 50px;
             background-color: lighten(black, 94%);
             @include flex-center;
+            align-items: center;
+            gap: 0 7px;
+
+            .icon {
+                @include flex-center-col;
+            }
+
+            svg {
+                fill: black;
+                transition: all 200ms;
+                height: 18px;
+            }
 
             &.enabled {
-                background-color: $brand_color_a;
-                color: white;
+                background-color: $brand_color_b;
+                //color: white;
+
+                &.enabled {
+                    svg {
+                        //fill: white;
+                    }
+                }
             }
         }
 
