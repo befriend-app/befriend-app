@@ -18,6 +18,7 @@ befriend.filters = {
                 befriend.filters.initSendReceive();
 
                 befriend.filters.setActive();
+                befriend.filters.setSendReceive();
             } catch(e) {
                 console.error(e)
             }
@@ -125,7 +126,7 @@ befriend.filters = {
             }
 
             reviewsHtml += `
-            <div class="filter-option include-new">
+            <div class="filter-option include-new" data-filter-token="reviews_unrated">
                 ${befriend.filters.sendReceiveHtml(true, true)}
 
                 <div class="filter-option-name">
@@ -143,7 +144,7 @@ befriend.filters = {
             const checkbox = section.querySelector('.checkbox');
             if (!checkbox) return;
 
-            checkbox.addEventListener('click', function(e) {
+            checkbox.addEventListener('click', async function(e) {
                 e.preventDefault();
 
                 let filter_option_el = this.closest('.filter-option');
@@ -154,10 +155,14 @@ befriend.filters = {
 
                 this.classList.toggle('checked');
 
-                befriend.auth.put('/filters/active', {
-                    filter_token,
-                    active
-                })
+                try {
+                    await befriend.auth.put('/filters/active', {
+                        filter_token,
+                        active
+                    })
+                } catch(e) {
+                    console.error(e);
+                }
             });
         },
 
@@ -398,18 +403,26 @@ befriend.filters = {
                     <div class="option receive ${receive_enabled ? 'enabled':''}">Receive</div>
                 </div>`
     },
-    saveSendReceiveState: function(filterType, optionType, isEnabled) {
+    saveSendReceiveState: async function(filterToken, optionType, isEnabled) {
         if (!this.data.sendReceive) {
             this.data.sendReceive = {};
         }
-        if (!this.data.sendReceive[filterType]) {
-            this.data.sendReceive[filterType] = {};
+        if (!this.data.sendReceive[filterToken]) {
+            this.data.sendReceive[filterToken] = {};
         }
 
         // Save state
-        this.data.sendReceive[filterType][optionType] = isEnabled;
+        this.data.sendReceive[filterToken][optionType] = isEnabled;
 
-        // befriend.user.setLocal('filters.sendReceive', this.data.sendReceive);
+        try {
+            await befriend.auth.put('/filters/send-receive', {
+                filter_token: filterToken,
+                type: optionType,
+                enabled: isEnabled
+            });
+        } catch(e) {
+            console.error('Error updating filter send/receive state:', e);
+        }
     },
     setActive: function() {
         let checkboxes = befriend.els.filters.getElementsByClassName('checkbox');
@@ -427,6 +440,39 @@ befriend.filters = {
             if(befriend.filters.data.filters[filter_token]) {
                 if(!befriend.filters.data.filters[filter_token].is_active) {
                     removeClassEl('checked', checkbox);
+                }
+            }
+        }
+    },
+    setSendReceive: function () {
+        let filter_options = befriend.els.filters.getElementsByClassName('filter-option');
+
+        for(let filter_option of filter_options) {
+            let filter_token = befriend.filters.getFilterToken(filter_option);
+            let filter_data = befriend.filters.data.filters?.[filter_token];
+
+            if(!filter_data) {
+                continue;
+            }
+
+            // Set send/receive states
+            let send_receive = filter_option.querySelector('.send-receive');
+            if(send_receive) {
+                let send_option = send_receive.querySelector('.option.send');
+                let receive_option = send_receive.querySelector('.option.receive');
+
+                // Set send state
+                if(send_option) {
+                    if(!filter_data.is_send) {
+                        removeClassEl('enabled', send_option);
+                    }
+                }
+
+                // Set receive state
+                if(receive_option) {
+                    if(!filter_data.is_receive) {
+                        removeClassEl('enabled', receive_option);
+                    }
                 }
             }
         }
