@@ -145,7 +145,9 @@ befriend.events = {
                 befriend.me.toggleAutoComplete(null, false);
 
                 //view specific logic
-                if (nav_name === 'me') {
+                if(nav_name === 'filters') {
+                    befriend.filters.updateSectionHeights(true);
+                } else if (nav_name === 'me') {
                     befriend.me.updateCollapsed(true);
                     befriend.me.updateModeHeight(true);
 

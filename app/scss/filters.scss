@@ -1,4 +1,7 @@
 #filters {
+    $section_padding_lr: 20px;
+    $section_padding_tb: 15px;
+
     background-color: $app_background;
 
     .sections {
@@ -10,25 +13,50 @@
     .section {
         //border: 1px solid $color_lightgray;
         border-radius: 16px;
-        padding: 15px 20px;
+        padding: 0 0;
         background: white;
 
-        .section-name {
-            font-size: 20px;
-            font-weight: 500;
+        .section-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            border-bottom: 1px solid $color_lightgray;
+            padding: 10px $section_padding_lr;
+            transition: border $filters_section_transition_ms;
+
+            .section-name {
+                font-size: 20px;
+                font-weight: 500;
+            }
+
+            .chevron {
+                @include flex-center-col;
+                width: 16px;
+                transition: transform 300ms;
+
+                svg {
+                    width: 100%;
+                    fill: lighten(black, 30%);
+                }
+            }
         }
 
-        .section-options {
-            margin-top: 10px;
+        .filter-options {
+            padding: $section_padding_tb $section_padding_lr;
+        }
+
+        .section-container {
+            overflow-y: hidden;
+            transition: height $filters_section_transition_ms;
+            padding: 0;
         }
 
         &.reviews {
-            padding-bottom: 20px;
-
-            .section-options {
+            .filter-options {
                 display: flex;
                 flex-direction: column;
-                gap: 12px 0;
+                gap: 14px 0;
             }
 
             .section-option-name {
@@ -172,6 +200,20 @@
                         //transform: scale(1.1);
                     }
                 }
+            }
+        }
+
+        &.collapsed {
+            .section-top {
+                border-bottom-color: transparent;
+
+                .chevron {
+                    transform: rotate(180deg);
+                }
+            }
+
+            .section-container {
+                height: 0;
             }
         }
     }

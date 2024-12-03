@@ -1,13 +1,53 @@
 befriend.filters = {
+    data: {
+        collapsed: {}
+    },
     init: function () {
         return new Promise(async (resolve, reject) => {
             try {
+                if (befriend.user.local.data?.filters?.collapsed) {
+                    this.data.collapsed = befriend.user.local.data.filters.collapsed;
+                }
+
+                befriend.filters.initSections();
+                befriend.filters.initCollapsible();
+                
                 befriend.filters.reviews.init();
             } catch(e) {
                 console.error(e)
             }
             resolve();
         });
+    },
+    sections: {
+        reviews: {
+            class: 'reviews',
+            name: 'Reviews',
+        },
+        verifications: {
+            class: 'verifications',
+            name: 'Verifications'
+        },
+        networks: {
+            class: 'networks',
+            name: 'Networks'
+        },
+        distance: {
+            class: 'distance',
+            name: 'Distance'
+        },
+        modes: {
+            class: 'modes',
+            name: 'Modes'
+        },
+        activityTypes: {
+            class: 'activity-types',
+            name: 'Activity Types'
+        },
+        interests: {
+            class: 'interests',
+            name: 'Interests'
+        },
     },
     reviews: {
         ratings: {
@@ -31,7 +71,7 @@ befriend.filters = {
 
         init: function() {
             const section_el = befriend.els.filters.querySelector('.section.reviews');
-            const section_options = section_el.querySelector('.section-options');
+            const filter_options = section_el.querySelector('.filter-options');
 
             let reviewsHtml = '';
 
@@ -77,7 +117,7 @@ befriend.filters = {
                 </div>
             </div>`;
 
-            section_options.innerHTML = reviewsHtml;
+            filter_options.innerHTML = reviewsHtml;
 
             this.initEvents(section_el);
         },
@@ -197,5 +237,108 @@ befriend.filters = {
             // console.log(`${type} rating saved:`, rating.toFixed(1));
             // console.log('Current ratings:', this.ratings);
         }
+    },
+    initSections: async function () {
+        let sections_el = befriend.els.filters.querySelector('.sections');
+
+        let html = '';
+
+        for(let key in this.sections) {
+            let section = this.sections[key];
+
+            let collapsed_class = this.data.collapsed[key] ? 'collapsed' : '';
+
+            html += `<div class="section ${section.class} ${collapsed_class}" data-key="${key}">
+                        <div class="section-top">
+                            <div class="section-name">${section.name}</div>
+                            <div class="chevron">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360.0005 192.001"><path id="Down_Arrow" d="M176.001,192.001c-4.092,0-8.188-1.564-11.312-4.688L4.689,27.313C-1.563,21.061-1.563,10.937,4.689,4.689s16.376-6.252,22.624,0l148.688,148.688L324.689,4.689c6.252-6.252,16.376-6.252,22.624,0s6.252,16.376,0,22.624l-160,160c-3.124,3.124-7.22,4.688-11.312,4.688h0Z"/></svg>
+                            </div>
+                        </div>
+                        <div class="section-container">
+                            <div class="filter-options"></div>
+                        </div>
+                    </div>`;
+        }
+
+        sections_el.innerHTML = html;
+
+        requestAnimationFrame(this.updateSectionHeights);
+    },
+    updateSectionHeights: function (without_transition) {
+        let sections_el = befriend.els.filters.querySelector('.sections');
+
+        let sections = sections_el.getElementsByClassName('section');
+
+        for (let section of sections) {
+            let container = section.querySelector('.section-container');
+
+            let is_collapsed = elHasClass(section, 'collapsed');
+
+            if(without_transition) {
+                container.style.transition = 'none';
+
+                setTimeout(function () {
+                    container.style.removeProperty('transition');
+                }, befriend.variables.filters_section_transition_ms)
+            }
+
+            if (is_collapsed) {
+                container.style.height = '0';
+            } else {
+                setElHeightDynamic(container);
+            }
+        }
+    },
+    initCollapsible: function() {
+        let sections = befriend.els.filters.getElementsByClassName('section');
+
+        for (let i = 0; i < sections.length; i++) {
+            let section = sections[i];
+            let section_top = section.querySelector('.section-top');
+            let section_container = section.querySelector('.section-container');
+
+            if (!section_top || section_top._listener) {
+                continue;
+            }
+
+            section_top._listener = true;
+
+            // Set initial height if not already set
+            if (!section_container.style.height) {
+                let is_collapsed = elHasClass(section, 'collapsed');
+                if (is_collapsed) {
+                    section_container.style.height = '0';
+                } else {
+                    setElHeightDynamic(section_container);
+                }
+            }
+
+            section_top.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                let is_collapsed = elHasClass(section, 'collapsed');
+                let section_key = this.getSectionKey(section);
+
+                console.log(section_key)
+
+                if (is_collapsed) {
+                    removeClassEl('collapsed', section);
+                    setElHeightDynamic(section_container);
+                    delete this.data.collapsed[section_key];
+                } else {
+                    addClassEl('collapsed', section);
+                    section_container.style.height = '0';
+                    this.data.collapsed[section_key] = true;
+                }
+
+                // Save collapsed state to local storage
+                befriend.user.setLocal('filters.collapsed', this.data.collapsed);
+            });
+        }
+    },
+    getSectionKey: function(section_el) {
+        return section_el.getAttribute('data-key');
     }
 };
