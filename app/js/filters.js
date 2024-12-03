@@ -24,6 +24,10 @@ befriend.filters = {
             class: 'reviews',
             name: 'Reviews',
         },
+        activityTypes: {
+            class: 'activity-types',
+            name: 'Activity Types'
+        },
         verifications: {
             class: 'verifications',
             name: 'Verifications'
@@ -39,10 +43,6 @@ befriend.filters = {
         modes: {
             class: 'modes',
             name: 'Modes'
-        },
-        activityTypes: {
-            class: 'activity-types',
-            name: 'Activity Types'
         },
         interests: {
             class: 'interests',
@@ -78,8 +78,10 @@ befriend.filters = {
             //star ratings
             for (let [key, rating] of Object.entries(this.ratings)) {
                 reviewsHtml += `
-                    <div class="section-option review review-${key}">
-                        <div class="section-option-name">
+                    <div class="filter-option review review-${key}">
+                        ${befriend.filters.sendReceiveHtml(true, true)}
+
+                        <div class="filter-option-name">
                             ${checkboxHtml(true)}
                             
                             <div class="name">
@@ -110,8 +112,10 @@ befriend.filters = {
             }
 
             reviewsHtml += `
-            <div class="section-option include-new">
-                <div class="section-option-name">
+            <div class="filter-option include-new">
+                ${befriend.filters.sendReceiveHtml(true, true)}
+
+                <div class="filter-option-name">
                     ${checkboxHtml(true)}
                     <div class="name">Include unrated matches</div>
                 </div>
@@ -140,9 +144,9 @@ befriend.filters = {
         },
 
         initEvents: function(section_el) {
-            const reviewSections = section_el.querySelectorAll('.section-option.review');
+            const reviewFilters = section_el.querySelectorAll('.filter-option.review');
 
-            for (let section of reviewSections) {
+            for (let section of reviewFilters) {
                 const type = Array.from(section.classList)
                     .find(cls => cls.startsWith('review-'))
                     ?.replace('review-', '');
@@ -340,5 +344,11 @@ befriend.filters = {
     },
     getSectionKey: function(section_el) {
         return section_el.getAttribute('data-key');
+    },
+    sendReceiveHtml: function(send_enabled, receive_enabled) {
+        return `<div class="send-receive">
+                    <div class="option send ${send_enabled ? 'enabled':''}">Send</div>
+                    <div class="option receive ${receive_enabled ? 'enabled':''}">Receive</div>
+                </div>`
     }
 };
