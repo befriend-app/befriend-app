@@ -4,7 +4,7 @@
     $option_padding_lr: 12px;
     $option_padding_tb: 10px;
     $option_br: 10px;
-    $border_color: lighten(black, 75%);
+    $border_color: lighten(black, 80%);
 
     background-color: $app_background;
 
@@ -34,7 +34,7 @@
             transition: border $filters_section_transition_ms;
 
             .section-name {
-                font-size: 20px;
+                font-size: 17px;
                 font-weight: 500;
             }
 
@@ -98,7 +98,7 @@
                 border: 1px solid $border_color;
                 padding: 8px 12px;
                 font-size: 15px;
-                height: 33px;
+                height: 35px;
                 display: flex;
                 align-items: center;
 
@@ -251,7 +251,7 @@
         position: absolute;
         right: 0;
         top: 0;
-        transform: translate(1px, -1px);
+        transform: translate(0px, 0px);
 
         .option {
             padding: 4px 0;
@@ -259,7 +259,7 @@
             font-weight: 500;
             transition: all 200ms;
             width: 60px;
-            background-color: lighten(black, 90%);
+            background-color: lighten(black, 94%);
             @include flex-center;
 
             &.enabled {

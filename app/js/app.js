@@ -101,14 +101,14 @@ window['befriend'] = {
 
             //me
             try {
-                await befriend.filters.init();
+                await befriend.me.init();
             } catch (e) {
                 console.error(e);
             }
 
-            //me
+            //filters
             try {
-                await befriend.me.init();
+                await befriend.filters.init();
             } catch (e) {
                 console.error(e);
             }

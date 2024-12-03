@@ -98,6 +98,8 @@ befriend.me = {
                 befriend.me.data.sections.options = data.sections.options;
                 befriend.me.data.sections.active = sortObj(data.sections.active, 'position');
 
+                befriend.filters.data.filters = data.filters;
+
                 if (data.country) {
                     befriend.me.data.country = data.country;
                 }

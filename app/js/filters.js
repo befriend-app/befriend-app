@@ -1,5 +1,6 @@
 befriend.filters = {
     data: {
+        filters: null,
         collapsed: {}
     },
     init: function () {
@@ -15,6 +16,8 @@ befriend.filters = {
                 befriend.filters.reviews.init();
 
                 befriend.filters.initSendReceive();
+
+                befriend.filters.setActive();
             } catch(e) {
                 console.error(e)
             }
@@ -54,23 +57,31 @@ befriend.filters = {
     reviews: {
         ratings: {
             safety: {
+                token: 'reviews_safety',
                 name: 'Safety',
                 current_rating: 4.5
             },
+            trust: {
+                token: 'reviews_trust',
+                name: 'Trust',
+                current_rating: 4.5
+            },
             timeliness: {
+                token: 'reviews_timeliness',
                 name: 'Timeliness',
                 current_rating: 4.5
             },
             friendliness: {
+                token: 'reviews_friendliness',
                 name: 'Friendliness',
                 current_rating: 4.5
             },
             fun: {
+                token: 'reviews_fun',
                 name: 'Fun',
                 current_rating: 4.5
             }
         },
-
         init: function() {
             const section_el = befriend.els.filters.querySelector('.section.reviews');
             const filter_options = section_el.querySelector('.filter-options');
@@ -80,7 +91,7 @@ befriend.filters = {
             //star ratings
             for (let [key, rating] of Object.entries(this.ratings)) {
                 reviewsHtml += `
-                    <div class="filter-option review review-${key}" data-filter-type="review-${key}">
+                    <div class="filter-option review review-${key}" data-filter-token="${rating.token}">
                         ${befriend.filters.sendReceiveHtml(true, true)}
 
                         <div class="filter-option-name">
@@ -134,14 +145,19 @@ befriend.filters = {
 
             checkbox.addEventListener('click', function(e) {
                 e.preventDefault();
-                this.classList.toggle('checked');
-            });
 
-            checkbox.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    this.classList.toggle('checked');
-                }
+                let filter_option_el = this.closest('.filter-option');
+                
+                let filter_token = befriend.filters.getFilterToken(filter_option_el)
+                
+                let active = !elHasClass(this, 'checked');
+
+                this.classList.toggle('checked');
+
+                befriend.auth.put('/filters/active', {
+                    filter_token,
+                    active
+                })
             });
         },
 
@@ -302,8 +318,6 @@ befriend.filters = {
                 let is_collapsed = elHasClass(section, 'collapsed');
                 let section_key = this.getSectionKey(section);
 
-                console.log(section_key)
-
                 if (is_collapsed) {
                     removeClassEl('collapsed', section);
                     setElHeightDynamic(section_container);
@@ -338,11 +352,11 @@ befriend.filters = {
 
                     // Get the filter type and option type
                     const filterOption = this.closest('.filter-option');
-                    const filterType = befriend.filters.getFilterType(filterOption);
+                    const filterToken = befriend.filters.getFilterToken(filterOption);
                     const optionType = this.classList.contains('send') ? 'send' : 'receive';
 
                     // Save the state
-                    befriend.filters.saveSendReceiveState(filterType, optionType, this.classList.contains('enabled'));
+                    befriend.filters.saveSendReceiveState(filterToken, optionType, this.classList.contains('enabled'));
                 });
             }
         }
@@ -375,8 +389,8 @@ befriend.filters = {
     getSectionKey: function(section_el) {
         return section_el.getAttribute('data-key');
     },
-    getFilterType: function(filterOption) {
-        return filterOption.getAttribute('data-filter-type');
+    getFilterToken: function(filterOption) {
+        return filterOption.getAttribute('data-filter-token');
     },
     sendReceiveHtml: function(send_enabled, receive_enabled) {
         return `<div class="send-receive">
@@ -397,4 +411,24 @@ befriend.filters = {
 
         // befriend.user.setLocal('filters.sendReceive', this.data.sendReceive);
     },
+    setActive: function() {
+        let checkboxes = befriend.els.filters.getElementsByClassName('checkbox');
+
+        for(let checkbox of checkboxes) {
+            let filter_option_el = checkbox.closest('.filter-option');
+
+            if(!filter_option_el) {
+                console.error("Missing filter option");
+                continue;
+            }
+
+            let filter_token = befriend.filters.getFilterToken(filter_option_el);
+
+            if(befriend.filters.data.filters[filter_token]) {
+                if(!befriend.filters.data.filters[filter_token].is_active) {
+                    removeClassEl('checked', checkbox);
+                }
+            }
+        }
+    }
 };
