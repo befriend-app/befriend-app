@@ -18,7 +18,7 @@
     }
 
     .section {
-        //border: 1px solid $color_lightgray;
+        border: 1px solid $color_lightgray;
         border-radius: 16px;
         padding: 0 0;
         background: white;
@@ -229,7 +229,6 @@
 
         &.ages {
             $slider_h: 8px;
-            padding-bottom: 10px;
 
             .filter-option-name {
                 font-size: 15px;
@@ -238,7 +237,8 @@
             .range-container {
                 position: relative;
                 width: calc(100% - 20px);
-                padding-top: 50px;
+                padding-top: 40px;
+                padding-bottom: 20px;
                 margin: auto;
             }
 
@@ -276,6 +276,10 @@
                 border-radius: 50%;
                 cursor: pointer;
                 transform: translate(-50%, -50%);
+
+                &.min-thumb {
+                    z-index: 2;
+                }
             }
 
             .thumb-value {
@@ -288,9 +292,27 @@
                 //color: $brand_color_a;
                 pointer-events: none;
             }
+        }
 
-            .send-receive {
-                transform: translate(0, -$option_padding_tb);
+        &.genders {
+            .gender-buttons {
+                display: flex;
+
+                .gender-button {
+                    background-color: lighten(black, 95%);
+                    @include flex-center;
+                    border-radius: 6px;
+                    padding: 5px 12px;
+                    font-size: 14px;
+                    transition: all 200ms;
+                    border: 1px solid $color_lightgray;
+                    min-width: 60px;
+
+                    &.selected {
+                        background-color: $brand_color_b;
+                        border: 1px solid darken($brand_color_a, 10%);
+                    }
+                }
             }
         }
 
@@ -362,15 +384,17 @@
             border-bottom-left-radius: $br;
         }
 
-        &.full-borders {
+        &.position-corner {
+            transform: translate($section_padding_lr, -$section_padding_tb);
+
             .send {
-                border-top-left-radius: $br !important;
-                border-top-right-radius: $br !important;
+                //border-top-left-radius: $br !important;
+                border-top-right-radius: 0 !important;
             }
 
             .receive {
-                border-bottom-left-radius: $br !important;
-                border-bottom-right-radius: $br !important;
+                //border-bottom-left-radius: $br !important;
+                //border-bottom-right-radius: $br !important;
             }
         }
     }

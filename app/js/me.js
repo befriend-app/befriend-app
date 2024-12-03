@@ -222,6 +222,7 @@ befriend.me = {
                     </div>
                     <div class="options">
                         ${genders
+                            .filter(gender => gender.is_visible)
                             .map(
                                 (gender) => `
                             <div class="option ${genderSelected(gender)}" data-gender="${gender.token}">${gender.name}</div>
@@ -297,6 +298,10 @@ befriend.me = {
         }
 
         for (let gender of befriend.me.data.genders) {
+            if(!gender.is_visible) {
+                continue;
+            }
+
             let gender_name =
                 gender.token === 'male' ? 'Boy' : gender.token === 'female' ? 'Girl' : gender.name;
 
@@ -1488,6 +1493,10 @@ befriend.me = {
                                                         </div>`;
     },
     sectionItemOptionHtml: function (section_key, table_key, item) {
+        if(typeof item.is_visible !== 'undefined' && !item.is_visible) {
+            return '';
+        }
+
         let section_data = befriend.me.getActiveSection(section_key);
         let section_type = section_data.data?.type;
 

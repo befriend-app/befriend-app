@@ -10,11 +10,13 @@ befriend.filters = {
                     this.data.collapsed = befriend.user.local.data.filters.collapsed;
                 }
 
+
                 befriend.filters.initSections();
                 befriend.filters.initCollapsible();
 
                 befriend.filters.reviews.init();
                 befriend.filters.age.init();
+                befriend.filters.genders.init();
 
                 befriend.filters.initSendReceive();
                 befriend.filters.initCheckboxEvents();
@@ -35,6 +37,10 @@ befriend.filters = {
         ages: {
             class: 'ages',
             name: 'Age',
+        },
+        genders: {
+            class: 'genders',
+            name: 'Gender',
         },
         activityTypes: {
             class: 'activity-types',
@@ -436,6 +442,100 @@ befriend.filters = {
             }
         }
     },
+    genders: {
+        init: function() {
+            const section_el = befriend.els.filters.querySelector('.section.genders');
+            const filter_options = section_el.querySelector('.filter-options');
+
+            // Create single filter-option with all gender buttons
+            let html = `
+                <div class="filter-option" data-filter-token="genders">
+                    ${befriend.filters.sendReceiveHtml(true, true, true)}
+                    
+                    <div class="filter-option-name">
+                        ${checkboxHtml(true)}
+                        <div class="name">Active</div>
+                    </div>
+                    
+                    <div class="gender-buttons">
+                        <div class="gender-button selected" data-gender-token="any">
+                            <div class="name">Any</div>
+                        </div>`;
+
+            // Add other gender options
+            if (befriend.me.data.genders) {
+                for (let gender of befriend.me.data.genders) {
+                    html += `
+                        <div class="gender-button" data-gender-token="${gender.token}">
+                            <div class="name">${gender.name}</div>
+                        </div>`;
+                }
+            }
+
+            html += `
+                    </div>
+                </div>`;
+
+            filter_options.innerHTML = html;
+
+            this.initEvents(section_el);
+        },
+        initEvents: function(section_el) {
+            const genderButtons = section_el.querySelectorAll('.gender-button');
+
+            for (let button of genderButtons) {
+                if (!button._listener) {
+                    button._listener = true;
+
+                    button.addEventListener('click', async function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const genderToken = this.getAttribute('data-gender-token');
+                        const isAny = genderToken === 'any';
+                        const wasSelected = elHasClass(this, 'selected');
+
+                        // If selecting "Any", deselect all others
+                        if (isAny && !wasSelected) {
+                            for(let btn of genderButtons) {
+                                if (btn !== this) {
+                                    removeClassEl('selected', btn);
+                                }
+                            }
+                        }
+                        // If selecting a specific gender, deselect "Any"
+                        else if (!isAny && !wasSelected) {
+                            const anyButton = section_el.querySelector('.gender-button[data-gender-token="any"]');
+                            if (anyButton) {
+                                removeClassEl('selected', anyButton);
+                            }
+                        }
+
+                        toggleElClass(this, 'selected');
+
+                        try {
+                            await befriend.auth.put('/filters/gender', {
+                                gender_token: genderToken,
+                                active: !wasSelected
+                            });
+                        } catch (e) {
+                            console.error('Error updating gender filter:', e);
+
+                            // Revert UI state on error
+                            toggleElClass('selected', this);
+                            if (isAny) {
+                                for(let btn of genderButtons) {
+                                    if (btn !== this) {
+                                        toggleElClass('selected', btn);
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    },
     initSections: async function () {
         let sections_el = befriend.els.filters.querySelector('.sections');
 
@@ -599,8 +699,8 @@ befriend.filters = {
     getFilterToken: function (filterOption) {
         return filterOption.getAttribute('data-filter-token');
     },
-    sendReceiveHtml: function (send_enabled, receive_enabled, full_borders) {
-        return `<div class="send-receive ${full_borders ? 'full-borders' : ''}">
+    sendReceiveHtml: function (send_enabled, receive_enabled, position_corner) {
+        return `<div class="send-receive ${position_corner ? 'position-corner' : ''}">
                     <div class="option send ${send_enabled ? 'enabled' : ''}">
                         <div class="icon">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 511.998 512.0029"><defs><style>.send-cls-1{fill-rule:evenodd;}</style></defs><path class="send-cls-1" d="M510.539,36.2574c7.1675-21.5056-13.29-41.9661-34.7956-34.7985L18.8108,153.7717c-25.6598,8.5523-24.8644,45.1188,1.1409,52.5476l222.2321,63.4978,63.4949,222.2321c7.4317,26.0082,43.9953,26.8036,52.5476,1.1409L510.539,36.2574ZM474.7157,56.7382l-142.5848,427.7544-63.373-221.7995L474.7157,56.7382ZM455.2626,37.285l-205.9548,205.9548L27.5111,179.8698,455.2626,37.285Z"/></svg>
@@ -647,7 +747,7 @@ befriend.filters = {
 
             let filter_token = befriend.filters.getFilterToken(filter_option_el);
 
-            if (befriend.filters.data.filters[filter_token]) {
+            if (befriend.filters.data?.filters?.[filter_token]) {
                 if (!befriend.filters.data.filters[filter_token].is_active) {
                     removeClassEl('checked', checkbox);
                 }

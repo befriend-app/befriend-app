@@ -71,7 +71,7 @@
 }
 
 .checkbox {
-    $transition_ms: 100ms;
+    $transition_ms: 50ms;
     $dim: 20px;
     width: $dim;
     height: $dim;
@@ -110,8 +110,8 @@
         opacity: 0;
         transition: opacity $transition_ms;
         pointer-events: none;
-        z-index: 1;
-        transform: translateZ(0);
+        z-index: 2;
+        //transform: translateZ(0);
         backface-visibility: hidden;
     }
 }
