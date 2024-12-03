@@ -105,8 +105,8 @@
     }
 
     svg {
-        width: $dim * .7;
-        height: $dim * .7;
+        width: $dim * 0.7;
+        height: $dim * 0.7;
         opacity: 0;
         transition: opacity $transition_ms;
         pointer-events: none;
@@ -115,4 +115,3 @@
         backface-visibility: hidden;
     }
 }
-

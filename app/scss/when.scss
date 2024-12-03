@@ -26,8 +26,8 @@
         position: absolute;
         transform: translateY(calc(50% - calc($arrow_h / 2)));
         transition:
-                opacity 200ms,
-                visibility 0ms 200ms;
+            opacity 200ms,
+            visibility 0ms 200ms;
         width: $box_dim;
         height: $box_dim;
         @include flex-center-col;
@@ -36,8 +36,8 @@
             opacity: 1;
             visibility: visible;
             transition:
-                    opacity 200ms,
-                    visibility 0ms;
+                opacity 200ms,
+                visibility 0ms;
         }
 
         svg {

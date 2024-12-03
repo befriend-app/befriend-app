@@ -28,7 +28,7 @@ befriend.when = {
         { id: 390, value: '6.5', unit: 'hrs', in_mins: 390 },
         { id: 420, value: '7', unit: 'hrs', in_mins: 420 },
         { id: 450, value: '7.5', unit: 'hrs', in_mins: 450 },
-        { id: 480, value: '8', unit: 'hrs', in_mins: 480 }
+        { id: 480, value: '8', unit: 'hrs', in_mins: 480 },
     ],
     colors: [
         '#EBF5FF', // Lightest Sky Blue
@@ -50,7 +50,7 @@ befriend.when = {
         '#47A3FF', // Clear Blue
         '#3D9EFF', // Medium Clear Blue
         '#3399FF', // Rich Blue
-        '#2894FF'  // Bright Medium Blue
+        '#2894FF', // Bright Medium Blue
     ],
     init: function () {
         return new Promise(async (resolve, reject) => {
@@ -117,9 +117,11 @@ befriend.when = {
 
         let round_minutes;
 
-        if (option.in_mins >= 240) { // 4 hours or more
+        if (option.in_mins >= 240) {
+            // 4 hours or more
             round_minutes = 30;
-        } else if (option.in_mins >= 120) { // 2 hours or more
+        } else if (option.in_mins >= 120) {
+            // 2 hours or more
             round_minutes = 15;
         } else {
             round_minutes = 5;
@@ -179,7 +181,7 @@ befriend.when = {
         let containerEl = befriend.els.when.querySelector('.when-options-container');
         let arrowLeft = befriend.els.when.querySelector('.arrow-left');
         let arrowRight = befriend.els.when.querySelector('.arrow-right');
-        
+
         const scrollLeft = containerEl.scrollLeft;
         const scrollWidth = containerEl.scrollWidth;
         const clientWidth = containerEl.clientWidth;
@@ -188,7 +190,9 @@ befriend.when = {
         const hasOverflow = scrollWidth > clientWidth;
 
         // Show/hide left arrow based on scroll position
-        hasOverflow && scrollLeft > 0 ? addClassEl('show', arrowLeft) : removeClassEl('show', arrowLeft);
+        hasOverflow && scrollLeft > 0
+            ? addClassEl('show', arrowLeft)
+            : removeClassEl('show', arrowLeft);
 
         // Show/hide right arrow based on remaining scroll and overflow
         const lastItemVisible = scrollLeft + clientWidth >= scrollWidth;
@@ -216,7 +220,7 @@ befriend.when = {
                 for (let i = 0; i < when_els.length; i++) {
                     let el = when_els[i];
 
-                    if(el.getAttribute('data-id') === 'now') {
+                    if (el.getAttribute('data-id') === 'now') {
                         now_el = el;
                     }
 
@@ -238,18 +242,20 @@ befriend.when = {
         },
         onScroll: function () {
             function scrollDirection(direction) {
-                const itemWidth = befriend.variables.when_option_width + befriend.variables.when_option_gap_lr;
+                const itemWidth =
+                    befriend.variables.when_option_width + befriend.variables.when_option_gap_lr;
                 const scrollAmount = itemWidth * 3;
 
                 const currentScroll = container.scrollLeft;
 
-                const newScroll = direction === 'left'
-                    ? currentScroll - scrollAmount
-                    : currentScroll + scrollAmount;
+                const newScroll =
+                    direction === 'left'
+                        ? currentScroll - scrollAmount
+                        : currentScroll + scrollAmount;
 
                 container.scrollTo({
                     left: newScroll,
-                    behavior: 'smooth'
+                    behavior: 'smooth',
                 });
             }
 
@@ -274,6 +280,6 @@ befriend.when = {
             arrowRight.addEventListener('click', () => scrollDirection('right'));
 
             befriend.when.updateArrowsVisibility();
-        }
+        },
     },
 };

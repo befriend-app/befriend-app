@@ -90,13 +90,6 @@ befriend.friends = {
                 //set position of number for range
                 let rangeSpan = befriend.els.numPersons.querySelector('.slider span');
 
-                //load prev setting
-                // let prevSetting = localStorage.getItem(settings_key);
-                //
-                // if(prevSetting) {
-                //     personsCount = parseInt(prevSetting);
-                // }
-
                 sliderRange.setAttribute('value', personsCount);
 
                 sliderRange.addEventListener('input', function (e) {
@@ -109,8 +102,6 @@ befriend.friends = {
                     personsCount = parseInt(val);
 
                     befriend.friends.setActivityFriendNum(personsCount);
-
-                    // localStorage.setItem(settings_key, personsCount);
 
                     updatePosition();
                 });

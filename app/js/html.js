@@ -164,7 +164,9 @@ befriend.html = {
                                         
                                         <div class="mode-wrapper">
                                             <div class="mode-options">
-                                                ${befriend.me.modes.options.map(option => `
+                                                ${befriend.me.modes.options
+                                                    .map(
+                                                        (option) => `
                                                     <div class="mode-option ${option.id === befriend.me.modes.selected ? 'selected' : ''}" data-mode="${option.id}">
                                                         <div class="content">
                                                             <div class="icon">${option.icon}</div>
@@ -172,7 +174,9 @@ befriend.html = {
                                                             <div class="description">${option.description}</div>
                                                         </div>
                                                     </div>
-                                                `).join('')}
+                                                `,
+                                                    )
+                                                    .join('')}
                                             </div>
                                             
                                             <div class="selected-mode-container">

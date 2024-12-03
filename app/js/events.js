@@ -89,7 +89,7 @@ befriend.events = {
                 //kids select
                 let open_kids_list_el = befriend.els.me.querySelector('.open.select-list');
 
-                if(open_kids_list_el && !e.target.closest('.select-list')) {
+                if (open_kids_list_el && !e.target.closest('.select-list')) {
                     befriend.me.transitionKidsAge(open_kids_list_el, false);
                 }
 
@@ -145,7 +145,7 @@ befriend.events = {
                 befriend.me.toggleAutoComplete(null, false);
 
                 //view specific logic
-                if(nav_name === 'filters') {
+                if (nav_name === 'filters') {
                     requestAnimationFrame(function () {
                         befriend.filters.updateSectionHeights(true);
                     });
@@ -158,18 +158,18 @@ befriend.events = {
             });
         }
     },
-    onDrag: function() {
+    onDrag: function () {
         const events = {
             touch: {
                 start: 'touchstart',
                 move: 'touchmove',
-                end: 'touchend'
+                end: 'touchend',
             },
             mouse: {
                 start: 'mousedown',
                 move: 'mousemove',
-                end: 'mouseup'
-            }
+                end: 'mouseup',
+            },
         };
 
         const deviceType = isTouchDevice() ? 'touch' : 'mouse';
@@ -178,7 +178,7 @@ befriend.events = {
         let itemReorder = befriend.me.events.itemReorder;
         let sectionReorder = befriend.me.events.sectionReorder;
 
-        document.addEventListener(deviceEvents.move, function(e) {
+        document.addEventListener(deviceEvents.move, function (e) {
             // Handle item reordering
             if (itemReorder.ip && itemReorder.el) {
                 e.preventDefault();
@@ -209,10 +209,17 @@ befriend.events = {
 
                     if (!itemReorder.autoScroll.scrolling) {
                         if (itemRect.top < containerRect.top) {
-                            startSmoothScroll(container, container.scrollTop - scrollAmount, itemReorder.autoScroll);
-                        }
-                        else if (itemRect.bottom > containerRect.bottom) {
-                            startSmoothScroll(container, container.scrollTop + scrollAmount, itemReorder.autoScroll);
+                            startSmoothScroll(
+                                container,
+                                container.scrollTop - scrollAmount,
+                                itemReorder.autoScroll,
+                            );
+                        } else if (itemRect.bottom > containerRect.bottom) {
+                            startSmoothScroll(
+                                container,
+                                container.scrollTop + scrollAmount,
+                                itemReorder.autoScroll,
+                            );
                         }
                     }
                 }
@@ -226,9 +233,14 @@ befriend.events = {
                 const offsetY = coords.y - sectionReorder.start.y;
 
                 // Only start repositioning other sections after some movement
-                if (!sectionReorder.dragStarted && (Math.abs(offsetX) > 5 || Math.abs(offsetY) > 5)) {
+                if (
+                    !sectionReorder.dragStarted &&
+                    (Math.abs(offsetX) > 5 || Math.abs(offsetY) > 5)
+                ) {
                     sectionReorder.dragStarted = true;
-                    const idleSections = sectionReorder.getIdleSections(sectionReorder.el.parentElement);
+                    const idleSections = sectionReorder.getIdleSections(
+                        sectionReorder.el.parentElement,
+                    );
                     sectionReorder.setSectionsGap(idleSections);
                     sectionReorder.initSectionsState(sectionReorder.el, idleSections);
                 }
@@ -248,16 +260,24 @@ befriend.events = {
 
                     if (!sectionReorder.autoScroll.scrolling) {
                         if (sectionRect.top < containerRect.top) {
-                            startSmoothScroll(container, container.scrollTop - scrollAmount, sectionReorder.autoScroll);
+                            startSmoothScroll(
+                                container,
+                                container.scrollTop - scrollAmount,
+                                sectionReorder.autoScroll,
+                            );
                         } else if (sectionRect.bottom > containerRect.bottom) {
-                            startSmoothScroll(container, container.scrollTop + scrollAmount, sectionReorder.autoScroll);
+                            startSmoothScroll(
+                                container,
+                                container.scrollTop + scrollAmount,
+                                sectionReorder.autoScroll,
+                            );
                         }
                     }
                 }
             }
         });
 
-        document.addEventListener(deviceEvents.end, function(e) {
+        document.addEventListener(deviceEvents.end, function (e) {
             // Handle item reorder end
             if (itemReorder.ip) {
                 if (itemReorder.autoScroll.animationFrame) {
@@ -308,10 +328,10 @@ befriend.events = {
 
         function startSmoothScroll(container, targetPosition, autoScrollState) {
             // Bound target position
-            targetPosition = Math.max(0, Math.min(
-                targetPosition,
-                container.scrollHeight - container.clientHeight
-            ));
+            targetPosition = Math.max(
+                0,
+                Math.min(targetPosition, container.scrollHeight - container.clientHeight),
+            );
 
             // Don't scroll if we're already at target
             if (container.scrollTop === targetPosition) return;
@@ -333,7 +353,8 @@ befriend.events = {
                 // Ease out cubic function
                 const easeOut = 1 - Math.pow(1 - progress, 3);
 
-                const currentPosition = autoScrollState.startPosition +
+                const currentPosition =
+                    autoScrollState.startPosition +
                     (autoScrollState.targetPosition - autoScrollState.startPosition) * easeOut;
 
                 container.scrollTop = currentPosition;

@@ -281,7 +281,7 @@ window['befriend'] = {
         if (show) {
             addClassEl('show', befriend.els.viewSpinner);
         } else {
-            if(timeout_ms) {
+            if (timeout_ms) {
                 setTimeout(function () {
                     removeClassEl('show', befriend.els.viewSpinner);
                 }, timeout_ms);

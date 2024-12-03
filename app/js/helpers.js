@@ -225,22 +225,22 @@ function getEventCoords(e) {
     if (e.touches) {
         return {
             x: e.touches[0].clientX,
-            y: e.touches[0].clientY
+            y: e.touches[0].clientY,
         };
     }
     return {
         x: e.clientX,
-        y: e.clientY
+        y: e.clientY,
     };
 }
 
 function isTouchDevice() {
     let prefixes = ' -webkit- -moz- -o- -ms- '.split(' ');
-    let mq = function(query) {
+    let mq = function (query) {
         return window.matchMedia(query).matches;
     };
 
-    if (('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch) {
+    if ('ontouchstart' in window || (window.DocumentTouch && document instanceof DocumentTouch)) {
         return true;
     }
 
@@ -404,7 +404,7 @@ function rafAwait() {
 }
 
 function sortObj(obj, key, desc) {
-    if(typeof obj !== 'object') {
+    if (typeof obj !== 'object') {
         return obj;
     }
 
@@ -413,14 +413,14 @@ function sortObj(obj, key, desc) {
     let keys = Object.keys(obj);
 
     keys.sort(function (a, b) {
-        if(desc) {
+        if (desc) {
             return obj[b][key] - obj[a][key];
         } else {
             return obj[a][key] - obj[b][key];
         }
     });
 
-    for(let key of keys) {
+    for (let key of keys) {
         newObj[key] = obj[key];
     }
 

@@ -43,7 +43,8 @@ html.#{$class_confirm_me_action} {
         min-height: max(1000px, 100vh);
     }
 
-    .view-profile, .view-account {
+    .view-profile,
+    .view-account {
         padding-left: $view_padding_lr !important;
         padding-right: $view_padding_lr !important;
 
@@ -52,7 +53,6 @@ html.#{$class_confirm_me_action} {
         &.active {
             display: block;
         }
-
     }
 
     .view-profile {
@@ -187,7 +187,7 @@ html.#{$class_confirm_me_action} {
             color: white;
             border-top-right-radius: $section_br;
             border-top-left-radius: $section_br;
-            border: .5px solid lighten(black, 50%);
+            border: 0.5px solid lighten(black, 50%);
             border-bottom-color: transparent;
 
             .title {
@@ -221,11 +221,11 @@ html.#{$class_confirm_me_action} {
                 padding: 8px;
                 cursor: pointer;
 
-                &[data-mode="solo"] {
+                &[data-mode='solo'] {
                     flex-basis: 70px;
                 }
 
-                &[data-mode="plus-one"] {
+                &[data-mode='plus-one'] {
                     flex-basis: 120px;
                 }
 
@@ -295,7 +295,6 @@ html.#{$class_confirm_me_action} {
                     transition: all 200ms;
                     margin-top: 6px;
 
-
                     .plus {
                         $dim: 15px;
                         fill: lighten(black, 5%);
@@ -311,7 +310,7 @@ html.#{$class_confirm_me_action} {
 
                 .description {
                     font-size: 12px;
-                    opacity: .8;
+                    opacity: 0.8;
                     text-align: center;
                     margin-top: 3px;
                 }
@@ -328,7 +327,6 @@ html.#{$class_confirm_me_action} {
             }
 
             &.active {
-
             }
 
             .partner {
@@ -367,7 +365,6 @@ html.#{$class_confirm_me_action} {
                 padding-top: 10px;
 
                 .add-kid {
-
                     .add-btn {
                         background-color: lighten($brand_color_a, 10%);
                         color: white;
@@ -615,8 +612,6 @@ html.#{$class_confirm_me_action} {
                         border-bottom: 0px !important;
                     }
                 }
-
-
             }
 
             &:not(.my-items) {
@@ -1264,7 +1259,6 @@ html.#{$class_confirm_me_action} {
                     }
 
                     &.mine {
-
                     }
 
                     &.item-secondary-open {
@@ -1281,9 +1275,10 @@ html.#{$class_confirm_me_action} {
                         z-index: 2;
                         cursor: grab;
                         opacity: 1;
-                        transition: transform $me_items_transition_ms ease-out,
-                                    opacity $me_items_transition_ms ease-out,
-                                    background-color $me_items_transition_ms ease-out;
+                        transition:
+                            transform $me_items_transition_ms ease-out,
+                            opacity $me_items_transition_ms ease-out,
+                            background-color $me_items_transition_ms ease-out;
 
                         .favorite {
                             svg {
@@ -1302,17 +1297,18 @@ html.#{$class_confirm_me_action} {
                             z-index: 10;
                             opacity: 0.8;
                             background: lighten($brand_color_a, 40%);
-                            transition: transform 100ms ease-out,
-                                        background-color $me_items_transition_ms ease-out,
-                                        opacity $me_items_transition_ms ease-out;
+                            transition:
+                                transform 100ms ease-out,
+                                background-color $me_items_transition_ms ease-out,
+                                opacity $me_items_transition_ms ease-out;
                         }
 
                         &.is-drag-ending {
                             opacity: 0.8;
-                            transition: transform $me_items_transition_ms ease-out,
-                                        background-color 500ms $me_items_transition_ms ease-out,
-                                        opacity $me_items_transition_ms ease-out;
-
+                            transition:
+                                transform $me_items_transition_ms ease-out,
+                                background-color 500ms $me_items_transition_ms ease-out,
+                                opacity $me_items_transition_ms ease-out;
                         }
                     }
 
@@ -1507,8 +1503,9 @@ html.#{$class_confirm_me_action} {
                 }
             }
 
-            &.movies, &.tv_shows {
-                &:not(.my-items):not([data-table-key="genres"]) {
+            &.movies,
+            &.tv_shows {
+                &:not(.my-items):not([data-table-key='genres']) {
                     .items {
                         display: grid;
 
@@ -1641,7 +1638,8 @@ html.#{$class_confirm_me_action} {
             font-size: 0.875rem;
             font-weight: 500;
             background-color: $brand_color_a;
-            color: white;border-radius: 8px;
+            color: white;
+            border-radius: 8px;
         }
     }
 }
