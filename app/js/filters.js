@@ -11,8 +11,10 @@ befriend.filters = {
 
                 befriend.filters.initSections();
                 befriend.filters.initCollapsible();
-                
+
                 befriend.filters.reviews.init();
+
+                befriend.filters.initSendReceive();
             } catch(e) {
                 console.error(e)
             }
@@ -78,7 +80,7 @@ befriend.filters = {
             //star ratings
             for (let [key, rating] of Object.entries(this.ratings)) {
                 reviewsHtml += `
-                    <div class="filter-option review review-${key}">
+                    <div class="filter-option review review-${key}" data-filter-type="review-${key}">
                         ${befriend.filters.sendReceiveHtml(true, true)}
 
                         <div class="filter-option-name">
@@ -269,31 +271,6 @@ befriend.filters = {
 
         requestAnimationFrame(this.updateSectionHeights);
     },
-    updateSectionHeights: function (without_transition) {
-        let sections_el = befriend.els.filters.querySelector('.sections');
-
-        let sections = sections_el.getElementsByClassName('section');
-
-        for (let section of sections) {
-            let container = section.querySelector('.section-container');
-
-            let is_collapsed = elHasClass(section, 'collapsed');
-
-            if(without_transition) {
-                container.style.transition = 'none';
-
-                setTimeout(function () {
-                    container.style.removeProperty('transition');
-                }, befriend.variables.filters_section_transition_ms)
-            }
-
-            if (is_collapsed) {
-                container.style.height = '0';
-            } else {
-                setElHeightDynamic(container);
-            }
-        }
-    },
     initCollapsible: function() {
         let sections = befriend.els.filters.getElementsByClassName('section');
 
@@ -342,13 +319,82 @@ befriend.filters = {
             });
         }
     },
+    initSendReceive: function() {
+        const sendReceiveElements = befriend.els.filters.querySelectorAll('.send-receive');
+
+        for (let element of sendReceiveElements) {
+            if (element._listener) continue;
+            element._listener = true;
+
+            const options = element.querySelectorAll('.option');
+
+            for (let option of options) {
+                option.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    // Toggle enabled class
+                    this.classList.toggle('enabled');
+
+                    // Get the filter type and option type
+                    const filterOption = this.closest('.filter-option');
+                    const filterType = befriend.filters.getFilterType(filterOption);
+                    const optionType = this.classList.contains('send') ? 'send' : 'receive';
+
+                    // Save the state
+                    befriend.filters.saveSendReceiveState(filterType, optionType, this.classList.contains('enabled'));
+                });
+            }
+        }
+    },
+    updateSectionHeights: function (without_transition) {
+        let sections_el = befriend.els.filters.querySelector('.sections');
+
+        let sections = sections_el.getElementsByClassName('section');
+
+        for (let section of sections) {
+            let container = section.querySelector('.section-container');
+
+            let is_collapsed = elHasClass(section, 'collapsed');
+
+            if(without_transition) {
+                container.style.transition = 'none';
+
+                setTimeout(function () {
+                    container.style.removeProperty('transition');
+                }, befriend.variables.filters_section_transition_ms)
+            }
+
+            if (is_collapsed) {
+                container.style.height = '0';
+            } else {
+                setElHeightDynamic(container);
+            }
+        }
+    },
     getSectionKey: function(section_el) {
         return section_el.getAttribute('data-key');
+    },
+    getFilterType: function(filterOption) {
+        return filterOption.getAttribute('data-filter-type');
     },
     sendReceiveHtml: function(send_enabled, receive_enabled) {
         return `<div class="send-receive">
                     <div class="option send ${send_enabled ? 'enabled':''}">Send</div>
                     <div class="option receive ${receive_enabled ? 'enabled':''}">Receive</div>
                 </div>`
-    }
+    },
+    saveSendReceiveState: function(filterType, optionType, isEnabled) {
+        if (!this.data.sendReceive) {
+            this.data.sendReceive = {};
+        }
+        if (!this.data.sendReceive[filterType]) {
+            this.data.sendReceive[filterType] = {};
+        }
+
+        // Save state
+        this.data.sendReceive[filterType][optionType] = isEnabled;
+
+        // befriend.user.setLocal('filters.sendReceive', this.data.sendReceive);
+    },
 };

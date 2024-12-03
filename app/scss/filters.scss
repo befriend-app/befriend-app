@@ -259,6 +259,7 @@
             font-weight: 500;
             transition: all 200ms;
             width: 60px;
+            background-color: lighten(black, 90%);
             @include flex-center;
 
             &.enabled {
@@ -270,7 +271,7 @@
         .send {
             //border-bottom-left-radius: $br;
             border-top-right-radius: $br;
-            border-bottom: 1px solid $color_lightgray;
+            border-bottom: 1px solid darken($color_lightgray, 5%);
         }
 
         .receive {
