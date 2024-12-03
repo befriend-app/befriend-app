@@ -146,7 +146,9 @@ befriend.events = {
 
                 //view specific logic
                 if(nav_name === 'filters') {
-                    befriend.filters.updateSectionHeights(true);
+                    requestAnimationFrame(function () {
+                        befriend.filters.updateSectionHeights(true);
+                    });
                 } else if (nav_name === 'me') {
                     befriend.me.updateCollapsed(true);
                     befriend.me.updateModeHeight(true);
