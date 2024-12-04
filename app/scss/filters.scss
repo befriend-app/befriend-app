@@ -48,15 +48,22 @@
             }
 
             .chevron {
-                display: none !important;
+                position: absolute;
+                right: 10px;
+                //top: 8px;
+                //display: none !important;
                 @include flex-center-col;
-                width: 16px;
+                width: 12px;
                 transition: transform 300ms;
 
                 svg {
                     width: 100%;
                     fill: lighten(black, 30%);
                 }
+            }
+
+            .checkbox-container {
+                margin-right: 15px;
             }
         }
 
