@@ -211,41 +211,18 @@
                     border-bottom-left-radius: $option_br;
                     border-bottom: 1px solid $border_color;
                     border-left: 1px solid $border_color;
-                    padding: 4px 8px;
+                    padding: 4px 10px;
 
-                    .name {
-                        height: $dim;
-                        @include flex-center-col;
-                        padding: 0 6px;
-                    }
-
-                    .checkbox {
-                        width: $dim;
-                        height: $dim;
-                        border-top-right-radius: $option_br;
-                        border-bottom-left-radius: $option_br;
-                        border-bottom: 1px solid $border_color;
-                        box-sizing: border-box;
-                        transform: translateX(0px);
-                        border-left-color: transparent;
-
-                        .inner {
-                            width: $dim;
-                            height: $dim;
-                            border-radius: 0;
-                            border-top-right-radius: $option_br;
-                            //border-bottom-left-radius: $option_br;
-                            border-right: 1px solid $border_color;
-                            border-bottom: 1px solid $border_color;
-                            border-left: 1px solid $border_color;
-                            box-sizing: border-box;
-                        }
-
-                        svg {
-                            width: $dim * .6;
-                            height: $dim * .6;
+                    &.active {
+                        .toggle-switch {
+                            background-color: darken($brand_color_b, 30%);
                         }
                     }
+
+                    .toggle-label {
+                        margin-left: 8px;
+                    }
+
                 }
             }
 

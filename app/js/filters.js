@@ -179,11 +179,13 @@ befriend.filters = {
                     rating.current_rating = parseFloat(filter_data.filter_value);
                 }
 
+                const isActive = !filter_data || filter_data.is_active;
+
                 reviewsHtml += `
                     <div class="filter-option review review-${key}" data-filter-token="${rating.token}">
                         ${befriend.filters.sendReceiveHtml(true, true)}
                         <div class="toggle-wrapper">
-                                ${toggleHtml(true, 'Enabled')}
+                                ${toggleHtml(true, isActive ? 'On' : 'Off')}
                         </div>
                             
                         <div class="filter-option-name">
@@ -775,6 +777,13 @@ befriend.filters = {
                 }
 
                 let active = !elHasClass(this, 'active');
+
+                //toggle on/off label
+                let toggle_label = filter_option?.querySelector('.toggle-label');
+
+                if(toggle_label?.innerText) {
+                    toggle_label.innerHTML = active ? 'On' : 'Off';
+                }
 
                 try {
                     if (active) {
