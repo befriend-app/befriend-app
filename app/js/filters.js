@@ -754,7 +754,7 @@ befriend.filters = {
         }
     },
     initCheckboxEvents: function () {
-        const checkboxes = befriend.els.filters.querySelectorAll('.checkbox');
+        const checkboxes = befriend.els.filters.querySelectorAll('.section-top .checkbox-container .checkbox, .filter-option .checkbox-container .checkbox');
 
         for (let checkbox of checkboxes) {
             if (checkbox._listener) continue;
@@ -764,19 +764,47 @@ befriend.filters = {
                 e.preventDefault();
                 e.stopPropagation();
 
-                let filter_option_el = this.closest('.filter-option');
-                let filter_token = befriend.filters.getFilterToken(filter_option_el);
+                // Find the closest filter token - either from section or filter option
+                let filter_token;
+                let section = this.closest('.section');
+                let filter_option = this.closest('.filter-option');
+
+                if (filter_option) {
+                    filter_token = befriend.filters.getFilterToken(filter_option);
+                } else if (section) {
+                    filter_token = befriend.filters.sections[section.getAttribute('data-key')]?.token;
+                }
+
+                if (!filter_token) {
+                    console.error('Could not find filter token');
+                    return;
+                }
+
                 let active = !elHasClass(this, 'checked');
 
-                this.classList.toggle('checked');
-
                 try {
+                    //toggle checkbox
+                    if (active) {
+                        addClassEl('checked', this);
+                    } else {
+                        removeClassEl('checked', this);
+                    }
+
+                    // Save to server
                     await befriend.auth.put('/filters/active', {
                         filter_token,
                         active,
                     });
+
                 } catch (e) {
                     console.error('Error updating filter active state:', e);
+
+                    // Revert UI state on error
+                    if (active) {
+                        removeClassEl('checked', this);
+                    } else {
+                        addClassEl('checked', this);
+                    }
                 }
             });
         }
@@ -848,22 +876,61 @@ befriend.filters = {
         }
     },
     setActive: function () {
-        let checkboxes = befriend.els.filters.getElementsByClassName('checkbox');
+        // Handle section-level checkboxes
+        for (let key in this.sections) {
+            const section = this.sections[key];
+            const sectionEl = befriend.els.filters.querySelector(`.section.${section.token}`);
 
-        for (let checkbox of checkboxes) {
-            let filter_option_el = checkbox.closest('.filter-option');
+            if (!sectionEl) continue;
 
-            if (!filter_option_el) {
-                console.error('Missing filter option');
-                continue;
-            }
+            const sectionCheckbox = sectionEl.querySelector('.section-top .checkbox');
+            if (!sectionCheckbox) continue;
 
-            let filter_token = befriend.filters.getFilterToken(filter_option_el);
+            // Check if we have filter data for this section
+            const filterData = befriend.filters.data?.filters?.[section.token];
 
-            if (befriend.filters.data?.filters?.[filter_token]) {
-                if (!befriend.filters.data.filters[filter_token].is_active) {
-                    removeClassEl('checked', checkbox);
+            if (filterData && !filterData.is_active) {
+                removeClassEl('checked', sectionCheckbox);
+
+                // Also update any child checkboxes
+                const childCheckboxes = sectionEl.querySelectorAll('.filter-option .checkbox');
+                for (let childBox of childCheckboxes) {
+                    removeClassEl('checked', childBox);
                 }
+            } else {
+                addClassEl('checked', sectionCheckbox);
+            }
+        }
+
+        return;
+        // Handle individual filter option checkboxes
+        let filterOptionCheckboxes = befriend.els.filters.querySelectorAll('.filter-option .checkbox');
+
+        for (let checkbox of filterOptionCheckboxes) {
+            let filterOptionEl = checkbox.closest('.filter-option');
+            if (!filterOptionEl) continue;
+
+            let filterToken = befriend.filters.getFilterToken(filterOptionEl);
+            if (!filterToken) continue;
+
+            const filterData = befriend.filters.data?.filters?.[filterToken];
+
+            if (filterData && !filterData.is_active) {
+                removeClassEl('checked', checkbox);
+
+                // Update parent section checkbox if all children are unchecked
+                let sectionEl = checkbox.closest('.section');
+                if (sectionEl) {
+                    let sectionCheckbox = sectionEl.querySelector('.section-top .checkbox');
+                    let allChildCheckboxes = sectionEl.querySelectorAll('.filter-option .checkbox');
+                    let allUnchecked = Array.from(allChildCheckboxes).every(box => !elHasClass(box, 'checked'));
+
+                    if (allUnchecked && sectionCheckbox) {
+                        removeClassEl('checked', sectionCheckbox);
+                    }
+                }
+            } else {
+                addClassEl('checked', checkbox);
             }
         }
     },
