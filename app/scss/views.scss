@@ -71,15 +71,16 @@
 }
 
 .checkbox {
+    $br: 4px;
     $transition_ms: 50ms;
-    $dim: 20px;
+    $dim: 24px;
     width: $dim;
     height: $dim;
     border: 1px solid $color_lightgray;
     outline: 0;
     position: relative;
     cursor: pointer;
-    border-radius: 3px;
+    border-radius: $br;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -92,6 +93,7 @@
         position: absolute;
         top: 0;
         left: 0;
+        border-radius: $br;
     }
 
     &.checked {

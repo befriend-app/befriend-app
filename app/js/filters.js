@@ -361,7 +361,6 @@ befriend.filters = {
         },
         minGap: 2,
         _updateTimer: null,
-
         init: function() {
             let self = this;
 
@@ -495,7 +494,6 @@ befriend.filters = {
                 updateRange();
             });
         },
-
         debounceUpdateServer: function() {
             clearTimeout(this._updateTimer);
             this._updateTimer = setTimeout(() => {
@@ -891,18 +889,11 @@ befriend.filters = {
 
             if (filterData && !filterData.is_active) {
                 removeClassEl('checked', sectionCheckbox);
-
-                // Also update any child checkboxes
-                const childCheckboxes = sectionEl.querySelectorAll('.filter-option .checkbox');
-                for (let childBox of childCheckboxes) {
-                    removeClassEl('checked', childBox);
-                }
             } else {
                 addClassEl('checked', sectionCheckbox);
             }
         }
 
-        return;
         // Handle individual filter option checkboxes
         let filterOptionCheckboxes = befriend.els.filters.querySelectorAll('.filter-option .checkbox');
 
@@ -917,18 +908,6 @@ befriend.filters = {
 
             if (filterData && !filterData.is_active) {
                 removeClassEl('checked', checkbox);
-
-                // Update parent section checkbox if all children are unchecked
-                let sectionEl = checkbox.closest('.section');
-                if (sectionEl) {
-                    let sectionCheckbox = sectionEl.querySelector('.section-top .checkbox');
-                    let allChildCheckboxes = sectionEl.querySelectorAll('.filter-option .checkbox');
-                    let allUnchecked = Array.from(allChildCheckboxes).every(box => !elHasClass(box, 'checked'));
-
-                    if (allUnchecked && sectionCheckbox) {
-                        removeClassEl('checked', sectionCheckbox);
-                    }
-                }
             } else {
                 addClassEl('checked', checkbox);
             }
