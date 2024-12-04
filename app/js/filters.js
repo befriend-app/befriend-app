@@ -447,7 +447,33 @@ befriend.filters = {
             const section_el = befriend.els.filters.querySelector('.section.genders');
             const filter_options = section_el.querySelector('.filter-options');
 
-            // Create single filter-option with all gender buttons
+            const filter_data = befriend.filters.data.filters?.['genders'];
+
+            let gender_buttons_html = '';
+
+            if (befriend.me.data.genders) {
+                for (let gender of befriend.me.data.genders) {
+                    let selected = '';
+
+                    const matchingItem = filter_data?.items ?
+                        Object.values(filter_data.items)
+                            .find(item => item.gender_id === gender.id) : null;
+
+                    // Item is selected if it exists and is not negative
+                    if (matchingItem && !matchingItem.is_negative) {
+                        selected = 'selected';
+                    } else if (!filter_data?.items && gender.token === 'any') {
+                        // Default to 'any' selected if no filter data exists yet
+                        selected = 'selected';
+                    }
+
+                    gender_buttons_html += `
+                        <div class="gender-button ${selected}" data-gender-token="${gender.token}">
+                            <div class="name">${gender.name}</div>
+                        </div>`;
+                }
+            }
+
             let html = `
                 <div class="filter-option" data-filter-token="genders">
                     ${befriend.filters.sendReceiveHtml(true, true, true)}
@@ -458,23 +484,10 @@ befriend.filters = {
                     </div>
                     
                     <div class="gender-buttons">
-                        <div class="gender-button selected" data-gender-token="any">
-                            <div class="name">Any</div>
-                        </div>`;
-
-            // Add other gender options
-            if (befriend.me.data.genders) {
-                for (let gender of befriend.me.data.genders) {
-                    html += `
-                        <div class="gender-button" data-gender-token="${gender.token}">
-                            <div class="name">${gender.name}</div>
-                        </div>`;
-                }
-            }
-
-            html += `
+                        ${gender_buttons_html}
                     </div>
-                </div>`;
+                </div>
+            `;
 
             filter_options.innerHTML = html;
 
@@ -491,8 +504,9 @@ befriend.filters = {
                         e.preventDefault();
                         e.stopPropagation();
 
-                        const genderToken = this.getAttribute('data-gender-token');
-                        const isAny = genderToken === 'any';
+                        let genderToken = this.getAttribute('data-gender-token');
+                        let isAny = genderToken === 'any';
+                        const anyButton = section_el.querySelector('.gender-button[data-gender-token="any"]');
                         const wasSelected = elHasClass(this, 'selected');
 
                         // If selecting "Any", deselect all others
@@ -505,13 +519,32 @@ befriend.filters = {
                         }
                         // If selecting a specific gender, deselect "Any"
                         else if (!isAny && !wasSelected) {
-                            const anyButton = section_el.querySelector('.gender-button[data-gender-token="any"]');
                             if (anyButton) {
                                 removeClassEl('selected', anyButton);
                             }
                         }
 
                         toggleElClass(this, 'selected');
+
+                        //switch to any if all three selected
+                        let allSelected = true;
+
+                        for(let btn of genderButtons) {
+                            if(btn.getAttribute('data-gender-token') === 'any' && !wasSelected) {
+                                continue;
+                            }
+
+                            if(!elHasClass(btn, 'selected')) {
+                                allSelected = false;
+                            }
+                        }
+
+                        if(allSelected) {
+                            removeElsClass(genderButtons, 'selected');
+                            genderToken = 'any';
+                            isAny = true;
+                            addClassEl('selected', anyButton);
+                        }
 
                         try {
                             await befriend.auth.put('/filters/gender', {
@@ -521,12 +554,16 @@ befriend.filters = {
                         } catch (e) {
                             console.error('Error updating gender filter:', e);
 
+                            console.log({
+                                wasSelected, isAny, genderToken
+                            })
                             // Revert UI state on error
-                            toggleElClass('selected', this);
-                            if (isAny) {
+                            toggleElClass(this, 'selected');
+
+                            if (isAny && !wasSelected) {
                                 for(let btn of genderButtons) {
                                     if (btn !== this) {
-                                        toggleElClass('selected', btn);
+                                        toggleElClass(btn, 'selected');
                                     }
                                 }
                             }

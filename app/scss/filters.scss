@@ -296,7 +296,9 @@
 
         &.genders {
             .gender-buttons {
+                margin-top: 20px;
                 display: flex;
+                gap: 0 8px;
 
                 .gender-button {
                     background-color: lighten(black, 95%);
@@ -306,7 +308,6 @@
                     font-size: 14px;
                     transition: all 200ms;
                     border: 1px solid $color_lightgray;
-                    min-width: 60px;
 
                     &.selected {
                         background-color: $brand_color_b;

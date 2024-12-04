@@ -111,7 +111,7 @@
         transition: opacity $transition_ms;
         pointer-events: none;
         z-index: 2;
-        //transform: translateZ(0);
+        transform: translateZ(0);
         backface-visibility: hidden;
     }
 }

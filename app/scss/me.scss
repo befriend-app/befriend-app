@@ -1337,23 +1337,8 @@ html.#{$class_confirm_me_action} {
                         transition: all 300ms;
 
                         &.selected {
-                            //background: $brand_color_a;
-                            //color: white;
-
                             background-color: $brand_color_b;
                             border: 1px solid darken($brand_color_a, 10%);
-                            //background-color: lighten(black, 95%);
-                            //@include flex-center;
-                            //border-radius: 8px;
-                            //padding: 5px 8px;
-                            //font-size: 14px;
-                            //transition: all 200ms;
-                            //border: 1px solid $color_lightgray;
-                            //
-                            //&.selected {
-                            //    background-color: $brand_color_b;
-                            //    border: 1px solid darken($brand_color_a, 10%);
-                            //}
                         }
                     }
 
