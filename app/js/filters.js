@@ -111,9 +111,13 @@ befriend.filters = {
                 reviewsHtml += `
                     <div class="filter-option review review-${key}" data-filter-token="${rating.token}">
                         ${befriend.filters.sendReceiveHtml(true, true)}
-
-                        <div class="filter-option-name">
+                        <div class="checkbox-container">
+                            <div class="name">Enabled</div>
                             ${checkboxHtml(true)}
+                        </div>
+                            
+                        <div class="filter-option-name">
+                            
                             
                             <div class="name">
                                 ${rating.name}
@@ -314,9 +318,9 @@ befriend.filters = {
                  <div class="filter-option age-range" data-filter-token="ages">
                     ${befriend.filters.sendReceiveHtml(true, true, true)}
                     
-                    <div class="filter-option-name">
+                    <div class="checkbox-container">
+                        <div class="name">Enabled</div>
                         ${checkboxHtml(true)}
-                        <div class="name">Active</div>
                     </div>
                     
                     <div class="range-container">
@@ -478,9 +482,9 @@ befriend.filters = {
                 <div class="filter-option" data-filter-token="genders">
                     ${befriend.filters.sendReceiveHtml(true, true, true)}
                     
-                    <div class="filter-option-name">
+                    <div class="checkbox-container">
+                        <div class="name">Enabled</div>
                         ${checkboxHtml(true)}
-                        <div class="name">Active</div>
                     </div>
                     
                     <div class="gender-buttons">
