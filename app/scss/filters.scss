@@ -26,16 +26,25 @@
 
         .section-top {
             display: flex;
-            justify-content: space-between;
             align-items: center;
             cursor: pointer;
             border-bottom: 1px solid $border_color;
             padding: 10px $section_padding_lr;
             transition: border $filters_section_transition_ms;
 
+            .section-icon {
+                margin-right: 12px;
+                @include flex-center-col;
+
+                svg {
+                    height: 24px;
+                }
+            }
+
             .section-name {
                 font-size: 17px;
                 font-weight: 500;
+                margin-right: auto;
             }
 
             .chevron {
