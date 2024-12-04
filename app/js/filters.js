@@ -19,7 +19,7 @@ befriend.filters = {
                 befriend.filters.genders.init();
 
                 befriend.filters.initSendReceive();
-                befriend.filters.initCheckboxEvents();
+                befriend.filters.initActiveEvents();
 
                 befriend.filters.setActive();
                 befriend.filters.setSendReceive();
@@ -182,14 +182,11 @@ befriend.filters = {
                 reviewsHtml += `
                     <div class="filter-option review review-${key}" data-filter-token="${rating.token}">
                         ${befriend.filters.sendReceiveHtml(true, true)}
-                        <div class="checkbox-container">
-                            <div class="name">Enabled</div>
-                            ${checkboxHtml(true)}
+                        <div class="toggle-wrapper">
+                                ${toggleHtml(true, 'Enabled')}
                         </div>
                             
                         <div class="filter-option-name">
-                            
-                            
                             <div class="name">
                                 ${rating.name}
                             </div>
@@ -227,7 +224,7 @@ befriend.filters = {
                 ${befriend.filters.sendReceiveHtml(true, true)}
 
                 <div class="filter-option-name">
-                    ${checkboxHtml(true)}
+                    ${toggleHtml(true)}
                     <div class="name">Include unrated matches</div>
                 </div>
             </div>`;
@@ -655,10 +652,10 @@ befriend.filters = {
                             <div class="section-icon">${section.icon ? section.icon : ''}</div>
                             <div class="section-name">${section.name}</div>
                             
-                            <div class="checkbox-container">
-                                    <div class="name">Enabled</div>
-                                    ${checkboxHtml(true)}
+                            <div class="toggle-wrapper">
+                                ${toggleHtml(true)}
                             </div>
+                            
                             <div class="chevron">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360.0005 192.001"><path id="Down_Arrow" d="M176.001,192.001c-4.092,0-8.188-1.564-11.312-4.688L4.689,27.313C-1.563,21.061-1.563,10.937,4.689,4.689s16.376-6.252,22.624,0l148.688,148.688L324.689,4.689c6.252-6.252,16.376-6.252,22.624,0s6.252,16.376,0,22.624l-160,160c-3.124,3.124-7.22,4.688-11.312,4.688h0Z"/></svg>
                             </div>
@@ -751,18 +748,17 @@ befriend.filters = {
             }
         }
     },
-    initCheckboxEvents: function () {
-        const checkboxes = befriend.els.filters.querySelectorAll('.section-top .checkbox-container .checkbox, .filter-option .checkbox-container .checkbox');
+    initActiveEvents: function () {
+        const toggles = befriend.els.filters.querySelectorAll('.section-top .toggle, .filter-option .toggle');
 
-        for (let checkbox of checkboxes) {
-            if (checkbox._listener) continue;
-            checkbox._listener = true;
+        for (let toggle of toggles) {
+            if (toggle._listener) continue;
+            toggle._listener = true;
 
-            checkbox.addEventListener('click', async function (e) {
+            toggle.addEventListener('click', async function (e) {
                 e.preventDefault();
                 e.stopPropagation();
 
-                // Find the closest filter token - either from section or filter option
                 let filter_token;
                 let section = this.closest('.section');
                 let filter_option = this.closest('.filter-option');
@@ -778,30 +774,27 @@ befriend.filters = {
                     return;
                 }
 
-                let active = !elHasClass(this, 'checked');
+                let active = !elHasClass(this, 'active');
 
                 try {
-                    //toggle checkbox
                     if (active) {
-                        addClassEl('checked', this);
+                        addClassEl('active', this);
                     } else {
-                        removeClassEl('checked', this);
+                        removeClassEl('active', this);
                     }
 
-                    // Save to server
                     await befriend.auth.put('/filters/active', {
                         filter_token,
                         active,
                     });
-
                 } catch (e) {
                     console.error('Error updating filter active state:', e);
 
                     // Revert UI state on error
                     if (active) {
-                        removeClassEl('checked', this);
+                        removeClassEl('active', this);
                     } else {
-                        addClassEl('checked', this);
+                        addClassEl('active', this);
                     }
                 }
             });
@@ -874,31 +867,30 @@ befriend.filters = {
         }
     },
     setActive: function () {
-        // Handle section-level checkboxes
         for (let key in this.sections) {
             const section = this.sections[key];
             const sectionEl = befriend.els.filters.querySelector(`.section.${section.token}`);
 
             if (!sectionEl) continue;
 
-            const sectionCheckbox = sectionEl.querySelector('.section-top .checkbox');
-            if (!sectionCheckbox) continue;
+            const sectionToggle = sectionEl.querySelector('.section-top .toggle');
+            if (!sectionToggle) continue;
 
             // Check if we have filter data for this section
             const filterData = befriend.filters.data?.filters?.[section.token];
 
             if (filterData && !filterData.is_active) {
-                removeClassEl('checked', sectionCheckbox);
+                removeClassEl('active', sectionToggle);
             } else {
-                addClassEl('checked', sectionCheckbox);
+                addClassEl('active', sectionToggle);
             }
         }
 
-        // Handle individual filter option checkboxes
-        let filterOptionCheckboxes = befriend.els.filters.querySelectorAll('.filter-option .checkbox');
+        // Handle individual filter option toggles
+        let filterOptionToggles = befriend.els.filters.querySelectorAll('.filter-option .toggle');
 
-        for (let checkbox of filterOptionCheckboxes) {
-            let filterOptionEl = checkbox.closest('.filter-option');
+        for (let toggle of filterOptionToggles) {
+            let filterOptionEl = toggle.closest('.filter-option');
             if (!filterOptionEl) continue;
 
             let filterToken = befriend.filters.getFilterToken(filterOptionEl);
@@ -906,10 +898,13 @@ befriend.filters = {
 
             const filterData = befriend.filters.data?.filters?.[filterToken];
 
+            // Skip send/receive toggles
+            if (toggle.closest('.send-receive')) continue;
+
             if (filterData && !filterData.is_active) {
-                removeClassEl('checked', checkbox);
+                removeClassEl('active', toggle);
             } else {
-                addClassEl('checked', checkbox);
+                addClassEl('active', toggle);
             }
         }
     },

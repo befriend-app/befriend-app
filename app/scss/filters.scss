@@ -1,6 +1,6 @@
 #filters {
     $section_padding_lr: 20px;
-    $section_padding_tb: 15px;
+    $section_padding_tb: 10px;
     $option_padding_lr: 12px;
     $option_padding_tb: 10px;
     $option_br: 10px;
@@ -29,7 +29,7 @@
             align-items: center;
             cursor: pointer;
             border-bottom: 1px solid $border_color;
-            padding: 5px $section_padding_lr;
+            padding: $section_padding_tb $section_padding_lr;
             transition: border $filters_section_transition_ms;
 
             .section-icon {
@@ -96,58 +96,45 @@
             }
         }
 
-        //.checkbox-container {
-        //    display: flex;
-        //    align-items: center;
-        //    flex-direction: row-reverse;
-        //
-        //    margin-right: 10px;
-        //    .name {
-        //        font-size: 12px;
-        //        font-weight: 300;
-        //        //display: none;
-        //    }
-        //
-        //    .checkbox {
-        //        margin-right: 8px;
-        //    }
-        //}
-
-        .checkbox-container {
-            $dim: 27px;
-
-            top: 0;
-            right: calc($section_padding_lr + 20px);
+        .toggle-wrapper {
+            margin-right: 15px;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            border-top-color: transparent;
-            border-right-color: transparent;
-            border-bottom-left-radius: $option_br;
-            border-bottom-right-radius: $option_br;
-            gap: 3px 0;
-            transform: translateY(-1px);
-
-            .name {
-                font-size: 9px;
-                font-weight: 300;
-            }
-
-            .checkbox {
-                width: $dim;
-                height: $dim;
-
-                .inner {
-                    width: $dim;
-                    height: $dim;
-                }
-
-                svg {
-                    width: $dim * .6;
-                    height: $dim * .6;
-                }
-            }
+            gap: 8px;
+            //$dim: 27px;
+            //
+            //top: 0;
+            //right: calc($section_padding_lr + 20px);
+            //display: flex;
+            //flex-direction: column;
+            //align-items: center;
+            //justify-content: center;
+            //border-top-color: transparent;
+            //border-right-color: transparent;
+            //border-bottom-left-radius: $option_br;
+            //border-bottom-right-radius: $option_br;
+            //gap: 3px 0;
+            //transform: translateY(-1px);
+            //
+            //.name {
+            //    font-size: 9px;
+            //    font-weight: 300;
+            //}
+            //
+            //.checkbox {
+            //    width: $dim;
+            //    height: $dim;
+            //
+            //    .inner {
+            //        width: $dim;
+            //        height: $dim;
+            //    }
+            //
+            //    svg {
+            //        width: $dim * .6;
+            //        height: $dim * .6;
+            //    }
+            //}
         }
 
         &.availability {
@@ -211,7 +198,7 @@
                 border-radius: $option_br;
                 position: relative;
 
-                .checkbox-container {
+                .toggle {
                     $dim: 30px;
                     position: absolute;
                     top: 0;
@@ -224,6 +211,7 @@
                     border-bottom-left-radius: $option_br;
                     border-bottom: 1px solid $border_color;
                     border-left: 1px solid $border_color;
+                    padding: 4px 8px;
 
                     .name {
                         height: $dim;
@@ -402,8 +390,8 @@
             .range-container {
                 position: relative;
                 width: calc(100% - 20px);
-                padding-top: 20px;
-                padding-bottom: 20px;
+                padding-top: 30px;
+                padding-bottom: 30px;
                 margin: auto;
             }
 
@@ -508,11 +496,7 @@
         $bc: $border_color;
         display: flex;
         width: fit-content;
-        //flex-direction: column;
         $br: $option_br;
-        //position: absolute;
-        //right: 0;
-        //top: 0;
         transform: translate(-$section_padding_lr, -$section_padding_tb);
 
         .option {

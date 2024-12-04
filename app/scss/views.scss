@@ -117,3 +117,79 @@
         backface-visibility: hidden;
     }
 }
+
+.toggle {
+    $toggle-width: 60px;
+    $toggle-height: 30px;
+    $knob-size: 24px;
+    $toggle-padding: 3px;
+    $transition-speed: 0.3s;
+
+    $toggle-off-color: $app_background;
+    $toggle-on-color: darken($brand_color_b, 45%);
+    $knob-color: white;
+    $shadow-color: rgba(0, 0, 0, 0.2);
+
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+
+    &.active {
+        .toggle-switch {
+            background-color: $toggle-on-color;
+
+            &::before {
+                transform: translateX($toggle-width - $knob-size - 2 * $toggle-padding);
+            }
+        }
+    }
+
+    &:active {
+        .toggle-switch::after {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    .toggle-switch {
+        position: relative;
+        width: $toggle-width;
+        height: $toggle-height;
+        background-color: $toggle-off-color;
+        border-radius: $toggle-height;
+        transition: background-color $transition-speed ease;
+
+        &::before {
+            content: '';
+            position: absolute;
+            width: $knob-size;
+            height: $knob-size;
+            left: $toggle-padding;
+            bottom: $toggle-padding;
+            background-color: $knob-color;
+            border-radius: 50%;
+            transition: transform $transition-speed ease;
+            box-shadow: 0 2px 4px $shadow-color;
+        }
+
+        &::after {
+            content: '';
+            position: absolute;
+            width: $toggle-height;
+            height: $toggle-height;
+            border-radius: 50%;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            transform: scale(0);
+            transition: all $transition-speed ease;
+        }
+    }
+
+    .toggle-label {
+        margin-left: 10px;
+        font-size: 12px;
+
+    }
+}

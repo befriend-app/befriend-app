@@ -1084,3 +1084,10 @@ function checkboxHtml(is_checked) {
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 518.0006 376.0036"><path d="M504.5025,7.4985c-9.997-9.998-26.205-9.998-36.204,0L161.5945,314.2055l-117.892-117.892c-9.997-9.998-26.205-9.997-36.204,0-9.998,9.997-9.998,26.205,0,36.203l135.994,135.992c9.994,9.997,26.214,9.99,36.204,0L504.5025,43.7025c9.998-9.997,9.997-26.206,0-36.204Z"/></svg>
             </div>`;
 }
+
+function toggleHtml(is_checked = false, label = '') {
+    return `<div class="toggle ${is_checked ? 'active' : ''}">
+                <div class="toggle-switch"></div>
+                ${label ? `<span class="toggle-label">${label}</span>` : ''}
+            </div>`;
+}
