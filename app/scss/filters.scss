@@ -29,7 +29,7 @@
             align-items: center;
             cursor: pointer;
             border-bottom: 1px solid $border_color;
-            padding: 10px $section_padding_lr;
+            padding: 5px $section_padding_lr;
             transition: border $filters_section_transition_ms;
 
             .section-icon {
@@ -48,6 +48,7 @@
             }
 
             .chevron {
+                display: none !important;
                 @include flex-center-col;
                 width: 16px;
                 transition: transform 300ms;
@@ -88,29 +89,96 @@
             }
         }
 
+        //.checkbox-container {
+        //    display: flex;
+        //    align-items: center;
+        //    flex-direction: row-reverse;
+        //
+        //    margin-right: 10px;
+        //    .name {
+        //        font-size: 12px;
+        //        font-weight: 300;
+        //        //display: none;
+        //    }
+        //
+        //    .checkbox {
+        //        margin-right: 8px;
+        //    }
+        //}
+
         .checkbox-container {
-            position: absolute;
-            top: -$section_padding_tb;
-            right: -$section_padding_lr;
+            //position: absolute;
+            //top: -$section_padding_tb;
+            //right: -$section_padding_lr;
+            top: 0;
+            right: calc($section_padding_lr + 20px);
             display: flex;
-            flex-direction: row-reverse;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             //flex-direction: column;
-            border: 1px solid $border_color;
+            //border: 1px solid $border_color;
             border-top-color: transparent;
             border-right-color: transparent;
             border-bottom-left-radius: $option_br;
-            padding: 6px 8px;
-            padding-bottom: 8px;
+            border-bottom-right-radius: $option_br;
+            gap: 3px 0;
+            transform: translateY(-1px);
+            //margin-right: 8px;
+            //padding: 6px 8px;
+            //padding-bottom: 8px;
 
             .name {
-                font-size: 12px;
+                font-size: 9px;
                 font-weight: 300;
                 //display: none;
             }
 
             .checkbox {
-                margin-right: 8px;
+                //margin-right: 8px;
+            }
+        }
+
+        &.availability {
+            .filter-options {
+                padding: 15px 10px;
+            }
+
+            .days {
+                padding-top: 40px;
+                display: flex;
+                flex-direction: column;
+                gap: 20px 0;
+
+                .day {
+                    display: flex;
+                    align-items: center;
+                    gap: 0 30px;
+                    border: 1px solid $color_lightgray;
+                    border-radius: 16px;
+                    padding: 8px 16px;
+
+                    .day-name {
+                        width: 60px;
+                        font-weight: 500;
+                        font-size: 14px;
+                    }
+                }
+
+                .times-of-day {
+                    display: flex;
+                    align-items: center;
+
+                    .time-of-day {
+                        padding: 3px 6px;
+                        background-color: $app_background;
+
+                        .name {
+                            font-size: 13px;
+                        }
+                    }
+
+                }
             }
         }
 
