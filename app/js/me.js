@@ -312,11 +312,18 @@ befriend.me = {
 
         let html = `
                 <div class="kid" data-token="${kid.token || ''}">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="remove">
+                  <svg class="remove" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                     <path d="M256,512C114.8359,512,0,397.1641,0,256S114.8359,0,256,0s256,114.8359,256,256-114.8359,256-256,256ZM256,32c-123.5195,0-224,100.4805-224,224s100.4805,224,224,224,224-100.4805,224-224S379.5195,32,256,32Z"/>
                     <path d="M368,272h-224c-8.832,0-16-7.168-16-16s7.168-16,16-16h224c8.832,0,16,7.168,16,16s-7.168,16-16,16Z"/>
                   </svg>
-                  <div class="child-number">Child #${count}</div>
+                  
+                  <div class="number-active">
+                        <div class="child-number">Child #${count}</div>
+                        <div class="kid-active">
+                            ${toggleHtml(kid?.is_active, 'Active')}
+                        </div>
+                  </div>
+                  
                   <div class="age">
                     <div class="select-list ${!current_age ? 'unselected' : ''}" 
                          data-value="${current_age?.age_token || ''}">
@@ -328,10 +335,6 @@ befriend.me = {
                     </div>
                   </div>
                   <div class="gender">${gender_options}</div>
-                  <div class="active">
-                    ${checkboxHtml(kid?.is_active)}
-                    <div class="name">Active</div>
-                  </div>
                 </div>`;
 
         let kids_list_el = befriend.els.me.querySelector(
@@ -2497,7 +2500,7 @@ befriend.me = {
             befriend.me.events.onKidsRemove();
         },
         onKidsActive: function () {
-            let active_btns = befriend.els.me.querySelectorAll('.kids .kid .active');
+            let active_btns = befriend.els.me.querySelectorAll('.kids .kid .kid-active');
 
             for (let btn of active_btns) {
                 if (btn._listener) continue;
@@ -2510,11 +2513,11 @@ befriend.me = {
                     let kid_el = this.closest('.kid');
                     let token = kid_el.getAttribute('data-token');
 
-                    let checkbox_el = this.querySelector('.checkbox');
+                    let toggle_el = btn.querySelector('.toggle');
 
-                    let is_active = !elHasClass(checkbox_el, 'checked');
+                    let is_active = !elHasClass(toggle_el, 'active');
 
-                    toggleElClass(checkbox_el, 'checked');
+                    toggleElClass(toggle_el, 'active');
 
                     try {
                         await befriend.auth.put('/me/mode/kids', {

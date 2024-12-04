@@ -366,7 +366,7 @@ html.#{$class_confirm_me_action} {
 
                 .add-kid {
                     .add-btn {
-                        background-color: lighten($brand_color_a, 10%);
+                        background-color: darken($brand_color_b, 50%);
                         color: white;
                         display: flex;
                         width: fit-content;
@@ -411,7 +411,6 @@ html.#{$class_confirm_me_action} {
 
                         .child-number {
                             font-size: 13px;
-                            margin-bottom: 8px;
                         }
 
                         .select-list {
@@ -521,16 +520,32 @@ html.#{$class_confirm_me_action} {
                             }
                         }
 
-                        .active {
+                        .number-active {
                             display: flex;
                             align-items: center;
-                            margin-top: 14px;
+                            gap: 0 8px;
+                            margin-bottom: 8px;
+                        }
+
+                        .kid-active {
+                            display: flex;
+                            align-items: center;
                             width: fit-content;
 
-                            .name {
-                                font-size: 12px;
-                                margin-left: 8px;
+                            .toggle {
+                                display: flex;
+                                flex-direction: column-reverse;
+                                align-items: center;
+                                justify-content: center;
+                                gap: 4px 8px;
                             }
+
+                            .toggle-label {
+                                margin-left: 0;
+                                font-size: 9px;
+                                display: none;
+                            }
+
                         }
                     }
                 }
