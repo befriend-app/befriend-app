@@ -84,6 +84,7 @@ befriend.filters = {
         },
     },
     availability: {
+        data: {},
         days: [
             { index: 0, name: 'Sunday' },
             { index: 1, name: 'Monday' },
@@ -100,10 +101,11 @@ befriend.filters = {
             }
         },
         selectedDay: null,
-        data: {}, // Stores availability data by day
-
         init: function() {
             const section = befriend.filters.sections.availability;
+
+            section.data = befriend.filters.data.availability;
+
             const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
             const filter_options = section_el.querySelector('.filter-options');
 
@@ -159,7 +161,7 @@ befriend.filters = {
         `;
 
             this.initEvents(section_el);
-            this.loadSavedData();
+            this.setData();
         },
 
         initEvents: function(section_el) {
@@ -263,7 +265,6 @@ befriend.filters = {
             if (!daySection) return;
 
             const toggle = daySection.querySelector('.toggle');
-            const timeSlotsContainer = daySection.querySelector('.time-slots-container');
             const selectedTimesEl = daySection.querySelector('.selected-times');
 
             if (isAvailable) {
@@ -275,26 +276,32 @@ befriend.filters = {
                         this.data[dayIndex] = {
                             times: {
                                 [this.generateTimeId()]: this.data[dayIndex].lastTimes
-                            }
+                            },
+                            isDisabled: false,
+                            isAny: false
                         };
                     } else {
                         // Initialize with empty times instead of Any Time
-                        this.data[dayIndex] = { times: {} };
+                        this.data[dayIndex] = {
+                            times: {},
+                            isDisabled: false,
+                            isAny: false
+                        };
                     }
                 }
             } else {
                 removeClassEl('active', toggle);
 
                 // Store current times before disabling
-                if (this.data[dayIndex]?.times) {
-                    const timeValues = Object.values(this.data[dayIndex].times);
-                    if (timeValues.length > 0) {
-                        this.data[dayIndex] = {
-                            isDisabled: true,
-                            lastTimes: timeValues[0] // Store the first time slot
-                        };
-                    }
-                }
+                const currentTimes = this.data[dayIndex]?.times || {};
+                const timeValues = Object.values(currentTimes);
+
+                this.data[dayIndex] = {
+                    isDisabled: true,
+                    isAny: false,
+                    times: {},  // Keep empty times object for consistency
+                    lastTimes: timeValues.length > 0 ? timeValues[0] : null
+                };
 
                 selectedTimesEl.innerHTML = '<span class="not-available">Not Available</span>';
             }
@@ -639,10 +646,9 @@ befriend.filters = {
             removeClassEl('selected', daySection);
             container.style.height = '0';
         },
-        async loadSavedData() {
+        async setData() {
             try {
-                const response = await befriend.auth.get('/filters/availability');
-                this.data = response.data || {};
+                const filter_data = befriend.filters.data.filters?.['availability'];
 
                 // Initialize toggles and displays for each day
                 for (const day of this.days) {
@@ -671,11 +677,8 @@ befriend.filters = {
         },
 
         async saveData() {
-            return;
             try {
-                await befriend.auth.put('/filters/availability', {
-                    availability: this.data
-                });
+                await befriend.auth.put('/filters/availability', this.data);
             } catch (e) {
                 console.error('Error saving availability data:', e);
             }
