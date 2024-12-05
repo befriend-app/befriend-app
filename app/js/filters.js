@@ -93,6 +93,12 @@ befriend.filters = {
             { index: 5, name: 'Friday' },
             { index: 6, name: 'Saturday' }
         ],
+        times: {
+            default: {
+                start: '09:00',
+                end: '21:00'
+            }
+        },
         selectedDay: null,
         data: {}, // Stores availability data by day
 
@@ -109,14 +115,17 @@ befriend.filters = {
                             <div class="name">
                                 ${day.name}
                             </div>
-                            <div class="icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448.3146 447.9978"><path d="M438.9568,281.792l-16.7509-16.7403c-12.4587-12.48-32.7915-12.48-45.2501,0l-110.0203,110.0096c-1.6256,1.6363-2.688,3.7504-3.0208,6.0309l-7.8123,54.7285c-.48,3.3237.6464,6.6773,3.0208,9.0517,2.0203,2.0096,4.7296,3.1253,7.5413,3.1253.4992,0,1.0005-.032,1.4997-.1045l54.7285-7.8229c2.2912-.3328,4.416-1.3845,6.0416-3.0208l93.8283-93.8197s.0043,0,.0043-.0021,0-.0043.0021-.0043l16.1856-16.1813c12.48-12.48,12.48-32.7701,0-45.2501h.0022ZM316.3733,419.4581l-37.1456,5.3014,5.312-37.1243,83.7718-83.7717,31.8315,31.8251-83.7696,83.7696ZM423.8742,311.9573l-8.6464,8.6464-31.8315-31.8251,8.6443-8.6443c4.0427-4.0213,11.0421-4.0213,15.0827,0l16.7509,16.7403c4.1664,4.1557,4.1664,10.9269,0,15.0827h0ZM21.3333,330.6667v-138.6667h362.6667v33.8709c7.0059-1.7536,14.176-2.2549,21.3333-1.6128v-106.9248c0-41.1669-33.4997-74.6667-74.6667-74.6667h-32V10.6667c0-5.8965-4.7701-10.6667-10.6667-10.6667s-10.6667,4.7701-10.6667,10.6667v32h-149.3333V10.6667c0-5.8965-4.7701-10.6667-10.6667-10.6667s-10.6667,4.7701-10.6667,10.6667v32h-32C33.4997,42.6667,0,76.1664,0,117.3333v213.3333c0,41.167,33.4997,74.6667,74.6667,74.6667h153.4784l3.0464-21.3333H74.6688c-29.4165,0-53.3333-23.9275-53.3333-53.3333h-.0021ZM21.3333,117.3333c0-29.4059,23.9168-53.3333,53.3333-53.3333h32v32c0,5.8965,4.7701,10.6667,10.6667,10.6667s10.6667-4.7701,10.6667-10.6667v-32h149.3333v32c0,5.8965,4.7701,10.6667,10.6667,10.6667s10.6667-4.7701,10.6667-10.6667v-32h32c29.4165,0,53.3333,23.9275,53.3333,53.3333v53.3333H21.3333v-53.3333Z"/></svg>
-                            </div>
                         </div>
-                        <div class="selected-times"></div>
+                        <div class="selected-container">
+                            
+                            <div class="selected-times"></div>
+                        </div>
                     </div>
                     <div class="day-actions">
                         ${toggleHtml(true)}
+                    </div>
+                    <div class="chevron">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360.0005 192.001"><path id="Down_Arrow" d="M176.001,192.001c-4.092,0-8.188-1.564-11.312-4.688L4.689,27.313C-1.563,21.061-1.563,10.937,4.689,4.689s16.376-6.252,22.624,0l148.688,148.688L324.689,4.689c6.252-6.252,16.376-6.252,22.624,0s6.252,16.376,0,22.624l-160,160c-3.124,3.124-7.22,4.688-11.312,4.688h0Z"/></svg>
                     </div>
                 </div>
                 <div class="time-slots-container">
@@ -240,9 +249,12 @@ befriend.filters = {
                 });
             }
         },
+        getDaySection: function(dayIndex) {
+            return befriend.els.filters.querySelector(`.day-section[data-day-index="${dayIndex}"]`);
+        },
 
         toggleDayAvailability: function(dayIndex, isAvailable) {
-            const daySection = document.querySelector(`.day-section[data-day-index="${dayIndex}"]`);
+            const daySection = this.getDaySection(dayIndex);
             if (!daySection) return;
 
             const toggle = daySection.querySelector('.toggle');
@@ -252,17 +264,35 @@ befriend.filters = {
             if (isAvailable) {
                 addClassEl('active', toggle);
 
-                // If day was previously disabled, initialize with empty times
+                // If day was previously disabled, restore last known times if they exist
                 if (!this.data[dayIndex] || this.data[dayIndex].isDisabled) {
-                    this.data[dayIndex] = { times: {} };
+                    if (this.data[dayIndex]?.lastTimes) {
+                        this.data[dayIndex] = {
+                            times: {
+                                [this.generateTimeId()]: this.data[dayIndex].lastTimes
+                            }
+                        };
+                    } else {
+                        this.data[dayIndex] = { times: {} };
+                    }
                 }
 
                 timeSlotsContainer.style.display = '';
             } else {
                 removeClassEl('active', toggle);
 
-                // Clear existing times and mark as disabled
-                this.data[dayIndex] = { isDisabled: true };
+                // Store current times before disabling
+                if (this.data[dayIndex]?.times) {
+                    const timeValues = Object.values(this.data[dayIndex].times);
+                    if (timeValues.length > 0) {
+                        this.data[dayIndex] = {
+                            isDisabled: true,
+                            lastTimes: timeValues[0] // Store the first time slot
+                        };
+                    }
+                } else {
+                    this.data[dayIndex] = { isDisabled: true };
+                }
 
                 // Close time slots if they're open
                 if (this.selectedDay === dayIndex) {
@@ -302,6 +332,15 @@ befriend.filters = {
 
         showTimePickerPopup: function(dayIndex, existingTimeId = null) {
             const existingTime = existingTimeId ? this.data[dayIndex]?.times?.[existingTimeId] : null;
+            const dayData = this.data[dayIndex];
+
+            let defaultStart = this.times.default.start;
+            let defaultEnd = this.times.default.end;
+
+            if (dayData?.isDisabled && dayData.lastTimes) {
+                defaultStart = dayData.lastTimes.start;
+                defaultEnd = dayData.lastTimes.end;
+            }
 
             let popupHtml = `
             <div class="time-picker-popup">
@@ -309,11 +348,11 @@ befriend.filters = {
                 <div class="time-inputs">
                     <div class="time-input">
                         <label>Start Time</label>
-                        <input type="time" class="start-time" value="${existingTime?.start || '09:00'}">
+                        <input type="time" class="start-time" value="${existingTime?.start || defaultStart}">
                     </div>
                     <div class="time-input">
                         <label>End Time</label>
-                        <input type="time" class="end-time" value="${existingTime?.end || '17:00'}">
+                        <input type="time" class="end-time" value="${existingTime?.end || defaultEnd}">
                     </div>
                 </div>
                 <div class="popup-actions">
@@ -339,12 +378,15 @@ befriend.filters = {
                 const startTime = popupEl.querySelector('.start-time').value;
                 const endTime = popupEl.querySelector('.end-time').value;
 
+                // Normalize and compare times
+                const { normalizedStart, normalizedEnd } = this.normalizeTimeRange(startTime, endTime);
+
                 if (!this.data[dayIndex]) {
                     this.data[dayIndex] = { times: {} };
                 }
 
                 // Handle overlapping times
-                const newTime = { start: startTime, end: endTime };
+                const newTime = { start: normalizedStart, end: normalizedEnd };
                 const existingTimes = Object.values(this.data[dayIndex].times || {});
                 const allTimes = [...existingTimes, newTime];
                 const mergedTimes = this.mergeOverlappingTimes(allTimes);
@@ -360,13 +402,39 @@ befriend.filters = {
 
                 this.updateDayUI(dayIndex);
                 this.updateDayTimesDisplay(dayIndex);
+
                 this.saveData();
                 popupEl.remove();
+
+                let daySection = this.getDaySection(dayIndex);
+                this.openTimeSlots(daySection);
             });
+        },
+        normalizeTimeRange: function(startTime, endTime) {
+            // Convert times to minutes since midnight for comparison
+            const startMinutes = this.timeToMinutes(startTime);
+            const endMinutes = this.timeToMinutes(endTime);
+
+            // If end time is earlier than start time, swap them
+            if (endMinutes < startMinutes) {
+                return {
+                    normalizedStart: endTime,
+                    normalizedEnd: startTime
+                };
+            }
+
+            return {
+                normalizedStart: startTime,
+                normalizedEnd: endTime
+            };
+        },
+        timeToMinutes: function(timeString) {
+            const [hours, minutes] = timeString.split(':').map(Number);
+            return hours * 60 + minutes;
         },
 
         updateDayTimesDisplay: function(dayIndex) {
-            const daySection = document.querySelector(`.day-section[data-day-index="${dayIndex}"]`);
+            const daySection = this.getDaySection(dayIndex);
             if (!daySection) return;
 
             const selectedTimesEl = daySection.querySelector('.selected-times');
@@ -393,20 +461,20 @@ befriend.filters = {
                 return;
             }
 
+
             const timeStrings = timeSlots
                 .sort((a, b) => a.start.localeCompare(b.start))
-                .map(time => `${this.formatTimeDisplay(time.start)}-${this.formatTimeDisplay(time.end)}`);
+                .map(time => `<div class="selected-time">${this.formatTimeDisplay(time.start)} - ${this.formatTimeDisplay(time.end)}</div>`);
 
-            selectedTimesEl.innerHTML = timeStrings.join(', ');
+            selectedTimesEl.innerHTML = timeStrings.join('');
         },
 
         updateDayUI: function(dayIndex) {
-            const daySection = document.querySelector(`.day-section[data-day-index="${dayIndex}"]`);
+            const daySection = this.getDaySection(dayIndex);
             const timeSlotsEl = daySection.querySelector('.time-slots');
             const dayData = this.data[dayIndex];
 
             if (!dayData || dayData.isAny) {
-                timeSlotsEl.innerHTML = '<div class="any-time-indicator">Any Time</div>';
                 return;
             }
 
@@ -437,6 +505,12 @@ befriend.filters = {
                     const timeSlot = btn.closest('.time-slot');
                     const timeId = timeSlot.getAttribute('data-time-id');
                     this.deleteTimeSlot(dayIndex, timeId);
+
+                    let timeSlotHeight = timeSlot.offsetHeight;
+
+                    timeSlot.remove();
+
+                    this.openTimeSlots(daySection, timeSlotHeight);
                 });
             }
         },
@@ -444,7 +518,7 @@ befriend.filters = {
         formatTimeDisplay: function(time) {
             const [hours, minutes] = time.split(':');
             const hr = parseInt(hours);
-            const ampm = hr >= 12 ? 'PM' : 'AM';
+            const ampm = hr >= 12 ? 'pm' : 'am';
             const hr12 = hr % 12 || 12;
             return `${hr12}:${minutes} ${ampm}`;
         },
@@ -497,19 +571,19 @@ befriend.filters = {
             return merged;
         },
 
-        openTimeSlots: function(daySection) {
+        openTimeSlots: function(daySection, minusPixels = 0) {
             const container = daySection.querySelector('.time-slots-container');
-            daySection.classList.add('selected');
-            container.style.height = `${container.scrollHeight}px`;
-        },
+            addClassEl('selected', daySection);
 
+            let setHeight = container.scrollHeight - minusPixels;
+            container.style.height = `${setHeight}px`;
+        },
         closeTimeSlots: function(daySection) {
             if (!daySection) return;
             const container = daySection.querySelector('.time-slots-container');
-            daySection.classList.remove('selected');
+            removeClassEl('selected', daySection);
             container.style.height = '0';
         },
-
         async loadSavedData() {
             try {
                 const response = await befriend.auth.get('/filters/availability');
@@ -517,7 +591,7 @@ befriend.filters = {
 
                 // Initialize toggles and displays for each day
                 for (const day of this.days) {
-                    const daySection = document.querySelector(`.day-section[data-day-index="${day.index}"]`);
+                    const daySection = this.getDaySection(day.index);
                     if (!daySection) continue;
 
                     const toggle = daySection.querySelector('.toggle');
