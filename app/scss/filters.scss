@@ -104,6 +104,8 @@
         }
 
         &.availability {
+            $time_slots_p_tb: 16px;
+
             .filter-options {
                 padding: 0 10px;
             }
@@ -213,80 +215,91 @@
                     height: 0;
                     transition: height $filters_section_transition_ms;
                     background-color: $app_background;
+
+                    &.has-slots {
+                        .time-actions {
+                            padding-top: 8px;
+                        }
+                    }
+
+                    .wrapper {
+                        padding: 16px 16px;
+                    }
                 }
 
                 .time-slots {
-                    padding: 8px 16px;
+                    padding: 0;
                     display: flex;
                     flex-direction: column;
-                    gap: 8px;
+                    gap: $filters_time_slot_gap;
                 }
 
                 .time-slot {
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
-                    padding: 8px 12px;
-                    background: white;
+                    padding: 4px 16px;
+                    background: $brand_color_a;
+                    color: white;
                     border: 1px solid $color_lightgray;
                     border-radius: 8px;
-                    font-size: 14px;
+                    font-size: 15px;
 
                     .time-range {
                         font-weight: 400;
                     }
 
-                    .time-actions {
-                        display: flex;
-                        gap: 8px;
+                    .delete-btn {
+                        padding: 4px;
+                        background: transparent;
+                        border: none;
+                        cursor: pointer;
+                        color: lighten(black, 40%);
+                        transition: color 200ms;
+                        @include flex-center-col;
 
-                        button {
-                            padding: 4px;
-                            background: transparent;
-                            border: none;
-                            cursor: pointer;
-                            color: lighten(black, 40%);
-                            transition: color 200ms;
-
-                            svg {
-                                fill: currentColor;
-                            }
+                        svg {
+                            fill: white;
+                            height: 18px;
                         }
                     }
                 }
 
                 .time-actions {
-                    padding: 0 16px 16px;
+                    padding: 0;
                     display: flex;
                     flex-direction: column;
-                    gap: 12px;
+                    gap: 8px;
+
+                    .add-time-btn {
+                        svg {
+                            height: 24px;
+                        }
+                    }
 
                     button {
                         width: 100%;
                         padding: 8px;
-                        color: lighten(black, 40%);
+                        color: lighten(black, 20%);
                         border: 1px solid $color_lightgray;
                         border-radius: 8px;
                         background: white;
-                        font-size: 14px;
+                        font-size: 16px;
                         cursor: pointer;
                         transition: all 200ms;
                         display: flex;
                         align-items: center;
                         justify-content: center;
-                        gap: 6px;
+                        gap: 8px;
 
                         svg {
-                            fill: currentColor;
-                        }
-
-                        &:hover {
+                            fill: $brand_color_a;
                         }
                     }
 
                     .copy-all-btn {
                         //color: lighten(black, 30%);
-                        font-size: 12px;
+                        font-size: 14px;
                     }
                 }
             }

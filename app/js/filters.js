@@ -129,16 +129,16 @@ befriend.filters = {
                     </div>
                 </div>
                 <div class="time-slots-container">
-                    <div class="time-slots"></div>
-                    <div class="time-actions">
-                        <button class="add-time-btn">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
-                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
-                            </svg>
-                            Add Time
-                        </button>
-                        <button class="any-time-btn">Set to Any Time</button>
-                        <button class="copy-all-btn">Copy to All Days</button>
+                    <div class="wrapper">
+                        <div class="time-slots"></div>
+                        <div class="time-actions">
+                            <button class="add-time-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M181.332,405.332H58.668c-32.3633,0-58.668-26.3008-58.668-58.6641V101.332c0-32.3633,26.3047-58.6641,58.668-58.6641h309.332c32.3633,0,58.668,26.3008,58.668,58.6641v85.3359c0,8.832-7.168,16-16,16s-16-7.1484-16-16v-85.3359c0-14.6992-11.9688-26.6641-26.668-26.6641H58.668c-14.6992,0-26.668,11.9648-26.668,26.6641v245.3359c0,14.6992,11.9688,26.6641,26.668,26.6641h122.6641c8.832,0,16,7.168,16,16s-7.168,16-16,16Z"/><path d="M410.668,160H16c-8.832,0-16-7.168-16-16s7.168-16,16-16h394.668c8.832,0,16,7.168,16,16s-7.168,16-16,16Z"/><path d="M101.332,117.332c-8.832,0-16-7.168-16-16V16c0-8.832,7.168-16,16-16s16,7.168,16,16v85.332c0,8.832-7.168,16-16,16Z"/><path d="M325.332,117.332c-8.832,0-16-7.168-16-16V16c0-8.832,7.168-16,16-16s16,7.168,16,16v85.332c0,8.832-7.168,16-16,16Z"/><path d="M373.332,512c-76.457,0-138.6641-62.207-138.6641-138.668s62.207-138.6641,138.6641-138.6641,138.668,62.207,138.668,138.6641-62.207,138.668-138.668,138.668ZM373.332,266.668c-58.8164,0-106.6641,47.8477-106.6641,106.6641s47.8477,106.668,106.6641,106.668,106.668-47.8516,106.668-106.668-47.8516-106.6641-106.668-106.6641Z"/><path d="M373.332,448c-8.832,0-16-7.168-16-16v-117.332c0-8.832,7.168-16,16-16s16,7.168,16,16v117.332c0,8.832-7.168,16-16,16Z"/><path d="M432,389.332h-117.332c-8.832,0-16-7.168-16-16s7.168-16,16-16h117.332c8.832,0,16,7.168,16,16s-7.168,16-16,16Z"/></svg>
+                                Add Time
+                            </button>
+                            <button class="any-time-btn">Any Time</button>
+                            <button class="copy-all-btn">Copy to All</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -407,6 +407,11 @@ befriend.filters = {
                 popupEl.remove();
 
                 let daySection = this.getDaySection(dayIndex);
+
+                addClassEl('has-slots', daySection.querySelector('.time-slots-container'));
+
+                void daySection;
+
                 this.openTimeSlots(daySection);
             });
         },
@@ -485,13 +490,9 @@ befriend.filters = {
             const timeSlotsHtml = sortedTimes.map(([timeId, time]) => `
             <div class="time-slot" data-time-id="${timeId}">
                 <div class="time-range">${this.formatTimeDisplay(time.start)} - ${this.formatTimeDisplay(time.end)}</div>
-                <div class="time-actions">
-                    <button class="delete-btn" title="Delete">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
-                            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-                        </svg>
-                    </button>
-                </div>
+                <button class="delete-btn" title="Delete">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 373.98"><path d="M272.328,40.864h-56.992v-18.064c-.0264-12.5811-10.2188-22.7736-22.8-22.8h-91.048c-12.589.0154-22.7936,10.2111-22.82,22.8v18.064H21.676C9.7102,40.8772.0132,50.5742,0,62.54v23.428c.0154,11.9649,9.7111,21.6606,21.676,21.676h.284v236.164c.0176,16.6547,13.5133,30.1522,30.168,30.172h189.748c16.6547-.0198,30.1504-13.5173,30.168-30.172V107.644h.284c11.9643-.0154,21.6588-9.7117,21.672-21.676v-23.428c-.011-11.9652-9.7068-21.6628-21.672-21.676ZM92.668,22.8c.0154-4.8615,3.9585-8.7956,8.82-8.8h91.028c4.8537.0154,8.7846,3.9463,8.8,8.8v18.064h-108.648v-18.064ZM258.044,343.808c-.0088,8.9263-7.2417,16.161-16.168,16.172H52.128c-8.9263-.011-16.1592-7.2457-16.168-16.172V107.644h222.084v236.164ZM280,85.968c-.0022,4.2369-3.4352,7.6716-7.672,7.676H21.676c-4.2375-.0044-7.6716-3.4385-7.676-7.676v-23.428c.0044-4.2375,3.4385-7.6716,7.676-7.676h250.652c4.2368.0044,7.6698,3.4391,7.672,7.676v23.428Z"/><path d="M147.004,313.144c3.8638.0022,6.9978-3.1282,7-6.992v-144.672c0-3.866-3.134-7-7-7s-7,3.134-7,7v144.664c0,3.866,3.134,7,7,7h0Z"/><path d="M208.336,313.144c3.866,0,7-3.134,7-7h0v-144.664c0-3.866-3.134-7-7-7s-7,3.134-7,7v144.664c0,3.866,3.134,7,7,7h0Z"/><path d="M85.668,313.144c3.866,0,7-3.134,7-7h0v-144.664c0-3.866-3.134-7-7-7s-7,3.134-7,7v144.664c0,3.866,3.134,7,7,7h0Z"/></svg>
+                </button>
             </div>
         `).join('');
 
@@ -500,17 +501,25 @@ befriend.filters = {
             // Add delete handlers
             const deleteButtons = timeSlotsEl.querySelectorAll('.delete-btn');
             for (const btn of deleteButtons) {
+                if(btn._listener) {
+                    continue;
+                }
+
+                btn._listener = true;
+
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     const timeSlot = btn.closest('.time-slot');
                     const timeId = timeSlot.getAttribute('data-time-id');
-                    this.deleteTimeSlot(dayIndex, timeId);
 
                     let timeSlotHeight = timeSlot.offsetHeight;
 
+                    this.deleteTimeSlot(dayIndex, timeId);
                     timeSlot.remove();
 
-                    this.openTimeSlots(daySection, timeSlotHeight);
+                    requestAnimationFrame(function () {
+                        befriend.filters.availability.openTimeSlots(daySection, timeSlotHeight + befriend.variables.filters_time_slot_gap);
+                    });
                 });
             }
         },
@@ -525,10 +534,14 @@ befriend.filters = {
 
         deleteTimeSlot: function(dayIndex, timeId) {
             if (this.data[dayIndex]?.times?.[timeId]) {
+                let daySection = this.getDaySection(dayIndex);
+                let timeSlotsContainer = daySection.querySelector('.time-slots-container');
+
                 delete this.data[dayIndex].times[timeId];
 
                 if (Object.keys(this.data[dayIndex].times).length === 0) {
                     delete this.data[dayIndex];
+                    removeClassEl('has-slots', timeSlotsContainer);
                 }
                 this.updateDayUI(dayIndex);
                 this.updateDayTimesDisplay(dayIndex);
@@ -616,6 +629,7 @@ befriend.filters = {
         },
 
         async saveData() {
+            return;
             try {
                 await befriend.auth.put('/filters/availability', {
                     availability: this.data
