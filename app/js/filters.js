@@ -295,23 +295,37 @@ befriend.filters = {
             if (isAvailable) {
                 addClassEl('active', toggle);
 
-                // If day was previously disabled, restore last known times if they exist
-                if (!this.data[dayIndex] || this.data[dayIndex].isDisabled) {
-                    if (this.data[dayIndex]?.lastTimes) {
+                // Check if we have this day in stored filter data
+                const filter_data = befriend.filters.data.filters?.['availability'];
+                if (filter_data?.items) {
+                    const dayRecord = Object.values(filter_data.items).find(
+                        record => record.day_of_week === parseInt(dayIndex) && record.is_day
+                    );
+
+                    // If we have a day record and it was set to any time, restore that state
+                    if (dayRecord?.is_any_time) {
                         this.data[dayIndex] = {
-                            times: {
-                                [this.generateTimeId()]: this.data[dayIndex].lastTimes
-                            },
-                            isDisabled: false,
-                            isAny: false
-                        };
-                    } else {
-                        // Initialize with empty times instead of Any Time
-                        this.data[dayIndex] = {
+                            isAny: true,
                             times: {},
-                            isDisabled: false,
-                            isAny: false
+                            isDisabled: false
                         };
+                    } else if (!this.data[dayIndex] || this.data[dayIndex].isDisabled) {
+                        // Fallback to previous behavior for non-any-time days
+                        if (this.data[dayIndex]?.lastTimes) {
+                            this.data[dayIndex] = {
+                                times: {
+                                    [this.generateTimeId()]: this.data[dayIndex].lastTimes
+                                },
+                                isDisabled: false,
+                                isAny: false
+                            };
+                        } else {
+                            this.data[dayIndex] = {
+                                times: {},
+                                isDisabled: false,
+                                isAny: false
+                            };
+                        }
                     }
                 }
             } else {
@@ -321,9 +335,10 @@ befriend.filters = {
                 const currentTimes = this.data[dayIndex]?.times || {};
                 const timeValues = Object.values(currentTimes);
 
+                // Preserve isAny state when disabling
                 this.data[dayIndex] = {
                     isDisabled: true,
-                    isAny: false,
+                    isAny: this.data[dayIndex]?.isAny || false,
                     times: {},  // Keep empty times object for consistency
                     lastTimes: timeValues.length > 0 ? timeValues[0] : null
                 };
@@ -339,8 +354,16 @@ befriend.filters = {
             const daySection = this.getDaySection(dayIndex);
             if (!daySection) return;
 
-            // Clear existing times
-            this.data[dayIndex] = { isAny: true, times: {} };
+            // Clear existing times and set isAny
+            this.data[dayIndex] = {
+                isAny: true,
+                times: {},
+                isDisabled: false  // Ensure day is enabled when setting any time
+            };
+
+            // Update UI state
+            const toggle = daySection.querySelector('.toggle');
+            addClassEl('active', toggle);
 
             // Remove has-slots class since we're clearing times
             const timeSlotsContainer = daySection.querySelector('.time-slots-container');
@@ -375,12 +398,24 @@ befriend.filters = {
                     const daySection = this.getDaySection(day.index);
                     if (!daySection) continue;
 
+                    // Update toggle state
+                    const toggle = daySection.querySelector('.toggle');
+                    if (sourceData.isDisabled) {
+                        removeClassEl('active', toggle);
+                    } else {
+                        addClassEl('active', toggle);
+                    }
+
                     this.updateDayUI(day.index);
                     this.updateDayTimesDisplay(day.index);
 
-                    // If source day had times, ensure proper container setup
+                    // If source day was "Any Time", ensure proper container setup
                     const timeSlotsContainer = daySection.querySelector('.time-slots-container');
-                    if (sourceData.times && Object.keys(sourceData.times).length > 0) {
+                    if (sourceData.isAny) {
+                        removeClassEl('has-slots', timeSlotsContainer);
+                    }
+                    // Otherwise if source day had times, set up container
+                    else if (sourceData.times && Object.keys(sourceData.times).length > 0) {
                         addClassEl('has-slots', timeSlotsContainer);
                     } else {
                         removeClassEl('has-slots', timeSlotsContainer);
