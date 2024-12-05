@@ -258,7 +258,6 @@ befriend.filters = {
         getDaySection: function(dayIndex) {
             return befriend.els.filters.querySelector(`.day-section[data-day-index="${dayIndex}"]`);
         },
-
         toggleDayAvailability: function(dayIndex, isAvailable) {
             const daySection = this.getDaySection(dayIndex);
             if (!daySection) return;
@@ -279,11 +278,10 @@ befriend.filters = {
                             }
                         };
                     } else {
+                        // Initialize with empty times instead of Any Time
                         this.data[dayIndex] = { times: {} };
                     }
                 }
-
-                timeSlotsContainer.style.display = '';
             } else {
                 removeClassEl('active', toggle);
 
@@ -296,46 +294,75 @@ befriend.filters = {
                             lastTimes: timeValues[0] // Store the first time slot
                         };
                     }
-                } else {
-                    this.data[dayIndex] = { isDisabled: true };
                 }
 
-                // Close time slots if they're open
-                if (this.selectedDay === dayIndex) {
-                    this.closeTimeSlots(daySection);
-                    this.selectedDay = null;
-                }
-
-                timeSlotsContainer.style.display = 'none';
                 selectedTimesEl.innerHTML = '<span class="not-available">Not Available</span>';
             }
 
+            // Update the UI without affecting the time slots container state
             this.updateDayTimesDisplay(dayIndex);
             this.saveData();
         },
-
         setAnyTime: function(dayIndex) {
-            this.data[dayIndex] = { isAny: true };
+            const daySection = this.getDaySection(dayIndex);
+            if (!daySection) return;
+
+            // Clear existing times
+            this.data[dayIndex] = { isAny: true, times: {} };
+
+            // Remove has-slots class since we're clearing times
+            const timeSlotsContainer = daySection.querySelector('.time-slots-container');
+            removeClassEl('has-slots', timeSlotsContainer);
+
+            // Keep time slots container open if it was open
+            if (this.selectedDay === dayIndex) {
+                const timeSlots = daySection.querySelector('.time-slots');
+                timeSlots.innerHTML = ''; // Clear existing time slots
+                this.openTimeSlots(daySection);
+            }
+
             this.updateDayTimesDisplay(dayIndex);
             this.updateDayUI(dayIndex);
             this.saveData();
         },
-
         copyToAllDays: function(sourceDayIndex) {
             const sourceData = this.data[sourceDayIndex];
             if (!sourceData) return;
 
+            // Calculate the height of time slots to maintain proper spacing
+            const sourceSection = this.getDaySection(sourceDayIndex);
+            const timeSlots = sourceSection.querySelectorAll('.time-slot');
+            const totalGap = (timeSlots.length - 1) * befriend.variables.filters_time_slot_gap;
+            const totalHeight = Array.from(timeSlots).reduce((sum, slot) => sum + slot.offsetHeight, 0) + totalGap;
+
             for (const day of this.days) {
                 if (day.index.toString() !== sourceDayIndex) {
+                    // Deep copy the source data
                     this.data[day.index] = JSON.parse(JSON.stringify(sourceData));
+
+                    const daySection = this.getDaySection(day.index);
+                    if (!daySection) continue;
+
                     this.updateDayUI(day.index);
                     this.updateDayTimesDisplay(day.index);
+
+                    // If source day had times, ensure proper container setup
+                    const timeSlotsContainer = daySection.querySelector('.time-slots-container');
+                    if (sourceData.times && Object.keys(sourceData.times).length > 0) {
+                        addClassEl('has-slots', timeSlotsContainer);
+                    } else {
+                        removeClassEl('has-slots', timeSlotsContainer);
+                    }
+
+                    // If this day is currently selected, update its height
+                    if (this.selectedDay === day.index.toString()) {
+                        timeSlotsContainer.style.height = `${totalHeight + 40}px`; // Add padding
+                    }
                 }
             }
 
             this.saveData();
         },
-
         showTimePickerPopup: function(dayIndex, existingTimeId = null) {
             const existingTime = existingTimeId ? this.data[dayIndex]?.times?.[existingTimeId] : null;
             const dayData = this.data[dayIndex];
@@ -450,8 +477,11 @@ befriend.filters = {
 
             const selectedTimesEl = daySection.querySelector('.selected-times');
             const dayData = this.data[dayIndex];
+            const toggle = daySection.querySelector('.toggle');
+            const isActive = toggle && elHasClass(toggle, 'active');
 
-            if (dayData?.isDisabled) {
+            // If toggle is off, always show "Not Available" regardless of other states
+            if (!isActive) {
                 selectedTimesEl.innerHTML = '<span class="not-available">Not Available</span>';
                 return;
             }
@@ -472,7 +502,6 @@ befriend.filters = {
                 return;
             }
 
-
             const timeStrings = timeSlots
                 .sort((a, b) => a.start.localeCompare(b.start))
                 .map(time => `<div class="selected-time">${this.formatTimeDisplay(time.start)} - ${this.formatTimeDisplay(time.end)}</div>`);
@@ -483,53 +512,60 @@ befriend.filters = {
         updateDayUI: function(dayIndex) {
             const daySection = this.getDaySection(dayIndex);
             const timeSlotsEl = daySection.querySelector('.time-slots');
+            const timeSlotsContainer = daySection.querySelector('.time-slots-container');
             const dayData = this.data[dayIndex];
 
-            if (!dayData || dayData.isAny) {
+            // Clear existing time slots
+            timeSlotsEl.innerHTML = '';
+
+            // Handle "Any Time" case
+            if (dayData?.isAny) {
+                removeClassEl('has-slots', timeSlotsContainer);
                 return;
             }
 
-            const times = dayData.times || {};
-            const sortedTimes = Object.entries(times)
-                .sort(([,a], [,b]) => a.start.localeCompare(b.start));
+            // Handle regular time slots
+            if (dayData?.times && Object.keys(dayData.times).length > 0) {
+                addClassEl('has-slots', timeSlotsContainer);
 
-            const timeSlotsHtml = sortedTimes.map(([timeId, time]) => `
-            <div class="time-slot" data-time-id="${timeId}">
-                <div class="time-range">${this.formatTimeDisplay(time.start)} - ${this.formatTimeDisplay(time.end)}</div>
-                <button class="delete-btn" title="Delete">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 310 373.98"><path d="M272.328,40.864h-56.992v-18.064c-.0264-12.5811-10.2188-22.7736-22.8-22.8h-91.048c-12.589.0154-22.7936,10.2111-22.82,22.8v18.064H21.676C9.7102,40.8772.0132,50.5742,0,62.54v23.428c.0154,11.9649,9.7111,21.6606,21.676,21.676h.284v236.164c.0176,16.6547,13.5133,30.1522,30.168,30.172h189.748c16.6547-.0198,30.1504-13.5173,30.168-30.172V107.644h.284c11.9643-.0154,21.6588-9.7117,21.672-21.676v-23.428c-.011-11.9652-9.7068-21.6628-21.672-21.676ZM92.668,22.8c.0154-4.8615,3.9585-8.7956,8.82-8.8h91.028c4.8537.0154,8.7846,3.9463,8.8,8.8v18.064h-108.648v-18.064ZM258.044,343.808c-.0088,8.9263-7.2417,16.161-16.168,16.172H52.128c-8.9263-.011-16.1592-7.2457-16.168-16.172V107.644h222.084v236.164ZM280,85.968c-.0022,4.2369-3.4352,7.6716-7.672,7.676H21.676c-4.2375-.0044-7.6716-3.4385-7.676-7.676v-23.428c.0044-4.2375,3.4385-7.6716,7.676-7.676h250.652c4.2368.0044,7.6698,3.4391,7.672,7.676v23.428Z"/><path d="M147.004,313.144c3.8638.0022,6.9978-3.1282,7-6.992v-144.672c0-3.866-3.134-7-7-7s-7,3.134-7,7v144.664c0,3.866,3.134,7,7,7h0Z"/><path d="M208.336,313.144c3.866,0,7-3.134,7-7h0v-144.664c0-3.866-3.134-7-7-7s-7,3.134-7,7v144.664c0,3.866,3.134,7,7,7h0Z"/><path d="M85.668,313.144c3.866,0,7-3.134,7-7h0v-144.664c0-3.866-3.134-7-7-7s-7,3.134-7,7v144.664c0,3.866,3.134,7,7,7h0Z"/></svg>
-                </button>
-            </div>
-        `).join('');
+                const sortedTimes = Object.entries(dayData.times)
+                    .sort(([,a], [,b]) => a.start.localeCompare(b.start));
 
-            timeSlotsEl.innerHTML = timeSlotsHtml;
+                const timeSlotsHtml = sortedTimes.map(([timeId, time]) => `
+                <div class="time-slot" data-time-id="${timeId}">
+                    <div class="time-range">${this.formatTimeDisplay(time.start)} - ${this.formatTimeDisplay(time.end)}</div>
+                    <button class="delete-btn" title="Delete">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 310 373.98"><path d="M272.328,40.864h-56.992v-18.064c-.0264-12.5811-10.2188-22.7736-22.8-22.8h-91.048c-12.589.0154-22.7936,10.2111-22.82,22.8v18.064H21.676C9.7102,40.8772.0132,50.5742,0,62.54v23.428c.0154,11.9649,9.7111,21.6606,21.676,21.676h.284v236.164c.0176,16.6547,13.5133,30.1522,30.168,30.172h189.748c16.6547-.0198,30.1504-13.5173,30.168-30.172V107.644h.284c11.9643-.0154,21.6588-9.7117,21.672-21.676v-23.428c-.011-11.9652-9.7068-21.6628-21.672-21.676ZM92.668,22.8c.0154-4.8615,3.9585-8.7956,8.82-8.8h91.028c4.8537.0154,8.7846,3.9463,8.8,8.8v18.064h-108.648v-18.064ZM258.044,343.808c-.0088,8.9263-7.2417,16.161-16.168,16.172H52.128c-8.9263-.011-16.1592-7.2457-16.168-16.172V107.644h222.084v236.164ZM280,85.968c-.0022,4.2369-3.4352,7.6716-7.672,7.676H21.676c-4.2375-.0044-7.6716-3.4385-7.676-7.676v-23.428c.0044-4.2375,3.4385-7.6716,7.676-7.676h250.652c4.2368.0044,7.6698,3.4391,7.672,7.676v23.428Z"/></svg>
+                    </button>
+                </div>
+            `).join('');
 
-            // Add delete handlers
-            const deleteButtons = timeSlotsEl.querySelectorAll('.delete-btn');
-            for (const btn of deleteButtons) {
-                if(btn._listener) {
-                    continue;
-                }
+                timeSlotsEl.innerHTML = timeSlotsHtml;
 
-                btn._listener = true;
+                // Add delete handlers
+                const deleteButtons = timeSlotsEl.querySelectorAll('.delete-btn');
+                for (const btn of deleteButtons) {
+                    if (btn._listener) continue;
+                    btn._listener = true;
 
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const timeSlot = btn.closest('.time-slot');
-                    const timeId = timeSlot.getAttribute('data-time-id');
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const timeSlot = btn.closest('.time-slot');
+                        const timeId = timeSlot.getAttribute('data-time-id');
+                        const timeSlotHeight = timeSlot.offsetHeight;
 
-                    let timeSlotHeight = timeSlot.offsetHeight;
+                        this.deleteTimeSlot(dayIndex, timeId);
+                        timeSlot.remove();
 
-                    this.deleteTimeSlot(dayIndex, timeId);
-                    timeSlot.remove();
-
-                    requestAnimationFrame(function () {
-                        befriend.filters.availability.openTimeSlots(daySection, timeSlotHeight + befriend.variables.filters_time_slot_gap);
+                        requestAnimationFrame(() => {
+                            this.openTimeSlots(daySection, timeSlotHeight + befriend.variables.filters_time_slot_gap);
+                        });
                     });
-                });
+                }
+            } else {
+                removeClassEl('has-slots', timeSlotsContainer);
             }
         },
-
         formatTimeDisplay: function(time) {
             const [hours, minutes] = time.split(':');
             const hr = parseInt(hours);
