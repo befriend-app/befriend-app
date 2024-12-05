@@ -372,8 +372,15 @@ befriend.filters = {
             // Keep time slots container open if it was open
             if (this.selectedDay === dayIndex) {
                 const timeSlots = daySection.querySelector('.time-slots');
+                let timeSlotEls = timeSlots.getElementsByClassName('time-slot');
+                let timeSlotCount = timeSlotEls?.length || 0;
+                let timeSlotHeight = timeSlotEls?.[0]?.offsetHeight || 0;
+
                 timeSlots.innerHTML = ''; // Clear existing time slots
-                this.openTimeSlots(daySection);
+
+                requestAnimationFrame(() => {
+                    this.openTimeSlots(daySection, timeSlotCount * (timeSlotHeight + befriend.variables.filters_time_slot_gap));
+                });
             }
 
             this.updateDayTimesDisplay(dayIndex);
@@ -392,8 +399,25 @@ befriend.filters = {
 
             for (const day of this.days) {
                 if (day.index.toString() !== sourceDayIndex) {
-                    // Deep copy the source data
-                    this.data[day.index] = JSON.parse(JSON.stringify(sourceData));
+                    // Deep copy the source data but create new IDs for times
+                    const copiedData = {
+                        ...sourceData,
+                        times: {}
+                    };
+
+                    // Generate new IDs for each time slot
+                    if (sourceData.times) {
+                        Object.values(sourceData.times).forEach(timeSlot => {
+                            const newTimeId = 'time_' + Math.random().toString(36).substr(2, 9);
+                            copiedData.times[newTimeId] = {
+                                ...timeSlot
+                            };
+
+                            delete copiedData.times[newTimeId].id;
+                        });
+                    }
+
+                    this.data[day.index] = copiedData;
 
                     const daySection = this.getDaySection(day.index);
                     if (!daySection) continue;
@@ -742,6 +766,7 @@ befriend.filters = {
         updateIds: function(idMapping) {
             for (let dayIndex in this.data) {
                 const dayData = this.data[dayIndex];
+
                 if (dayData.times) {
                     const updatedTimes = {};
                     for (let [oldId, timeSlot] of Object.entries(dayData.times)) {
@@ -750,7 +775,13 @@ befriend.filters = {
                             ...timeSlot,
                             id: newId
                         };
+
+                        const timeSlotEl = befriend.els.filters.querySelector(`[data-time-id="${oldId}"]`);
+                        if (timeSlotEl) {
+                            timeSlotEl.setAttribute('data-time-id', newId);
+                        }
                     }
+
                     dayData.times = updatedTimes;
                 }
             }
