@@ -93,47 +93,462 @@ befriend.filters = {
             { index: 5, name: 'Friday' },
             { index: 6, name: 'Saturday' }
         ],
-        times: [
-            { index: 0, name: 'Any' },
-            { index: 1, name: 'Morning' },
-            { index: 2, name: 'Afternoon' },
-            { index: 3, name: 'Evening' },
-        ],
-        timeRanges: {
-            Morning: { start: '06:00', end: '12:00' },
-            Afternoon: { start: '12:00', end: '17:00' },
-            Evening: { start: '17:00', end: '22:00' }
-        },
-        init: function () {
-            let section = befriend.filters.sections.availability;
+        selectedDay: null,
+        data: {}, // Stores availability data by day
+
+        init: function() {
+            const section = befriend.filters.sections.availability;
             const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
             const filter_options = section_el.querySelector('.filter-options');
 
-            let html = ``;
-
-            for(let day of this.days) {
-                let day_html = ``;
-
-                for(let time of this.times) {
-                    day_html += `<div class="time-of-day" data-index="${time.index}">
-                                <div class="custom-time"></div>
-                                <div class="name">${time.name}</div>
-                             </div>`
-                }
-
-                html += `<div class="day" data-index="${day.index}">
-                            <div class="day-name">${day.name}</div>
-                            <div class="times-of-day">
-                                ${day_html}
+            let daysHtml = this.days.map(day => `
+            <div class="day-section" data-day-index="${day.index}">
+                <div class="day-tab">
+                    <div class="day-info">
+                        <div class="day-name">
+                            <div class="name">
+                                ${day.name}
                             </div>
-                        </div>`;
+                            <div class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448.3146 447.9978"><path d="M438.9568,281.792l-16.7509-16.7403c-12.4587-12.48-32.7915-12.48-45.2501,0l-110.0203,110.0096c-1.6256,1.6363-2.688,3.7504-3.0208,6.0309l-7.8123,54.7285c-.48,3.3237.6464,6.6773,3.0208,9.0517,2.0203,2.0096,4.7296,3.1253,7.5413,3.1253.4992,0,1.0005-.032,1.4997-.1045l54.7285-7.8229c2.2912-.3328,4.416-1.3845,6.0416-3.0208l93.8283-93.8197s.0043,0,.0043-.0021,0-.0043.0021-.0043l16.1856-16.1813c12.48-12.48,12.48-32.7701,0-45.2501h.0022ZM316.3733,419.4581l-37.1456,5.3014,5.312-37.1243,83.7718-83.7717,31.8315,31.8251-83.7696,83.7696ZM423.8742,311.9573l-8.6464,8.6464-31.8315-31.8251,8.6443-8.6443c4.0427-4.0213,11.0421-4.0213,15.0827,0l16.7509,16.7403c4.1664,4.1557,4.1664,10.9269,0,15.0827h0ZM21.3333,330.6667v-138.6667h362.6667v33.8709c7.0059-1.7536,14.176-2.2549,21.3333-1.6128v-106.9248c0-41.1669-33.4997-74.6667-74.6667-74.6667h-32V10.6667c0-5.8965-4.7701-10.6667-10.6667-10.6667s-10.6667,4.7701-10.6667,10.6667v32h-149.3333V10.6667c0-5.8965-4.7701-10.6667-10.6667-10.6667s-10.6667,4.7701-10.6667,10.6667v32h-32C33.4997,42.6667,0,76.1664,0,117.3333v213.3333c0,41.167,33.4997,74.6667,74.6667,74.6667h153.4784l3.0464-21.3333H74.6688c-29.4165,0-53.3333-23.9275-53.3333-53.3333h-.0021ZM21.3333,117.3333c0-29.4059,23.9168-53.3333,53.3333-53.3333h32v32c0,5.8965,4.7701,10.6667,10.6667,10.6667s10.6667-4.7701,10.6667-10.6667v-32h149.3333v32c0,5.8965,4.7701,10.6667,10.6667,10.6667s10.6667-4.7701,10.6667-10.6667v-32h32c29.4165,0,53.3333,23.9275,53.3333,53.3333v53.3333H21.3333v-53.3333Z"/></svg>
+                            </div>
+                        </div>
+                        <div class="selected-times"></div>
+                    </div>
+                    <div class="day-actions">
+                        ${toggleHtml(true)}
+                    </div>
+                </div>
+                <div class="time-slots-container">
+                    <div class="time-slots"></div>
+                    <div class="time-actions">
+                        <button class="add-time-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+                            </svg>
+                            Add Time
+                        </button>
+                        <button class="any-time-btn">Set to Any Time</button>
+                        <button class="copy-all-btn">Copy to All Days</button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+            filter_options.innerHTML = `
+            <div class="filter-option" data-filter-token="${section.token}">
+                <div class="days-container">
+                    ${daysHtml}
+                </div>
+            </div>
+        `;
+
+            this.initEvents(section_el);
+            this.loadSavedData();
+        },
+
+        initEvents: function(section_el) {
+            // Day tab click handler
+            const dayTabs = section_el.querySelectorAll('.day-tab');
+            for (const tab of dayTabs) {
+                if (tab._listener) continue;
+                tab._listener = true;
+
+                tab.addEventListener('click', (e) => {
+                    // Don't handle click if clicking toggle or if day is disabled
+                    if (e.target.closest('.toggle')) return;
+
+                    const daySection = tab.closest('.day-section');
+                    const dayIndex = daySection.getAttribute('data-day-index');
+                    const isDisabled = this.data[dayIndex]?.isDisabled;
+
+                    // Don't allow expanding if day is disabled
+                    if (isDisabled) return;
+
+                    if (this.selectedDay === dayIndex) {
+                        this.closeTimeSlots(daySection);
+                        this.selectedDay = null;
+                    } else {
+                        if (this.selectedDay !== null) {
+                            const prevSection = section_el.querySelector(`.day-section[data-day-index="${this.selectedDay}"]`);
+                            this.closeTimeSlots(prevSection);
+                        }
+                        this.openTimeSlots(daySection);
+                        this.selectedDay = dayIndex;
+                    }
+                });
             }
 
-            filter_options.innerHTML = `<div class="filter-option" data-filter-token="${section.token}">
-                                            <div class="days">
-                                                ${html}
-                                            </div>
-                                        </div>`;
+            // Initialize toggle handlers
+            const toggles = section_el.querySelectorAll('.day-tab .toggle');
+            for (const toggle of toggles) {
+                if (toggle._listener) continue;
+                toggle._listener = true;
+
+                toggle.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const daySection = toggle.closest('.day-section');
+                    const dayIndex = daySection.getAttribute('data-day-index');
+                    const isActive = toggle.classList.contains('active');
+
+                    this.toggleDayAvailability(dayIndex, !isActive);
+                });
+            }
+
+            this.initTimeButtons(section_el);
+        },
+
+        initTimeButtons: function(section_el) {
+            // Add time button handler
+            const addTimeBtns = section_el.querySelectorAll('.add-time-btn');
+            for (const btn of addTimeBtns) {
+                if (btn._listener) continue;
+                btn._listener = true;
+
+                btn.addEventListener('click', () => {
+                    const daySection = btn.closest('.day-section');
+                    const dayIndex = daySection.getAttribute('data-day-index');
+                    this.showTimePickerPopup(dayIndex);
+                });
+            }
+
+            // Any time button handler
+            const anyTimeBtns = section_el.querySelectorAll('.any-time-btn');
+            for (const btn of anyTimeBtns) {
+                if (btn._listener) continue;
+                btn._listener = true;
+
+                btn.addEventListener('click', () => {
+                    const daySection = btn.closest('.day-section');
+                    const dayIndex = daySection.getAttribute('data-day-index');
+                    this.setAnyTime(dayIndex);
+                });
+            }
+
+            // Copy to all days button handler
+            const copyBtns = section_el.querySelectorAll('.copy-all-btn');
+            for (const btn of copyBtns) {
+                if (btn._listener) continue;
+                btn._listener = true;
+
+                btn.addEventListener('click', () => {
+                    const daySection = btn.closest('.day-section');
+                    const dayIndex = daySection.getAttribute('data-day-index');
+                    this.copyToAllDays(dayIndex);
+                });
+            }
+        },
+
+        toggleDayAvailability: function(dayIndex, isAvailable) {
+            const daySection = document.querySelector(`.day-section[data-day-index="${dayIndex}"]`);
+            if (!daySection) return;
+
+            const toggle = daySection.querySelector('.toggle');
+            const timeSlotsContainer = daySection.querySelector('.time-slots-container');
+            const selectedTimesEl = daySection.querySelector('.selected-times');
+
+            if (isAvailable) {
+                addClassEl('active', toggle);
+
+                // If day was previously disabled, initialize with empty times
+                if (!this.data[dayIndex] || this.data[dayIndex].isDisabled) {
+                    this.data[dayIndex] = { times: {} };
+                }
+
+                timeSlotsContainer.style.display = '';
+            } else {
+                removeClassEl('active', toggle);
+
+                // Clear existing times and mark as disabled
+                this.data[dayIndex] = { isDisabled: true };
+
+                // Close time slots if they're open
+                if (this.selectedDay === dayIndex) {
+                    this.closeTimeSlots(daySection);
+                    this.selectedDay = null;
+                }
+
+                timeSlotsContainer.style.display = 'none';
+                selectedTimesEl.innerHTML = '<span class="not-available">Not Available</span>';
+            }
+
+            this.updateDayTimesDisplay(dayIndex);
+            this.saveData();
+        },
+
+        setAnyTime: function(dayIndex) {
+            this.data[dayIndex] = { isAny: true };
+            this.updateDayTimesDisplay(dayIndex);
+            this.updateDayUI(dayIndex);
+            this.saveData();
+        },
+
+        copyToAllDays: function(sourceDayIndex) {
+            const sourceData = this.data[sourceDayIndex];
+            if (!sourceData) return;
+
+            for (const day of this.days) {
+                if (day.index.toString() !== sourceDayIndex) {
+                    this.data[day.index] = JSON.parse(JSON.stringify(sourceData));
+                    this.updateDayUI(day.index);
+                    this.updateDayTimesDisplay(day.index);
+                }
+            }
+
+            this.saveData();
+        },
+
+        showTimePickerPopup: function(dayIndex, existingTimeId = null) {
+            const existingTime = existingTimeId ? this.data[dayIndex]?.times?.[existingTimeId] : null;
+
+            let popupHtml = `
+            <div class="time-picker-popup">
+                <div class="popup-header">${existingTime ? 'Edit Time' : 'Add Time'}</div>
+                <div class="time-inputs">
+                    <div class="time-input">
+                        <label>Start Time</label>
+                        <input type="time" class="start-time" value="${existingTime?.start || '09:00'}">
+                    </div>
+                    <div class="time-input">
+                        <label>End Time</label>
+                        <input type="time" class="end-time" value="${existingTime?.end || '17:00'}">
+                    </div>
+                </div>
+                <div class="popup-actions">
+                    <button class="cancel-btn">Cancel</button>
+                    <button class="save-btn">Save</button>
+                </div>
+            </div>
+        `;
+
+            const popupEl = document.createElement('div');
+            popupEl.className = 'popup-overlay';
+            popupEl.innerHTML = popupHtml;
+            document.body.appendChild(popupEl);
+
+            const cancelBtn = popupEl.querySelector('.cancel-btn');
+            const saveBtn = popupEl.querySelector('.save-btn');
+
+            cancelBtn.addEventListener('click', () => {
+                popupEl.remove();
+            });
+
+            saveBtn.addEventListener('click', () => {
+                const startTime = popupEl.querySelector('.start-time').value;
+                const endTime = popupEl.querySelector('.end-time').value;
+
+                if (!this.data[dayIndex]) {
+                    this.data[dayIndex] = { times: {} };
+                }
+
+                // Handle overlapping times
+                const newTime = { start: startTime, end: endTime };
+                const existingTimes = Object.values(this.data[dayIndex].times || {});
+                const allTimes = [...existingTimes, newTime];
+                const mergedTimes = this.mergeOverlappingTimes(allTimes);
+
+                // Clear existing times and add merged times
+                this.data[dayIndex].times = {};
+                this.data[dayIndex].isAny = false;
+
+                mergedTimes.forEach(time => {
+                    const timeId = existingTimeId || this.generateTimeId();
+                    this.data[dayIndex].times[timeId] = time;
+                });
+
+                this.updateDayUI(dayIndex);
+                this.updateDayTimesDisplay(dayIndex);
+                this.saveData();
+                popupEl.remove();
+            });
+        },
+
+        updateDayTimesDisplay: function(dayIndex) {
+            const daySection = document.querySelector(`.day-section[data-day-index="${dayIndex}"]`);
+            if (!daySection) return;
+
+            const selectedTimesEl = daySection.querySelector('.selected-times');
+            const dayData = this.data[dayIndex];
+
+            if (dayData?.isDisabled) {
+                selectedTimesEl.innerHTML = '<span class="not-available">Not Available</span>';
+                return;
+            }
+
+            if (!dayData || (!dayData.times && !dayData.isAny)) {
+                selectedTimesEl.innerHTML = '<span class="no-times">No times set</span>';
+                return;
+            }
+
+            if (dayData.isAny) {
+                selectedTimesEl.innerHTML = '<span class="any-time">Any Time</span>';
+                return;
+            }
+
+            const timeSlots = Object.values(dayData.times || {});
+            if (timeSlots.length === 0) {
+                selectedTimesEl.innerHTML = '<span class="no-times">No times set</span>';
+                return;
+            }
+
+            const timeStrings = timeSlots
+                .sort((a, b) => a.start.localeCompare(b.start))
+                .map(time => `${this.formatTimeDisplay(time.start)}-${this.formatTimeDisplay(time.end)}`);
+
+            selectedTimesEl.innerHTML = timeStrings.join(', ');
+        },
+
+        updateDayUI: function(dayIndex) {
+            const daySection = document.querySelector(`.day-section[data-day-index="${dayIndex}"]`);
+            const timeSlotsEl = daySection.querySelector('.time-slots');
+            const dayData = this.data[dayIndex];
+
+            if (!dayData || dayData.isAny) {
+                timeSlotsEl.innerHTML = '<div class="any-time-indicator">Any Time</div>';
+                return;
+            }
+
+            const times = dayData.times || {};
+            const sortedTimes = Object.entries(times)
+                .sort(([,a], [,b]) => a.start.localeCompare(b.start));
+
+            const timeSlotsHtml = sortedTimes.map(([timeId, time]) => `
+            <div class="time-slot" data-time-id="${timeId}">
+                <div class="time-range">${this.formatTimeDisplay(time.start)} - ${this.formatTimeDisplay(time.end)}</div>
+                <div class="time-actions">
+                    <button class="delete-btn" title="Delete">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
+                            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        `).join('');
+
+            timeSlotsEl.innerHTML = timeSlotsHtml;
+
+            // Add delete handlers
+            const deleteButtons = timeSlotsEl.querySelectorAll('.delete-btn');
+            for (const btn of deleteButtons) {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const timeSlot = btn.closest('.time-slot');
+                    const timeId = timeSlot.getAttribute('data-time-id');
+                    this.deleteTimeSlot(dayIndex, timeId);
+                });
+            }
+        },
+
+        formatTimeDisplay: function(time) {
+            const [hours, minutes] = time.split(':');
+            const hr = parseInt(hours);
+            const ampm = hr >= 12 ? 'PM' : 'AM';
+            const hr12 = hr % 12 || 12;
+            return `${hr12}:${minutes} ${ampm}`;
+        },
+
+        deleteTimeSlot: function(dayIndex, timeId) {
+            if (this.data[dayIndex]?.times?.[timeId]) {
+                delete this.data[dayIndex].times[timeId];
+
+                if (Object.keys(this.data[dayIndex].times).length === 0) {
+                    delete this.data[dayIndex];
+                }
+                this.updateDayUI(dayIndex);
+                this.updateDayTimesDisplay(dayIndex);
+                this.saveData();
+            }
+        },
+
+        generateTimeId: function() {
+            return 'time_' + Math.random().toString(36).substr(2, 9);
+        },
+
+        doTimesOverlap: function(time1Start, time1End, time2Start, time2End) {
+            const t1s = new Date(`2000/01/01 ${time1Start}`);
+            const t1e = new Date(`2000/01/01 ${time1End}`);
+            const t2s = new Date(`2000/01/01 ${time2Start}`);
+            const t2e = new Date(`2000/01/01 ${time2End}`);
+
+            return t1s < t2e && t2s < t1e;
+        },
+
+        mergeOverlappingTimes: function(times) {
+            if (!times || times.length === 0) return [];
+
+            // Sort times by start time
+            const sortedTimes = times.sort((a, b) => a.start.localeCompare(b.start));
+            const merged = [sortedTimes[0]];
+
+            for (let i = 1; i < sortedTimes.length; i++) {
+                const current = sortedTimes[i];
+                const last = merged[merged.length - 1];
+
+                if (this.doTimesOverlap(last.start, last.end, current.start, current.end)) {
+                    // Merge the times
+                    last.end = current.end > last.end ? current.end : last.end;
+                } else {
+                    merged.push(current);
+                }
+            }
+
+            return merged;
+        },
+
+        openTimeSlots: function(daySection) {
+            const container = daySection.querySelector('.time-slots-container');
+            daySection.classList.add('selected');
+            container.style.height = `${container.scrollHeight}px`;
+        },
+
+        closeTimeSlots: function(daySection) {
+            if (!daySection) return;
+            const container = daySection.querySelector('.time-slots-container');
+            daySection.classList.remove('selected');
+            container.style.height = '0';
+        },
+
+        async loadSavedData() {
+            try {
+                const response = await befriend.auth.get('/filters/availability');
+                this.data = response.data || {};
+
+                // Initialize toggles and displays for each day
+                for (const day of this.days) {
+                    const daySection = document.querySelector(`.day-section[data-day-index="${day.index}"]`);
+                    if (!daySection) continue;
+
+                    const toggle = daySection.querySelector('.toggle');
+                    const timeSlotsContainer = daySection.querySelector('.time-slots-container');
+
+                    // Set initial toggle state and container display
+                    if (this.data[day.index]?.isDisabled) {
+                        removeClassEl('active', toggle);
+                        timeSlotsContainer.style.display = 'none';
+                    } else {
+                        addClassEl('active', toggle);
+                        timeSlotsContainer.style.display = '';
+                    }
+
+                    // Update UI elements
+                    this.updateDayUI(day.index);
+                    this.updateDayTimesDisplay(day.index);
+                }
+            } catch (e) {
+                console.error('Error loading availability data:', e);
+            }
+        },
+
+        async saveData() {
+            try {
+                await befriend.auth.put('/filters/availability', {
+                    availability: this.data
+                });
+            } catch (e) {
+                console.error('Error saving availability data:', e);
+            }
         }
     },
     reviews: {
