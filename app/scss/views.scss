@@ -119,16 +119,10 @@
 }
 
 .toggle {
-    $toggle-width: 48px;
-    $toggle-height: 24px;
-    $knob-size: 20px;
-    $toggle-padding: 2px;
-    $transition-speed: 0.3s;
-
-    $toggle-off-color: $app_background;
     $toggle-on-color: darken($brand_color_b, 45%);
-    $knob-color: white;
+    $toggle-off-color: $app_background;
     $shadow-color: rgba(0, 0, 0, 0.2);
+    $transition-speed: 0.3s;
 
     display: inline-block;
     position: relative;
@@ -138,10 +132,6 @@
     &.active {
         .toggle-switch {
             background-color: $toggle-on-color;
-
-            &::before {
-                transform: translateX($toggle-width - $knob-size - 2 * $toggle-padding);
-            }
         }
     }
 
@@ -154,20 +144,13 @@
 
     .toggle-switch {
         position: relative;
-        width: $toggle-width;
-        height: $toggle-height;
         background-color: $toggle-off-color;
-        border-radius: $toggle-height;
+        border-radius: 24px;
         transition: background-color $transition-speed ease;
 
         &::before {
             content: '';
             position: absolute;
-            width: $knob-size;
-            height: $knob-size;
-            left: $toggle-padding;
-            bottom: $toggle-padding;
-            background-color: $knob-color;
             border-radius: 50%;
             transition: transform $transition-speed ease;
             box-shadow: 0 2px 4px $shadow-color;
@@ -176,8 +159,6 @@
         &::after {
             content: '';
             position: absolute;
-            width: $toggle-height;
-            height: $toggle-height;
             border-radius: 50%;
             left: 0;
             top: 0;
@@ -190,6 +171,27 @@
     .toggle-label {
         margin-left: 10px;
         font-size: 12px;
+    }
 
+    // Default size
+    @include create-toggle(26px);
+
+    // Additional sizes
+    &.toggle-20 {
+        @include create-toggle(20px);
+    }
+
+    &.toggle-24 {
+        @include create-toggle(24px);
+
+        &.active {
+            .toggle-switch {
+                background-color: darken($brand_color_b, 30%);
+            }
+        }
+    }
+
+    &.toggle-32 {
+        @include create-toggle(32px);
     }
 }

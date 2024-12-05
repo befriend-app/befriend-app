@@ -8,3 +8,33 @@
     @include flex-center;
     flex-direction: column;
 }
+
+@mixin create-toggle($height) {
+    $width: $height * 2;
+    $knob-size: $height * 0.833;
+    $padding: calc(($height - $knob-size) / 2);
+    $knob-color: white;
+
+    .toggle-switch {
+        width: $width;
+        height: $height;
+        border-radius: $height;
+
+        &::before {
+            background-color: $knob-color;
+            width: $knob-size;
+            height: $knob-size;
+            left: $padding;
+            bottom: $padding;
+        }
+
+        &::after {
+            width: $height;
+            height: $height;
+        }
+    }
+
+    &.active .toggle-switch::before {
+        transform: translateX($width - $knob-size - 2 * $padding);
+    }
+}

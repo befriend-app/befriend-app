@@ -17,6 +17,7 @@ befriend.filters = {
                 befriend.filters.reviews.init();
                 befriend.filters.age.init();
                 befriend.filters.genders.init();
+                befriend.filters.distance.init();
 
                 befriend.filters.initSendReceive();
                 befriend.filters.initActiveEvents();
@@ -155,7 +156,7 @@ befriend.filters = {
                         </div>
                     </div>
                     <div class="day-actions">
-                        ${toggleHtml(true)}
+                        ${toggleHtml(true, null, 'toggle-24')}
                     </div>
                     <div class="chevron">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360.0005 192.001"><path id="Down_Arrow" d="M176.001,192.001c-4.092,0-8.188-1.564-11.312-4.688L4.689,27.313C-1.563,21.061-1.563,10.937,4.689,4.689s16.376-6.252,22.624,0l148.688,148.688L324.689,4.689c6.252-6.252,16.376-6.252,22.624,0s6.252,16.376,0,22.624l-160,160c-3.124,3.124-7.22,4.688-11.312,4.688h0Z"/></svg>
@@ -906,7 +907,7 @@ befriend.filters = {
                 ${befriend.filters.sendReceiveHtml(true, true)}
 
                 <div class="filter-option-name">
-                    ${toggleHtml(true)}
+                    ${toggleHtml(true, null, 'toggle-24')}
                     <div class="name">Include unrated matches</div>
                 </div>
             </div>`;
@@ -924,7 +925,7 @@ befriend.filters = {
                     <div class="filter-option review review-${key}" data-filter-token="${rating.token}">
                         ${befriend.filters.sendReceiveHtml(true, true)}
                         <div class="toggle-wrapper">
-                                ${toggleHtml(true, isActive ? 'On' : 'Off')}
+                                ${toggleHtml(true, isActive ? 'On' : 'Off', 'toggle-24')}
                         </div>
                             
                         <div class="filter-option-name">
@@ -1365,6 +1366,137 @@ befriend.filters = {
                         }
                     });
                 }
+            }
+        }
+    },
+    distance: {
+        min: 1,
+        max: 60,
+        current: 20,
+        unit: 'miles',
+        _updateTimer: null,
+        init: function() {
+            let self = this;
+
+            let section = befriend.filters.sections.distance;
+
+            const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+            const filter_options = section_el.querySelector('.filter-options');
+
+            // Get stored filter values if they exist
+            const filter_data = befriend.filters.data.filters?.[section.token];
+
+            if (filter_data?.filter_value) {
+                this.current = parseInt(filter_data.filter_value);
+            }
+
+            const distanceHtml = `
+                <div class="filter-option distance-range" data-filter-token="${section.token}">
+                    ${befriend.filters.sendReceiveHtml(true, true, true)}
+                    
+                    <div class="filter-option-name">
+                        <span class="name">Max distance <span class="miles-km">(miles)</span></span>
+                    </div>
+                    <div class="range-container">
+                        <div class="sliders-control">
+                            <div class="slider-track"></div>
+                            <div class="slider-range"></div>
+                            <div class="thumb">
+                                <span class="thumb-value"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+
+            filter_options.innerHTML = distanceHtml;
+
+            const container = section_el.querySelector('.sliders-control');
+            const range = section_el.querySelector('.slider-range');
+            const thumb = section_el.querySelector('.thumb');
+
+            let isDragging = false;
+            let startX, startLeft;
+
+            function setPosition(value) {
+                const percent = (value - self.min) / (self.max - self.min);
+                const position = percent * container.offsetWidth;
+                thumb.style.left = `${position}px`;
+                range.style.width = `${position}px`;
+                thumb.querySelector('.thumb-value').textContent = Math.round(value);
+            }
+
+            function getValueFromPosition(position) {
+                const percent = position / container.offsetWidth;
+                return Math.min(Math.max(percent * (self.max - self.min) + self.min, self.min), self.max);
+            }
+
+            function handleStart(e) {
+                isDragging = true;
+                startX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+                startLeft = parseFloat(thumb.style.left);
+                e.preventDefault();
+            }
+
+            function handleMove(e) {
+                if (!isDragging) return;
+
+                const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+                const dx = clientX - startX;
+                const newLeft = Math.min(Math.max(0, startLeft + dx), container.offsetWidth);
+                const value = getValueFromPosition(newLeft);
+
+                self.current = Math.round(value);
+                setPosition(self.current);
+                self.debounceUpdateServer();
+            }
+
+            function handleEnd() {
+                isDragging = false;
+            }
+
+            function handleTrackClick(e) {
+                const rect = container.getBoundingClientRect();
+                const clickPosition = e.clientX - rect.left;
+                const value = getValueFromPosition(clickPosition);
+
+                self.current = Math.round(value);
+                setPosition(self.current);
+                self.debounceUpdateServer();
+            }
+
+            // Mouse events
+            thumb.addEventListener('mousedown', handleStart);
+            document.addEventListener('mousemove', handleMove);
+            document.addEventListener('mouseup', handleEnd);
+
+            // Touch events
+            thumb.addEventListener('touchstart', handleStart);
+            document.addEventListener('touchmove', handleMove);
+            document.addEventListener('touchend', handleEnd);
+
+            // Track click event
+            container.addEventListener('click', handleTrackClick);
+
+            // Initialize position
+            requestAnimationFrame(function () {
+                setPosition(self.current);
+            });
+        },
+
+        debounceUpdateServer: function() {
+            clearTimeout(this._updateTimer);
+            this._updateTimer = setTimeout(() => {
+                this.saveDistance();
+            }, 500);
+        },
+
+        saveDistance: async function() {
+            try {
+                await befriend.auth.put('/filters/distance', {
+                    distance: this.current
+                });
+            } catch(e) {
+                console.error('Error saving distance:', e);
             }
         }
     },

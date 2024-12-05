@@ -149,14 +149,14 @@ html.#{$class_confirm_me_action} {
     .add-section-btn {
         $color: white;
         background-color: lighten($brand_color_a, 0%);
-        padding: 7px 0;
+        padding: 8px 0;
         width: 100%;
         border-radius: 6px;
         color: $color;
         display: flex;
         align-items: center;
         //border: .5px solid black;
-        font-size: 13px;
+        font-size: 16px;
         margin-top: $me_add_btn_tb;
         @include flex-center;
 
@@ -174,7 +174,7 @@ html.#{$class_confirm_me_action} {
     }
 
     .#{$class_modes_section} {
-        $tab_h: 30px;
+        $tab_h: 40px;
 
         .tab {
             top: calc((#{-$tab_h - 1}));
@@ -191,7 +191,7 @@ html.#{$class_confirm_me_action} {
             border-bottom-color: transparent;
 
             .title {
-                font-size: 12px;
+                font-size: 14px;
                 font-weight: 500;
                 text-transform: uppercase;
             }

@@ -162,10 +162,10 @@
 
                     .day-name {
                         font-weight: 500;
-                        font-size: 14px;
+                        font-size: 15px;
                         display: flex;
                         gap: 0 8px;
-                        margin-bottom: 3px;
+                        margin-bottom: 2px;
 
                         .name {
                             min-width: 70px;
@@ -352,30 +352,19 @@
                 position: relative;
 
                 .toggle {
-                    $dim: 30px;
                     position: absolute;
                     top: 0;
                     right: 0;
                     display: flex;
-                    flex-direction: row;
                     align-items: center;
-                    justify-content: flex-start;
-                    border-top-right-radius: $option_br;
                     border-bottom-left-radius: $option_br;
                     border-bottom: 1px solid $border_color;
                     border-left: 1px solid $border_color;
                     padding: 4px 10px;
 
-                    &.active {
-                        .toggle-switch {
-                            background-color: darken($brand_color_b, 30%);
-                        }
-                    }
-
                     .toggle-label {
                         margin-left: 8px;
                     }
-
                 }
             }
 
@@ -526,7 +515,7 @@
         }
 
         &.ages {
-            $slider_h: 8px;
+            $slider_h: 4px;
 
             .range-container {
                 position: relative;
@@ -557,7 +546,7 @@
                 transform: translateY(-50%);
                 height: $slider_h;
                 background-color: $brand_color_a;
-                border-radius: 2px;
+                border-radius: $slider_h;
             }
 
             .thumb {
@@ -615,6 +604,74 @@
         &.ages, &.genders {
             .filter-option-name {
                 font-size: 15px;
+            }
+        }
+
+        &.distance {
+            $slider_h: 4px;
+
+            .filter-option-name {
+                margin-top: 4px;
+                font-size: 15px;
+                margin-bottom: 0px;
+
+                .miles-km {
+                    color: lighten(black, 25%);
+                    font-weight: 300;
+                }
+            }
+
+            .range-container {
+                position: relative;
+                width: calc(100% - 20px);
+                padding-top: 30px;
+                padding-bottom: 30px;
+                margin: auto;
+            }
+
+            .sliders-control {
+                position: relative;
+            }
+
+            .slider-track {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 100%;
+                height: $slider_h;
+                background-color: #e5e7eb;
+                border-radius: $slider_h;
+            }
+
+            .slider-range {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                height: $slider_h;
+                background-color: $brand_color_a;
+                border-radius: $slider_h;
+            }
+
+            .thumb {
+                position: absolute;
+                top: 50%;
+                width: $filter_range_dim;
+                height: $filter_range_dim;
+                background-color: white;
+                border: 2px solid $brand_color_a;
+                border-radius: 50%;
+                cursor: pointer;
+                transform: translate(-50%, -50%);
+            }
+
+            .thumb-value {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                font-size: 14px;
+                font-weight: 300;
+                pointer-events: none;
             }
         }
 
