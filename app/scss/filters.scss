@@ -290,16 +290,29 @@
                         display: flex;
                         align-items: center;
                         justify-content: center;
-                        gap: 8px;
+                        gap: 10px;
+                        font-weight: 400;
 
                         svg {
-                            fill: $brand_color_a;
+                            fill: black;
+                        }
+                    }
+
+                    .any-time-btn {
+                        svg {
+                            height: 24px;
+                            fill: black;
                         }
                     }
 
                     .copy-all-btn {
                         //color: lighten(black, 30%);
                         font-size: 14px;
+
+                        svg {
+                            height: 24px;
+                            fill: black;
+                        }
                     }
                 }
             }
@@ -310,6 +323,9 @@
                 display: flex;
                 flex-direction: column;
                 gap: 14px 0;
+
+                max-height: 400px;
+                overflow-y: scroll;
             }
 
             .filter-option-name {
@@ -675,7 +691,7 @@
     }
 }
 
-.popup-overlay {
+.availability-popup-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -689,7 +705,7 @@
     padding: 20px;
 }
 
-.time-picker-popup {
+.availability-time-picker-popup {
     background-color: white;
     border-radius: 12px;
     padding: 20px;
@@ -717,16 +733,17 @@
             display: block;
             font-size: 14px;
             margin-bottom: 6px;
-            color: lighten(black, 40%);
+            font-weight: 300;
         }
 
         input[type="time"] {
             width: 100%;
-            padding: 10px;
             border: 1px solid $color_lightgray;
             border-radius: 8px;
-            font-size: 14px;
             transition: all 0.2s ease;
+            color: lighten(black, 20%);
+            font-size: 16px;
+            padding: 24px 30px;
 
             &:focus {
                 outline: none;
@@ -747,18 +764,7 @@
             font-size: 14px;
             cursor: pointer;
             transition: all 0.2s ease;
-
-            &.delete-btn {
-                margin-right: auto;
-                color: $color_red;
-                background: none;
-                border: none;
-                padding: 8px 12px;
-
-                &:hover {
-                    background-color: rgba($color_red, 0.1);
-                }
-            }
+            color: black;
 
             &.cancel-btn {
                 background-color: $app_background;
