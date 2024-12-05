@@ -277,6 +277,14 @@
                         }
                     }
 
+                    .icon-name {
+                        display: flex;
+                        gap: 0 12px;
+                        align-items: center;
+                        transform: translateY(-1px);
+                        //justify-content: center;
+                    }
+
                     button {
                         width: 100%;
                         padding: 8px;
@@ -289,12 +297,16 @@
                         transition: all 200ms;
                         display: flex;
                         align-items: center;
-                        justify-content: center;
                         gap: 10px;
                         font-weight: 400;
+                        position: relative;
 
                         svg {
                             fill: black;
+                            margin-left: 10px;
+                            //position: absolute;
+                            //left: 20px;
+                            //transform: translateY(-1px);
                         }
                     }
 
