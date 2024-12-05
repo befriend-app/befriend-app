@@ -103,8 +103,39 @@ befriend.filters = {
         selectedDay: null,
         init: function() {
             const section = befriend.filters.sections.availability;
+            const filter_data = befriend.filters.data.filters?.['availability'];
 
-            section.data = befriend.filters.data.availability;
+            if (filter_data?.items) {
+                const availability = {};
+
+                for (let [id, record] of Object.entries(filter_data.items)) {
+                    const dayIndex = record.day_of_week;
+
+                    if (!availability[dayIndex]) {
+                        availability[dayIndex] = {
+                            isDisabled: !record.is_active,
+                            isAny: false,
+                            times: {}
+                        };
+                    }
+
+                    // Handle day-level record
+                    if (record.is_day) {
+                        availability[dayIndex].isDisabled = !record.is_active;
+                        availability[dayIndex].isAny = record.is_any_time;
+                    }
+                    // Handle time-level records
+                    else if (record.is_time) {
+                        availability[dayIndex].times[id] = {
+                            id: id,
+                            start: record.start_time?.slice(0, 5), // Convert HH:mm:ss to HH:mm
+                            end: record.end_time?.slice(0, 5)
+                        };
+                    }
+                }
+
+                this.data = availability;
+            }
 
             const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
             const filter_options = section_el.querySelector('.filter-options');
@@ -163,7 +194,6 @@ befriend.filters = {
             this.initEvents(section_el);
             this.setData();
         },
-
         initEvents: function(section_el) {
             // Day tab click handler
             const dayTabs = section_el.querySelectorAll('.day-tab');
@@ -177,10 +207,6 @@ befriend.filters = {
 
                     const daySection = tab.closest('.day-section');
                     const dayIndex = daySection.getAttribute('data-day-index');
-                    const isDisabled = this.data[dayIndex]?.isDisabled;
-
-                    // Don't allow expanding if day is disabled
-                    if (isDisabled) return;
 
                     if (this.selectedDay === dayIndex) {
                         this.closeTimeSlots(daySection);
@@ -216,7 +242,6 @@ befriend.filters = {
 
             this.initTimeButtons(section_el);
         },
-
         initTimeButtons: function(section_el) {
             // Add time button handler
             const addTimeBtns = section_el.querySelectorAll('.add-time-btn');
@@ -477,7 +502,6 @@ befriend.filters = {
             const [hours, minutes] = timeString.split(':').map(Number);
             return hours * 60 + minutes;
         },
-
         updateDayTimesDisplay: function(dayIndex) {
             const daySection = this.getDaySection(dayIndex);
             if (!daySection) return;
@@ -515,7 +539,6 @@ befriend.filters = {
 
             selectedTimesEl.innerHTML = timeStrings.join('');
         },
-
         updateDayUI: function(dayIndex) {
             const daySection = this.getDaySection(dayIndex);
             const timeSlotsEl = daySection.querySelector('.time-slots');
@@ -580,7 +603,6 @@ befriend.filters = {
             const hr12 = hr % 12 || 12;
             return `${hr12}:${minutes} ${ampm}`;
         },
-
         deleteTimeSlot: function(dayIndex, timeId) {
             if (this.data[dayIndex]?.times?.[timeId]) {
                 let daySection = this.getDaySection(dayIndex);
@@ -597,11 +619,9 @@ befriend.filters = {
                 this.saveData();
             }
         },
-
         generateTimeId: function() {
             return 'time_' + Math.random().toString(36).substr(2, 9);
         },
-
         doTimesOverlap: function(time1Start, time1End, time2Start, time2End) {
             const t1s = new Date(`2000/01/01 ${time1Start}`);
             const t1e = new Date(`2000/01/01 ${time1End}`);
@@ -610,7 +630,6 @@ befriend.filters = {
 
             return t1s < t2e && t2s < t1e;
         },
-
         mergeOverlappingTimes: function(times) {
             if (!times || times.length === 0) return [];
 
@@ -632,7 +651,6 @@ befriend.filters = {
 
             return merged;
         },
-
         openTimeSlots: function(daySection, minusPixels = 0) {
             const container = daySection.querySelector('.time-slots-container');
             addClassEl('selected', daySection);
@@ -646,7 +664,7 @@ befriend.filters = {
             removeClassEl('selected', daySection);
             container.style.height = '0';
         },
-        async setData() {
+        setData() {
             try {
                 const filter_data = befriend.filters.data.filters?.['availability'];
 
@@ -659,10 +677,21 @@ befriend.filters = {
                     const timeSlotsContainer = daySection.querySelector('.time-slots-container');
 
                     // Set initial toggle state and container display
-                    if (this.data[day.index]?.isDisabled) {
-                        removeClassEl('active', toggle);
-                        timeSlotsContainer.style.display = 'none';
+                    const dayRecords = Object.values(filter_data?.items || {}).filter(
+                        record => record.day_of_week === day.index
+                    );
+
+                    // Find the day-level record
+                    const dayLevelRecord = dayRecords.find(record => record.is_day);
+
+                    if (dayLevelRecord) {
+                        if (dayLevelRecord.is_active) {
+                            addClassEl('active', toggle);
+                        } else {
+                            removeClassEl('active', toggle);
+                        }
                     } else {
+                        // Default to active if no day record exists
                         addClassEl('active', toggle);
                         timeSlotsContainer.style.display = '';
                     }
@@ -675,10 +704,31 @@ befriend.filters = {
                 console.error('Error loading availability data:', e);
             }
         },
-
+        updateIds: function(idMapping) {
+            for (let dayIndex in this.data) {
+                const dayData = this.data[dayIndex];
+                if (dayData.times) {
+                    const updatedTimes = {};
+                    for (let [oldId, timeSlot] of Object.entries(dayData.times)) {
+                        const newId = idMapping[oldId] || oldId;
+                        updatedTimes[newId] = {
+                            ...timeSlot,
+                            id: newId
+                        };
+                    }
+                    dayData.times = updatedTimes;
+                }
+            }
+        },
         async saveData() {
             try {
-                await befriend.auth.put('/filters/availability', this.data);
+                let response = await befriend.auth.put('/filters/availability', {
+                    availability: this.data
+                });
+
+                if (response?.data?.idMapping) {
+                    this.updateIds(response.data.idMapping);
+                }
             } catch (e) {
                 console.error('Error saving availability data:', e);
             }
@@ -1447,6 +1497,11 @@ befriend.filters = {
         let filterOptionToggles = befriend.els.filters.querySelectorAll('.filter-option .toggle');
 
         for (let toggle of filterOptionToggles) {
+            //skip availability days
+            if(toggle.closest('.day-section')) {
+                continue;
+            }
+
             let filterOptionEl = toggle.closest('.filter-option');
             if (!filterOptionEl) continue;
 

@@ -1085,8 +1085,8 @@ function checkboxHtml(is_checked) {
             </div>`;
 }
 
-function toggleHtml(is_checked = false, label = '') {
-    return `<div class="toggle ${is_checked ? 'active' : ''}">
+function toggleHtml(is_active = false, label = '') {
+    return `<div class="toggle ${is_active ? 'active' : ''}">
                 <div class="toggle-switch"></div>
                 ${label ? `<span class="toggle-label">${label}</span>` : ''}
             </div>`;
