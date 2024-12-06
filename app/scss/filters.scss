@@ -648,15 +648,14 @@
             .gender-buttons {
                 margin: 10px 0;
                 display: flex;
-                justify-content: center;
-                gap: 0 16px;
+                justify-content: space-between;
 
                 .gender-button {
                     background-color: lighten(black, 95%);
                     @include flex-center;
                     border-radius: 6px;
-                    padding: 5px 12px;
-                    font-size: 14px;
+                    padding: 7px 13px;
+                    font-size: 15px;
                     transition: all 200ms;
                     border: 1px solid $color_lightgray;
 

@@ -1502,7 +1502,7 @@ befriend.filters = {
                     }
 
                     gender_buttons_html += `
-                        <div class="gender-button ${selected}" data-gender-token="${gender.token}">
+                        <div class="gender-button ${gender.token} ${selected}" data-gender-token="${gender.token}">
                             <div class="name">${gender.name}</div>
                         </div>`;
                 }
