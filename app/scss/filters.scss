@@ -330,11 +330,65 @@
             }
         }
 
+        &.modes {
+            .filter-options {
+                //padding: 15px 20px;
+            }
+
+            .modes-buttons {
+                display: flex;
+                justify-content: center;
+                gap: 12px;
+                padding: 15px 0;
+
+                .mode-button {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 8px 16px;
+                    border-radius: 8px;
+                    border: 1px solid $color_lightgray;
+                    background-color: white;
+                    transition: all 200ms;
+                    cursor: pointer;
+                    color: lighten(black, 20%);
+                    font-weight: 300;
+                    font-size: 17px;
+
+                    &:hover {
+                        background-color: darken(white, 3%);
+                    }
+
+                    svg {
+                        height: 20px;
+                        width: 20px;
+                        fill: black;
+                    }
+
+                    &.selected {
+                        background-color: $brand_color_b;
+                        border-color: darken($brand_color_a, 10%);
+                    }
+
+                    &.kids {
+                        svg {
+                            $dim: 26px;
+                            height: $dim;
+                            width: $dim;
+                            transform: translateY(-2px);
+                        }
+                    }
+                }
+            }
+        }
+
         &.reviews {
             .filter-options {
                 display: flex;
                 flex-direction: column;
                 gap: 14px 0;
+                padding-top: 15px;
+                padding-bottom: 15px;
 
                 max-height: 400px;
                 overflow-y: scroll;
