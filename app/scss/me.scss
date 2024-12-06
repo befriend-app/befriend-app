@@ -1760,38 +1760,38 @@ html.#{$class_confirm_me_action} {
         gap: 10px 0;
 
         .option {
-            $plr: 10px;
+            $plr: 16px;
             display: flex;
             width: calc(100% - calc($plr * 2));
-            padding: 6px $plr;
+            padding: 10px $plr;
             background-color: white;
-            border-radius: 7px;
+            border-radius: 8px;
             border: 1px solid $color_lightgray;
 
             .icon {
-                width: 25px;
+                width: 30px;
                 @include flex-center-col;
 
                 svg {
-                    height: 20px;
+                    height: 24px;
                     @include flex-center-col;
                 }
             }
 
             .name {
                 @include flex-center-col;
-                font-size: 12px;
+                font-size: 15px;
                 font-weight: 500;
-                margin-left: 6px;
+                margin-left: 10px;
             }
 
             .add {
                 display: flex;
-                font-size: 9px;
+                font-size: 12px;
                 margin-left: auto;
                 justify-content: center;
                 align-items: center;
-                gap: 0 5px;
+                gap: 0 8px;
 
                 svg {
                     height: 15px;
