@@ -867,6 +867,9 @@ befriend.filters = {
         }
     },
     reviews: {
+        min: 0,
+        max: 5,
+        precision: 10,
         ratings: {
             safety: {
                 token: 'reviews_safety',
@@ -924,6 +927,7 @@ befriend.filters = {
                 reviewsHtml += `
                     <div class="filter-option review review-${key}" data-filter-token="${rating.token}">
                         ${befriend.filters.sendReceiveHtml(true, true)}
+                        
                         <div class="toggle-wrapper">
                                 ${toggleHtml(true, isActive ? 'On' : 'Off', 'toggle-24')}
                         </div>
@@ -937,6 +941,7 @@ befriend.filters = {
                                 <div class="value">${rating.current_rating}</div>
                             </div>
                         </div>
+                        
                         <div class="stars">
                             <div class="stars-container">
                                 ${Array(5)
@@ -955,7 +960,17 @@ befriend.filters = {
                                     )
                                     .join('')}
                             </div>
-                            <input type="range" class="rating-slider" min="0" max="5" step="0.1" value="${rating.current_rating}">
+                            
+                            
+                            <div class="range-container">
+                                <div class="sliders-control">
+                                    <div class="slider-track"></div>
+                                    <div class="slider-range"></div>
+                                    <div class="thumb">
+                                        <span class="thumb-inner"></span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -965,7 +980,9 @@ befriend.filters = {
 
             this.initEvents(section_el);
         },
-        initEvents: function (section_el) {
+        initEvents: function(section_el) {
+            const self = this;
+            const precision = this.precision;
             const reviewFilters = section_el.querySelectorAll('.filter-option.review');
 
             for (let section of reviewFilters) {
@@ -976,12 +993,40 @@ befriend.filters = {
                 if (!type || !this.ratings[type]) continue;
 
                 const stars = section.querySelectorAll('.star-container');
-                const slider = section.querySelector('.rating-slider');
                 const display = section.querySelector('.rating-display');
+
+                // Slider elements
+                const container = section.querySelector('.sliders-control');
+                const range = section.querySelector('.slider-range');
+                const thumb = section.querySelector('.thumb');
+                let isDragging = false;
+                let startX, startLeft;
+
+                function setPosition(value) {
+                    if (typeof value !== 'number' || isNaN(value)) {
+                        value = 0;
+                    }
+                    const percent = value / self.max;
+                    // Use getBoundingClientRect() for more accurate width
+                    const width = container.getBoundingClientRect().width;
+                    const position = percent * width;
+                    thumb.style.left = `${position}px`;
+                    range.style.width = `${position}px`;
+                    // thumb.querySelector('.thumb-value').textContent = value.toFixed(1);
+                }
+
+                function getValueFromPosition(position) {
+                    // Use getBoundingClientRect() for more accurate width
+                    const width = container.getBoundingClientRect().width;
+                    const percent = position / width;
+                    const value = percent * self.max;
+                    return Math.min(Math.max(value, self.min), self.max);
+                }
 
                 const updateRating = (rating, skip_save) => {
                     rating = Math.max(0, Math.min(5, rating));
 
+                    // Update stars
                     for (let i = 0; i < stars.length; i++) {
                         const fill = stars[i].querySelector('.fill');
                         const fillPercentage = Math.max(0, Math.min(100, (rating - i) * 100));
@@ -1000,16 +1045,52 @@ befriend.filters = {
                         }
                     }
 
-                    slider.value = rating;
+                    // Update slider position and display
+                    setPosition(rating);
                     display.querySelector('.value').innerHTML = rating.toFixed(1);
-
-                    this.ratings[type].current_rating = rating;
+                    self.ratings[type].current_rating = rating;
 
                     if (!skip_save) {
-                        this.saveRating(type, rating);
+                        self.saveRating(type, rating);
                     }
                 };
 
+                function handleStart(e) {
+                    isDragging = true;
+                    startX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+                    // Use getBoundingClientRect() for accurate position
+                    const thumbRect = thumb.getBoundingClientRect();
+                    const containerRect = container.getBoundingClientRect();
+                    startLeft = thumbRect.left - containerRect.left;
+                    e.preventDefault();
+                }
+
+                function handleMove(e) {
+                    if (!isDragging) return;
+
+                    const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+                    const containerRect = container.getBoundingClientRect();
+                    const position = clientX - containerRect.left;
+                    const value = getValueFromPosition(position);
+                    const roundedValue = Math.round(value * precision) / precision; // Round to nearest 0.1
+                    updateRating(roundedValue);
+                }
+
+                function handleEnd() {
+                    isDragging = false;
+                }
+
+                function handleTrackClick(e) {
+                    if (isDragging) return; // Prevent click while dragging
+
+                    const rect = container.getBoundingClientRect();
+                    const clickPosition = e.clientX - rect.left;
+                    const value = getValueFromPosition(clickPosition);
+                    const roundedValue = Math.round(value * precision) / precision;
+                    updateRating(roundedValue);
+                }
+
+                // Star events
                 for (let i = 0; i < stars.length; i++) {
                     const star = stars[i];
 
@@ -1043,22 +1124,26 @@ befriend.filters = {
                     });
                 }
 
-                slider.addEventListener(
-                    'touchstart',
-                    (e) => {
-                        e.stopPropagation();
-                    },
-                    { passive: true },
-                );
+                thumb.addEventListener('mousedown', handleStart);
+                document.addEventListener('mousemove', handleMove);
+                document.addEventListener('mouseup', handleEnd);
 
-                slider.addEventListener('input', (e) => {
-                    updateRating(parseFloat(e.target.value));
+                // Touch events
+                thumb.addEventListener('touchstart', handleStart);
+                document.addEventListener('touchmove', handleMove);
+                document.addEventListener('touchend', handleEnd);
+
+                // Track click event
+                container.addEventListener('click', handleTrackClick);
+
+                // Initialize with current rating
+                requestAnimationFrame(() => {
+                    const currentRating = self.ratings[type].current_rating;
+                    updateRating(currentRating, true);
                 });
-
-                updateRating(this.ratings[type].current_rating, true);
             }
         },
-        saveRating: function (type, rating) {
+        saveRating: function(type, rating) {
             if (!this._debounceTimers) {
                 this._debounceTimers = {};
             }
@@ -1073,13 +1158,13 @@ befriend.filters = {
 
                     await befriend.auth.put('/filters/reviews', {
                         filter_token,
-                        rating: parseFloat(rating),
+                        rating: parseFloat(rating)
                     });
                 } catch (e) {
                     console.error(`Error saving ${type} rating:`, e);
                 }
             }, 500);
-        },
+        }
     },
     age: {
         min: 18,
