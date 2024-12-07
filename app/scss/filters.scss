@@ -747,13 +747,6 @@
                 padding-bottom: 0;
             }
 
-            .send-receive {
-                position: absolute;
-                transform: initial;
-                top: 0;
-                left: -$section_padding_lr;
-            }
-
             .activities-wrapper {
                 display: flex;
                 justify-content: center;
@@ -781,7 +774,7 @@
                 flex-wrap: wrap;
                 overflow-x: hidden;
                 //padding: 0;
-                padding-top: 50px;
+                padding-top: 20px;
                 padding-bottom: 20px;
 
                 .level_1_row {

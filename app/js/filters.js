@@ -1817,7 +1817,6 @@ befriend.filters = {
                 `;
 
             filter_options.innerHTML = `<div class="filter-option" data-filter-token="${section.token}">
-                                            ${befriend.filters.sendReceiveHtml(true, true, true)}
                                             <div class="activities-wrapper">
                                                 ${html}
                                             </div>
