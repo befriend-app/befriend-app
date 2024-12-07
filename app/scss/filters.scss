@@ -741,68 +741,70 @@
             }
         }
 
-        .activities-filter {
-            $dim: 65px;
-            $gap_tb: 8px;
-            $gap_lr: 12px;
-            margin-top: 15px;
+        &.activity-types {
+            .filter-options {
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+
+            .send-receive {
+                position: absolute;
+                transform: initial;
+                top: 0;
+                left: -$section_padding_lr;
+            }
+
+            .activities-wrapper {
+                display: flex;
+                justify-content: center;
+
+                max-height: 400px;
+                overflow-y: scroll;
+            }
+
+            .activity {
+                cursor: pointer;
+
+                .name {
+                    $fs: 15px;
+                    margin-top: 2px;
+                    font-weight: 300;
+                    font-size: $fs;
+                    line-height: $fs;
+                    text-align: center;
+                }
+            }
 
             .level_1 {
+                $dim: 65px;
                 display: flex;
-                flex-direction: column;
-                gap: $gap_tb 0;
-                width: 100%;
+                flex-wrap: wrap;
+                overflow-x: hidden;
+                //padding: 0;
+                padding-top: 50px;
+                padding-bottom: 20px;
 
                 .level_1_row {
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: $gap_tb $gap_lr;
+                    display: grid;
                     width: 100%;
-                    position: relative;
-                    //margin-bottom: $gap_tb;
-
-                    &:last-child {
-                        margin-bottom: 0;
-                    }
-
-                    &.has-nested-content {
-                        margin-bottom: 0;
-                    }
-
-                    .nested-levels {
-                        position: relative;
-                        top: 100%;
-                        left: 0;
-                        width: 100%;
-                        pointer-events: none;
-                        opacity: 0;
-                        transform: translateY(-10px);
-                        transition: opacity 200ms, transform 200ms;
-
-                        .level_2, .level_3 {
-                            border: none;
-                        }
-
-                        &.show {
-                            pointer-events: auto;
-                            opacity: 1;
-                            transform: translateY(0);
-                        }
-                    }
+                    margin-bottom: 8px;
+                    grid-template-columns: repeat($filter_activity_row_items, 1fr);
+                    grid-gap: $activity_gap_tb $activity_gap_lr;
                 }
+                //justify-content: center;
 
                 .activity {
-                    border: 1px solid $color_lightgray;
+                    border: 1px solid lightgray;
                     box-sizing: border-box;
                     padding: 8px 0;
                     border-radius: 6px;
-                    flex-basis: calc(#{$activity_item_w} - #{$gap_lr} * calc(($activity_row_items - 1) / $activity_row_items));
                     display: flex;
                     justify-content: center;
-                    transition: all 200ms;
+                    transition: background $activity_transition_ms;
                     background: white;
 
                     &.active {
+                        background-color: $brand_color_b;
                         border-color: darken($brand_color_a, 10%);
 
                         &.font_white {
@@ -816,15 +818,14 @@
                         }
                     }
 
+                    &:not(.active) {
+                        background-color: white !important;
+                    }
+
                     .activity_wrapper {
                         width: $dim;
-
-                        &.no_icon {
-                            .name {
-                                margin-top: 0;
-                            }
-                        }
                     }
+                    //height: $dim;
 
                     .icon {
                         display: flex;
@@ -833,18 +834,11 @@
                         margin: auto;
 
                         svg {
+                            //width: $dim * .6;
                             height: $dim * 0.45;
                             fill: black;
-                            transition: fill 200ms;
+                            transition: fill $activity_transition_ms;
                         }
-                    }
-
-                    .name {
-                        margin-top: 2px;
-                        font-size: 15px;
-                        line-height: 15px;
-                        text-align: center;
-                        font-weight: 300;
                     }
                 }
             }
@@ -852,55 +846,63 @@
             .level_2 {
                 $dim: 55px;
                 height: 0;
+                //background-color: #2d86c7;
                 width: 100%;
-                transition: all 200ms;
+                transition: all $activity_transition_ms;
                 box-sizing: border-box;
-                border: 1px solid transparent;
+                border-width: 1px;
+                border-style: solid;
+                border-color: transparent;
+                display: flex;
+                flex-wrap: wrap;
                 overflow: hidden;
                 border-radius: 12px;
-                margin-top: 0;
-                margin-bottom: $gap_tb;
-
-                &:not(.show) {
-                    margin-bottom: 0;
-                }
 
                 &.show {
                     border-color: $brand_color_a;
-                    margin-bottom: $gap_tb;
+                    //border: $activity_level_2_border_w solid $brand_color_a;
+                    margin-bottom: $activity_gap_tb;
 
-                    .level_2_container {
-                        padding: $activity_level_2_ptb $activity_level_2_plr;
+                    &:last-of-type {
+                        margin-top: $activity_gap_tb;
                     }
+                }
+
+                .level_2_container {
+                    padding: $activity_level_2_ptb $activity_level_2_plr;
+                    width: calc(
+                            100vw - #{$app_margin_lr * 2} - #{$activity_level_2_plr * 2} - #{$activity_level_2_border_w *
+                        2}
+                    );
                 }
 
                 .level_2_row {
-                    display: flex;
-                    gap: $gap_tb $gap_lr;
+                    display: grid;
+                    grid-gap: $activity_gap_tb $activity_gap_lr;
+                    grid-template-columns: repeat($filter_activity_level_2_row_items, 1fr);
                     flex-wrap: wrap;
                     width: 100%;
                     margin-bottom: 8px;
-
-                    &:last-child {
-                        margin-bottom: 0;
-                    }
                 }
 
                 .activity {
-                    border: 1px solid $color_lightgray;
+                    border: 1px solid lightgray;
                     box-sizing: border-box;
                     padding: 8px 0;
                     border-radius: 6px;
-                    flex-basis: calc(#{$activity_level_2_item_w} - #{$activity_gap_lr} * calc(($activity_level_2_row_items - 1) / $activity_level_2_row_items));
                     display: flex;
                     justify-content: center;
                     height: $activity_level_2_height;
-                    transition: all 200ms;
-                    background: white;
+
+                    .name {
+                        $fs: 13px;
+                        font-size: $fs;
+                        line-height: $fs;
+                        margin-top: 8px;
+                    }
 
                     &.active {
                         background: $brand_color_b;
-                        border-color: darken($brand_color_a, 10%);
 
                         svg {
                             fill: black !important;
@@ -917,6 +919,10 @@
                         justify-content: center;
 
                         &.no_icon {
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+
                             .name {
                                 margin-top: 0 !important;
                             }
@@ -937,17 +943,9 @@
                         }
 
                         svg {
+                            //width: $dim * .6;
                             height: $dim * 0.5;
-                            transition: fill 200ms;
                         }
-                    }
-
-                    .name {
-                        font-size: 13px;
-                        line-height: 13px;
-                        margin-top: 8px;
-                        text-align: center;
-                        font-weight: 300;
                     }
                 }
             }
@@ -956,61 +954,59 @@
                 $dim: 50px;
                 height: 0;
                 width: 100%;
-                transition: all 200ms;
+                transition: all $activity_transition_ms;
                 box-sizing: border-box;
-                border: 1px solid transparent;
+                border-width: 1px;
+                border-style: solid;
+                border-color: transparent;
+                display: flex;
+                flex-wrap: wrap;
                 overflow: hidden;
                 border-radius: 12px;
-                margin-top: 0;
-
-                &:not(.show) {
-                    margin-bottom: 0;
-                }
 
                 &.show {
                     border-color: $color_gray;
-                    margin-bottom: $gap_tb;
+                    //border: $activity_level_2_border_w solid $brand_color_a;
+                    margin-bottom: $activity_gap_tb;
 
-                    .level_3_container {
-                        padding: $activity_level_2_ptb $activity_level_2_plr;
-                    }
-                }
-
-                .level_3_row {
-                    display: flex;
-                    gap: $gap_tb $gap_lr;
-                    flex-wrap: wrap;
-                    width: 100%;
-                    margin-bottom: 8px;
-
-                    &:last-child {
+                    &:last-of-type {
+                        margin-top: $activity_gap_tb;
                         margin-bottom: 0;
                     }
                 }
 
+                .level_3_container {
+                    padding: $activity_level_2_ptb $activity_level_2_plr;
+                    width: calc(100%);
+                }
+
+                .level_3_row {
+                    display: grid;
+                    grid-gap: $activity_gap_tb $activity_gap_lr;
+                    grid-template-columns: repeat($filter_activity_level_3_row_items, 1fr);
+                    width: 100%;
+                    margin-bottom: 8px;
+                }
+
                 .activity {
-                    border: 1px solid $color_lightgray;
+                    border: 1px solid lightgray;
                     box-sizing: border-box;
                     padding: 8px 0;
                     border-radius: 6px;
-                    flex-basis: calc(#{$activity_level_3_item_w} - #{$activity_gap_lr} * calc(($activity_level_2_row_items - 1) / $activity_level_2_row_items));
                     display: flex;
                     justify-content: center;
                     height: $activity_level_3_height;
-                    transition: all 200ms;
-                    background: white;
+
+                    .name {
+                        $fs: 13px;
+                        font-size: $fs;
+                        line-height: $fs;
+                        margin-top: 8px;
+                    }
 
                     &.active {
-                        background: $brand_color_c;
-                        border-color: darken($brand_color_c, 10%);
-
-                        svg {
-                            fill: white !important;
-                        }
-
-                        .name {
-                            color: white;
-                        }
+                        background-color: $brand_color_b;
+                        border-color: darken($brand_color_a, 10%);
                     }
 
                     .activity_wrapper {
@@ -1020,6 +1016,10 @@
                         width: unset;
 
                         &.no_icon {
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+
                             .name {
                                 margin-top: 0 !important;
                             }
@@ -1040,17 +1040,9 @@
                         }
 
                         svg {
+                            //width: $dim * .6;
                             height: $dim * 0.5;
-                            transition: fill 200ms;
                         }
-                    }
-
-                    .name {
-                        font-size: 13px;
-                        line-height: 13px;
-                        margin-top: 8px;
-                        text-align: center;
-                        font-weight: 300;
                     }
                 }
             }
