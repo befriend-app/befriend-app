@@ -19,6 +19,7 @@ befriend.filters = {
                 befriend.filters.age.init();
                 befriend.filters.genders.init();
                 befriend.filters.distance.init();
+                befriend.filters.activity_types.init();
 
                 befriend.filters.initSendReceive();
                 befriend.filters.initActiveEvents();
@@ -934,8 +935,6 @@ befriend.filters = {
             // Get stored filter values if they exist
             const filter_data = befriend.filters.data.filters?.['modes'];
 
-            console.log(filter_data?.items);
-
             if (filter_data?.items) {
                 this.data.selectedModes = Object.values(filter_data.items)
                     .filter(item => !item.is_negative)
@@ -1731,6 +1730,430 @@ befriend.filters = {
             } catch(e) {
                 console.error('Error saving distance:', e);
             }
+        }
+    },
+    activity_types: {
+        data: {
+            selected: {
+                level_1: null,
+                level_2: null,
+                level_3: null
+            }
+        },
+        init: function() {
+            const section = befriend.filters.sections.activityTypes;
+            const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+            const filter_options = section_el.querySelector('.filter-options');
+
+            this.render(filter_options);
+            this.initEvents(section_el);
+        },
+        render: function(container) {
+            let html = `
+            <div class="filter-option" data-filter-token="activity_types">
+                ${befriend.filters.sendReceiveHtml(true, true, true)}
+                
+                <div class="activities-filter">
+                    <div class="level_1"></div>
+                    <div class="level_2"></div>
+                    <div class="level_3"></div>
+                </div>
+            </div>
+        `;
+
+            container.innerHTML = html;
+
+            this.renderLevel1();
+        },
+        renderLevel1: function() {
+            if (!befriend.activities.types.data) return;
+
+            let level1Html = '';
+            let activities_level_1 = [];
+            let rowCount = 0;
+
+            for (let id in befriend.activities.types.data) {
+                if (activities_level_1.length === befriend.variables.activity_row_items) {
+                    let row_html = activities_level_1.join('');
+                    level1Html += `
+                    <div class="level_1_row" data-row="${rowCount}">
+                        ${row_html}
+                        <div class="nested-levels">
+                            <div class="level_2"></div>
+                            <div class="level_3"></div>
+                        </div>
+                    </div>
+                `;
+                    activities_level_1 = [];
+                    rowCount++;
+                }
+
+                let activity = befriend.activities.types.data[id];
+                let image_html = activity.image ? `<div class="image">${activity.image}</div>` : '';
+                let icon_html = image_html ? `<div class="icon">${image_html}</div>` : '';
+                let no_icon_class = icon_html ? '' : 'no_icon';
+                let font_white_class = activity.font_white ? 'font_white' : '';
+                let background_style = activity.color ? `style="background-color: ${activity.color}"` : '';
+
+                activities_level_1.push(`
+                <div class="activity level_1_activity ${font_white_class}" data-id="${id}" ${background_style}>
+                    <div class="activity_wrapper ${no_icon_class}">
+                        ${icon_html}
+                        <div class="name">${activity.name}</div>
+                    </div>
+                </div>
+            `);
+            }
+
+            if (activities_level_1.length) {
+                level1Html += `
+                <div class="level_1_row" data-row="${rowCount}">
+                    ${activities_level_1.join('')}
+                    <div class="nested-levels">
+                        <div class="level_2"></div>
+                        <div class="level_3"></div>
+                    </div>
+                </div>
+            `;
+            }
+
+            const level1El = document.querySelector('.activities-filter .level_1');
+            level1El.innerHTML = level1Html;
+        },
+
+        renderLevel2: function(parent_id, rowEl) {
+            const activity = befriend.activities.types.data[parent_id];
+            if (!activity?.sub) return;
+
+            // Find the nested levels container
+            const nestedLevels = rowEl.querySelector('.nested-levels');
+            const level2El = nestedLevels.querySelector('.level_2');
+
+            let level2Html = '';
+            let activities_level_2 = [];
+
+            for (let level_2_id in activity.sub) {
+                if (activities_level_2.length === befriend.variables.activity_level_2_row_items) {
+                    let row_html = activities_level_2.join('');
+                    level2Html += `<div class="level_2_row">${row_html}</div>`;
+                    activities_level_2 = [];
+                }
+
+                let level2Activity = activity.sub[level_2_id];
+                let image_html = level2Activity.image ? `<div class="image">${level2Activity.image}</div>` : '';
+                let icon_html = image_html ? `<div class="icon">${image_html}</div>` : '';
+                let no_icon_class = icon_html ? '' : 'no_icon';
+
+                activities_level_2.push(`
+                <div class="activity level_2_activity" data-id="${level_2_id}">
+                    <div class="activity_wrapper ${no_icon_class}">
+                        ${icon_html}
+                        <div class="name">${level2Activity.name}</div>
+                    </div>
+                </div>
+            `);
+            }
+
+            if (activities_level_2.length) {
+                level2Html += `<div class="level_2_row">${activities_level_2.join('')}</div>`;
+            }
+
+            level2El.innerHTML = `
+            <div class="level_2_container">
+                ${level2Html}
+            </div>
+        `;
+            level2El.setAttribute('data-parent-id', parent_id);
+
+            // Update height
+            this.updateLevelHeight(level2El);
+        },
+
+        renderLevel3: function(parent_id, level_2_id, rowEl) {
+            const activity = befriend.activities.types.data[parent_id]?.sub?.[level_2_id];
+            if (!activity?.sub) return;
+
+            // Find the nested levels container
+            const nestedLevels = rowEl.querySelector('.nested-levels');
+            const level3El = nestedLevels.querySelector('.level_3');
+
+            let level3Html = '';
+            let activities_level_3 = [];
+
+            for (let level_3_id in activity.sub) {
+                if (activities_level_3.length === befriend.variables.activity_level_3_row_items) {
+                    let row_html = activities_level_3.join('');
+                    level3Html += `<div class="level_3_row">${row_html}</div>`;
+                    activities_level_3 = [];
+                }
+
+                let level3Activity = activity.sub[level_3_id];
+                let image_html = level3Activity.image ? `<div class="image">${level3Activity.image}</div>` : '';
+                let icon_html = image_html ? `<div class="icon">${image_html}</div>` : '';
+                let no_icon_class = icon_html ? '' : 'no_icon';
+
+                activities_level_3.push(`
+                <div class="activity level_3_activity" data-id="${level_3_id}">
+                    <div class="activity_wrapper ${no_icon_class}">
+                        ${icon_html}
+                        <div class="name">${level3Activity.name}</div>
+                    </div>
+                </div>
+            `);
+            }
+
+            if (activities_level_3.length) {
+                level3Html += `<div class="level_3_row">${activities_level_3.join('')}</div>`;
+            }
+
+            level3El.innerHTML = `
+            <div class="level_3_container">
+                ${level3Html}
+            </div>
+        `;
+            level3El.setAttribute('data-parent-id', parent_id);
+            level3El.setAttribute('data-level-2-id', level_2_id);
+
+            // Update heights
+            this.updateLevelHeight(level3El);
+        },
+        initEvents: function(section_el) {
+            this.initLevel1Events();
+            this.initLevel2Events();
+            this.initLevel3Events();
+        },
+        updateSectionContainerHeight: async function() {
+            const section = document.querySelector('.section.activity-types');
+            if (!section) return;
+
+            const container = section.querySelector('.section-container');
+            if (!container) return;
+
+            // Reset any previous inline height to get true content height
+            container.style.height = 'auto';
+
+            // Give browser time to reflow
+            await rafAwait();
+
+            // Set height based on content
+            await setElHeightDynamic(container);
+        },
+        updateLevelHeight: async function(levelEl) {
+            if (!levelEl) return;
+
+            const lastRow = levelEl.querySelector('.level_2_row:last-child, .level_3_row:last-child');
+            if (lastRow) {
+                lastRow.style.marginBottom = '0px';
+            }
+
+            // Reset height to get natural height
+            levelEl.style.height = 'auto';
+            await rafAwait();
+
+            // Get and set the height
+            const height = levelEl.scrollHeight;
+            levelEl.style.height = `${height}px`;
+            levelEl.setAttribute('data-prev-height', `${height}px`);
+
+            // Add show class
+            addClassEl('show', levelEl);
+
+            // Update section container height after level height changes
+            await this.updateSectionContainerHeight();
+        },
+        clearNestedLevels: function() {
+            // Remove show class from all nested levels
+            const allNestedLevels = document.querySelectorAll('.activities-filter .nested-levels');
+            allNestedLevels.forEach(el => {
+                removeClassEl('show', el);
+            });
+
+            // Remove has-nested-content from all rows
+            const allRows = document.querySelectorAll('.activities-filter .level_1_row');
+            allRows.forEach(row => {
+                removeClassEl('has-nested-content', row);
+            });
+
+            // Clear and hide level 2 and 3
+            const allLevel2s = document.querySelectorAll('.activities-filter .level_2');
+            const allLevel3s = document.querySelectorAll('.activities-filter .level_3');
+
+            allLevel2s.forEach(el => {
+                el.style.height = '0';
+                el.innerHTML = '';
+                removeClassEl('show', el);
+            });
+
+            allLevel3s.forEach(el => {
+                el.style.height = '0';
+                el.innerHTML = '';
+                removeClassEl('show', el);
+            });
+        },
+        initLevel1Events: function() {
+            const self = this;
+            const level1Activities = document.querySelectorAll('.activities-filter .level_1_activity');
+
+            level1Activities.forEach(activity => {
+                activity.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const id = this.getAttribute('data-id');
+                    const activity_data = befriend.activities.types.data[id];
+                    const rowEl = this.closest('.level_1_row');
+                    const nestedLevels = rowEl.querySelector('.nested-levels');
+
+                    // Remove active class from all rows and reset their margins
+                    document.querySelectorAll('.level_1_row').forEach(row => {
+                        removeClassEl('has-nested-content', row);
+                    });
+
+                    // Handle deselection
+                    if (elHasClass(this, 'active')) {
+                        removeClassEl('active', this);
+                        removeClassEl('show', nestedLevels);
+                        removeClassEl('has-nested-content', rowEl);
+                        self.clearNestedLevels();
+                        self.data.selected.level_1 = null;
+                        self.data.selected.level_2 = null;
+                        self.data.selected.level_3 = null;
+                        await self.updateSectionContainerHeight();
+                        return;
+                    }
+
+                    // Handle selection
+                    removeElsClass(level1Activities, 'active');
+                    addClassEl('active', this);
+                    self.data.selected.level_1 = activity_data;
+                    self.data.selected.level_2 = null;
+                    self.data.selected.level_3 = null;
+
+                    // Clear all nested levels first
+                    self.clearNestedLevels();
+
+                    if (activity_data.sub && Object.keys(activity_data.sub).length) {
+                        addClassEl('has-nested-content', rowEl);
+                        addClassEl('show', nestedLevels);
+                        self.renderLevel2(id, rowEl);
+                    }
+
+                    self.saveSelection();
+                });
+            });
+        },
+        initLevel2Events: function() {
+            const self = this;
+            const level2Container = document.querySelector('.activities-filter .level_1');
+
+            // Use event delegation on the container since level 2 items are dynamically added
+            level2Container.addEventListener('click', async function(e) {
+                const activity = e.target.closest('.level_2_activity');
+                if (!activity) return;
+
+                e.preventDefault();
+                e.stopPropagation();
+
+                const rowEl = activity.closest('.level_1_row');
+                const level2El = activity.closest('.level_2');
+                const level3El = rowEl.querySelector('.level_3');
+                const parent_id = level2El.getAttribute('data-parent-id');
+                const id = activity.getAttribute('data-id');
+                const activity_data = befriend.activities.types.data[parent_id].sub[id];
+
+                // Handle deselection
+                if (elHasClass(activity, 'active')) {
+                    removeClassEl('active', activity);
+                    level3El.style.height = '0';
+                    level3El.innerHTML = '';
+                    removeClassEl('show', level3El);
+                    self.data.selected.level_2 = null;
+                    self.data.selected.level_3 = null;
+
+                    // Update container height after collapsing level 3
+                    await self.updateSectionContainerHeight();
+                    return;
+                }
+
+                // Handle selection
+                const level2Activities = level2El.querySelectorAll('.level_2_activity');
+                removeElsClass(level2Activities, 'active');
+                addClassEl('active', activity);
+                self.data.selected.level_2 = activity_data;
+                self.data.selected.level_3 = null;
+
+                // Clear any existing level 3 content
+                if (level3El) {
+                    level3El.style.height = '0';
+                    level3El.innerHTML = '';
+                    removeClassEl('show', level3El);
+                }
+
+                if (activity_data.sub && Object.keys(activity_data.sub).length) {
+                    self.renderLevel3(parent_id, id, rowEl);
+                }
+
+                self.saveSelection();
+            });
+        },
+        initLevel3Events: function() {
+            const self = this;
+            const level3Container = document.querySelector('.activities-filter .level_1');
+
+            // Use event delegation on the container since level 3 items are dynamically added
+            level3Container.addEventListener('click', async function(e) {
+                const activity = e.target.closest('.level_3_activity');
+                if (!activity) return;
+
+                e.preventDefault();
+                e.stopPropagation();
+
+                const rowEl = activity.closest('.level_1_row');
+                const level3El = activity.closest('.level_3');
+                const parent_id = level3El.getAttribute('data-parent-id');
+                const level_2_id = level3El.getAttribute('data-level-2-id');
+                const id = activity.getAttribute('data-id');
+                const activity_data = befriend.activities.types.data[parent_id].sub[level_2_id].sub[id];
+
+                // Handle deselection
+                if (elHasClass(activity, 'active')) {
+                    removeClassEl('active', activity);
+                    self.data.selected.level_3 = null;
+                } else {
+                    // Handle selection
+                    const level3Activities = level3El.querySelectorAll('.level_3_activity');
+                    removeElsClass(level3Activities, 'active');
+                    addClassEl('active', activity);
+                    self.data.selected.level_3 = activity_data;
+                }
+
+                // Update container height after selection changes
+                await self.updateSectionContainerHeight();
+                self.saveSelection();
+            });
+        },
+        saveSelection: async function() {
+            try {
+                const selected = this.getCurrentSelection();
+                if (!selected) return;
+
+                return;
+
+                await befriend.auth.put('/filters/activity_types', {
+                    activity_type_token: selected.token,
+                    level: selected.level
+                });
+            } catch (e) {
+                console.error('Error saving activity type selection:', e);
+            }
+        },
+
+        getCurrentSelection: function() {
+            const { level_3, level_2, level_1 } = this.data.selected;
+            if (level_3) return { ...level_3, level: 3 };
+            if (level_2) return { ...level_2, level: 2 };
+            if (level_1) return { ...level_1, level: 1 };
+            return null;
         }
     },
     initSections: async function () {
