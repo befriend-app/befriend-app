@@ -301,10 +301,23 @@ befriend.filters = {
             const toggle = daySection.querySelector('.toggle');
             const selectedTimesEl = daySection.querySelector('.selected-times');
 
+            const currentData = this.data[dayIndex] || {
+                isDisabled: true,
+                isAny: false,
+                times: {}
+            };
+
             if (isAvailable) {
                 addClassEl('active', toggle);
 
-                // Check if we have this day in stored filter data
+                // Initialize or update data for this day
+                this.data[dayIndex] = {
+                    isDisabled: false,
+                    isAny: currentData.isAny,
+                    times: currentData.times || {} // Preserve existing times
+                };
+
+                // Check if we have stored filter data
                 const filter_data = befriend.filters.data.filters?.['availability'];
                 if (filter_data?.items) {
                     const dayRecord = Object.values(filter_data.items).find(
@@ -313,43 +326,17 @@ befriend.filters = {
 
                     // If we have a day record and it was set to any time, restore that state
                     if (dayRecord?.is_any_time) {
-                        this.data[dayIndex] = {
-                            isAny: true,
-                            times: {},
-                            isDisabled: false
-                        };
-                    } else if (!this.data[dayIndex] || this.data[dayIndex].isDisabled) {
-                        // Fallback to previous behavior for non-any-time days
-                        if (this.data[dayIndex]?.lastTimes) {
-                            this.data[dayIndex] = {
-                                times: {
-                                    [this.generateTimeId()]: this.data[dayIndex].lastTimes
-                                },
-                                isDisabled: false,
-                                isAny: false
-                            };
-                        } else {
-                            this.data[dayIndex] = {
-                                times: {},
-                                isDisabled: false,
-                                isAny: false
-                            };
-                        }
+                        this.data[dayIndex].isAny = true;
+                        this.data[dayIndex].times = {}; // Clear times when setting to any time
                     }
                 }
             } else {
                 removeClassEl('active', toggle);
 
-                // Store current times before disabling
-                const currentTimes = this.data[dayIndex]?.times || {};
-                const timeValues = Object.values(currentTimes);
-
-                // Preserve isAny state when disabling
+                // Update the data but preserve the times and isAny state
                 this.data[dayIndex] = {
-                    isDisabled: true,
-                    isAny: this.data[dayIndex]?.isAny || false,
-                    times: {},  // Keep empty times object for consistency
-                    lastTimes: timeValues.length > 0 ? timeValues[0] : null
+                    ...currentData,
+                    isDisabled: true
                 };
 
                 selectedTimesEl.innerHTML = '<span class="not-available">Not Available</span>';
@@ -357,6 +344,7 @@ befriend.filters = {
 
             // Update the UI without affecting the time slots container state
             this.updateDayTimesDisplay(dayIndex);
+            this.updateDayUI(dayIndex);
             this.saveData();
         },
         setAnyTime: function(dayIndex) {
@@ -466,33 +454,29 @@ befriend.filters = {
             const existingTime = existingTimeId ? this.data[dayIndex]?.times?.[existingTimeId] : null;
             const dayData = this.data[dayIndex];
 
+            // Set default times without using lastTimes
             let defaultStart = this.times.default.start;
             let defaultEnd = this.times.default.end;
 
-            if (dayData?.isDisabled && dayData.lastTimes) {
-                defaultStart = dayData.lastTimes.start;
-                defaultEnd = dayData.lastTimes.end;
-            }
-
             let popupHtml = `
-            <div class="availability-time-picker-popup">
-                <div class="popup-header">${existingTime ? 'Edit Time' : 'Add Time'}</div>
-                <div class="time-inputs">
-                    <div class="time-input">
-                        <label>Start Time</label>
-                        <input type="time" class="start-time" value="${existingTime?.start || defaultStart}">
-                    </div>
-                    <div class="time-input">
-                        <label>End Time</label>
-                        <input type="time" class="end-time" value="${existingTime?.end || defaultEnd}">
-                    </div>
-                </div>
-                <div class="popup-actions">
-                    <button class="cancel-btn">Cancel</button>
-                    <button class="save-btn">Save</button>
-                </div>
+    <div class="availability-time-picker-popup">
+        <div class="popup-header">${existingTime ? 'Edit Time' : 'Add Time'}</div>
+        <div class="time-inputs">
+            <div class="time-input">
+                <label>Start Time</label>
+                <input type="time" class="start-time" value="${existingTime?.start || defaultStart}">
             </div>
-        `;
+            <div class="time-input">
+                <label>End Time</label>
+                <input type="time" class="end-time" value="${existingTime?.end || defaultEnd}">
+            </div>
+        </div>
+        <div class="popup-actions">
+            <button class="cancel-btn">Cancel</button>
+            <button class="save-btn">Save</button>
+        </div>
+    </div>
+    `;
 
             const popupEl = document.createElement('div');
             addClassEl('availability-popup-overlay', popupEl);
@@ -1714,14 +1698,12 @@ befriend.filters = {
                 setPosition(self.current);
             });
         },
-
         debounceUpdateServer: function() {
             clearTimeout(this._updateTimer);
             this._updateTimer = setTimeout(() => {
                 this.saveDistance();
             }, 500);
         },
-
         saveDistance: async function() {
             try {
                 await befriend.auth.put('/filters/distance', {
@@ -1756,6 +1738,14 @@ befriend.filters = {
             //create rows and add hidden placeholder row below each row for multi-level select
             let activities_row = [];
 
+            //all activities
+            activities_row.push(`
+            <div class="activity all level_1_activity" data-token="all">
+                    <div class="activity_wrapper">
+                        All
+                    </div>
+            </div>`);
+
             let level_1_ids = Object.keys(activities);
 
             for (let i = 0; i < level_1_ids.length; i++) {
@@ -1781,9 +1771,6 @@ befriend.filters = {
                                         ${activity.image}
                                     </div>`;
                 } else if (activity.emoji) {
-                    // image_html += `<div class="emoji">
-                    //                 ${activity.emoji}
-                    //             </div>`;
                 }
 
                 let icon_html = ``;
@@ -1795,7 +1782,8 @@ befriend.filters = {
                 let center_class = icon_html ? '' : 'center';
 
                 activities_row.push(`
-                        <div class="activity level_1_activity" data-id="${level_1_id}">
+                        <div class="activity level_1_activity" data-id="${level_1_id}" data-token="${activity.token}">
+                            ${checkboxHtml(true)}
                             <div class="activity_wrapper ${center_class}">
                                 ${icon_html}
                                 <div class="name">${activity.name}</div>
@@ -1888,7 +1876,7 @@ befriend.filters = {
                     let prev_level_2 = befriend.els.filters.querySelector('.level_2.show');
 
                     //do not proceed if no sub categories
-                    if (!activity.sub || !Object.keys(activity.sub).length) {
+                    if (!activity?.sub || !Object.keys(activity.sub).length) {
                         if (prev_level_2) {
                             hideLevel(prev_level_2);
                         }
@@ -1937,9 +1925,6 @@ befriend.filters = {
                                         ${activity.image}
                                     </div>`;
                         } else if (activity.emoji) {
-                            // image_html += `<div class="emoji">
-                            //             ${activity.emoji}
-                            //         </div>`;
                         }
 
                         let icon_html = ``;
@@ -1951,7 +1936,7 @@ befriend.filters = {
                         let no_icon_class = icon_html ? '' : 'no_icon';
 
                         activities_level_2.push(`
-                            <div class="activity level_2_activity" data-id="${level_2_id}">
+                            <div class="activity level_2_activity" data-id="${level_2_id}" data-token="${activity.token}">
                                 <div class="activity_wrapper ${no_icon_class}">
                                     ${icon_html}
                                     <div class="name">${activity.name}</div>
@@ -2077,9 +2062,6 @@ befriend.filters = {
                                         ${activity.image}
                                     </div>`;
                         } else if (activity.emoji) {
-                            // image_html += `<div class="emoji">
-                            //             ${activity.emoji}
-                            //         </div>`;
                         }
 
                         let icon_html = ``;
@@ -2091,7 +2073,7 @@ befriend.filters = {
                         let no_icon_class = icon_html ? '' : 'no_icon';
 
                         activities_level_3.push(`
-                            <div class="activity level_3_activity" data-id="${level_3_id}">
+                            <div class="activity level_3_activity" data-id="${level_3_id}" data-token="${activity.token}">
                                 <div class="activity_wrapper ${no_icon_class}">
                                     ${icon_html}
                                     <div class="name">${activity.name}</div>
