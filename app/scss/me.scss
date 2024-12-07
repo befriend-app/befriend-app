@@ -235,25 +235,32 @@ html.#{$class_confirm_me_action} {
 
                 &.selected {
                     $fill_color: darken($brand_color_a, 10%);
-                    //color: white;
                     border-color: darken($brand_color_a, 10%);
-                    fill: $fill_color !important;
 
-                    svg {
-                        .outline {
-                            //opacity: 0 !important;
-                            fill: $fill_color !important;
-                        }
-                        .filled {
-                            //fill: $brand_color_a !important;
+                    &:not(.plus-kids) {
+                        .icon {
+                            path {
+                                fill: $fill_color !important;
+                            }
                         }
                     }
 
-                    .name {
-                        color: darken($brand_color_a, 20%);
+                    &.plus-kids {
+                        .icon {
+                            svg {
+                                path, circle {
+                                    stroke: $fill_color;
+                                }
+                            }
+                        }
+                    }
+                }
 
-                        .plus {
-                            fill: darken($brand_color_a, 20%) !important;
+                &.plus-kids {
+                    .icon {
+                        svg {
+                            height: 24px;
+                            transform: translateY(-2px);
                         }
                     }
                 }
@@ -262,12 +269,10 @@ html.#{$class_confirm_me_action} {
                     display: flex;
                     align-items: center;
                     justify-content: center;
+                    height: 20px;
 
                     svg {
                         height: 20px;
-                        //fill: transparent;
-                        //stroke: black;
-                        //stroke-width: 4px;
                         .outline {
                             fill: black;
                             opacity: 1;

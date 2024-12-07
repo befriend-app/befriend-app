@@ -167,7 +167,7 @@ befriend.html = {
                                                 ${befriend.me.modes.options
                                                     .map(
                                                         (option) => `
-                                                    <div class="mode-option ${option.id === befriend.me.modes.selected ? 'selected' : ''}" data-mode="${option.id}">
+                                                    <div class="mode-option ${option.id} ${option.id === befriend.me.modes.selected ? 'selected' : ''}" data-mode="${option.id}">
                                                         <div class="content">
                                                             <div class="icon">${option.icon}</div>
                                                             <div class="name">${option.name}</div>
