@@ -17,6 +17,10 @@ html.#{$class_create_activity_shown} {
             opacity $create_activity_transition_ms,
             visibility 0ms;
     }
+
+    #activities {
+        z-index: 3;
+    }
 }
 
 #activities {
@@ -620,7 +624,7 @@ html.#{$class_create_activity_shown} {
                 }
 
                 .message {
-                    font-size: 11px;
+                    font-size: 13px;
                     color: white;
                     margin: auto;
                     position: relative;
