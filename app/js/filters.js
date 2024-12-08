@@ -1740,6 +1740,32 @@ befriend.filters = {
 
             return null;
         },
+        updateFilterData: function(activityIds, isActive, isAll) {
+            const section = befriend.filters.sections.activityTypes;
+            const filterData = befriend.filters.data.filters?.[section.token];
+
+            if (!filterData) {
+                return;
+            }
+
+            if(isAll) {
+                if(filterData?.items) {
+                    for (let k in filterData.items) {
+                        let item = filterData.items[k];
+                        item.is_negative = false;
+                    }
+                }
+            } else if(activityIds.length) {
+                if (filterData?.items) {
+                    for (let k in filterData.items) {
+                        let item = filterData.items[k];
+                        if(activityIds.includes(item.activity_type_id)) {
+                            item.is_negative = !isActive;
+                        }
+                    }
+                }
+            }
+        },
         render: function () {
             let section = befriend.filters.sections.activityTypes;
             const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
@@ -1901,6 +1927,7 @@ befriend.filters = {
                     e.preventDefault();
                     e.stopPropagation();
 
+                    let updateIds = [];
                     let updateTokens = {};
 
                     let activity_el = checkbox.closest('.activity');
@@ -1933,12 +1960,13 @@ befriend.filters = {
                     toggleElClass(checkbox, 'checked');
 
                     //set update state for server for main token
+                    updateIds.push(parseInt(activityId));
                     updateTokens[token] = !wasSelected;
 
                     if(wasSelected) {
                         // Uncheck all child elements
                         if(next_level_el) {
-                            befriend.filters.activity_types.toggleCheckboxes(false, false, next_level_el, updateTokens);
+                            befriend.filters.activity_types.toggleCheckboxes(false, false, next_level_el, updateTokens, updateIds);
                         }
 
                         removeClassEl('active', allActivityEl);
@@ -1949,7 +1977,10 @@ befriend.filters = {
 
                             if(all_unchecked) {
                                 // Also uncheck parent if this was the last checked item
+
+                                let parent_id = parent_activity.getAttribute('data-id');
                                 let parent_token = parent_activity.getAttribute('data-token');
+                                updateIds.push(parseInt(parent_id));
                                 updateTokens[parent_token] = false;
 
                                 removeClassEl('checked', parent_activity.querySelector('.checkbox'));
@@ -1966,6 +1997,8 @@ befriend.filters = {
 
                                     if(all_level_2_unchecked && level_1_activity) {
                                         let level_1_token = level_1_activity.getAttribute('data-token');
+
+                                        updateIds.push(parseInt(level_1_id));
                                         updateTokens[level_1_token] = false;
                                         removeClassEl('checked', level_1_activity.querySelector('.checkbox'));
                                     }
@@ -1975,12 +2008,15 @@ befriend.filters = {
                     } else {
                         // Check all child elements
                         if(next_level_el) {
-                            befriend.filters.activity_types.toggleCheckboxes(true, false, next_level_el, updateTokens);
+                            befriend.filters.activity_types.toggleCheckboxes(true, false, next_level_el, updateTokens, updateIds);
                         }
 
                         // Check parent activities
                         if(parent_activity) {
+                            let parent_id = parent_activity.getAttribute('data-id');
                             let parent_token = parent_activity.getAttribute('data-token');
+
+                            updateIds.push(parseInt(parent_id));
                             updateTokens[parent_token] = true;
                             addClassEl('checked', parent_activity.querySelector('.checkbox'));
 
@@ -1992,6 +2028,8 @@ befriend.filters = {
 
                                 if(level_1_activity) {
                                     let level_1_token = level_1_activity.getAttribute('data-token');
+
+                                    updateIds.push(parseInt(level_1_id));
                                     updateTokens[level_1_token] = true;
                                     addClassEl('checked', level_1_activity.querySelector('.checkbox'));
                                 }
@@ -2004,6 +2042,8 @@ befriend.filters = {
                         }
                     }
 
+                    befriend.filters.activity_types.updateFilterData(updateIds, !wasSelected);
+
                     try {
                         await befriend.filters.activity_types.updateServer(updateTokens, !wasSelected);
                     } catch(e) {
@@ -2012,7 +2052,7 @@ befriend.filters = {
                 });
             }
         },
-        toggleCheckboxes: function (is_active, is_all, parent_el, updateTokens = {}) {
+        toggleCheckboxes: function (is_active, is_all, parent_el, updateTokens = {}, updateIds = []) {
             let section = befriend.filters.sections.activityTypes;
             let section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
 
@@ -2026,7 +2066,10 @@ befriend.filters = {
 
             if(checkboxes) {
                 for(let checkbox of checkboxes) {
+                    let id = checkbox.closest('.activity').getAttribute('data-id');
                     let token = checkbox.closest('.activity').getAttribute('data-token');
+
+                    updateIds.push(parseInt(id));
 
                     //for server update
                     updateTokens[token] = is_active;
@@ -2055,6 +2098,8 @@ befriend.filters = {
                         if(!elHasClass(el, 'active')) {
                             addClassEl('active', el);
                             befriend.filters.activity_types.toggleCheckboxes(true, true);
+
+                            befriend.filters.activity_types.updateFilterData(null, true, true);
 
                             await befriend.filters.activity_types.updateServer({
                                 [token]: true
