@@ -1862,9 +1862,22 @@ befriend.filters = {
         initCheckboxState: function(parentEl, childEl) {
             const parentCheckbox = parentEl.querySelector('.checkbox');
             const childCheckbox = childEl.querySelector('.checkbox');
+            const childId = childEl.getAttribute('data-id');
+
+            // Check if this item has a negative state
+            const isNegative = this.getNegativeState(childId);
 
             if (parentCheckbox && childCheckbox) {
-                if (elHasClass(parentCheckbox, 'checked')) {
+                // If there's a negative state
+                if (isNegative !== null) {
+                    if (isNegative) {
+                        removeClassEl('checked', childCheckbox);
+                    } else {
+                        addClassEl('checked', childCheckbox);
+                    }
+                }
+                // Otherwise inherit from parent
+                else if (elHasClass(parentCheckbox, 'checked')) {
                     addClassEl('checked', childCheckbox);
                 } else {
                     removeClassEl('checked', childCheckbox);
@@ -2052,21 +2065,17 @@ befriend.filters = {
                     }
 
                     let parent_id = this.getAttribute('data-id');
-
                     let activity = befriend.activities.types.data[parent_id];
-
                     let level_2_el = this.closest('.level_1_row').nextSibling;
 
                     //remove activity selection and hide level 2 if same activity clicked
                     if (elHasClass(this, 'active')) {
                         removeClassEl('active', this);
-
                         hideLevel(level_2_el);
 
                         befriend.filters.activity_types.selected.level_1 = null;
                         befriend.filters.activity_types.selected.level_2 = null;
                         befriend.filters.activity_types.selected.level_3 = null;
-
                         return;
                     } else {
                         //remove active from any previously selected activity except any
