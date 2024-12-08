@@ -27,6 +27,7 @@ befriend.filters = {
                 befriend.filters.activity_types.init();
                 befriend.filters.verifications.init();
                 befriend.filters.life_stages.init();
+                befriend.filters.relationship.init();
 
                 befriend.filters.initSendReceive();
                 befriend.filters.initActiveEvents();
@@ -109,6 +110,11 @@ befriend.filters = {
             token: 'life_stages',
             name: 'Life Stage',
             icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480.612 511.998"><path d="M353.336,304.254c-.597-6.81-4.287-12.756-10.124-16.315-7.295-4.446-16.499-4.113-23.453.851l-54.336,38.798-4.514-41.989c-1.378-12.815-12.136-22.479-25.024-22.479-12.507,0-23.227,9.344-24.933,21.734l-7.727,56.096-35.227-47.339c-4.688-6.301-12.454-9.719-20.27-8.916-7.967.817-14.724,5.649-18.073,12.924-3.349,7.276-2.626,15.55,1.934,22.134l58.567,84.569c-.742,43.266-21.788,96.837-22.005,97.383-.918,2.316-.63,4.937.77,6.998,1.4,2.061,3.73,3.295,6.221,3.295h113.93c2.637,0,5.081-1.381,6.441-3.639,1.361-2.258,1.439-5.065.208-7.396-.273-.512-26.729-51.326-24.576-112.704l75.063-66.176c5.128-4.521,7.727-11.019,7.128-17.829ZM336.262,310.802l-77.464,68.294c-1.52,1.34-2.434,3.236-2.537,5.259-2.547,50.02,12.68,93.11,21.021,112.606h-91.357v-.001c6.568-18.761,19.292-59.665,19.292-94.956,0-1.53-.467-3.024-1.338-4.281l-59.925-86.53c-2.163-3.123-1.166-6.133-.636-7.283.529-1.149,2.168-3.864,5.946-4.252,2.56-.263,5.125.86,6.669,2.934l46.201,62.086c1.822,2.449,4.945,3.555,7.904,2.794,2.957-.76,5.162-3.232,5.578-6.257l10.235-74.306c.687-4.986,5.001-8.747,10.034-8.747,5.187,0,9.516,3.889,10.071,9.046l5.89,54.783c.286,2.657,1.96,4.963,4.398,6.057,2.438,1.094,5.275.81,7.448-.741l64.807-46.275c2.038-1.457,4.742-1.556,6.884-.25,1.713,1.045,2.796,2.79,2.971,4.788s-.5871,3.905-2.0921,5.232Z"/><path d="M468.612,217.611c0-17.421-5.677-34.482-16.092-48.65,4.817-7.583,7.337-16.204,7.337-25.25,0-26.82-22.669-48.639-50.533-48.639-.222,0-.445.001-.668.004-10.156-33.16-42.274-56.599-78.83-56.599-7.579,0-15.043.987-22.268,2.941C293.669,16.054,266.317,0,236.067,0c-33.816,0-63.873,20.305-75.595,50.206-7.214-1.692-14.606-2.547-22.059-2.547-41.936,0-78.765,27.298-89.69,65.656-24.365,3.586-42.711,23.707-42.711,48.009,0,12.353,4.961,24.224,13.59,33.15C7.052,207.384,0,224.377,0,242.264c0,32.569,22.964,60.362,55.359,68.018,6.867,39.992,41.276,70.819,83.862,74.224,4.126.328,7.765-2.756,8.096-6.897.331-4.14-2.757-7.764-6.897-8.095-37.323-2.984-67.128-30.89-70.871-66.353-.357-3.379-2.935-6.098-6.288-6.636-27.941-4.479-48.221-27.299-48.221-54.261,0-16.238,7.505-31.574,20.592-42.073,1.84-1.477,2.881-3.731,2.811-6.089s-1.243-4.547-3.168-5.911c-9.039-6.409-14.223-16.202-14.223-26.867,0-18.053,14.919-32.772,33.963-33.508,3.431-.132,6.337-2.573,7.061-5.93,7.39-34.295,39.494-59.187,76.337-59.187,8.386,0,16.676,1.281,24.643,3.807,1.941.615,4.051.417,5.845-.55s3.118-2.621,3.669-4.583c7.667-27.28,33.778-46.333,63.498-46.333,26.63,0,50.458,15.11,60.704,38.495,1.584,3.619,5.703,5.394,9.421,4.062,7.562-2.707,15.514-4.079,23.633-4.079,31.812,0,59.476,21.487,65.778,51.091.823,3.867,4.5,6.43,8.412,5.88,1.762-.25,3.548-.377,5.308-.377,19.57,0,35.493,15.072,35.493,33.599,0,7.559-2.601,14.703-7.52,20.661-2.322,2.812-2.291,6.883.07,9.66,10.6,12.465,16.204,27.534,16.204,43.579,0,31.953-22.743,59.628-55.308,67.302-2.025.477-3.762,1.772-4.798,3.577-1.035,1.805-1.277,3.959-.666,5.948,6.404,20.864-.909,36.955-8.17,46.78-12.625,17.082-35.205,28.559-56.185,28.559-2.162,0-4.344-.101-6.485-.301-4.145-.38-7.8,2.654-8.186,6.79-.386,4.135,2.655,7.8,6.789,8.186,2.604.243,5.255.366,7.881.366,25.916,0,52.718-13.604,68.28-34.659,11.608-15.705,15.869-34.155,12.317-52.656,35.4319-11.516,59.5719-43.392,59.5719-79.892Z"/></svg>`
+        },
+        relationship: {
+            token: 'relationship',
+            name: 'Relationship Status',
+            icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 66 52.022"><g><path d="M58.545,29.362c-1.875-1.082-4.052-1.579-6.199-1.436-.948-1.935-2.469-3.567-4.344-4.65-1.659-.957-3.543-1.463-5.449-1.463-3.891,0-7.516,2.092-9.458,5.458-5.147,8.913,4.238,22.789,4.64,23.375.516.752,1.333,1.225,2.252,1.296.184.013,1.175.08,2.625.08,5.771,0,16.035-1.007,19.929-7.751,3.007-5.211,1.215-11.9-3.996-14.909ZM60.808,43.271c-3.392,5.874-12.856,6.751-18.196,6.751h-.002c-1.379,0-2.306-.063-2.479-.075-.303-.023-.576-.181-.748-.432-.373-.544-9.081-13.409-4.557-21.244,1.587-2.75,4.547-4.458,7.726-4.458,1.556,0,3.094.413,4.449,1.195,1.711.987,3.061,2.537,3.8,4.362.171.425.611.681,1.065.615,1.914-.269,3.964.12,5.677,1.108,4.258,2.459,5.722,7.922,3.265,12.178Z"/><path d="M31.959,44.327c-1.347.739-2.313,1.211-2.665,1.379-.805.385-1.785.385-2.588,0-2.529-1.209-24.706-12.259-24.706-27.706C2,9.178,9.178,2,18,2c3.411,0,6.666,1.058,9.411,3.059.351.256.827.256,1.178,0,2.746-2.001,6-3.059,9.411-3.059,8.822,0,16,7.178,16,16,0,2.359-.545,4.78-1.622,7.193-.225.505.002,1.096.506,1.32.504.228,1.096-.001,1.321-.506,1.191-2.671,1.795-5.364,1.795-8.007C56,8.075,47.925,0,38,0c-3.596,0-7.038,1.046-10,3.031-2.962-1.985-6.404-3.031-10-3.031C8.075,0,0,8.075,0,18c0,16.671,23.198,28.246,25.843,29.511.669.32,1.416.489,2.157.489s1.487-.169,2.157-.489c.368-.176,1.373-.667,2.764-1.43.484-.266.662-.873.396-1.357-.266-.485-.874-.665-1.358-.397Z"/></g></svg>`
         }
     },
     availability: {
@@ -2702,6 +2708,135 @@ befriend.filters = {
                         console.error('Error updating life stage filter:', e);
 
                         toggleElClass(this, 'selected');
+                    }
+                });
+            }
+        }
+    },
+    relationship: {
+        init: function() {
+            let section = befriend.filters.sections.relationship;
+
+            const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+            const filter_options = section_el.querySelector('.filter-options');
+
+            const filter_data = befriend.filters.data.filters?.['relationship'];
+            const relationship_options = befriend.filters.data.options?.relationship || [];
+
+            // Determine if "Any" should be selected
+            let anySelected = false;
+
+            if (!filter_data) {
+                // No filter data exists at all - select Any
+                anySelected = true;
+            } else if (filter_data.items) {
+                const hasActiveSelections = filter_data.items &&
+                    Object.values(filter_data.items).some(item =>
+                        !item.deleted && !item.is_negative
+                    );
+
+                if(!hasActiveSelections) {
+                    anySelected = true;
+                }
+            }
+
+            const anyOption = {
+                id: 0,
+                token: 'any',
+                name: 'Any'
+            };
+
+            let anyButtonHtml = `
+            <div class="relationship-button any ${anySelected ? 'selected' : ''}" data-relationship-token="any">
+                <div class="name">${anyOption.name}</div>
+            </div>`;
+
+            let relationship_buttons_html = '';
+
+            for (let status of relationship_options) {
+                let selected = '';
+
+                const matchingItem = filter_data?.items ?
+                    Object.values(filter_data.items)
+                        .find(item => item.relationship_status_id === status.id) : null;
+
+                if (matchingItem && !matchingItem.is_negative && !matchingItem.deleted) {
+                    selected = 'selected';
+                }
+
+                relationship_buttons_html += `
+                <div class="relationship-button ${status.token} ${selected}" data-relationship-token="${status.token}">
+                    <div class="name">${status.name}</div>
+                </div>`;
+            }
+
+            let html = `
+            <div class="filter-option" data-filter-token="${section.token}">
+                ${befriend.filters.sendReceiveHtml(true, true, true)}
+                
+                <div class="relationship-buttons">
+                    ${anyButtonHtml}
+                    <div class="options-grid">
+                        ${relationship_buttons_html}
+                    </div>
+                </div>
+            </div>
+        `;
+
+            filter_options.innerHTML = html;
+
+            this.initEvents(section_el);
+        },
+
+        initEvents: function(section_el) {
+            const relationship_buttons = section_el.querySelectorAll('.relationship-button');
+            const anyButton = section_el.querySelector('.relationship-button[data-relationship-token="any"]');
+            const regularButtons = Array.from(relationship_buttons)
+                .filter(btn => btn.getAttribute('data-relationship-token') !== 'any');
+
+            for (let button of relationship_buttons) {
+                if (button._listener) continue;
+                button._listener = true;
+
+                button.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const relationship_token = this.getAttribute('data-relationship-token');
+                    const isAny = relationship_token === 'any';
+                    const wasSelected = elHasClass(this, 'selected');
+
+                    try {
+                        if (isAny) {
+                            if (!wasSelected) {
+                                // When selecting "Any", deselect all previously selected
+                                removeElsClass(regularButtons, 'selected');
+                                addClassEl('selected', this);
+                            }
+                        } else {
+                            toggleElClass(this, 'selected');
+
+                            // Check if all regular buttons are now selected
+                            const allSelected = regularButtons.every(btn =>
+                                elHasClass(btn, 'selected')
+                            );
+
+                            if (allSelected) {
+                                addClassEl('selected', anyButton);
+                                removeElsClass(regularButtons, 'selected');
+                            } else {
+                                removeClassEl('selected', anyButton);
+                            }
+                        }
+
+                        await befriend.auth.put('/filters/relationship', {
+                            relationship_token: relationship_token,
+                            active: !wasSelected
+                        });
+
+                    } catch (e) {
+                        console.error('Error updating relationship status filter:', e);
+                        toggleElClass(this, 'selected'); // Revert UI state on error
                     }
                 });
             }

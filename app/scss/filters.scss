@@ -1187,12 +1187,12 @@
             }
         }
 
-        &.life_stages {
+        &.life_stages, &.relationship {
             .filter-options {
                 padding: $section_padding_tb $section_padding_lr;
             }
 
-            .life-stage-buttons {
+            .life-stage-buttons, .relationship-buttons {
                 display: flex;
                 flex-direction: column;
                 gap: 12px;
@@ -1205,7 +1205,7 @@
                 }
             }
 
-            .life-stage-button {
+            .life-stage-button, .relationship-button {
                 background-color: lighten(black, 95%);
                 padding: 7px 0px;
                 border-radius: 6px;
