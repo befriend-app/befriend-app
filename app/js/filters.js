@@ -2605,7 +2605,16 @@ befriend.filters = {
                         !item.deleted && !item.is_negative
                     );
 
-                if(!hasActiveSelections) {
+                const everySelected = life_stages.every(stage => {
+                    return filter_data?.items &&
+                        Object.values(filter_data.items).some(item =>
+                            item.life_stage_id === stage.id &&
+                            !item.deleted &&
+                            !item.is_negative
+                        );
+                });
+
+                if(!hasActiveSelections || everySelected) {
                     anySelected = true;
                 }
             }
@@ -2630,7 +2639,7 @@ befriend.filters = {
                     Object.values(filter_data.items)
                         .find(item => item.life_stage_id === stage.id) : null;
 
-                if (matchingItem && !matchingItem.is_negative && !matchingItem.deleted) {
+                if (matchingItem && !matchingItem.is_negative && !matchingItem.deleted && !anySelected) {
                     selected = 'selected';
                 }
 
@@ -2677,11 +2686,19 @@ befriend.filters = {
 
                     try {
                         if (isAny) {
+                            if(wasSelected) {
+                                return false;
+                            }
+
                             if (!wasSelected) {
                                 // When selecting "Any", deselect all previously selected
                                 removeElsClass(regularButtons, 'selected');
-
                                 addClassEl('selected', this);
+
+                                await befriend.auth.put('/filters/life-stages', {
+                                    life_stage_token: life_stage_token,
+                                    active: !wasSelected
+                                });
                             }
                         } else {
                             toggleElClass(this, 'selected');
@@ -2694,16 +2711,25 @@ befriend.filters = {
                             if (allSelected) {
                                 addClassEl('selected', anyButton);
                                 removeElsClass(regularButtons, 'selected');
+
+                                await befriend.auth.put('/filters/life-stages', {
+                                    life_stage_token: life_stage_token,
+                                    active: !wasSelected
+                                });
+
+                                await befriend.auth.put('/filters/life-stages', {
+                                    life_stage_token: 'any',
+                                    active: true
+                                });
                             } else {
                                 removeClassEl('selected', anyButton);
+
+                                await befriend.auth.put('/filters/life-stages', {
+                                    life_stage_token: life_stage_token,
+                                    active: !wasSelected
+                                });
                             }
                         }
-
-                        await befriend.auth.put('/filters/life-stages', {
-                            life_stage_token: life_stage_token,
-                            active: !wasSelected
-                        });
-
                     } catch (e) {
                         console.error('Error updating life stage filter:', e);
 
@@ -2721,7 +2747,7 @@ befriend.filters = {
             const filter_options = section_el.querySelector('.filter-options');
 
             const filter_data = befriend.filters.data.filters?.['relationship'];
-            const relationship_options = befriend.filters.data.options?.relationship || [];
+            const relationship_statuses = befriend.filters.data.options?.relationship || [];
 
             // Determine if "Any" should be selected
             let anySelected = false;
@@ -2735,7 +2761,16 @@ befriend.filters = {
                         !item.deleted && !item.is_negative
                     );
 
-                if(!hasActiveSelections) {
+                const everySelected = relationship_statuses.every(status => {
+                    return filter_data?.items &&
+                        Object.values(filter_data.items).some(item =>
+                            item.relationship_status_id === status.id &&
+                            !item.deleted &&
+                            !item.is_negative
+                        );
+                });
+
+                if(!hasActiveSelections || everySelected) {
                     anySelected = true;
                 }
             }
@@ -2753,14 +2788,14 @@ befriend.filters = {
 
             let relationship_buttons_html = '';
 
-            for (let status of relationship_options) {
+            for (let status of relationship_statuses) {
                 let selected = '';
 
                 const matchingItem = filter_data?.items ?
                     Object.values(filter_data.items)
                         .find(item => item.relationship_status_id === status.id) : null;
 
-                if (matchingItem && !matchingItem.is_negative && !matchingItem.deleted) {
+                if (matchingItem && !matchingItem.is_negative && !matchingItem.deleted && !anySelected) {
                     selected = 'selected';
                 }
 
@@ -2808,10 +2843,19 @@ befriend.filters = {
 
                     try {
                         if (isAny) {
+                            if(wasSelected) {
+                                return false;
+                            }
+
                             if (!wasSelected) {
                                 // When selecting "Any", deselect all previously selected
                                 removeElsClass(regularButtons, 'selected');
                                 addClassEl('selected', this);
+
+                                await befriend.auth.put('/filters/relationship', {
+                                    relationship_token: relationship_token,
+                                    active: !wasSelected
+                                });
                             }
                         } else {
                             toggleElClass(this, 'selected');
@@ -2824,19 +2868,28 @@ befriend.filters = {
                             if (allSelected) {
                                 addClassEl('selected', anyButton);
                                 removeElsClass(regularButtons, 'selected');
+
+                                await befriend.auth.put('/filters/relationship', {
+                                    relationship_token: relationship_token,
+                                    active: !wasSelected
+                                });
+
+                                await befriend.auth.put('/filters/relationship', {
+                                    relationship_token: 'any',
+                                    active: true
+                                });
                             } else {
                                 removeClassEl('selected', anyButton);
+
+                                await befriend.auth.put('/filters/relationship', {
+                                    relationship_token: relationship_token,
+                                    active: !wasSelected
+                                });
                             }
                         }
-
-                        await befriend.auth.put('/filters/relationship', {
-                            relationship_token: relationship_token,
-                            active: !wasSelected
-                        });
-
                     } catch (e) {
-                        console.error('Error updating relationship status filter:', e);
-                        toggleElClass(this, 'selected'); // Revert UI state on error
+                        console.error('Error updating relationship filter:', e);
+                        toggleElClass(this, 'selected');
                     }
                 });
             }
