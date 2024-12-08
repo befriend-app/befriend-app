@@ -794,25 +794,25 @@
                     $bw: 1px;
                     position: absolute;
                     top: 0;
-                    right: 0;
+                    left: 0;
 
                     $dim: 22px;
                     $bc: lighten(black, 70%);
                     width: $dim;
                     height: $dim;
                     border-width: 0;
-                    border-top-left-radius: 0;
-                    border-bottom-right-radius: 0;
+                    border-top-right-radius: 0;
+                    border-bottom-left-radius: 0;
                     border-color: transparent;
                     box-sizing: border-box;
 
                     .inner {
                         width: $dim;
                         height: $dim;
-                        border-left: $bw solid $bc;
+                        border-right: $bw solid $bc;
                         border-bottom: $bw solid $bc;
-                        border-top-left-radius: 0;
-                        border-bottom-right-radius: 0;
+                        border-top-right-radius: 0;
+                        border-bottom-left-radius: 0;
                         box-sizing: border-box;
                     }
 
@@ -820,18 +820,17 @@
                         width: $dim * .6;
                         height: $dim * .6;
                     }
-
-
                 }
 
                 .chevron {
                     position: absolute;
-
-                    top: -4px;
-                    left: 8px;
+                    top: -6px;
+                    right: 6px;
+                    transform-origin: center center;
+                    transition: transform 200ms;
 
                     svg {
-                        height: 6px;
+                        height: 5px;
                     }
                 }
             }
@@ -876,6 +875,11 @@
                             .name {
                                 color: white;
                             }
+                        }
+
+                        .chevron {
+                            transform: rotate(180deg);
+                            margin-top: 6px;
                         }
                     }
 
