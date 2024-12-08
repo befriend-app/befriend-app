@@ -1119,12 +1119,12 @@
                 gap: 12px;
             }
 
-            .filter-option.verification-button {
+            .filter-option {
                 position: relative;
                 background: white;
                 border: 1px solid $color_lightgray;
                 border-radius: 12px;
-                padding: 14px 16px;
+                padding: $option_padding_tb $option_padding_lr;
                 transition: all 200ms;
 
                 &:hover {
@@ -1136,9 +1136,10 @@
                     display: flex;
                     align-items: center;
                     gap: 12px;
+                    padding: 15px 0;
                 }
 
-                .icon {
+                .verification-icon {
                     flex-shrink: 0;
                     width: 32px;
                     height: 32px;
@@ -1158,6 +1159,30 @@
                         font-size: 15px;
                         margin-bottom: 2px;
                     }
+                }
+
+                .toggle {
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    display: flex;
+                    align-items: center;
+                    border-bottom-left-radius: $option_br;
+                    border-bottom: 1px solid $border_color;
+                    border-left: 1px solid $border_color;
+                    padding: 4px 10px;
+
+                    .toggle-label {
+                        margin-left: 8px;
+                    }
+                }
+            }
+
+            .send-receive {
+                transform: translate(-$option_padding_lr, -$option_padding_tb) !important;
+
+                .send {
+                    border-top-left-radius: $option_br;
                 }
             }
         }
