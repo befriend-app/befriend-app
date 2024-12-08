@@ -1,14 +1,19 @@
 befriend.filters = {
     data: {
         filters: null,
+        options: null,
         collapsed: {},
     },
     init: function () {
         return new Promise(async (resolve, reject) => {
+            console.log("[init] Filters");
+
             try {
                 if (befriend.user.local.data?.filters?.collapsed) {
                     this.data.collapsed = befriend.user.local.data.filters.collapsed;
                 }
+
+                await befriend.filters.getData();
 
                 befriend.filters.initSections();
                 befriend.filters.initCollapsible();
@@ -21,6 +26,7 @@ befriend.filters = {
                 befriend.filters.distance.init();
                 befriend.filters.activity_types.init();
                 befriend.filters.verifications.init();
+                befriend.filters.life_stages.init();
 
                 befriend.filters.initSendReceive();
                 befriend.filters.initActiveEvents();
@@ -31,6 +37,19 @@ befriend.filters = {
                 console.error(e);
             }
             resolve();
+        });
+    },
+    getData: function () {
+        return new Promise(async (resolve, reject) => {
+            try {
+                 let response = await befriend.auth.get('/filters');
+
+                 befriend.filters.data.options = response.data;
+            } catch(e) {
+                console.error(e);
+            }
+
+            return resolve();
         });
     },
     sections: {
@@ -86,6 +105,11 @@ befriend.filters = {
             name: 'Interests',
             icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 505.736 499.736"><g id="_x32_1_Add_Love"><path d="M249.868,0C112.089,0,0,112.093,0,249.868s112.089,249.868,249.868,249.868c40.25,0,80.329-9.837,115.906-28.458,3.82-1.998,5.296-6.718,3.298-10.538s-6.707-5.315-10.542-3.294c-33.35,17.447-70.924,26.674-108.661,26.674-129.167-.001-234.252-105.086-234.252-234.252S120.702,15.617,249.868,15.617s234.251,105.085,234.251,234.251c0,37.929-8.796,74.157-26.144,107.678-1.983,3.836-.484,8.548,3.348,10.523,3.824,1.99,8.544.48,10.523-3.34,18.507-35.763,27.89-74.408,27.89-114.861C499.736,112.093,387.647,0,249.868,0h0Z"/><path d="M381.543,149.755c-30.013-30.013-78.842-30.006-108.856,0l-22.819,22.822-22.819-22.823c-30.013-30.013-78.842-30.006-108.856,0-30.084,30.084-30.092,78.795.011,108.875l126.143,126.078c1.525,1.525,3.523,2.288,5.521,2.288s3.996-.763,5.521-2.288l126.143-126.078c30.096-30.072,30.103-78.783.011-108.874h0ZM249.868,368.145l-120.622-120.557c-23.989-23.981-24-62.803-.011-86.792,23.921-23.921,62.84-23.925,86.773,0l28.34,28.343c2.928,2.928,8.113,2.928,11.042,0l28.34-28.343c23.917-23.928,62.848-23.928,86.773,0,23.985,23.985,23.982,62.807-.011,86.792l-120.624,120.557Z"/><path d="M370.52,428.759h43.636v43.632c0,4.316,3.496,7.808,7.808,7.808s7.808-3.492,7.808-7.808v-43.632h43.636c4.312,0,7.808-3.492,7.808-7.808s-3.496-7.808-7.808-7.808h-43.636v-43.64c0-4.316-3.496-7.808-7.808-7.808s-7.808,3.492-7.808,7.808v43.64h-43.636c-4.312,0-7.808,3.492-7.808,7.808s3.496,7.808,7.808,7.808h0Z"/></g></svg>`
         },
+        life_stages: {
+            token: 'life_stages',
+            name: 'Life Stage',
+            icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480.612 511.998"><path d="M353.336,304.254c-.597-6.81-4.287-12.756-10.124-16.315-7.295-4.446-16.499-4.113-23.453.851l-54.336,38.798-4.514-41.989c-1.378-12.815-12.136-22.479-25.024-22.479-12.507,0-23.227,9.344-24.933,21.734l-7.727,56.096-35.227-47.339c-4.688-6.301-12.454-9.719-20.27-8.916-7.967.817-14.724,5.649-18.073,12.924-3.349,7.276-2.626,15.55,1.934,22.134l58.567,84.569c-.742,43.266-21.788,96.837-22.005,97.383-.918,2.316-.63,4.937.77,6.998,1.4,2.061,3.73,3.295,6.221,3.295h113.93c2.637,0,5.081-1.381,6.441-3.639,1.361-2.258,1.439-5.065.208-7.396-.273-.512-26.729-51.326-24.576-112.704l75.063-66.176c5.128-4.521,7.727-11.019,7.128-17.829ZM336.262,310.802l-77.464,68.294c-1.52,1.34-2.434,3.236-2.537,5.259-2.547,50.02,12.68,93.11,21.021,112.606h-91.357v-.001c6.568-18.761,19.292-59.665,19.292-94.956,0-1.53-.467-3.024-1.338-4.281l-59.925-86.53c-2.163-3.123-1.166-6.133-.636-7.283.529-1.149,2.168-3.864,5.946-4.252,2.56-.263,5.125.86,6.669,2.934l46.201,62.086c1.822,2.449,4.945,3.555,7.904,2.794,2.957-.76,5.162-3.232,5.578-6.257l10.235-74.306c.687-4.986,5.001-8.747,10.034-8.747,5.187,0,9.516,3.889,10.071,9.046l5.89,54.783c.286,2.657,1.96,4.963,4.398,6.057,2.438,1.094,5.275.81,7.448-.741l64.807-46.275c2.038-1.457,4.742-1.556,6.884-.25,1.713,1.045,2.796,2.79,2.971,4.788s-.5871,3.905-2.0921,5.232Z"/><path d="M468.612,217.611c0-17.421-5.677-34.482-16.092-48.65,4.817-7.583,7.337-16.204,7.337-25.25,0-26.82-22.669-48.639-50.533-48.639-.222,0-.445.001-.668.004-10.156-33.16-42.274-56.599-78.83-56.599-7.579,0-15.043.987-22.268,2.941C293.669,16.054,266.317,0,236.067,0c-33.816,0-63.873,20.305-75.595,50.206-7.214-1.692-14.606-2.547-22.059-2.547-41.936,0-78.765,27.298-89.69,65.656-24.365,3.586-42.711,23.707-42.711,48.009,0,12.353,4.961,24.224,13.59,33.15C7.052,207.384,0,224.377,0,242.264c0,32.569,22.964,60.362,55.359,68.018,6.867,39.992,41.276,70.819,83.862,74.224,4.126.328,7.765-2.756,8.096-6.897.331-4.14-2.757-7.764-6.897-8.095-37.323-2.984-67.128-30.89-70.871-66.353-.357-3.379-2.935-6.098-6.288-6.636-27.941-4.479-48.221-27.299-48.221-54.261,0-16.238,7.505-31.574,20.592-42.073,1.84-1.477,2.881-3.731,2.811-6.089s-1.243-4.547-3.168-5.911c-9.039-6.409-14.223-16.202-14.223-26.867,0-18.053,14.919-32.772,33.963-33.508,3.431-.132,6.337-2.573,7.061-5.93,7.39-34.295,39.494-59.187,76.337-59.187,8.386,0,16.676,1.281,24.643,3.807,1.941.615,4.051.417,5.845-.55s3.118-2.621,3.669-4.583c7.667-27.28,33.778-46.333,63.498-46.333,26.63,0,50.458,15.11,60.704,38.495,1.584,3.619,5.703,5.394,9.421,4.062,7.562-2.707,15.514-4.079,23.633-4.079,31.812,0,59.476,21.487,65.778,51.091.823,3.867,4.5,6.43,8.412,5.88,1.762-.25,3.548-.377,5.308-.377,19.57,0,35.493,15.072,35.493,33.599,0,7.559-2.601,14.703-7.52,20.661-2.322,2.812-2.291,6.883.07,9.66,10.6,12.465,16.204,27.534,16.204,43.579,0,31.953-22.743,59.628-55.308,67.302-2.025.477-3.762,1.772-4.798,3.577-1.035,1.805-1.277,3.959-.666,5.948,6.404,20.864-.909,36.955-8.17,46.78-12.625,17.082-35.205,28.559-56.185,28.559-2.162,0-4.344-.101-6.485-.301-4.145-.38-7.8,2.654-8.186,6.79-.386,4.135,2.655,7.8,6.789,8.186,2.604.243,5.255.366,7.881.366,25.916,0,52.718-13.604,68.28-34.659,11.608-15.705,15.869-34.155,12.317-52.656,35.4319-11.516,59.5719-43.392,59.5719-79.892Z"/></svg>`
+        }
     },
     availability: {
         data: {},
@@ -2549,6 +2573,136 @@ befriend.filters = {
                     let toggle = option.querySelector('.toggle');
 
                     fireClick(toggle);
+                });
+            }
+        }
+    },
+    life_stages: {
+        init: function() {
+            let section = befriend.filters.sections.life_stages;
+
+            const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+            const filter_options = section_el.querySelector('.filter-options');
+
+            const filter_data = befriend.filters.data.filters?.['life_stages'];
+            const life_stages = befriend.filters.data.options?.life_stages || [];
+
+            // Determine if "Any" should be selected
+            let anySelected = false;
+
+            if (!filter_data) {
+                // No filter data exists at all - select Any
+                anySelected = true;
+            } else if (filter_data.items) {
+                const hasActiveSelections = filter_data.items &&
+                    Object.values(filter_data.items).some(item =>
+                        !item.deleted && !item.is_negative
+                    );
+
+                if(!hasActiveSelections) {
+                    anySelected = true;
+                }
+            }
+
+            const anyOption = {
+                id: 0,
+                token: 'any',
+                name: 'Any'
+            };
+
+            let anyButtonHtml = `
+        <div class="life-stage-button any ${anySelected ? 'selected' : ''}" data-life-stage-token="any">
+            <div class="name">${anyOption.name}</div>
+        </div>`;
+
+            let life_stages_buttons_html = '';
+
+            for (let stage of life_stages) {
+                let selected = '';
+
+                const matchingItem = filter_data?.items ?
+                    Object.values(filter_data.items)
+                        .find(item => item.life_stage_id === stage.id) : null;
+
+                if (matchingItem && !matchingItem.is_negative && !matchingItem.deleted) {
+                    selected = 'selected';
+                }
+
+                life_stages_buttons_html += `
+        <div class="life-stage-button ${stage.token} ${selected}" data-life-stage-token="${stage.token}">
+            <div class="name">${stage.name}</div>
+        </div>`;
+            }
+
+            let html = `
+    <div class="filter-option" data-filter-token="${section.token}">
+        ${befriend.filters.sendReceiveHtml(true, true, true)}
+        
+        <div class="life-stage-buttons">
+            ${anyButtonHtml}
+            <div class="options-grid">
+                ${life_stages_buttons_html}
+            </div>
+        </div>
+    </div>
+`;
+
+            filter_options.innerHTML = html;
+
+            this.initEvents(section_el);
+        },
+        initEvents: function(section_el) {
+            const life_stage_buttons = section_el.querySelectorAll('.life-stage-button');
+            const anyButton = section_el.querySelector('.life-stage-button[data-life-stage-token="any"]');
+            const regularButtons = Array.from(life_stage_buttons)
+                .filter(btn => btn.getAttribute('data-life-stage-token') !== 'any');
+
+            for (let button of life_stage_buttons) {
+                if (button._listener) continue;
+                button._listener = true;
+
+                button.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const life_stage_token = this.getAttribute('data-life-stage-token');
+                    const isAny = life_stage_token === 'any';
+                    const wasSelected = elHasClass(this, 'selected');
+
+                    try {
+                        if (isAny) {
+                            if (!wasSelected) {
+                                // When selecting "Any", deselect all previously selected
+                                removeElsClass(regularButtons, 'selected');
+
+                                addClassEl('selected', this);
+                            }
+                        } else {
+                            toggleElClass(this, 'selected');
+
+                            // Check if all regular buttons are now selected
+                            const allSelected = regularButtons.every(btn =>
+                                elHasClass(btn, 'selected')
+                            );
+
+                            if (allSelected) {
+                                addClassEl('selected', anyButton);
+                                removeElsClass(regularButtons, 'selected');
+                            } else {
+                                removeClassEl('selected', anyButton);
+                            }
+                        }
+
+                        await befriend.auth.put('/filters/life-stages', {
+                            life_stage_token: life_stage_token,
+                            active: !wasSelected
+                        });
+
+                    } catch (e) {
+                        console.error('Error updating life stage filter:', e);
+
+                        toggleElClass(this, 'selected');
+                    }
                 });
             }
         }
