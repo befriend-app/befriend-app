@@ -74,43 +74,20 @@ function fireClick(node) {
         return;
     }
 
-    // Handle checkbox special case for iOS/Android
     if (
         node.nodeName.toLowerCase() === 'input' &&
         node.getAttribute('type') === 'checkbox' &&
         (is_ios || is_android)
     ) {
         node.click();
-        return;
-    }
-
-    // Try to create touch event first
-    try {
-        const touchEvent = new TouchEvent('touchstart', {
-            bubbles: true,
-            cancelable: true,
-            view: window
-        });
-        node.dispatchEvent(touchEvent);
-    } catch (e) {
-        // Fallback to mouse events if TouchEvent is not supported
-        if (document.createEvent) {
-            const evt = document.createEvent('MouseEvents');
-            evt.initEvent('touchstart', true, false);
-            node.dispatchEvent(evt);
-
-            // Also dispatch click for better compatibility
-            const clickEvt = document.createEvent('MouseEvents');
-            clickEvt.initEvent('click', true, false);
-            node.dispatchEvent(clickEvt);
-        } else if (document.createEventObject) {
-            // For older IE versions
-            node.fireEvent('ontouchstart');
-            node.fireEvent('onclick');
-        } else if (typeof node.ontouchstart === 'function') {
-            node.ontouchstart();
-            node.onclick?.();
-        }
+    } else if (document.createEvent) {
+        var evt = document.createEvent('MouseEvents');
+        evt.initEvent('click', true, false);
+        node.dispatchEvent(evt);
+    } else if (document.createEventObject) {
+        node.fireEvent(`on${'click'}`);
+    } else if (typeof node[`on${'click'}`] == 'function') {
+        node[`on${'click'}`]();
     }
 }
 
