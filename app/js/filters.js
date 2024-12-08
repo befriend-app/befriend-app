@@ -1740,6 +1740,24 @@ befriend.filters = {
 
             return null;
         },
+        hasAnyNegatives: function () {
+            const section = befriend.filters.sections.activityTypes;
+            const filterData = befriend.filters.data.filters?.[section.token];
+
+            if(!filterData || !filterData.items) {
+                return false;
+            }
+
+            for(let k in filterData.items) {
+                let item = filterData.items[k];
+
+                if(item.is_negative) {
+                    return true;
+                }
+            }
+
+            return false;
+        },
         updateFilterData: function(activityIds, isActive, isAll) {
             const section = befriend.filters.sections.activityTypes;
             const filterData = befriend.filters.data.filters?.[section.token];
@@ -1770,7 +1788,6 @@ befriend.filters = {
             let section = befriend.filters.sections.activityTypes;
             const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
             const filter_options = section_el.querySelector('.filter-options');
-            const filter_data = befriend.filters.data.filters?.[section.token];
 
             let activities = befriend.activities.types.data;
 
@@ -1782,7 +1799,7 @@ befriend.filters = {
 
             //all activities
             activities_row.push(`
-            <div class="activity all active level_1_activity" data-token="all">
+            <div class="activity all ${this.hasAnyNegatives() ? '' : 'active'} level_1_activity" data-token="all">
                     <div class="activity_wrapper">
                         All
                     </div>
@@ -2035,11 +2052,6 @@ befriend.filters = {
                                 }
                             }
                         }
-
-                        let hasNegative = false;
-                        if(!hasNegative) {
-                            // addClassEl('active', allActivityEl);
-                        }
                     }
 
                     befriend.filters.activity_types.updateFilterData(updateIds, !wasSelected);
@@ -2048,6 +2060,13 @@ befriend.filters = {
                         await befriend.filters.activity_types.updateServer(updateTokens, !wasSelected);
                     } catch(e) {
                         console.error(e);
+                    }
+
+                    //set all to selected if no negatives
+                    if(!wasSelected) {
+                        if(!befriend.filters.activity_types.hasAnyNegatives()) {
+                            addClassEl('active', allActivityEl);
+                        }
                     }
                 });
             }
