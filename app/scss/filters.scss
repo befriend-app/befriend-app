@@ -770,6 +770,10 @@
                         text-align: center;
                         font-weight: 300;
                     }
+
+                    &.active {
+                        background-color: $brand_color_b;
+                    }
                 }
 
                 .name {
@@ -845,7 +849,7 @@
                     background: white;
 
                     &.active {
-                        background-color: $brand_color_b;
+                        //background-color: $brand_color_b;
                         border-color: darken($brand_color_a, 10%);
 
                         &.font_white {
@@ -943,8 +947,6 @@
                     }
 
                     &.active {
-                        background: $brand_color_b;
-
                         svg {
                             fill: black !important;
                         }
@@ -1046,7 +1048,7 @@
                     }
 
                     &.active {
-                        background-color: $brand_color_b;
+                        //background-color: $brand_color_b;
                         border-color: darken($brand_color_a, 10%);
                     }
 

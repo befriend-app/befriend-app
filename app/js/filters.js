@@ -946,7 +946,6 @@ befriend.filters = {
 
             this.initEvents(section_el);
         },
-
         initEvents: function(section_el) {
             const modeButtons = section_el.querySelectorAll('.mode-button');
 
@@ -1740,7 +1739,7 @@ befriend.filters = {
 
             //all activities
             activities_row.push(`
-            <div class="activity all level_1_activity" data-token="all">
+            <div class="activity all active level_1_activity" data-token="all">
                     <div class="activity_wrapper">
                         All
                     </div>
@@ -1817,6 +1816,7 @@ befriend.filters = {
             last_row.style.marginBottom = '0px';
         },
         initEvents: function () {
+            this.checkboxEvents();
             this.level1();
         },
         updateLevelHeight: async function (level_num, skip_set_prev) {
@@ -1838,6 +1838,149 @@ befriend.filters = {
 
             level_el.style.height = `${level_height}px`;
         },
+        initCheckboxState: function(parentEl, childEl) {
+            const parentCheckbox = parentEl.querySelector('.checkbox');
+            const childCheckbox = childEl.querySelector('.checkbox');
+
+            if (parentCheckbox && childCheckbox) {
+                if (elHasClass(parentCheckbox, 'checked')) {
+                    addClassEl('checked', childCheckbox);
+                } else {
+                    removeClassEl('checked', childCheckbox);
+                }
+            }
+        },
+        checkboxEvents: function () {
+            let section = befriend.filters.sections.activityTypes;
+            let section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+            let checkboxes = section_el.getElementsByClassName('checkbox');
+            let allActivityEl = section_el.querySelector('.activity.all');
+
+            for(let checkbox of checkboxes) {
+                if(checkbox._listener) {
+                    continue;
+                }
+
+                checkbox._listener = true;
+
+                checkbox.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    let activity_el = checkbox.closest('.activity');
+                    let token = activity_el.getAttribute('data-token');
+                    let activityId = activity_el.getAttribute('data-id');
+
+                    let next_level_el = null;
+                    let parent_activity = null;
+                    let level_checkboxes = null;
+
+                    // Determine level and get related elements
+                    if(elHasClass(activity_el, 'level_3_activity')) {
+                        let level_3_el = activity_el.closest('.level_3');
+                        let level_2_id = level_3_el.getAttribute('data-level-2-id');
+                        parent_activity = section_el.querySelector(`.level_2_activity[data-id="${level_2_id}"]`);
+                        level_checkboxes = level_3_el.querySelector('.level_3_container').getElementsByClassName('checkbox');
+                    } else if(elHasClass(activity_el, 'level_2_activity')) {
+                        let level_2_el = activity_el.closest('.level_2');
+                        let parent_id = level_2_el.getAttribute('data-parent-id');
+                        parent_activity = section_el.querySelector(`.level_1_activity[data-id="${parent_id}"]`);
+                        next_level_el = section_el.querySelector(`.level_3[data-level-2-id="${activityId}"]`);
+                        level_checkboxes = level_2_el.querySelector('.level_2_container').getElementsByClassName('checkbox');
+                    } else if(elHasClass(activity_el, 'level_1_activity')) {
+                        next_level_el = section_el.querySelector(`.level_2[data-parent-id="${activityId}"]`);
+                        level_checkboxes = activity_el.closest('.level_1').getElementsByClassName('checkbox');
+                    }
+
+                    let wasSelected = elHasClass(checkbox, 'checked');
+
+                    toggleElClass(checkbox, 'checked');
+
+                    if(wasSelected) {
+                        // Uncheck all child elements
+                        if(next_level_el) {
+                            befriend.filters.activity_types.toggleCheckboxes(false, false, next_level_el);
+                        }
+
+                        removeClassEl('active', allActivityEl);
+
+                        // Check if all siblings are unchecked
+                        if(level_checkboxes && parent_activity) {
+                            let all_unchecked = Array.from(level_checkboxes).every(el => !elHasClass(el, 'checked'));
+
+                            if(all_unchecked) {
+                                // Also uncheck parent if this was the last checked item
+                                removeClassEl('checked', parent_activity.querySelector('.checkbox'));
+
+                                // For level 3, also check level 1 parent
+                                if(elHasClass(activity_el, 'level_3_activity')) {
+                                    let level_2_el = parent_activity.closest('.level_2');
+                                    let level_1_id = level_2_el.getAttribute('data-parent-id');
+                                    let level_1_activity = section_el.querySelector(`.level_1_activity[data-id="${level_1_id}"]`);
+
+                                    // Check if all level 2 siblings are also unchecked
+                                    let level_2_checkboxes = level_2_el.getElementsByClassName('checkbox');
+                                    let all_level_2_unchecked = Array.from(level_2_checkboxes).every(el => !elHasClass(el, 'checked'));
+
+                                    if(all_level_2_unchecked && level_1_activity) {
+                                        removeClassEl('checked', level_1_activity.querySelector('.checkbox'));
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        // Check all child elements
+                        if(next_level_el) {
+                            befriend.filters.activity_types.toggleCheckboxes(true, false, next_level_el);
+                        }
+
+                        // Check parent activities
+                        if(parent_activity) {
+                            addClassEl('checked', parent_activity.querySelector('.checkbox'));
+
+                            // For level 3, also check level 1 parent
+                            if(elHasClass(activity_el, 'level_3_activity')) {
+                                let level_2_el = parent_activity.closest('.level_2');
+                                let level_1_id = level_2_el.getAttribute('data-parent-id');
+                                let level_1_activity = section_el.querySelector(`.level_1_activity[data-id="${level_1_id}"]`);
+
+                                if(level_1_activity) {
+                                    addClassEl('checked', level_1_activity.querySelector('.checkbox'));
+                                }
+                            }
+                        }
+
+                        let hasNegative = false; // You might want to implement negative check logic here
+                        if(!hasNegative) {
+                            // Uncomment if you want to automatically check "All" when any item is checked
+                            // addClassEl('active', allActivityEl);
+                        }
+                    }
+                });
+            }
+        },
+        toggleCheckboxes: function (is_active, is_all, parent_el) {
+            let section = befriend.filters.sections.activityTypes;
+            let section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+
+            let checkboxes = null;
+
+            if(is_all) {
+                checkboxes = section_el.getElementsByClassName('checkbox');
+            } else if(parent_el) {
+                checkboxes = parent_el.getElementsByClassName('checkbox');
+            }
+
+            if(checkboxes) {
+                for(let checkbox of checkboxes) {
+                    if(is_active) {
+                        addClassEl('checked', checkbox);
+                    } else {
+                        removeClassEl('checked', checkbox);
+                    }
+                }
+            }
+        },
         level1: function () {
             let els = befriend.els.filters.getElementsByClassName('level_1_activity');
 
@@ -1848,7 +1991,16 @@ befriend.filters = {
                     e.preventDefault();
                     e.stopPropagation();
 
+                    let token = this.getAttribute('data-token');
+
+                    if(token === 'all') {
+                        addClassEl('active', el);
+                        befriend.filters.activity_types.toggleCheckboxes(true, true);
+                        return false;
+                    }
+
                     let parent_id = this.getAttribute('data-id');
+
                     let activity = befriend.activities.types.data[parent_id];
 
                     let level_2_el = this.closest('.level_1_row').nextSibling;
@@ -1865,8 +2017,9 @@ befriend.filters = {
 
                         return;
                     } else {
-                        //remove active from any previously selected activity
-                        removeElsClass(els, 'active');
+                        //remove active from any previously selected activity except any
+                        let other_els = Array.from(els).filter(item_el => item_el.getAttribute('data-token') !== 'all');
+                        removeElsClass(other_els, 'active');
                         addClassEl('active', this);
                         befriend.filters.activity_types.selected.level_1 = activity;
                         befriend.filters.activity_types.selected.level_2 = null;
@@ -1901,6 +2054,12 @@ befriend.filters = {
                     let activities_level_2 = [];
 
                     for (let level_2_id in activity.sub) {
+                        let activity = befriend.activities.types.data[parent_id].sub[level_2_id];
+
+                        if(activity.name.toLowerCase() === 'any') {
+                            continue;
+                        }
+
                         if (
                             activities_level_2.length ===
                             befriend.variables.filter_activity_level_2_row_items
@@ -1915,8 +2074,6 @@ befriend.filters = {
 
                             activities_level_2.length = [];
                         }
-
-                        let activity = befriend.activities.types.data[parent_id].sub[level_2_id];
 
                         let image_html = '';
 
@@ -1937,6 +2094,7 @@ befriend.filters = {
 
                         activities_level_2.push(`
                             <div class="activity level_2_activity" data-id="${level_2_id}" data-token="${activity.token}">
+                                ${checkboxHtml(true)}
                                 <div class="activity_wrapper ${no_icon_class}">
                                     ${icon_html}
                                     <div class="name">${activity.name}</div>
@@ -1956,9 +2114,17 @@ befriend.filters = {
                                                 ${level_2_html}
                                             </div>`;
 
+                    const level2Activities = level_2_el.querySelectorAll('.level_2_activity');
+
+                    for(let activity_el of level2Activities) {
+                        befriend.filters.activity_types.initCheckboxState(this, activity_el);
+                    }
+
                     befriend.filters.activity_types.updateLevelHeight(2);
 
                     befriend.filters.activity_types.level2();
+
+                    befriend.filters.activity_types.checkboxEvents();
                 });
             }
         },
@@ -1974,166 +2140,109 @@ befriend.filters = {
                     e.stopPropagation();
 
                     let parent_id = this.closest('.level_2').getAttribute('data-parent-id');
-
                     let level_2_id = this.getAttribute('data-id');
-
-                    let level_2_activity =
-                        befriend.activities.types.data[parent_id].sub[level_2_id];
-
+                    let level_2_activity = befriend.activities.types.data[parent_id].sub[level_2_id];
                     let level_3_el = this.closest('.level_2_row').nextSibling;
-
                     let closest_level_2_el = this.closest('.level_2');
-
                     let prev_height_level_2 = closest_level_2_el.getAttribute('data-prev-height');
 
-                    //remove activity selection and hide level 3 if same activity clicked
-                    if (elHasClass(this, 'active')) {
-                        removeClassEl('active', this);
+                    // Check if this activity has sub-activities
+                    const hasSubActivities = level_2_activity.sub && Object.keys(level_2_activity.sub).length > 0;
 
-                        hideLevel(level_3_el);
+                    // Only handle active state and level 3 display for activities with sub-activities
+                    if (hasSubActivities) {
+                        if (elHasClass(this, 'active')) {
+                            removeClassEl('active', this);
+                            hideLevel(level_3_el);
+                            closest_level_2_el.style.height = prev_height_level_2;
+                            befriend.filters.activity_types.selected.level_2 = null;
+                            befriend.filters.activity_types.selected.level_3 = null;
+                            return;
+                        }
 
-                        closest_level_2_el.style.height = prev_height_level_2;
-
-                        befriend.filters.activity_types.selected.level_2 = null;
-                        befriend.filters.activity_types.selected.level_3 = null;
-
-                        return;
-                    } else {
-                        //remove active from any previously selected activity
                         removeElsClass(level_2_activity_els, 'active');
                         addClassEl('active', this);
-                        befriend.filters.activity_types.selected.level_2 = level_2_activity;
-                        befriend.filters.activity_types.selected.level_3 = null;
-                    }
 
-                    let prev_level_3 = befriend.els.filters.querySelector('.level_3.show');
+                        let prev_level_3 = befriend.els.filters.querySelector('.level_3.show');
 
-                    //do not proceed if no sub categories
-                    if (!level_2_activity.sub || !Object.keys(level_2_activity.sub).length) {
                         if (prev_level_3) {
-                            hideLevel(prev_level_3);
-                        }
-
-                        closest_level_2_el.style.height = prev_height_level_2;
-
-                        return;
-                    }
-
-                    //hide other level 3s if different from this one
-                    if (prev_level_3) {
-                        if (prev_level_3 !== level_3_el) {
-                            hideLevel(prev_level_3);
+                            if (prev_level_3 !== level_3_el) {
+                                hideLevel(prev_level_3);
+                                addClassEl('show', level_3_el);
+                            }
+                        } else {
                             addClassEl('show', level_3_el);
                         }
-                    } else {
-                        addClassEl('show', level_3_el);
-                    }
 
-                    level_3_el.setAttribute('data-parent-id', parent_id);
-                    level_3_el.setAttribute('data-level-2-id', level_2_id);
+                        level_3_el.setAttribute('data-parent-id', parent_id);
+                        level_3_el.setAttribute('data-level-2-id', level_2_id);
 
-                    let level_3_html = ``;
+                        let level_3_html = ``;
+                        let activities_level_3 = [];
 
-                    let activities_level_3 = [];
+                        for (let level_3_id in level_2_activity.sub) {
+                            let activity = befriend.activities.types.data[parent_id].sub[level_2_id].sub[level_3_id];
 
-                    for (let level_3_id in level_2_activity.sub) {
-                        if (
-                            activities_level_3.length ===
-                            befriend.variables.filter_activity_level_3_row_items
-                        ) {
+                            if(activity.name.toLowerCase() === 'any') {
+                                continue;
+                            }
+
+                            if (activities_level_3.length === befriend.variables.filter_activity_level_3_row_items) {
+                                let row_html = activities_level_3.join('');
+                                level_3_html += `<div class="level_3_row">${row_html}</div>`;
+                                activities_level_3.length = [];
+                            }
+
+                            let image_html = '';
+                            if (activity.image) {
+                                image_html += `<div class="image">${activity.image}</div>`;
+                            }
+
+                            let icon_html = image_html ? `<div class="icon">${image_html}</div>` : '';
+                            let no_icon_class = icon_html ? '' : 'no_icon';
+
+                            activities_level_3.push(`
+                <div class="activity level_3_activity" data-id="${level_3_id}" data-token="${activity.token}">
+                    ${checkboxHtml(true)}
+                    <div class="activity_wrapper ${no_icon_class}">
+                        ${icon_html}
+                        <div class="name">${activity.name}</div>
+                    </div>
+                </div>`);
+                        }
+
+                        if (activities_level_3.length) {
                             let row_html = activities_level_3.join('');
-
-                            level_3_html += `<div class="level_3_row">
-                                            ${row_html}
-                                        </div>`;
-
-                            activities_level_3.length = [];
+                            level_3_html += `<div class="level_3_row">${row_html}</div>`;
                         }
 
-                        let activity =
-                            befriend.activities.types.data[parent_id].sub[level_2_id].sub[
-                                level_3_id
-                                ];
+                        level_3_el.innerHTML = `<div class="level_3_container">${level_3_html}</div>`;
 
-                        let image_html = '';
-
-                        if (activity.image) {
-                            image_html += `<div class="image">
-                                        ${activity.image}
-                                    </div>`;
-                        } else if (activity.emoji) {
+                        const level3Activities = level_3_el.querySelectorAll('.level_3_activity');
+                        for(let activity_el of level3Activities) {
+                            befriend.filters.activity_types.initCheckboxState(this, activity_el);
                         }
 
-                        let icon_html = ``;
+                        befriend.filters.activity_types.updateLevelHeight(3);
+                        requestAnimationFrame(function () {
+                            befriend.filters.activity_types.updateLevelHeight(2, true);
+                        });
 
-                        if (image_html) {
-                            icon_html = `<div class="icon">${image_html}</div>`;
-                        }
-
-                        let no_icon_class = icon_html ? '' : 'no_icon';
-
-                        activities_level_3.push(`
-                            <div class="activity level_3_activity" data-id="${level_3_id}" data-token="${activity.token}">
-                                <div class="activity_wrapper ${no_icon_class}">
-                                    ${icon_html}
-                                    <div class="name">${activity.name}</div>
-                                </div>
-                            </div>`);
+                        befriend.filters.activity_types.checkboxEvents();
                     }
 
-                    if (activities_level_3.length) {
-                        let row_html = activities_level_3.join('');
-                        level_3_html += `<div class="level_3_row">
-                                            ${row_html}
-                                        </div>`;
-                    }
+                    // Always update the selected level 2 activity
+                    befriend.filters.activity_types.selected.level_2 = hasSubActivities ? level_2_activity : null;
+                    befriend.filters.activity_types.selected.level_3 = null;
 
-                    level_3_el.innerHTML = `<div class="level_3_container">
-                                                ${level_3_html}
-                                            </div>`;
-
-                    befriend.filters.activity_types.updateLevelHeight(3);
-
-                    requestAnimationFrame(function () {
-                        befriend.filters.activity_types.updateLevelHeight(2, true);
-                    });
-
-                    befriend.filters.activity_types.level3();
-                });
-            }
-        },
-        level3: function () {
-            let level_3_activity_els =
-                befriend.els.filters.getElementsByClassName('level_3_activity');
-
-            for (let i = 0; i < level_3_activity_els.length; i++) {
-                let el = level_3_activity_els[i];
-
-                el.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    let level_3_el = this.closest('.level_3');
-
-                    let parent_id = level_3_el.getAttribute('data-parent-id');
-
-                    let level_2_id = level_3_el.getAttribute('data-level-2-id');
-
-                    let level_3_id = this.getAttribute('data-id');
-
-                    let level_3_activity =
-                        befriend.activities.types.data[parent_id].sub[level_2_id].sub[level_3_id];
-
-                    //remove activity selection and hide level 3 if same activity clicked
-                    if (elHasClass(this, 'active')) {
-                        removeClassEl('active', this);
-                        befriend.filters.activity_types.selected.level_3 = null;
-                        // befriend.places.displayPlaces(befriend.filters.activity_types.selected.level_2);
-                    } else {
-                        //remove active from any previously selected activity
-                        removeElsClass(level_3_activity_els, 'active');
-                        addClassEl('active', this);
-                        befriend.filters.activity_types.selected.level_3 = level_3_activity;
+                    // Remove active from level 2 and hide any visible level 3 content
+                    if (!hasSubActivities) {
+                        removeElsClass(closest_level_2_el.getElementsByClassName('level_2_activity'), 'active');
+                        let visible_level_3 = befriend.els.filters.querySelector('.level_3.show');
+                        if (visible_level_3) {
+                            hideLevel(visible_level_3);
+                            closest_level_2_el.style.height = prev_height_level_2;
+                        }
                     }
                 });
             }
