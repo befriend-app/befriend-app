@@ -167,6 +167,11 @@ html.#{$class_confirm_me_action} {
             display: none;
         }
 
+        .icon {
+            height: 20px;
+            margin-right: 10px;
+        }
+
         svg {
             height: 12px;
             fill: $color;

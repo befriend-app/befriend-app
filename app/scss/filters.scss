@@ -1111,6 +1111,57 @@
             }
         }
 
+        &.verifications {
+            .filter-options-container {
+                padding: 10px 0;
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .filter-option.verification-button {
+                position: relative;
+                background: white;
+                border: 1px solid $color_lightgray;
+                border-radius: 12px;
+                padding: 14px 16px;
+                transition: all 200ms;
+
+                &:hover {
+                    border-color: darken($color_lightgray, 5%);
+                    background-color: darken(white, 1%);
+                }
+
+                .content {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                }
+
+                .icon {
+                    flex-shrink: 0;
+                    width: 32px;
+                    height: 32px;
+
+                    svg {
+                        width: 100%;
+                        height: 100%;
+                        fill: $brand_color_a;
+                    }
+                }
+
+                .text {
+                    flex: 1;
+
+                    .name {
+                        font-weight: 500;
+                        font-size: 15px;
+                        margin-bottom: 2px;
+                    }
+                }
+            }
+        }
+
         &.collapsed {
             .section-top {
                 border-bottom-color: transparent;
