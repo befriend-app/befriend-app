@@ -61,7 +61,7 @@ befriend.filters = {
             icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 495.114 512.0002"><path d="M454.451,247.8192h-.073c-13.284,0-24.795,7.735-30.268,18.937l-45.856-45.857c17.131-27.83,24.362-61.106,20.364-93.722-4.077-33.256-19.752-64.327-44.138-87.49C327.157,13.7342,291.226-.3898,253.256.0082c-37.944.367-73.621,15.142-100.462,41.604-10.967,10.813-19.99,23.062-26.911,36.323C55.163,85.8582,0,146.0072,0,218.8132c0,32.31,11.16,63.918,31.423,89.001,2.604,3.224,7.329,3.728,10.556,1.122,3.225-2.605,3.728-7.331,1.122-10.556-18.113-22.421-28.088-50.678-28.088-79.567,0-62.004,44.747-113.739,103.639-124.638-4.224,11.334-7.025,23.223-8.298,35.451-36.733,12.982-63.124,48.058-63.124,89.187,0,52.13,42.411,94.54,94.539,94.54,27.254,0,51.841-11.602,69.109-30.114,9.004,2.857,18.299,4.846,27.752,5.888,2.697.297,5.398.511,8.1.656-18.324,27.087-46.928,46.927-80.842,53.471-3.532.681-6.084,3.773-6.084,7.37v39.504c0,4.146,3.36,7.506,7.506,7.506h20.567c9.961,0,18.065,8.091,18.065,18.035,0,9.961-8.104,18.065-18.065,18.065h-20.567c-4.146,0-7.506,3.36-7.506,7.506v37.702c0,4.837-1.871,9.371-5.262,12.763-3.414,3.406-7.95,5.283-12.773,5.283-9.962,0-18.065-8.095-18.065-18.045v-37.703c0-4.146-3.36-7.506-7.506-7.506h-20.567c-9.951,0-18.045-8.104-18.045-18.065,0-9.944,8.095-18.035,18.045-18.035h20.567c4.146,0,7.506-3.36,7.506-7.506v-39.504c0-3.597-2.552-6.689-6.084-7.37-18.301-3.531-35.248-10.904-50.374-21.912-3.35-2.439-8.046-1.702-10.485,1.652-2.44,3.351-1.701,8.046,1.652,10.485,15.232,11.086,32.121,18.877,50.28,23.205v25.938h-13.061c-18.228,0-33.058,14.825-33.058,33.047,0,18.239,14.83,33.078,33.058,33.078h13.061v30.195c0,18.228,14.839,33.058,33.078,33.058,8.827,0,17.13-3.434,23.384-9.674,6.232-6.233,9.664-14.538,9.664-23.384v-30.195h13.061c18.239,0,33.078-14.839,33.078-33.078,0-18.222-14.839-33.047-33.078-33.047h-13.063v-25.94c38.689-9.24,70.649-34.11,89.68-67.038,23.34-1.609,46.152-8.808,66.098-21.086l45.857,45.858c-11.203,5.476-18.938,17.003-18.938,30.34,0,18.561,15.102,33.663,33.664,33.663h73.501c12.922,0,23.435-10.513,23.435-23.435v-73.502c0-18.561-15.101-33.663-33.663-33.663h0ZM141.768,298.3412c-43.851,0-79.527-35.676-79.527-79.528,0-32.4,19.481-60.307,47.33-72.694.301,38.311,15.34,74.264,42.476,101.402,12.571,12.57,27.343,22.659,43.415,29.846-14.159,13-33.002,20.974-53.694,20.974ZM473.102,354.9842c0,4.644-3.779,8.422-8.422,8.422h-73.501c-10.284,0-18.651-8.366-18.651-18.724,0-10.284,8.367-18.65,18.651-18.65,3.036,0,5.773-1.829,6.935-4.634s.52-6.033-1.626-8.181l-55.471-55.471c-2.831-2.831-6.565-4.295-10.347-4.295-2.669,0-5.364.729-7.782,2.223-24.487,15.123-53.823,21.712-82.611,18.531-29.64-3.269-56.478-16.167-77.611-37.301-24.69-24.689-38.218-57.515-38.095-92.432.124-34.913,13.891-67.646,38.764-92.169,49.205-48.512,130.719-49.308,180.808-1.732,21.866,20.77,35.922,48.625,39.575,78.432,3.594,29.313-2.921,59.211-18.346,84.187-3.608,5.845-2.756,13.3,2.072,18.129l55.47,55.47c2.147,2.146,5.374,2.788,8.181,1.626,2.805-1.161,4.634-3.899,4.634-6.935,0-10.284,8.366-18.65,18.65-18.65h.073c10.284,0,18.65,8.366,18.65,18.65v73.504Z"/><path d="M343.921,122.2012c-4.088.689-6.844,4.561-6.155,8.649,4.532,26.895-4.259,54.448-23.517,73.705-9.013,9.014-19.581,15.54-30.845,19.611.068-1.778.114-3.56.114-5.352,0-59.901-37.337-111.238-89.953-131.97.484-.508.951-1.026,1.449-1.524,32.873-32.873,86.362-32.873,119.235,0,4.909,4.909,9.192,10.386,12.729,16.279,2.134,3.555,6.744,4.705,10.3,2.572,3.554-2.134,4.706-6.745,2.572-10.3-4.168-6.943-9.21-13.392-14.985-19.168-38.728-38.726-101.74-38.726-140.468,0-38.726,38.727-38.726,101.74,0,140.468,19.364,19.363,44.798,29.045,70.234,29.045s50.87-9.682,70.234-29.045c22.685-22.686,33.041-55.14,27.704-86.815-.688-4.088-4.552-6.843-8.648-6.155h0ZM170.367,144.6202c29.757,11.514,50.929,40.415,50.929,74.193,0,1.175-.034,2.342-.087,3.504-9.516-4.097-18.434-10.002-26.194-17.763-16.518-16.517-24.729-38.238-24.648-59.934ZM235.938,227.1062c.239-2.734.37-5.498.37-8.293,0-41.627-27.039-77.044-64.467-89.64,1.983-10.5,5.974-20.687,11.957-29.954,49.287,17.38,84.707,64.424,84.707,119.593,0,3.122-.125,6.219-.351,9.293-10.685,1.724-21.634,1.39-32.216-.999h0Z"/></svg>`
         },
         activityTypes: {
-            token: 'activity-types',
+            token: 'activity_types',
             name: 'Activity Types',
             icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 415.9976 409.0015"><path d="M21.4841,152.0738C9.6343,152.0738,0,161.7081,0,173.554s9.6343,21.4841,21.4841,21.4841c4.6455,0,8.9244-1.5212,12.4427-4.037,3.335,26.6835,14.1433,51.4753,30.7089,71.7346-11.4949.4057-20.7352,9.8176-20.7352,21.4061,0,11.8498,9.6343,21.4841,21.4841,21.4841,11.7406,0,21.2852-9.4783,21.449-21.1877,6.0731,4.7625,12.5402,9.0765,19.4168,12.821l-12.2399,29.5816c-1.0765,2.6095.1599,5.6012,2.7655,6.6816.6436.2613,1.3028.3862,1.9581.3862,2.0088,0,3.9083-1.1858,4.7235-3.1555l11.9785-28.9458c3.7991,1.7201,7.6723,3.3272,11.6665,4.7235.5578.195,1.1273.2847,1.6889.2847,2.1102,0,4.0878-1.3184,4.825-3.4247.9322-2.668-.472-5.5817-3.1399-6.5178-17.5641-6.1355-33.135-15.8556-46.151-28.076l72.3431-72.347c3.3467,2.4417,7.2277,4.1775,11.448,4.9771v15.216c0,2.824,2.2896,5.1097,5.1136,5.1097s5.1136-2.2857,5.1136-5.1097v-15.1496c4.3296-.7528,8.3198-2.4768,11.7523-4.9498l6.3111,6.3072c.9985.9985,2.3052,1.4978,3.6119,1.4978,1.3106,0,2.6173-.4993,3.6158-1.4978,1.9971-1.9971,1.9971-5.2306,0-7.2277l-6.4242-6.4242c2.1258-3.1789,3.6119-6.8103,4.3179-10.7108h102.424c-.4447,11.959-2.4066,23.7347-6.0458,35.054-.862,2.6875.6163,5.5661,3.3037,6.432,2.6836.8581,5.57-.6124,6.432-3.3076,2.6914-8.3705,4.4817-16.9829,5.5583-25.7162,3.53,2.547,7.8284,4.0878,12.5051,4.0878,11.842,0,21.4802-9.6343,21.4802-21.4841s-9.6382-21.4802-21.4802-21.4802c-4.6533,0-8.9361,1.5212-12.4544,4.0448-3.0892-24.8893-12.6611-47.7932-27.0229-66.9253,10.3325-1.5524,18.3052-10.4027,18.3052-21.1565,0-11.8498-9.6382-21.4841-21.4802-21.4841-10.4885,0-19.2101,7.5592-21.0824,17.5134-19.959-16.1482-44.3958-26.9409-71.1378-30.2291,2.4768-3.5027,3.9668-7.7503,3.9668-12.353,0-11.8498-9.6382-21.4841-21.4841-21.4841s-21.4841,9.6343-21.4841,21.4841c0,4.6299,1.5056,8.8932,4.0097,12.4076-24.9049,3.1399-47.8088,12.7781-66.9292,27.2062-1.3808-10.5236-10.3091-18.6991-21.1994-18.6991-11.8459,0-21.4802,9.6343-21.4802,21.4841,0,10.6328,7.7777,19.4207,17.9346,21.1253-16.1638,19.9278-26.976,44.3373-30.3071,71.052-3.5027-2.4924-7.7621-3.9863-12.3764-3.9863ZM21.4841,184.8148c-6.2057,0-11.2608-5.0551-11.2608-11.2608s5.0551-11.2569,11.2608-11.2569,11.253,5.0512,11.253,11.2569-5.0473,11.2608-11.253,11.2608ZM173.4448,191.7187c-10.1141,0-18.3481-8.2262-18.3481-18.3442s8.234-18.3481,18.3481-18.3481,18.3442,8.234,18.3442,18.3481-8.2301,18.3442-18.3442,18.3442ZM145.3571,178.4881c.6982,3.8498,2.157,7.4305,4.236,10.5782l-72.4445,72.4445c-20.3803-22.3773-32.8034-51.5962-33.9931-83.0227h102.2016ZM197.2107,157.5462l72.3743-72.3743c20.3178,22.0614,33.1428,51.1125,34.4222,83.0929h-102.4786c-.7099-3.9044-2.196-7.5397-4.3179-10.7187ZM190.0922,150.2015c-3.374-2.43-7.2862-4.1424-11.5339-4.9147V43.0891c32.3003,1.2248,61.6244,14.2252,83.8067,34.8434l-72.2729,72.269ZM168.3312,145.2869c-4.3023.7801-8.2613,2.5275-11.6626,5.0083l-72.152-72.152c22.1589-20.6884,51.4909-33.7708,83.8145-35.0501v102.1938ZM149.593,157.6827c-2.079,3.1477-3.5378,6.7323-4.236,10.5821H43.0969c1.2755-31.8712,14.0107-60.8365,34.2115-82.8706l72.2846,72.2885ZM65.3845,295.4026c-6.2057,0-11.2608-5.0551-11.2608-11.2608s5.0551-11.2569,11.2608-11.2569,11.253,5.0512,11.253,11.2569-5.0473,11.2608-11.253,11.2608ZM325.7058,162.2971c6.2057,0,11.253,5.0512,11.253,11.2569s-5.0473,11.2608-11.253,11.2608-11.2569-5.0551-11.2569-11.2608,5.0512-11.2569,11.2569-11.2569ZM283.0535,56.7761c6.2057,0,11.253,5.0551,11.253,11.2608s-5.0473,11.253-11.253,11.253-11.2569-5.0473-11.2569-11.253,5.0512-11.2608,11.2569-11.2608ZM173.316,10.2233c6.2057,0,11.2569,5.0551,11.2569,11.2608s-5.0512,11.253-11.2569,11.253-11.2608-5.0473-11.2608-11.253,5.0551-11.2608,11.2608-11.2608ZM56.4562,63.8828c0-6.2057,5.0512-11.2608,11.2569-11.2608s11.2569,5.0551,11.2569,11.2608-5.0512,11.2569-11.2569,11.2569-11.2569-5.0512-11.2569-11.2569Z"/><path d="M5.1136,375.5428h18.7849c2.0985.0429,4.1502.0624,6.1823.0624.7567,0,1.4627-.0312,2.2116-.0351v28.3178c0,2.824,2.2857,5.1136,5.1136,5.1136,2.824,0,5.1097-2.2896,5.1097-5.1136v-28.5753c11.6353-.4954,22.1199-1.6577,31.4968-3.452v32.0272c0,2.824,2.2857,5.1136,5.1097,5.1136,2.8279,0,5.1136-2.2896,5.1136-5.1136v-34.3597c12.3608-3.2101,22.6621-7.567,31.2783-12.7898v47.1496c0,2.824,2.2857,5.1136,5.1136,5.1136,2.824,0,5.1136-2.2896,5.1136-5.1136v-54.2953c16.351-13.2696,25.1896-30.194,31.2744-47.3368v101.6322c0,2.824,2.2857,5.1136,5.1097,5.1136,2.8279,0,5.1136-2.2896,5.1136-5.1136v-135.5004c7.1224-20.5675,20.3217-33.5172,30.8493-40.9867v176.4872c0,2.824,2.2857,5.1136,5.1136,5.1136,2.824,0,5.1136-2.2896,5.1136-5.1136v-182.7241c3.0736-1.5719,5.098-2.3481,5.2501-2.4027.1677-.0702,11.998-5.0005,27.4285-4.2048v189.3316c0,2.824,2.2896,5.1136,5.1136,5.1136,2.8279,0,5.1136-2.2896,5.1136-5.1136v-187.9235c3.6275.8113,7.3369,1.9581,11.0619,3.6431,7.4656,3.3779,14.194,8.4134,20.2164,14.9585v169.3219c0,2.824,2.2857,5.1136,5.1136,5.1136,2.824,0,5.1097-2.2896,5.1097-5.1136v-155.6155c4.7976,7.9103,8.9517,17.1545,12.4154,27.7562,4.9537,15.1731,11.4402,26.8473,18.43,35.9005v91.9588c0,2.824,2.2896,5.1136,5.1136,5.1136s5.1136-2.2896,5.1136-5.1136v-80.7448c6.9936,6.4476,14.0224,10.7967,20.1891,13.6792,4.4232,2.0673,8.6475,3.5261,12.4973,4.5636v62.5021c0,2.824,2.2857,5.1136,5.1136,5.1136,2.824,0,5.1097-2.2896,5.1097-5.1136v-60.4933c5.3827.6553,8.7684.4291,8.862.4213l18.3208-.0039c2.824,0,5.1097-2.2935,5.1097-5.1136,0-2.8279-2.2896-5.1136-5.1097-5.1136l-18.6874.0195c-2.0088.0975-49.6303,2.668-70.3499-60.7507-10.3676-31.7464-26.6874-52.817-48.4953-62.623-28.5636-12.8561-55.7112-1.3457-56.5225-.9829-1.685.5929-41.3417,15.1145-54.1705,61.7337l-.9439,3.4364c-6.6114,24.195-13.6792,50.2076-36.743,68.1968-.4057.2535-.7957.5188-1.1156.8737-18.4729,13.8859-46.9233,22.744-92.8638,21.8313H5.1136c-2.8279,0-5.1136,2.2857-5.1136,5.1136,0,2.824,2.2857,5.1097,5.1136,5.1097Z"/></svg>`
         },
@@ -1723,6 +1723,23 @@ befriend.filters = {
             this.render();
             this.initEvents();
         },
+        getNegativeState(activity_type_id) {
+            activity_type_id = parseInt(activity_type_id);
+            let section = befriend.filters.sections.activityTypes;
+            const filter_data = befriend.filters.data.filters?.[section.token];
+
+            if(filter_data?.items) {
+                for(let k in filter_data?.items) {
+                    let data = filter_data?.items[k];
+
+                    if(data.activity_type_id === activity_type_id) {
+                        return data.is_negative;
+                    }
+                }
+            }
+
+            return null;
+        },
         render: function () {
             let section = befriend.filters.sections.activityTypes;
             const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
@@ -1780,9 +1797,13 @@ befriend.filters = {
 
                 let center_class = icon_html ? '' : 'center';
 
+                let negative_state = this.getNegativeState(level_1_id);
+
+                let is_checked = negative_state === null ? true : !negative_state;
+
                 activities_row.push(`
                         <div class="activity level_1_activity" data-id="${level_1_id}" data-token="${activity.token}">
-                            ${checkboxHtml(true)}
+                            ${checkboxHtml(is_checked)}
                             <div class="activity_wrapper ${center_class}">
                                 ${icon_html}
                                 <div class="name">${activity.name}</div>
@@ -1863,9 +1884,11 @@ befriend.filters = {
 
                 checkbox._listener = true;
 
-                checkbox.addEventListener('click', (e) => {
+                checkbox.addEventListener('click', async (e) => {
                     e.preventDefault();
                     e.stopPropagation();
+
+                    let updateTokens = {};
 
                     let activity_el = checkbox.closest('.activity');
                     let token = activity_el.getAttribute('data-token');
@@ -1896,10 +1919,13 @@ befriend.filters = {
 
                     toggleElClass(checkbox, 'checked');
 
+                    //set update state for server for main token
+                    updateTokens[token] = !wasSelected;
+
                     if(wasSelected) {
                         // Uncheck all child elements
                         if(next_level_el) {
-                            befriend.filters.activity_types.toggleCheckboxes(false, false, next_level_el);
+                            befriend.filters.activity_types.toggleCheckboxes(false, false, next_level_el, updateTokens);
                         }
 
                         removeClassEl('active', allActivityEl);
@@ -1910,6 +1936,9 @@ befriend.filters = {
 
                             if(all_unchecked) {
                                 // Also uncheck parent if this was the last checked item
+                                let parent_token = parent_activity.getAttribute('data-token');
+                                updateTokens[parent_token] = false;
+
                                 removeClassEl('checked', parent_activity.querySelector('.checkbox'));
 
                                 // For level 3, also check level 1 parent
@@ -1923,6 +1952,8 @@ befriend.filters = {
                                     let all_level_2_unchecked = Array.from(level_2_checkboxes).every(el => !elHasClass(el, 'checked'));
 
                                     if(all_level_2_unchecked && level_1_activity) {
+                                        let level_1_token = level_1_activity.getAttribute('data-token');
+                                        updateTokens[level_1_token] = false;
                                         removeClassEl('checked', level_1_activity.querySelector('.checkbox'));
                                     }
                                 }
@@ -1931,11 +1962,13 @@ befriend.filters = {
                     } else {
                         // Check all child elements
                         if(next_level_el) {
-                            befriend.filters.activity_types.toggleCheckboxes(true, false, next_level_el);
+                            befriend.filters.activity_types.toggleCheckboxes(true, false, next_level_el, updateTokens);
                         }
 
                         // Check parent activities
                         if(parent_activity) {
+                            let parent_token = parent_activity.getAttribute('data-token');
+                            updateTokens[parent_token] = true;
                             addClassEl('checked', parent_activity.querySelector('.checkbox'));
 
                             // For level 3, also check level 1 parent
@@ -1945,21 +1978,28 @@ befriend.filters = {
                                 let level_1_activity = section_el.querySelector(`.level_1_activity[data-id="${level_1_id}"]`);
 
                                 if(level_1_activity) {
+                                    let level_1_token = level_1_activity.getAttribute('data-token');
+                                    updateTokens[level_1_token] = true;
                                     addClassEl('checked', level_1_activity.querySelector('.checkbox'));
                                 }
                             }
                         }
 
-                        let hasNegative = false; // You might want to implement negative check logic here
+                        let hasNegative = false;
                         if(!hasNegative) {
-                            // Uncomment if you want to automatically check "All" when any item is checked
                             // addClassEl('active', allActivityEl);
                         }
+                    }
+
+                    try {
+                        await befriend.filters.activity_types.updateServer(updateTokens, !wasSelected);
+                    } catch(e) {
+                        console.error(e);
                     }
                 });
             }
         },
-        toggleCheckboxes: function (is_active, is_all, parent_el) {
+        toggleCheckboxes: function (is_active, is_all, parent_el, updateTokens = {}) {
             let section = befriend.filters.sections.activityTypes;
             let section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
 
@@ -1973,6 +2013,11 @@ befriend.filters = {
 
             if(checkboxes) {
                 for(let checkbox of checkboxes) {
+                    let token = checkbox.closest('.activity').getAttribute('data-token');
+
+                    //for server update
+                    updateTokens[token] = is_active;
+
                     if(is_active) {
                         addClassEl('checked', checkbox);
                     } else {
@@ -1987,15 +2032,22 @@ befriend.filters = {
             for (let i = 0; i < els.length; i++) {
                 let el = els[i];
 
-                el.addEventListener('click', function (e) {
+                el.addEventListener('click', async function (e) {
                     e.preventDefault();
                     e.stopPropagation();
 
                     let token = this.getAttribute('data-token');
 
                     if(token === 'all') {
-                        addClassEl('active', el);
-                        befriend.filters.activity_types.toggleCheckboxes(true, true);
+                        if(!elHasClass(el, 'active')) {
+                            addClassEl('active', el);
+                            befriend.filters.activity_types.toggleCheckboxes(true, true);
+
+                            await befriend.filters.activity_types.updateServer({
+                                [token]: true
+                            }, true);
+                        }
+
                         return false;
                     }
 
@@ -2092,9 +2144,13 @@ befriend.filters = {
 
                         let no_icon_class = icon_html ? '' : 'no_icon';
 
+                        let negative_state = befriend.filters.activity_types.getNegativeState(level_2_id);
+
+                        let is_checked = negative_state === null ? true : !negative_state;
+
                         activities_level_2.push(`
                             <div class="activity level_2_activity" data-id="${level_2_id}" data-token="${activity.token}">
-                                ${checkboxHtml(true)}
+                                ${checkboxHtml(is_checked)}
                                 <div class="activity_wrapper ${no_icon_class}">
                                     ${icon_html}
                                     <div class="name">${activity.name}</div>
@@ -2201,9 +2257,13 @@ befriend.filters = {
                             let icon_html = image_html ? `<div class="icon">${image_html}</div>` : '';
                             let no_icon_class = icon_html ? '' : 'no_icon';
 
+                            let negative_state = befriend.filters.activity_types.getNegativeState(level_3_id);
+
+                            let is_checked = negative_state === null ? true : !negative_state;
+
                             activities_level_3.push(`
                 <div class="activity level_3_activity" data-id="${level_3_id}" data-token="${activity.token}">
-                    ${checkboxHtml(true)}
+                    ${checkboxHtml(is_checked)}
                     <div class="activity_wrapper ${no_icon_class}">
                         ${icon_html}
                         <div class="name">${activity.name}</div>
@@ -2247,6 +2307,20 @@ befriend.filters = {
                 });
             }
         },
+        updateServer: function (updateTokens, is_active) {
+            return new Promise(async (resolve, reject) => {
+                 try {
+                      await befriend.auth.put(`/filters/activity-types`, {
+                          activities: updateTokens,
+                          active: is_active
+                      });
+                 } catch(e) {
+                     console.error(e);
+                 }
+
+                 resolve();
+            });
+        }
     },
     initSections: async function () {
         let sections_el = befriend.els.filters.querySelector('.sections');
