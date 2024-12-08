@@ -1053,14 +1053,14 @@ befriend.filters = {
                     rating.current_rating = parseFloat(filter_data.filter_value);
                 }
 
-                const isActive = !filter_data || filter_data.is_active;
+                const isActive = typeof filter_data?.is_active !== 'undefined' ? filter_data.is_active : false;
 
                 reviewsHtml += `
                     <div class="filter-option review review-${key}" data-filter-token="${rating.token}">
                         ${befriend.filters.sendReceiveHtml(true, true)}
                         
                         <div class="toggle-wrapper">
-                                ${toggleHtml(true, isActive ? 'On' : 'Off', 'toggle-24')}
+                                ${toggleHtml(false, isActive ? 'On' : 'Off', 'toggle-24')}
                         </div>
                             
                         <div class="filter-option-name">
@@ -2464,6 +2464,14 @@ befriend.filters = {
         }
     },
     verifications: {
+        options: {
+            in_person: {
+                token: 'verification_in_person'
+            },
+            linkedin: {
+                token: 'verification_linkedin'
+            }
+        },
         init: function() {
             let section = befriend.filters.sections.verifications;
 
@@ -2471,12 +2479,15 @@ befriend.filters = {
             const filter_options = section_el.querySelector('.filter-options');
 
             // Get stored filter values if they exist
-            const linkedinFilter = befriend.filters.data.filters?.['verification_linkedin'];
-            const inPersonFilter = befriend.filters.data.filters?.['verification_in_person'];
+            const inPersonFilter = befriend.filters.data.filters?.[this.options.in_person.token];
+            const linkedinFilter = befriend.filters.data.filters?.[this.options.linkedin.token];
+
+            let inPersonActive = typeof inPersonFilter?.is_active !== 'undefined' ? inPersonFilter.is_active : false;
+            let linkedInActive = typeof linkedinFilter?.is_active !== 'undefined' ? linkedinFilter.is_active : false;
 
             const html = `
                 <div class="filter-options-container">
-                    <div class="filter-option verification-button" data-filter-token="verification_in_person">
+                    <div class="filter-option verification-button" data-filter-token="${this.options.in_person.token}">
                         ${befriend.filters.sendReceiveHtml(true, true)}
 
                         <div class="content">
@@ -2489,10 +2500,10 @@ befriend.filters = {
                                 <div class="name">In-Person</div>
                             </div>
 
-                            ${toggleHtml(true, 'On', 'toggle-24')}
+                            ${toggleHtml(inPersonActive, inPersonActive ? 'On': 'Off', 'toggle-24')}
                         </div>
                     </div>
-                    <div class="filter-option verification-button" data-filter-token="verification_linkedin">
+                    <div class="filter-option verification-button" data-filter-token="${this.options.linkedin.token}">
                         ${befriend.filters.sendReceiveHtml(true, true)}
 
                         <div class="content">
@@ -2505,8 +2516,7 @@ befriend.filters = {
                                 <div class="name">LinkedIn</div>
                             </div>
                             
-                            ${toggleHtml(true, 'On', 'toggle-24')}
-
+                            ${toggleHtml(linkedInActive, linkedInActive ? 'On': 'Off', 'toggle-24')}
                         </div>
                     </div>
                 </div>
@@ -2516,12 +2526,12 @@ befriend.filters = {
 
             // Set initial states based on stored values
             if (inPersonFilter && !inPersonFilter.is_active) {
-                const toggle = filter_options.querySelector('[data-filter-token="verification_in_person"] .toggle');
+                const toggle = filter_options.querySelector(`[data-filter-token="${this.options.in_person.token}"] .toggle`);
                 removeClassEl('active', toggle);
             }
 
             if (linkedinFilter && !linkedinFilter.is_active) {
-                const toggle = filter_options.querySelector('[data-filter-token="verification_linkedin"] .toggle');
+                const toggle = filter_options.querySelector(`[data-filter-token="${this.options.linkedin.token}"] .toggle`);
                 removeClassEl('active', toggle);
             }
 
@@ -2825,6 +2835,35 @@ befriend.filters = {
             if (!filterToken) continue;
 
             const filterData = befriend.filters.data?.filters?.[filterToken];
+
+            //skip reviews/verifications if not set
+            let skipReview = false;
+            let skipVerification = false;
+
+            for(let k in befriend.filters.reviews.ratings) {
+                let data = befriend.filters.reviews.ratings[k];
+
+                if(data.token === filterToken) {
+                    if(typeof filterData?.is_active === 'undefined') {
+                        skipReview = true;
+                        break;
+                    }
+                }
+            }
+
+            for(let k in befriend.filters.verifications.options) {
+                let data = befriend.filters.verifications.options[k];
+
+                if(data.token === filterToken) {
+                    if(typeof filterData?.is_active === 'undefined') {
+                        skipVerification = true;
+                    }
+                }
+            }
+
+            if(skipReview || skipVerification) {
+                continue;
+            }
 
             // Skip send/receive toggles
             if (toggle.closest('.send-receive')) continue;
