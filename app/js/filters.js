@@ -1844,8 +1844,17 @@ befriend.filters = {
 
                 let is_checked = negative_state === null ? true : !negative_state;
 
+                let chevron_html = '';
+
+                if(activity.sub && Object.keys(activity.sub).length) {
+                    chevron_html = `<div class="chevron">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360.0005 192.001"><path id="Down_Arrow" d="M176.001,192.001c-4.092,0-8.188-1.564-11.312-4.688L4.689,27.313C-1.563,21.061-1.563,10.937,4.689,4.689s16.376-6.252,22.624,0l148.688,148.688L324.689,4.689c6.252-6.252,16.376-6.252,22.624,0s6.252,16.376,0,22.624l-160,160c-3.124,3.124-7.22,4.688-11.312,4.688h0Z"/></svg>
+                                    </div>`;
+                }
+
                 activities_row.push(`
                         <div class="activity level_1_activity" data-id="${level_1_id}" data-token="${activity.token}">
+                            ${chevron_html}
                             ${checkboxHtml(is_checked)}
                             <div class="activity_wrapper ${center_class}">
                                 ${icon_html}
@@ -1944,8 +1953,6 @@ befriend.filters = {
                     e.preventDefault();
                     e.stopPropagation();
 
-                    console.log("checkbox click")
-
                     let updateIds = [];
                     let updateTokens = {};
 
@@ -1986,6 +1993,20 @@ befriend.filters = {
                         // Uncheck all child elements
                         if(next_level_el) {
                             befriend.filters.activity_types.toggleCheckboxes(false, false, next_level_el, updateTokens, updateIds);
+                        }
+
+                        if(activityId in befriend.activities.types.data) {
+                            let activity = befriend.activities.types.data[activityId];
+
+                            if(activity.sub) {
+                                for(let sub_id in activity.sub) {
+                                    updateTokens[sub_id] = true;
+
+                                    if(!(updateIds.includes(parseInt(sub_id)))) {
+                                        updateIds.push(parseInt(sub_id));
+                                    }
+                                }
+                            }
                         }
 
                         removeClassEl('active', allActivityEl);
@@ -2234,8 +2255,17 @@ befriend.filters = {
 
                         let is_checked = negative_state === null ? true : !negative_state;
 
+                        let chevron_html = '';
+
+                        if(activity.sub && Object.keys(activity.sub).length) {
+                            chevron_html = `<div class="chevron">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360.0005 192.001"><path id="Down_Arrow" d="M176.001,192.001c-4.092,0-8.188-1.564-11.312-4.688L4.689,27.313C-1.563,21.061-1.563,10.937,4.689,4.689s16.376-6.252,22.624,0l148.688,148.688L324.689,4.689c6.252-6.252,16.376-6.252,22.624,0s6.252,16.376,0,22.624l-160,160c-3.124,3.124-7.22,4.688-11.312,4.688h0Z"/></svg>
+                                            </div>`;
+                        }
+
                         activities_level_2.push(`
                             <div class="activity level_2_activity" data-id="${level_2_id}" data-token="${activity.token}">
+                                ${chevron_html}
                                 ${checkboxHtml(is_checked)}
                                 <div class="activity_wrapper ${no_icon_class}">
                                     ${icon_html}
