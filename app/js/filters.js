@@ -2708,7 +2708,6 @@ befriend.filters = {
 
             this.initEvents(section_el);
         },
-
         initEvents: function(section_el) {
             const sectionData = befriend.filters.data.options?.['instruments'];
 
@@ -2723,44 +2722,133 @@ befriend.filters = {
                 search_input.addEventListener('input', () => {
                     clearTimeout(debounceTimer);
 
+                    let timeout = this.value ? 200 : 0;
+
                     debounceTimer = setTimeout(async () => {
                         const value = search_input.value.trim();
                         if (value.length < sectionData.autoComplete.minChars) {
-                            autocomplete_list.innerHTML = '';
+                            befriend.filters.instruments.toggleAutocomplete(false);
                             return;
                         }
 
                         try {
-                            const response = await befriend.auth.get('/filters/instruments/search', {
-                                query: value
+                            const response = await befriend.auth.get(sectionData.autoComplete.endpoint, {
+                                search: value
                             });
 
                             if (response.data.items?.length) {
-                                const items_html = response.data.items.map(item => `
-                                <div class="item" data-token="${item.token}">
-                                    <div class="name-meta">
-                                        <div class="name">${item.name}</div>
-                                    </div>
-                                </div>
-                            `).join('');
+                                // Filter out items that already exist in filters data
+                                const storedFilters = befriend.filters.data.filters?.instruments;
+                                const existingTokens = new Set();
 
-                                autocomplete_list.innerHTML = items_html;
+                                if (storedFilters?.items) {
+                                    for (let k in storedFilters.items) {
+                                        const item = storedFilters.items[k];
+                                        if (!item.deleted) {
+                                            let instrument = sectionData?.options.find(opt => opt.id === item.instrument_id);
+                                            if (instrument) {
+                                                existingTokens.add(instrument.token);
+                                            }
+                                        }
+                                    }
+                                }
+
+                                const filteredItems = response.data.items.filter(item => !existingTokens.has(item.token));
+
+                                if (filteredItems.length) {
+                                    const items_html = filteredItems.map(item => `
+                            <div class="item" data-token="${item.token}">
+                                <div class="name-meta">
+                                    <div class="name">${item.name}</div>
+                                </div>
+                            </div>
+                        `).join('');
+
+                                    autocomplete_list.innerHTML = items_html;
+                                    befriend.filters.instruments.toggleAutocomplete(true);
+                                } else {
+                                    autocomplete_list.innerHTML = '<div class="no-results">No results found</div>';
+                                    befriend.filters.instruments.toggleAutocomplete(true);
+                                }
                             } else {
                                 autocomplete_list.innerHTML = '<div class="no-results">No results found</div>';
+                                befriend.filters.instruments.toggleAutocomplete(true);
                             }
                         } catch (e) {
                             console.error('Error searching instruments:', e);
                         }
-                    }, 300);
+                    }, timeout);
+                });
+
+                console.log("autocomplete list")
+
+                autocomplete_list.addEventListener('click', async (e) => {
+                    console.log("here")
+                    const item = e.target.closest('.item');
+                    if (!item) return;
+
+                    const token = item.getAttribute('data-token');
+
+                    try {
+                        befriend.toggleSpinner(true);
+
+                        let r = await befriend.auth.put('/filters/instruments', {
+                            token,
+                            active: true
+                        });
+
+                        // Get current mine items
+                        const storedFilters = befriend.filters.data.filters?.instruments;
+
+                        if (!storedFilters?.items) {
+                            befriend.filters.data.filters.instruments = {
+                                items: {}
+                            }
+                        }
+
+                        let option = sectionData?.options.find(opt => opt.token === token);
+
+                        befriend.filters.data.filters.instruments.items[token] = {
+                            token,
+                            instrument_id: option.id,
+                            name: option.name,
+                            is_active: true
+                        }
+
+                        // Close autocomplete and clear input
+                        befriend.filters.instruments.toggleAutocomplete(false);
+                        search_input.value = '';
+
+                        // Switch to mine category and show updated items
+                        fireClick(category_mine);
+
+                        requestAnimationFrame(() => {
+                            befriend.filters.updateSectionHeights();
+                        });
+
+                        befriend.toggleSpinner(false);
+                    } catch (e) {
+                        console.error('Error adding instrument:', e);
+                        befriend.toggleSpinner(false);
+                    }
                 });
 
                 // Focus/blur handling
                 search_input.addEventListener('focus', () => {
                     addClassEl('input-focus', input_container);
+
+                    const value = search_input.value.trim();
+                    if (value.length >= sectionData.autoComplete.minChars) {
+                        befriend.filters.instruments.toggleAutocomplete(true);
+                    }
                 });
 
                 search_input.addEventListener('blur', () => {
                     removeClassEl('input-focus', input_container);
+
+                    setTimeout(function () {
+                        befriend.filters.instruments.toggleAutocomplete(false);
+                    }, 100);
                 });
             }
 
@@ -3035,7 +3123,29 @@ befriend.filters = {
             }
 
             items_container.innerHTML = items_html;
-        }
+        },
+        toggleAutocomplete: function(show) {
+            let section = befriend.filters.sections.instruments;
+            const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+
+            const autocomplete_container = section_el.querySelector('.autocomplete-container');
+            const autocomplete_list = section_el.querySelector('.autocomplete-list');
+
+            if (!autocomplete_list) return;
+
+            if (show) {
+                addClassEl('autocomplete-shown', autocomplete_container);
+
+                // Reset scroll position
+                autocomplete_list.scrollTop = 0;
+
+                // Ensure input stays focused
+                const search_input = section_el.querySelector('.search-input');
+                if (search_input) search_input.focus();
+            } else {
+                removeClassEl('autocomplete-shown', autocomplete_container);
+            }
+        },
     },
     initSections: async function () {
         let sections_el = befriend.els.filters.querySelector('.sections');

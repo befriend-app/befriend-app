@@ -1205,6 +1205,42 @@
                 gap: 0;
             }
 
+            .autocomplete-container {
+                position: relative;
+                height: fit-content;
+
+                &.autocomplete-shown {
+                    $bc: lighten(black, 60%);
+
+                    .autocomplete-list {
+                        max-height: 180px;
+                        height: fit-content;
+                        overflow-y: scroll;
+                        border: 1px solid $bc;
+                        border-top: 1px transparent;
+                        visibility: visible;
+                        z-index: 10;
+                        display: flex !important;
+                    }
+
+                    .search-input {
+                        //border-bottom: 1px solid $color_gray;
+                        border-bottom-left-radius: 0 !important;
+                        border-bottom-right-radius: 0 !important;
+                    }
+
+                    .input-container {
+                        border-bottom-left-radius: 0 !important;
+                        border-bottom-right-radius: 0 !important;
+                        border: 1px solid $input_focus_color !important;
+                    }
+
+                    .search-icon-container {
+                        border-bottom-right-radius: 0 !important;
+                    }
+                }
+            }
+
             .search-container {
                 $br: 6px;
 
@@ -1256,17 +1292,15 @@
                     left: 0;
                     right: 0;
                     background: white;
-                    border: 1px solid $color_lightgray;
-                    border-top: none;
-                    border-radius: 0 0 4px 4px;
-                    max-height: 200px;
-                    overflow-y: auto;
+                    border: 1px transparent;
+                    border-radius: $br;
+                    border-top-left-radius: 0;
+                    border-top-right-radius: 0;
+                    height: 0;
+                    overflow-y: scroll;
                     z-index: 10;
                     display: none;
-
-                    &.show {
-                        display: block;
-                    }
+                    flex-direction: column;
 
                     .item {
                         padding: 8px 12px;
