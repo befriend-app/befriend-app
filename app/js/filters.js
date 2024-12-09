@@ -2692,23 +2692,16 @@ befriend.filters = {
 
             filter_options.innerHTML = html;
 
-            let activeItems = [];
+            let items = [];
 
             // Initialize items for "mine" category
             if (storedFilters?.items) {
-                activeItems = Object.values(storedFilters.items)
-                    .filter(item => !item.deleted && !item.is_negative)
-                    .map(item => {
-                        const option = sectionData?.options.find(opt => opt.id === item.instrument_id);
-                        return option ? {
-                            token: option.token,
-                            name: option.name
-                        } : null;
-                    })
+                items = Object.values(storedFilters.items)
+                    .filter(item => !item.deleted)
                     .filter(Boolean);
             }
 
-            this.renderItems(section_el, activeItems, true);
+            this.renderItems(section_el, items, true);
 
             requestAnimationFrame(() => {
                 befriend.filters.updateSectionHeights();
@@ -2788,14 +2781,7 @@ befriend.filters = {
                         if (category === 'mine') {
                             const storedFilters = befriend.filters.data.filters?.instruments || {};
                             items = Object.values(storedFilters.items || {})
-                                .filter(item => !item.deleted && !item.is_negative)
-                                .map(item => {
-                                    const option = sectionData?.options.find(opt => opt.id === item.instrument_id);
-                                    return option ? {
-                                        token: option.token,
-                                        name: option.name
-                                    } : null;
-                                })
+                                .filter(item => !item.deleted)
                                 .filter(Boolean);
                         } else {
                             items = sectionData?.options.filter(item => item.category === category);
@@ -2814,6 +2800,7 @@ befriend.filters = {
 
             // Item selection handling
             const items_container = section_el.querySelector('.items-container');
+
             if (items_container) {
                 items_container.addEventListener('click', async (e) => {
                     const item = e.target.closest('.item');
@@ -2842,7 +2829,6 @@ befriend.filters = {
                     if (elHasClass(item, 'mine')) return;
 
                     const token = item.getAttribute('data-token');
-                    const name = item.querySelector('.name').textContent;
 
                     try {
                         // Remove item from current view
@@ -2868,7 +2854,8 @@ befriend.filters = {
                         befriend.filters.data.filters.instruments.items[token] = {
                             token,
                             instrument_id: option.id,
-                            name: option.name
+                            name: option.name,
+                            is_active: true
                         }
 
                         fireClick(category_mine);
@@ -2888,32 +2875,48 @@ befriend.filters = {
         renderItems: function(section_el, items, is_mine) {
             const storedFilters = befriend.filters.data.filters?.instruments;
             const sectionData = befriend.filters.data.options?.['instruments'];
-
             const items_container = section_el.querySelector('.items');
 
             let items_html = '';
+            let hasActiveItems = false;
 
             if (is_mine) {
+                const hasActiveNonDeletedItems = storedFilters?.items &&
+                    Object.values(storedFilters.items)
+                        .some(item => !item.deleted && item.is_active);
+
                 items_html = `
-                <div class="item any ${!items?.length ? 'active' : ''}" data-token="any">
+            <div class="item any ${!hasActiveNonDeletedItems ? 'active' : ''}" data-token="any">
                     <div class="name">Any</div>
                 </div>`;
             }
 
             let added_item_tokens = {};
 
-            if(storedFilters?.items) {
+            if (storedFilters?.items) {
                 for(let k in storedFilters.items) {
-                    let instrument = sectionData?.options.find(opt => opt.id === storedFilters.items[k].instrument_id);
-                    added_item_tokens[instrument.token] = storedFilters.items[k];
+                    let item = storedFilters.items[k];
+
+                    if(!item.deleted && item.is_active) {
+                        let instrument = sectionData?.options.find(opt => opt.id === storedFilters.items[k].instrument_id);
+
+                        if(instrument) {
+                            added_item_tokens[instrument.token] = storedFilters.items[k];
+                            hasActiveItems = true;
+                        }
+                    }
                 }
             }
 
             if (items?.length) {
                 items_html += items.map(item => {
                     if (is_mine) {
+                        console.log(item);
+
+                        const isActive = !item.deleted && item.is_active;
+
                         return `
-                        <div class="item mine" data-token="${item.token}">
+                        <div class="item mine ${isActive ? 'active': ''} data-token="${item.token}">
                             <div class="content">
                                 <div class="name">${item.name}</div>
                                 <div class="remove">

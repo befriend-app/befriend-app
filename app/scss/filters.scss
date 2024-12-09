@@ -1351,19 +1351,34 @@
                         background: lighten(black, 97%);
                         font-size: 15px;
 
+                        &.any {
+                            padding: 8px 0;
+                            width: 100%;
+                            text-align: center;
+                        }
+
+
                         &:hover {
                             border-color: darken($color_lightgray, 10%);
                             background: lighten(black, 96%);
                         }
 
+                        &.active {
+                            background-color: $brand_color_b !important;
+                            border-color: darken($brand_color_a, 10%);
+                        }
+
                         &.mine {
                             cursor: default;
                             background: white;
+                            padding: 8px 0;
+                            width: 100%;
 
                             .content {
                                 display: flex;
                                 align-items: center;
                                 gap: 8px;
+                                text-align: center;
                             }
 
                             .name-favorite {
@@ -1413,15 +1428,10 @@
 
                             .remove {
                                 cursor: pointer;
-                                opacity: 0.5;
                                 transition: opacity 200ms;
                                 position: absolute;
                                 top: -9px;
                                 right: -9px;
-
-                                &:hover {
-                                    opacity: 1;
-                                }
 
                                 svg {
                                     height: 18px;
