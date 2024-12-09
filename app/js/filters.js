@@ -26,6 +26,7 @@ befriend.filters = {
                 befriend.filters.distance.init();
                 befriend.filters.activity_types.init();
                 befriend.filters.verifications.init();
+                befriend.filters.instruments.init();
                 befriend.filters.life_stages.init();
                 befriend.filters.relationship.init();
                 befriend.filters.languages.init();
@@ -59,6 +60,11 @@ befriend.filters = {
         });
     },
     sections: {
+        instruments: {
+            token: 'instruments',
+            name: 'Instruments',
+            icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512.0001 511.846"><path d="M488.9347,328.303c-3.9248-5.1988-5.3417-11.9144-3.8888-18.4131,1.6899-7.5056,2.4059-15.2383,2.1279-22.9809-1.3769-38.9381-27.6517-72.2395-64.6618-82.997v-112.7885l13.1074-23.5808c.62-1.1149.945-2.3689.945-3.6438V18.4981c0-10.1995-8.2976-18.4981-18.4981-18.4981h-41.341c-10.1995,0-18.4971,8.2976-18.4971,18.4981v45.3998c0,1.2749.325,2.5289.945,3.6438l13.1114,23.5868v112.7735c-14.4733,4.2218-27.7436,12.1014-38.4381,22.7929v-24.4898h7.4606c4.1418,0,7.4996-3.3578,7.4996-7.4996s-3.3578-7.4996-7.4996-7.4996h-189.8607c-4.1418,0-7.4996,3.3578-7.4996,7.4996s3.3578,7.4996,7.4996,7.4996h6.8387v56.7712c-32.3854,27.1607-50.8875,66.7107-50.8875,109.0927,0,34.4763,12.3204,66.1277,32.7854,90.7896l-23.5028,40.315c-2.0859,3.5788-.876,8.1696,2.7019,10.2565,1.1879.692,2.4869,1.0209,3.7708,1.0209,2.5809,0,5.0928-1.3329,6.4857-3.7238l21.204-36.3722c25.6367,24.8048,60.533,40.096,98.9382,40.096,16.5752,0,32.8164-2.8249,48.2726-8.3956,3.8968-1.4039,5.9167-5.7017,4.5128-9.5985-1.4039-3.8958-5.7007-5.9167-9.5985-4.5128-13.8203,4.9807-28.3506,7.5066-43.1869,7.5066-70.2396,0-127.3838-57.1442-127.3838-127.3838-1.3889-68.5977,58.7341-128.4877,127.3838-127.3838,22.5639,0,44.4948,5.9207,63.8279,17.1432-3.9528,10.2525-6.0497,21.216-6.0497,32.3244,0,6.8487.782,13.6893,2.3219,20.328,1.4089,6.0957-.006,12.5264-3.8788,17.6401-1.1,1.4509-2.1519,2.9279-3.1768,4.4188-11.7104-17.3601-31.6174-28.3366-53.0444-28.3366-35.2163,0-63.8669,28.6506-63.8669,63.8669s28.6506,63.8669,63.8669,63.8669c12.6944,0,25.0818-3.8608,35.5193-10.8335,11.0145,51.8505,57.2012,90.7456,112.1075,90.7446,64.8888.08,114.9144-53.6544,114.5914-114.5994-.001-25.1078-7.9756-48.9486-23.0639-68.9436h0ZM397.3972,310.3258c-3.4808,0-6.8637.42-10.1125,1.1899v-19.0731h20.229v19.0741c-3.2508-.771-6.6347-1.191-10.1165-1.191ZM387.2836,254.3356h20.229v23.1089h-20.229v-23.1089ZM387.2836,239.3363v-23.0989h20.229v23.0989h-20.229ZM407.5127,96.6833v28.3376h-20.229v-28.3376h20.229ZM407.5127,140.0212v23.1089h-20.229v-23.1089h20.229ZM407.5127,178.1293v23.1089h-20.229v-23.1089h20.229ZM373.2283,18.4981c0-1.9289,1.5689-3.4988,3.4978-3.4988h41.341c1.9289,0,3.4988,1.5689,3.4988,3.4988v43.4559l-10.9655,19.727h-26.4077l-10.9645-19.726V18.4981ZM318.847,243.5461c-11.5674-6.4307-23.9308-11.1715-36.7582-14.1493v-27.1887h36.7582v41.338ZM208.8524,202.2081v29.4026c-12.5024,3.7348-24.4368,9.2046-35.5683,16.3352v-45.7368h35.5683v-.001ZM223.8516,228.0199v-25.8107h43.2379v24.5458c-5.7157-.695-11.4924-1.0669-17.3092-1.0669-8.8046-.001-17.4681.789-25.9287,2.3319ZM249.7804,416.9376c-26.9457,0-48.8676-21.9219-48.8676-48.8676s21.9219-48.8676,48.8676-48.8676c18.9791,0,36.3982,11.2555,44.3348,28.3126-8.1446,16.8742-12.2754,36.5412-11.1184,56.3783-9.0516,8.4296-20.724,13.0444-33.2164,13.0444h0ZM468.1387,467.3632c-18.1821,18.4761-44.2438,29.6315-70.7306,29.4856-54.4493-.005-99.0442-44.0159-99.6001-98.5492-.245-21.7959,6.6927-43.2849,20.148-61.12,6.5677-8.6716,8.9506-19.6341,6.5367-30.0815-1.2839-5.5347-1.9359-11.2354-1.9359-16.9442,0-17.1741,5.9657-33.9513,16.7982-47.2397,8.6736-10.6395,20.14-18.6981,32.9294-23.2699v98.6182c-11.3124,7.9366-18.7281,21.066-18.7281,35.9032,0,16.1452,8.8346,30.9395,23.0569,38.6091,3.6468,1.9669,8.1946.604,10.1605-3.0418s.604-8.1946-3.0418-10.1605c-9.3615-5.0478-15.1763-14.7833-15.1763-25.4067,0-15.9032,12.9384-28.8406,28.8416-28.8406s28.8416,12.9374,28.8416,28.8406c0,10.7635-5.9277,20.558-15.4692,25.5627-3.6678,1.9239-5.0828,6.4577-3.1588,10.1245,1.3409,2.5569,3.9488,4.0178,6.6477,4.0178,1.174,0,2.3649-.276,3.4768-.859,14.4973-7.6036,23.5018-22.4889,23.5018-38.8461,0-14.8353-7.4146-27.9646-18.7251-35.9012v-98.6172c28.6096,10.1675,48.5776,36.8502,49.6726,67.7957.231,6.4597-.364,12.9034-1.7739,19.1641-2.4169,10.8135-.029,22.0159,6.5517,30.7325,13.1074,17.3702,20.036,38.0862,20.036,59.9101,0,26.4377-10.2495,51.3375-28.8596,70.1136h0Z"/><path d="M83.9885,203.3111c-4.1418,0-7.4996,3.3578-7.4996,7.4996v291.4828c0,4.1418,3.3578,7.4996,7.4996,7.4996s7.4996-3.3578,7.4996-7.4996V210.8107c0-4.1418-3.3578-7.4996-7.4996-7.4996Z"/><path d="M144.8315,153.5795c2.0519.569,4.1388.851,6.2117.851,3.9378,0,7.8306-1.0169,11.3515-3.0089,5.3747-3.0419,9.2436-7.9936,10.8965-13.9573l.028-.104c1.6499-5.9507.883-12.1874-2.1579-17.5621s-7.9936-9.2436-13.9453-10.8935L29.3371,73.4534c-5.9497-1.6479-12.1884-.883-17.5621,2.1579-5.3747,3.0419-9.2435,7.9936-10.8965,13.9573l-.028.104c-1.6499,5.9507-.883,12.1874,2.1579,17.5621,3.0409,5.3747,7.9936,9.2436,13.9453,10.8935l59.5361,16.5052v41.19c0,4.1418,3.3578,7.4996,7.4996,7.4996s7.4996-3.3578,7.4996-7.4996v-37.0322l53.3424,14.7883ZM15.3078,93.6674l.028-.104c.579-2.0899,1.9379-3.8298,3.8258-4.8978,1.8869-1.0679,4.0778-1.3379,6.1687-.758l127.8788,35.4513c4.3148,1.1959,6.8517,5.6797,5.6517,10.0065l-.028.104c-.579,2.0899-1.9379,3.8298-3.8258,4.8978-1.8869,1.0669-4.0778,1.3389-6.1687.758L20.9595,103.6739c-4.3148-1.1969-6.8517-5.6797-5.6517-10.0065h0Z"/><path d="M429.7225,432.4049h-65.6868c-4.1418,0-7.4996,3.3578-7.4996,7.4996s3.3578,7.4996,7.4996,7.4996h65.6868c4.1418,0,7.4996-3.3578,7.4996-7.4996s-3.3578-7.4996-7.4996-7.4996Z"/></svg>`
+        },
         availability: {
             token: 'availability',
             name: 'Availability',
@@ -106,6 +112,7 @@ befriend.filters = {
             name: 'Distance',
             icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30.3688 25.9848"><defs><style>.distance-icon-cls-1{fill-rule:evenodd;}</style></defs><path class="distance-icon-cls-1" d="M3.5723,17.9278c-.8842-.2233-1.5396-1.0246-1.5396-1.9781,0-1.1254.9139-2.0395,2.0392-2.0395s2.0388.9141,2.0388,2.0395c0,.9534-.6551,1.7548-1.5393,1.9781v3.5597c0,.9278.3683,1.8174,1.024,2.4733.6557.6562,1.5454,1.0246,2.4726,1.0246h1.9983c1.9314,0,3.497-1.5661,3.497-3.4979V4.4972c0-2.4838,2.0129-4.4972,4.4957-4.4972h1.9983c1.1925,0,2.3359.4738,3.1791,1.3172.8433.8437,1.3169,1.9874,1.3169,3.1801v3.0194c.8842.2229,1.5393,1.0246,1.5393,1.9777,0,1.1258-.9135,2.0399-2.0388,2.0399s-2.0392-.9142-2.0392-2.0399c0-.9531.6554-1.7548,1.5396-1.9777v-3.0194c0-.9274-.3686-1.8174-1.0244-2.4733s-1.5451-1.0246-2.4726-1.0246h-1.9983c-1.9311,0-3.4966,1.5661-3.4966,3.4983v16.99c0,2.4838-2.0129,4.4972-4.4961,4.4972h-1.9983c-1.1921,0-2.3359-.4738-3.1788-1.3172-.8433-.8434-1.3169-1.9874-1.3169-3.1801v-3.5597ZM4.0719,16.99c.5739,0,1.0397-.466,1.0397-1.0402,0-.5738-.4658-1.0402-1.0397-1.0402s-1.04.4664-1.04,1.0402c0,.5742.4661,1.0402,1.04,1.0402ZM23.8891,8.4674c-.4958.079-.8753.5092-.8753,1.027,0,.5742.4661,1.0402,1.04,1.0402s1.0397-.466,1.0397-1.0402c0-.5178-.3795-.948-.8753-1.027-.0515.0179-.1067.0276-.1644.0276s-.1132-.0097-.1647-.0276h0ZM4.0801,1.4899c2.2506,0,4.0637,1.5595,4.0637,4.1269,0,.7352-.3332,1.7069-.8211,2.7-1.068,2.1726-2.847,4.4813-2.847,4.4813-.0945.1225-.2404.1941-.3949.1945-.1548,0-.3008-.0716-.3956-.1937,0,0-1.7872-2.3083-2.86-4.4813-.4907-.9935-.8252-1.9652-.8252-2.7008C0,3.0501,1.8301,1.4899,4.0801,1.4899ZM4.0801,2.4896c-1.7023,0-3.0809,1.1857-3.0809,3.1272,0,.6173.31,1.4241.7216,2.2581.7246,1.4673,1.7882,2.9984,2.3584,3.7811.5678-.7831,1.6259-2.3134,2.3468-3.7803.4102-.834.7188-1.6412.7188-2.2589,0-1.9407-1.363-3.1272-3.0646-3.1272h0ZM23.9723,12.5017c2.4354,0,4.3965,1.6879,4.3965,4.4661,0,.7982-.3628,1.8528-.8931,2.9311-1.1655,2.3721-3.1079,4.8921-3.1079,4.8921-.0945.1225-.2404.1941-.3949.1945-.1548,0-.3008-.0712-.3956-.1937,0,0-1.9512-2.5199-3.1222-4.8921-.5326-1.0787-.8975-2.1337-.8975-2.9319,0-2.7775,1.9798-4.4661,4.4146-4.4661h0ZM23.9723,13.5014c-1.8867,0-3.4155,1.314-3.4155,3.4664,0,.6804.34,1.57.7942,2.4896.8095,1.6396,2.0061,3.3524,2.6202,4.193.6118-.841,1.8022-2.553,2.608-4.1923.4518-.9196.7904-1.81.7904-2.4904,0-2.1519-1.5113-3.4664-3.3974-3.4664Z"/></svg>`
         },
+
         interests: {
             token: 'interests',
             name: 'Interests',
@@ -2621,6 +2628,317 @@ befriend.filters = {
             }
         }
     },
+    // Initialize instruments section
+    instruments: {
+        init: function () {
+            let section = befriend.filters.sections.instruments;
+
+            const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+            const filter_options = section_el.querySelector('.filter-options');
+            const sectionData = befriend.filters.data.options?.['instruments'];
+            const storedFilters = befriend.filters.data.filters?.instruments || {};
+
+            let categories_html = '';
+            if (sectionData?.options.length > 0) {
+                categories_html = `
+                <div class="category-btn mine active" data-category="mine">Filters</div>`;
+
+                for (let category of sectionData.categories.options) {
+                    categories_html += `
+                    <div class="category-btn" data-category="${category.name}" 
+                         ${category.token ? `data-category-token="${category.token}"` : ''}
+                         ${category.table_key ? `data-category-table="${category.table_key}"` : ''}>
+                        <div class="heading-name">
+                            <div class="name">${category.name}</div>
+                        </div>
+                    </div>`;
+                }
+            }
+
+            const html = `
+            <div class="filter-options-container">
+                <div class="search-container">
+                    <div class="autocomplete-container">
+                        <div class="input-container">
+                            <input type="text" class="search-input" 
+                                   placeholder="${sectionData?.autoComplete?.placeholders?.main || 'Search instruments'}">
+                            <div class="search-icon-container">
+                                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 611.9975 612.0095">
+                                    <path d="M606.203,578.714l-158.011-155.486c41.378-44.956,66.802-104.411,66.802-169.835-.02-139.954-115.296-253.393-257.507-253.393S0,113.439,0,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0,7.747-7.613,7.747-19.971.018-27.585ZM257.487,467.8c-120.326,0-217.869-95.993-217.869-214.407S137.161,38.986,257.487,38.986s217.869,95.993,217.869,214.407-97.542,214.407-217.869,214.407Z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="autocomplete-list"></div>
+                    </div>
+                </div>
+
+                ${categories_html ? `
+                    <div class="categories-container">
+                        <div class="category-filters">${categories_html}</div>
+                    </div>
+                ` : ''}
+
+                <div class="items-container">
+                    <div class="items cols-2"></div>
+                </div>
+            </div>
+        `;
+
+            section_el.querySelector('.section-container')
+                .insertAdjacentHTML(
+                    'afterbegin',
+                    befriend.filters.sendReceiveHtml(true, true, true)
+                );
+
+            filter_options.innerHTML = html;
+
+            let activeItems = [];
+
+            // Initialize items for "mine" category
+            if (storedFilters?.items) {
+                activeItems = Object.values(storedFilters.items)
+                    .filter(item => !item.deleted && !item.is_negative)
+                    .map(item => {
+                        const option = sectionData?.options.find(opt => opt.id === item.instrument_id);
+                        return option ? {
+                            token: option.token,
+                            name: option.name
+                        } : null;
+                    })
+                    .filter(Boolean);
+            }
+
+            this.renderItems(section_el, activeItems, true);
+
+            requestAnimationFrame(() => {
+                befriend.filters.updateSectionHeights();
+            });
+
+            this.initEvents(section_el);
+        },
+
+        initEvents: function(section_el) {
+            const sectionData = befriend.filters.data.options?.['instruments'];
+
+            // Search input handling
+            const search_input = section_el.querySelector('.search-input');
+            const input_container = section_el.querySelector('.input-container');
+            const autocomplete_list = section_el.querySelector('.autocomplete-list');
+
+            let debounceTimer;
+
+            if (search_input) {
+                search_input.addEventListener('input', () => {
+                    clearTimeout(debounceTimer);
+
+                    debounceTimer = setTimeout(async () => {
+                        const value = search_input.value.trim();
+                        if (value.length < sectionData.autoComplete.minChars) {
+                            autocomplete_list.innerHTML = '';
+                            return;
+                        }
+
+                        try {
+                            const response = await befriend.auth.get('/filters/instruments/search', {
+                                query: value
+                            });
+
+                            if (response.data.items?.length) {
+                                const items_html = response.data.items.map(item => `
+                                <div class="item" data-token="${item.token}">
+                                    <div class="name-meta">
+                                        <div class="name">${item.name}</div>
+                                    </div>
+                                </div>
+                            `).join('');
+
+                                autocomplete_list.innerHTML = items_html;
+                            } else {
+                                autocomplete_list.innerHTML = '<div class="no-results">No results found</div>';
+                            }
+                        } catch (e) {
+                            console.error('Error searching instruments:', e);
+                        }
+                    }, 300);
+                });
+
+                // Focus/blur handling
+                search_input.addEventListener('focus', () => {
+                    addClassEl('input-focus', input_container);
+                });
+
+                search_input.addEventListener('blur', () => {
+                    removeClassEl('input-focus', input_container);
+                });
+            }
+
+            // Category selection handling
+            const category_mine = section_el.querySelector(`.category-btn.mine`);
+            const category_btns = section_el.querySelectorAll('.category-btn');
+
+            for (let btn of category_btns) {
+                btn.addEventListener('click', async () => {
+                    removeElsClass(category_btns, 'active');
+                    addClassEl('active', btn);
+
+                    const category = btn.getAttribute('data-category');
+
+                    try {
+                        let items;
+                        if (category === 'mine') {
+                            const storedFilters = befriend.filters.data.filters?.instruments || {};
+                            items = Object.values(storedFilters.items || {})
+                                .filter(item => !item.deleted && !item.is_negative)
+                                .map(item => {
+                                    const option = sectionData?.options.find(opt => opt.id === item.instrument_id);
+                                    return option ? {
+                                        token: option.token,
+                                        name: option.name
+                                    } : null;
+                                })
+                                .filter(Boolean);
+                        } else {
+                            items = sectionData?.options.filter(item => item.category === category);
+                        }
+
+                        this.renderItems(section_el, items || [], category === 'mine');
+
+                        requestAnimationFrame(() => {
+                            befriend.filters.updateSectionHeights();
+                        });
+                    } catch (e) {
+                        console.error('Error loading instruments:', e);
+                    }
+                });
+            }
+
+            // Item selection handling
+            const items_container = section_el.querySelector('.items-container');
+            if (items_container) {
+                items_container.addEventListener('click', async (e) => {
+                    const item = e.target.closest('.item');
+                    if (!item) return;
+
+                    if (elHasClass(item, 'any')) {
+                        try {
+                            befriend.toggleSpinner(true);
+
+                            await befriend.auth.put('/filters/instruments', {
+                                token: 'any',
+                                active: true
+                            });
+
+                            const items_el = section_el.querySelector('.items');
+                            items_el.innerHTML = '';
+
+                            befriend.toggleSpinner(false);
+                        } catch (e) {
+                            console.error('Error setting any instrument:', e);
+                            befriend.toggleSpinner(false);
+                        }
+                        return;
+                    }
+
+                    if (elHasClass(item, 'mine')) return;
+
+                    const token = item.getAttribute('data-token');
+                    const name = item.querySelector('.name').textContent;
+
+                    try {
+                        // Remove item from current view
+                        item.remove();
+                        befriend.toggleSpinner(true);
+
+                        let r = await befriend.auth.put('/filters/instruments', {
+                            token,
+                            active: true
+                        });
+
+                        // Get current mine items
+                        const storedFilters = befriend.filters.data.filters?.instruments;
+
+                        if(!storedFilters?.items) {
+                            befriend.filters.data.filters.instruments = {
+                                items: {}
+                            }
+                        }
+
+                        let option = sectionData?.options.find(opt => opt.token === token);
+
+                        befriend.filters.data.filters.instruments.items[token] = {
+                            token,
+                            instrument_id: option.id,
+                            name: option.name
+                        }
+
+                        fireClick(category_mine);
+
+                        requestAnimationFrame(function () {
+                            befriend.filters.updateSectionHeights();
+                        });
+
+                        befriend.toggleSpinner(false);
+                    } catch (e) {
+                        console.error('Error adding instrument:', e);
+                        befriend.toggleSpinner(false);
+                    }
+                });
+            }
+        },
+        renderItems: function(section_el, items, is_mine) {
+            const storedFilters = befriend.filters.data.filters?.instruments;
+            const sectionData = befriend.filters.data.options?.['instruments'];
+
+            const items_container = section_el.querySelector('.items');
+
+            let items_html = '';
+
+            if (is_mine) {
+                items_html = `
+                <div class="item any ${!items?.length ? 'active' : ''}" data-token="any">
+                    <div class="name">Any</div>
+                </div>`;
+            }
+
+            let added_item_tokens = {};
+
+            if(storedFilters?.items) {
+                for(let k in storedFilters.items) {
+                    let instrument = sectionData?.options.find(opt => opt.id === storedFilters.items[k].instrument_id);
+                    added_item_tokens[instrument.token] = storedFilters.items[k];
+                }
+            }
+
+            if (items?.length) {
+                items_html += items.map(item => {
+                    if (is_mine) {
+                        return `
+                        <div class="item mine" data-token="${item.token}">
+                            <div class="content">
+                                <div class="name">${item.name}</div>
+                                <div class="remove">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56"><path d="M28,0C12.5605,0,0,12.5605,0,28s12.5605,28,28,28,28-12.5605,28-28S43.4395,0,28,0ZM28,53c-13.7852,0-25-11.2148-25-25S14.2148,3,28,3s25,11.2148,25,25-11.2148,25-25,25ZM39.2627,16.7373c-.5859-.5859-1.5352-.5859-2.1211,0l-9.1416,9.1416-9.1416-9.1416c-.5859-.5859-1.5352-.5859-2.1211,0-.5859.5854-.5859,1.5356,0,2.1211l9.1416,9.1416-9.1416,9.1416c-.5859.5854-.5859,1.5356,0,2.1211.293.293.6768.4395,1.0605.4395s.7676-.1465,1.0605-.4395l9.1417-9.1416,9.1416,9.1416c.293.293.6768.4395,1.0605.4395s.7676-.1465,1.0605-.4395c.5859-.5854.5859-1.5356,0-2.1211l-9.1415-9.1416,9.1416-9.1416c.5859-.5855.5859-1.5356,0-2.1211Z"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    }
+
+                    if(item.token in added_item_tokens) {
+                        return;
+                    }
+
+                    return `
+                    <div class="item" data-token="${item.token}">
+                        <div class="name">${item.name}</div>
+                    </div>
+                `;
+                }).join('');
+            }
+
+            items_container.innerHTML = items_html;
+        }
+    },
     initSections: async function () {
         let sections_el = befriend.els.filters.querySelector('.sections');
 
@@ -2994,6 +3312,10 @@ befriend.filters = {
         function getFilterNameStr() {
             if(filterName.toLowerCase().startsWith('relationship')) {
                 return 'relationship_status';
+            }
+
+            if(filterName.toLowerCase().startsWith('politics')) {
+                return filterName;
             }
 
             return filterName.endsWith('s') ? filterName.substring(0, filterName.length - 1) : filterName;

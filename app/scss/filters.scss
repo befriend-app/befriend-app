@@ -1187,6 +1187,332 @@
             }
         }
 
+        &.instruments {
+            $padding_lr: 20px;
+
+            .filter-options {
+                @include filter-options;
+                padding-left: 0;
+                padding-right: 0;
+                padding-top: 30px;
+                padding-bottom: 0;
+            }
+
+            .filter-options-container {
+                padding: 0 0;
+                display: flex;
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .search-container {
+                $br: 6px;
+
+                padding: 15px;
+                padding-bottom: 0;
+
+                .input-container {
+                    width: 100%;
+                    display: flex;
+                    border-radius: $br;
+                    box-sizing: border-box;
+                    border: 1px solid $color_lightgray;
+                    transition: all 200ms;
+
+                    &.input-focus {
+                        border-color: $input_focus_color;
+                    }
+                }
+
+                .search-input {
+                    width: calc(100% - 30px);
+                    padding: 6px 10px;
+                    border-radius: $br;
+                    border-top-right-radius: 0;
+                    border-bottom-right-radius: 0;
+                    font-size: 14px;
+                    border: none;
+                    outline: none;
+                }
+
+                .search-icon-container {
+                    width: 30px;
+                    height: inherit;
+                    background: lighten(black, 90%);
+                    border-top-right-radius: $br;
+                    border-bottom-right-radius: $br;
+                    border-left: 0.5px solid lighten(black, 60%);
+                    @include flex-center-col;
+
+                    .search-icon {
+                        height: 14px;
+                        fill: $color_gray;
+                    }
+                }
+
+                .autocomplete-list {
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                    right: 0;
+                    background: white;
+                    border: 1px solid $color_lightgray;
+                    border-top: none;
+                    border-radius: 0 0 4px 4px;
+                    max-height: 200px;
+                    overflow-y: auto;
+                    z-index: 10;
+                    display: none;
+
+                    &.show {
+                        display: block;
+                    }
+
+                    .item {
+                        padding: 8px 12px;
+                        border-bottom: 1px solid $color_lightgray;
+                        cursor: pointer;
+                        transition: background 200ms;
+
+                        &:hover {
+                            background: lighten($color_lightgray, 5%);
+                        }
+
+                        &:last-child {
+                            border-bottom: none;
+                        }
+
+                        .name {
+                            font-size: 14px;
+                        }
+                    }
+
+                    .no-results {
+                        padding: 12px;
+                        text-align: center;
+                        color: lighten(black, 40%);
+                        font-size: 14px;
+                    }
+                }
+            }
+
+            .categories-container {
+                padding: 12px $padding_lr;
+                border-bottom: 1px solid $color_lightgray;
+                width: 100%;
+                box-sizing: border-box;
+                max-height: 100px;
+                overflow-x: hidden;
+                overflow-y: scroll;
+
+                .category-filters {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 8px;
+                }
+
+                .category-btn {
+                    padding: 6px 12px;
+                    border: 1px solid $color_lightgray;
+                    border-radius: 8px;
+                    font-size: 15px;
+                    cursor: pointer;
+                    transition: all 200ms;
+                    background: lighten(black, 95%);
+
+                    &.active {
+                        background: $brand_color_b;
+                        border-color: darken($brand_color_a, 10%);
+                    }
+
+                    &.mine {
+                        font-weight: 500;
+                    }
+                }
+            }
+
+            .items-container {
+                padding: 15px $padding_lr;
+                max-height: 300px;
+                overflow-y: auto;
+
+                .items {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 10px;
+
+                    .item {
+                        position: relative;
+                        padding: 8px 12px;
+                        border: 1px solid $color_lightgray;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        transition: all 200ms;
+                        background: lighten(black, 97%);
+                        font-size: 15px;
+
+                        &:hover {
+                            border-color: darken($color_lightgray, 10%);
+                            background: lighten(black, 96%);
+                        }
+
+                        &.mine {
+                            cursor: default;
+                            background: white;
+
+                            .content {
+                                display: flex;
+                                align-items: center;
+                                gap: 8px;
+                            }
+
+                            .name-favorite {
+                                display: flex;
+                                align-items: center;
+                                gap: 8px;
+                                flex: 1;
+                            }
+
+                            .favorite {
+                                height: 20px;
+                                width: 20px;
+                                cursor: pointer;
+
+                                svg {
+                                    width: 100%;
+                                    height: 100%;
+
+                                    .outline {
+                                        fill: transparent;
+                                        stroke: lighten(black, 40%);
+                                        stroke-width: 20px;
+                                        transition: all 200ms;
+                                    }
+                                }
+                            }
+
+                            .name {
+                                font-weight: 500;
+                                flex: 1;
+                            }
+
+                            .rank {
+                                position: absolute;
+                                top: -10px;
+                                left: -10px;
+                                width: 20px;
+                                height: 20px;
+                                background: white;
+                                border: 1px solid $color_lightgray;
+                                border-radius: 50%;
+                                @include flex-center-col;
+                                font-size: 12px;
+                                font-weight: 500;
+                                z-index: 2;
+                            }
+
+                            .remove {
+                                cursor: pointer;
+                                opacity: 0.5;
+                                transition: opacity 200ms;
+                                position: absolute;
+                                top: -9px;
+                                right: -9px;
+
+                                &:hover {
+                                    opacity: 1;
+                                }
+
+                                svg {
+                                    height: 18px;
+                                    border-radius: 50%;
+                                    background-color: white;
+                                    path {
+                                        fill: black;
+                                    }
+                                }
+                            }
+
+                            &.is-favorite {
+                                .favorite {
+                                    svg {
+                                        .outline {
+                                            fill: $brand_color_a;
+                                            stroke: $brand_color_a;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .no-items {
+                    padding: 0 0;
+                    text-align: center;
+                    color: lighten(black, 40%);
+                    font-size: 14px;
+                    display: none;
+                }
+            }
+
+            &.no-items {
+                .items-container {
+                    .items {
+                        display: none;
+                    }
+                    .no-items {
+                        display: block;
+                    }
+                }
+            }
+
+            // Transitions and animations
+            .item {
+                &.mine {
+                    &.animating {
+                        transition: transform 300ms ease-out;
+                    }
+
+                    &.is-draggable {
+                        z-index: 10;
+                        opacity: 0.9;
+                        cursor: grabbing;
+                        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                        transition: none;
+                    }
+
+                    &.is-drag-ending {
+                        transition: transform 300ms ease-out;
+                    }
+                }
+            }
+
+            // Scrollbar styling
+            .items-container {
+                scrollbar-width: thin;
+                scrollbar-color: lighten(black, 70%) transparent;
+
+                &::-webkit-scrollbar {
+                    width: 6px;
+                }
+
+                &::-webkit-scrollbar-track {
+                    background: transparent;
+                }
+
+                &::-webkit-scrollbar-thumb {
+                    background-color: lighten(black, 70%);
+                    border-radius: 3px;
+                }
+            }
+
+            .send-receive {
+                transform: initial;
+                position: absolute;
+            }
+        }
+
         &.life_stages, &.relationship, &.languages,
         &.politics, &.religion, &.drinking, &.smoking {
             .section-container {
@@ -1201,6 +1527,7 @@
 
             .filter-options {
                 @include filter-options;
+                padding-top: 40px;
             }
 
             .buttons {
@@ -1259,7 +1586,9 @@
 
             &.enabled {
                 background-color: $brand_color_b;
-                //color: white;
+                border-color: darken($brand_color_a, 10%);
+                border-top-color: transparent;
+                border-left-color: transparent;
 
                 &.enabled {
                     svg {
@@ -1270,28 +1599,18 @@
         }
 
         .send {
-            //border-bottom-left-radius: $br;
-            //border-top-right-radius: $br;
-            //border-bottom: 1px solid darken($color_lightgray, 5%);
         }
 
         .receive {
-            //border-top-right-radius: $br;
-            //border-bottom-left-radius: $br;
             border-bottom-right-radius: $br;
         }
 
         &.position-corner {
-            //transform: translate($section_padding_lr, -$section_padding_tb);
-
             .send {
-                //border-top-left-radius: $br !important;
                 border-top-right-radius: 0 !important;
             }
 
             .receive {
-                //border-bottom-left-radius: $br !important;
-                //border-bottom-right-radius: $br !important;
             }
         }
     }
