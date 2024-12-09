@@ -2646,8 +2646,7 @@ befriend.filters = {
                 for (let category of sectionData.categories.options) {
                     categories_html += `
                     <div class="category-btn" data-category="${category.name}" 
-                         ${category.token ? `data-category-token="${category.token}"` : ''}
-                         ${category.table_key ? `data-category-table="${category.table_key}"` : ''}>
+                         ${category.token ? `data-category-token="${category.token}"` : ''}>
                         <div class="heading-name">
                             <div class="name">${category.name}</div>
                         </div>
@@ -2804,9 +2803,18 @@ befriend.filters = {
             if (items_container) {
                 items_container.addEventListener('click', async (e) => {
                     const item = e.target.closest('.item');
+                    const removeBtn = e.target.closest('.remove');
+
                     if (!item) return;
 
+                    let token = item.getAttribute('data-token');
+                    let wasSelected = elHasClass(item, 'active');
+
                     if (elHasClass(item, 'any')) {
+                        if(wasSelected) {
+                            return;
+                        }
+
                         try {
                             befriend.toggleSpinner(true);
 
@@ -2815,21 +2823,108 @@ befriend.filters = {
                                 active: true
                             });
 
-                            const items_el = section_el.querySelector('.items');
-                            items_el.innerHTML = '';
+                            const anyButton = item;
+                            const otherItems = section_el.querySelectorAll('.item:not(.any)');
 
-                            befriend.toggleSpinner(false);
+                            addClassEl('active', anyButton);
+                            removeElsClass(otherItems, 'active');
+
+                            //update state data
+                            if(befriend.filters.data.filters?.instruments?.items) {
+                                for(let k in befriend.filters.data.filters.instruments.items) {
+                                    befriend.filters.data.filters.instruments.items[k].is_active = false;
+                                }
+                            }
                         } catch (e) {
                             console.error('Error setting any instrument:', e);
-                            befriend.toggleSpinner(false);
                         }
+
+                        befriend.toggleSpinner(false);
+
                         return;
                     }
 
-                    if (elHasClass(item, 'mine')) return;
+                    if(removeBtn) {
+                        try {
+                            befriend.toggleSpinner(true);
 
-                    const token = item.getAttribute('data-token');
+                            await befriend.auth.put('/filters/instruments', {
+                                token,
+                                active: wasSelected,
+                                is_delete: true
+                            });
 
+                            // Remove item and update Any button if needed
+                            item.remove();
+
+                            const activeItems = section_el.querySelectorAll('.item.mine.active');
+                            if (activeItems.length === 0) {
+                                const anyButton = section_el.querySelector('.item.any');
+                                if (anyButton) addClassEl('active', anyButton);
+                            }
+
+                            //update state data
+                            if(befriend.filters.data.filters?.instruments?.items) {
+                                for(let k in befriend.filters.data.filters.instruments.items) {
+                                    if(befriend.filters.data.filters.instruments.items[k].token === token) {
+                                        befriend.filters.data.filters.instruments.items[k].deleted = true;
+                                    }
+                                }
+                            }
+                        } catch (e) {
+                            console.error('Error removing instrument:', e);
+                        }
+
+                        befriend.toggleSpinner(false);
+
+                        requestAnimationFrame(function () {
+                            befriend.filters.updateSectionHeights();
+                        });
+
+                        return;
+                    }
+
+                    if (elHasClass(item, 'mine')) {
+                        toggleElClass(item, 'active');
+
+                        try {
+                            befriend.toggleSpinner(true);
+
+                            await befriend.auth.put('/filters/instruments', {
+                                token,
+                                active: !wasSelected,
+                            });
+
+                            const activeItems = section_el.querySelectorAll('.item.mine.active');
+
+                            const anyButton = section_el.querySelector('.item.any');
+
+                            if(anyButton) {
+                                if (activeItems.length === 0) {
+                                    addClassEl('active', anyButton);
+                                } else {
+                                    removeClassEl('active', anyButton);
+                                }
+                            }
+
+                            //update state data
+                            if(befriend.filters.data.filters?.instruments?.items) {
+                                for(let k in befriend.filters.data.filters.instruments.items) {
+                                    if(befriend.filters.data.filters.instruments.items[k].token === token) {
+                                        befriend.filters.data.filters.instruments.items[k].is_active = !wasSelected;
+                                    }
+                                }
+                            }
+                        } catch (e) {
+                            console.error('Error removing instrument:', e);
+                        }
+
+                        befriend.toggleSpinner(false);
+
+                        return;
+                    }
+
+                    //select category item option
                     try {
                         // Remove item from current view
                         item.remove();
@@ -2916,7 +3011,7 @@ befriend.filters = {
                         const isActive = !item.deleted && item.is_active;
 
                         return `
-                        <div class="item mine ${isActive ? 'active': ''} data-token="${item.token}">
+                        <div class="item mine ${isActive ? 'active': ''}" data-token="${item.token}">
                             <div class="content">
                                 <div class="name">${item.name}</div>
                                 <div class="remove">
