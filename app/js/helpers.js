@@ -475,3 +475,10 @@ function sortObj(obj, key, desc) {
 
     return newObj;
 }
+
+function removeArrItem(arr, item) {
+    let index = arr.indexOf(item);
+    if(index > -1) {
+        arr.splice(index, 1);
+    }
+}

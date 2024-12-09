@@ -101,6 +101,8 @@ befriend.events = {
                 if (menu_shown_el && !e.target.closest('.menu')) {
                     befriend.me.toggleSectionActions(menu_shown_el, false);
                 }
+            } else if(befriend.isViewShown('filters')) {
+                befriend.filters.hideActiveSecondaryIf(e.target);
             }
         });
     },

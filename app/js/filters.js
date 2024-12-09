@@ -4,6 +4,9 @@ befriend.filters = {
         options: null,
         collapsed: {},
     },
+    secondaries: {
+        activeEl: null,
+    },
     init: function () {
         return new Promise(async (resolve, reject) => {
             console.log("[init] Filters");
@@ -2729,8 +2732,8 @@ befriend.filters = {
 
                 items_html = `
             <div class="item any ${!hasActiveNonDeletedItems ? 'active' : ''}" data-token="any">
-                    <div class="name">Any</div>
-                </div>`;
+                <div class="name">Any</div>
+            </div>`;
             }
 
             let added_item_tokens = {};
@@ -2738,12 +2741,10 @@ befriend.filters = {
             if (storedFilters?.items) {
                 for(let k in storedFilters.items) {
                     let item = storedFilters.items[k];
-
                     if(!item.deleted && item.is_active) {
-                        let instrument = sectionData?.options.find(opt => opt.id === storedFilters.items[k].instrument_id);
-
+                        let instrument = sectionData?.options.find(opt => opt.id === item.instrument_id);
                         if(instrument) {
-                            added_item_tokens[instrument.token] = storedFilters.items[k];
+                            added_item_tokens[instrument.token] = item;
                             hasActiveItems = true;
                         }
                     }
@@ -2753,21 +2754,41 @@ befriend.filters = {
             if (items?.length) {
                 items_html += items.map(item => {
                     if (is_mine) {
-                        const isActive = !item.deleted && item.is_active;
+                        const storedItem = Object.values(storedFilters?.items || {})
+                            .find(stored => stored.token === item.token);
+                        const isActive = storedItem && !storedItem.deleted && storedItem.is_active;
 
                         let secondary_html = '';
                         if (secondary_options) {
                             let secondary_options_html = '';
-                            let unselected = !item.secondary ? 'unselected' : '';
+                            const selectedSecondary = storedItem?.secondary || [];
+                            let isAnyLevel = selectedSecondary.includes('any');
+                            let unselected = selectedSecondary.length === 0 ? 'unselected' : '';
 
+                            // Determine the display text
+                            let currentText;
+                            if (isAnyLevel) {
+                                currentText = 'Any Level';
+                            } else if (selectedSecondary.length) {
+                                currentText = selectedSecondary.join(', ');
+                            } else {
+                                currentText = sectionData.secondary.instruments.unselectedStr;
+                            }
+
+                            // Add "Any Level" option first
+                            secondary_options_html += `<div class="option any-level ${isAnyLevel ? 'selected' : ''}" data-option="any">Any Level</div>`;
+
+                            // Add other options
                             for (let option of secondary_options) {
-                                let selected = item.secondary === option ? 'selected' : '';
-                                secondary_options_html += `<div class="option ${selected}" data-option="${option}">${option}</div>`;
+                                let selected = !isAnyLevel && selectedSecondary.includes(option) ? 'selected' : '';
+                                // Disable other options if "Any Level" is selected
+                                let disabled = isAnyLevel ? 'disabled' : '';
+                                secondary_options_html += `<div class="option ${selected} ${disabled}" data-option="${option}">${option}</div>`;
                             }
 
                             secondary_html = `
-                        <div class="secondary ${unselected}" data-value="${item.secondary || ''}">
-                            <div class="current-selected">${item.secondary || sectionData.secondary.instruments.unselectedStr}</div>
+                        <div class="secondary ${unselected}" data-value="${selectedSecondary.join(',')}">
+                            <div class="current-selected">${currentText}</div>
                             <svg class="arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 82.1 43.2">
                                 <path d="M41.1,43.2L0,2.2,2.1,0l39,39L80,0l2.1,2.2-41,41Z"/>
                             </svg>
@@ -2776,16 +2797,16 @@ befriend.filters = {
                         }
 
                         return `
-                        <div class="item mine ${isActive ? 'active': ''}" data-token="${item.token}">
-                            <div class="content">
-                                <div class="name">${item.name}</div>
-                                ${secondary_html}
-                                <div class="remove">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56"><path d="M28,0C12.5605,0,0,12.5605,0,28s12.5605,28,28,28,28-12.5605,28-28S43.4395,0,28,0ZM28,53c-13.7852,0-25-11.2148-25-25S14.2148,3,28,3s25,11.2148,25,25-11.2148,25-25,25ZM39.2627,16.7373c-.5859-.5859-1.5352-.5859-2.1211,0l-9.1416,9.1416-9.1416-9.1416c-.5859-.5859-1.5352-.5859-2.1211,0-.5859.5854-.5859,1.5356,0,2.1211l9.1416,9.1416-9.1416,9.1416c-.5859.5854-.5859,1.5356,0,2.1211.293.293.6768.4395,1.0605.4395s.7676-.1465,1.0605-.4395l9.1417-9.1416,9.1416,9.1416c.293.293.6768.4395,1.0605.4395s.7676-.1465,1.0605-.4395c.5859-.5854.5859-1.5356,0-2.1211l-9.1415-9.1416,9.1416-9.1416c.5859-.5855.5859-1.5356,0-2.1211Z"/></svg>
-                                </div>
+                    <div class="item mine ${isActive ? 'active': ''}" data-token="${item.token}">
+                        <div class="content">
+                            <div class="name">${item.name}</div>
+                            ${secondary_html}
+                            <div class="remove">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56"><path d="M28,0C12.5605,0,0,12.5605,0,28s12.5605,28,28,28,28-12.5605,28-28S43.4395,0,28,0ZM28,53c-13.7852,0-25-11.2148-25-25S14.2148,3,28,3s25,11.2148,25,25-11.2148,25-25,25ZM39.2627,16.7373c-.5859-.5859-1.5352-.5859-2.1211,0l-9.1416,9.1416-9.1416-9.1416c-.5859-.5859-1.5352-.5859-2.1211,0-.5859.5854-.5859,1.5356,0,2.1211l9.1416,9.1416-9.1416,9.1416c-.5859.5854-.5859,1.5356,0,2.1211.293.293.6768.4395,1.0605.4395s.7676-.1465,1.0605-.4395l9.1417-9.1416,9.1416,9.1416c.293.293.6768.4395,1.0605.4395s.7676-.1465,1.0605-.4395c.5859-.5854.5859-1.5356,0-2.1211l-9.1415-9.1416,9.1416-9.1416c.5859-.5855.5859-1.5356,0-2.1211Z"/></svg>
                             </div>
                         </div>
-                    `;
+                    </div>
+                `;
                     }
 
                     if(item.token in added_item_tokens) {
@@ -2793,10 +2814,10 @@ befriend.filters = {
                     }
 
                     return `
-                    <div class="item" data-token="${item.token}">
-                        <div class="name">${item.name}</div>
-                    </div>
-                `;
+                <div class="item" data-token="${item.token}">
+                    <div class="name">${item.name}</div>
+                </div>
+            `;
                 }).join('');
             }
 
@@ -3212,8 +3233,118 @@ befriend.filters = {
                     });
                 }
             },
-            secondary: function () {
+            secondary: function() {
+                let section = befriend.filters.sections.instruments;
+                const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+                let secondary_els = section_el.getElementsByClassName('secondary');
 
+                for(let secondary_el of secondary_els) {
+                    if(secondary_el._listener) continue;
+                    secondary_el._listener = true;
+
+                    secondary_el.addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const secondary_option = e.target.closest('.option');
+                        if (!secondary_option) {
+                            befriend.filters.transitionSecondary(secondary_el, !befriend.filters.secondaries.activeEl);
+                            return;
+                        }
+
+                        const item = secondary_el.closest('.item');
+                        const token = item.getAttribute('data-token');
+                        const option_value = secondary_option.getAttribute('data-option');
+                        const isAnyLevel = option_value === 'any';
+                        const anyOption = secondary_el.querySelector('.option.any-level');
+                        const otherOptions = secondary_el.querySelectorAll('.option:not(.any-level)');
+
+                        let itemData;
+
+                        try {
+                            let wasSelected = elHasClass(secondary_option, 'selected');
+
+                            befriend.toggleSpinner(true);
+
+                            if(befriend.filters.data.filters?.instruments?.items) {
+                                for(let k in befriend.filters.data.filters.instruments.items) {
+                                    if(befriend.filters.data.filters.instruments.items[k].token === token) {
+                                        itemData = befriend.filters.data.filters.instruments.items[k];
+
+                                        // Initialize array if needed
+                                        if(!itemData.secondary || !Array.isArray(itemData.secondary)) {
+                                            itemData.secondary = [];
+                                        }
+
+                                        if (isAnyLevel) {
+                                            // If selecting "Any Level"
+                                            if (!wasSelected) {
+                                                itemData.secondary = ['any'];
+                                                addClassEl('selected', anyOption);
+                                                removeElsClass(otherOptions, 'selected');
+                                            } else {
+                                                return
+                                                // // If unselecting "Any Level"
+                                                // itemData.secondary = [];
+                                                // removeClassEl('selected', anyOption);
+                                            }
+                                        } else {
+                                            // If selecting a specific level
+                                            if (!wasSelected) {
+                                                // Remove 'any' if it was selected
+                                                removeArrItem(itemData.secondary, 'any');
+                                                removeClassEl('selected', anyOption);
+
+                                                // Add the new selection
+                                                itemData.secondary.push(option_value);
+                                                addClassEl('selected', secondary_option);
+                                            } else {
+                                                // Remove the selection
+                                                removeArrItem(itemData.secondary, option_value);
+                                                removeClassEl('selected', secondary_option);
+                                            }
+                                        }
+
+                                        break;
+                                    }
+                                }
+                            }
+
+                            await befriend.auth.put('/filters/instruments', {
+                                token,
+                                active: itemData.is_active,
+                                secondary: itemData.secondary
+                            });
+
+                            // Update unselected class state
+                            if (itemData.secondary.length === 0) {
+                                addClassEl('unselected', secondary_el);
+                            } else {
+                                removeClassEl('unselected', secondary_el);
+                            }
+
+                            // Update displayed text
+                            let textContent;
+                            if (itemData.secondary.includes('any')) {
+                                textContent = 'Any Level';
+                            } else if (itemData.secondary.length) {
+                                textContent = itemData.secondary.join(', ');
+                            } else {
+                                textContent = 'Skill Level';
+                            }
+                            secondary_el.querySelector('.current-selected').textContent = textContent;
+
+                            requestAnimationFrame(function () {
+                                befriend.filters.updateSectionHeights();
+                            });
+
+                        } catch (e) {
+                            console.error('Error updating secondary:', e);
+                        } finally {
+                            befriend.toggleSpinner(false);
+                        }
+                    });
+                }
             }
         }
     },
@@ -3289,6 +3420,16 @@ befriend.filters = {
                     addClassEl('collapsed', section);
                     section_container.style.height = '0';
                     this.data.collapsed[section_key] = true;
+
+                    if(befriend.filters.secondaries.activeEl) {
+                        removeClassEl('secondary-open', section);
+                        //remove secondary classes
+                        befriend.filters.transitionSecondary(befriend.filters.secondaries.activeEl, false);
+                    }
+
+                    let secondaryItemsOpen = section.getElementsByClassName('item-secondary-open');
+
+                    removeElsClass(secondaryItemsOpen, 'item-secondary-open');
                 }
 
                 // Save collapsed state to local storage
@@ -3396,28 +3537,59 @@ befriend.filters = {
         }
     },
     updateSectionHeights: function (without_transition) {
-        let sections_el = befriend.els.filters.querySelector('.sections');
-
-        let sections = sections_el.getElementsByClassName('section');
+        const sections_el = befriend.els.filters.querySelector('.sections');
+        const sections = sections_el.getElementsByClassName('section');
 
         for (let section of sections) {
-            let container = section.querySelector('.section-container');
-
-            let is_collapsed = elHasClass(section, 'collapsed');
+            const container = section.querySelector('.section-container');
+            const is_collapsed = elHasClass(section, 'collapsed');
 
             if (without_transition) {
                 container.style.transition = 'none';
-
-                setTimeout(function () {
+                setTimeout(() => {
                     container.style.removeProperty('transition');
                 }, befriend.variables.filters_section_transition_ms);
             }
 
             if (is_collapsed) {
                 container.style.height = '0';
-            } else {
-                setElHeightDynamic(container);
+                continue;
             }
+
+            // Clone the container to measure its height without affecting the DOM
+            const containerClone = container.cloneNode(true);
+            containerClone.style.position = 'absolute';
+            containerClone.style.visibility = 'hidden';
+            containerClone.style.height = 'auto';
+            section.appendChild(containerClone);
+
+            // Find any secondary options containers
+            const secondaryOptions = containerClone.querySelectorAll('.secondary .options');
+
+            // Temporarily set their height to 0 to exclude from measurement
+            secondaryOptions.forEach(options => {
+                options.style.height = '0';
+                options.style.position = 'absolute'; // Ensure they don't affect layout
+            });
+
+            // Get the height excluding expanded dropdowns
+            const baseHeight = containerClone.offsetHeight;
+
+            // Find current-selected elements that might have wrapped
+            const currentSelectedEls = containerClone.querySelectorAll('.current-selected');
+            let maxCurrentSelectedHeight = 0;
+
+            currentSelectedEls.forEach(el => {
+                const height = el.offsetHeight;
+                maxCurrentSelectedHeight = Math.max(maxCurrentSelectedHeight, height);
+            });
+
+            // Remove the clone
+            section.removeChild(containerClone);
+
+            // Set the final height
+            // Add small padding to account for potential text wrapping
+            container.style.height = `${baseHeight + 5}px`;
         }
     },
     getSectionKey: function (section_el) {
@@ -3748,7 +3920,73 @@ befriend.filters = {
                 }
             }
         };
-    }
+    },
+    transitionSecondary: async function (secondary_el, show, on_internal) {
+        let options_el = secondary_el.querySelector('.options');
+        let section_el = secondary_el.closest('.section');
+        let item_el = secondary_el.closest('.item');
+
+        let activeEl = befriend.filters.secondaries.activeEl;
+
+        if (secondary_el._transitionTimeout) {
+            clearTimeout(secondary_el._transitionTimeout);
+        }
+
+        if (show) {
+            if (activeEl && activeEl !== secondary_el) {
+                let active_section = activeEl.closest('.section');
+                let active_item = activeEl.closest('.item');
+                let active_options = activeEl.querySelector('.options');
+
+                removeClassEl('item-secondary-open', active_item);
+                active_options.style.height = '0';
+
+                setTimeout(() => {
+                    if (active_section !== section_el) {
+                        removeClassEl('secondary-open', active_section);
+                        active_options.style.removeProperty('height');
+                    }
+                }, 300);
+            }
+
+            addClassEl('secondary-open', section_el);
+            addClassEl('item-secondary-open', item_el);
+
+            requestAnimationFrame(() => {
+                setElHeightDynamic(options_el);
+            });
+
+            befriend.filters.secondaries.activeEl = secondary_el;
+        } else {
+            const currentHeight = options_el.scrollHeight;
+            options_el.style.height = `${currentHeight}px`;
+            void options_el.offsetHeight;
+
+            // Then transition to 0
+            options_el.style.height = '0';
+
+            removeClassEl('item-secondary-open', item_el);
+
+            secondary_el._transitionTimeout = setTimeout(function () {
+                removeClassEl('secondary-open', section_el);
+
+                options_el.style.removeProperty('height');
+
+                if (!on_internal) {
+                    if (secondary_el === activeEl) {
+                        befriend.filters.secondaries.activeEl = null;
+                    }
+                }
+            }, 300);
+        }
+    },
+    hideActiveSecondaryIf: function (target) {
+        let open_secondary_el = befriend.filters.secondaries.activeEl;
+
+        if (open_secondary_el && !target?.closest('.secondary')) {
+            befriend.filters.transitionSecondary(open_secondary_el, false);
+        }
+    },
 };
 
 befriend.filters.life_stages = befriend.filters.createMultiSelectFilter('life_stages');
