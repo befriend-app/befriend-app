@@ -2732,7 +2732,7 @@ befriend.filters = {
 
                 items_html = `
             <div class="item any ${!hasActiveNonDeletedItems ? 'active' : ''}" data-token="any">
-                <div class="name">Any</div>
+                <div class="name">Any Instrument</div>
             </div>`;
             }
 
@@ -2862,6 +2862,12 @@ befriend.filters = {
                 let debounceTimer;
 
                 if (search_input) {
+                    if(search_input._listener) {
+                        return;
+                    }
+
+                    search_input._listener = true;
+
                     search_input.addEventListener('input', () => {
                         clearTimeout(debounceTimer);
 
@@ -3003,6 +3009,12 @@ befriend.filters = {
                 const category_btns = section_el.querySelectorAll('.category-btn');
 
                 for (let btn of category_btns) {
+                    if(btn._listener) {
+                        continue;
+                    }
+
+                    btn._listener = true;
+
                     btn.addEventListener('click', async () => {
                         removeElsClass(category_btns, 'active');
                         addClassEl('active', btn);
@@ -3050,6 +3062,8 @@ befriend.filters = {
                     item.addEventListener('click', async (e) => {
                         e.preventDefault();
                         e.stopPropagation();
+
+                        befriend.filters.hideActiveSecondaryIf(e.target);
 
                         let token = item.getAttribute('data-token');
                         let wasSelected = elHasClass(item, 'active');
@@ -3173,7 +3187,6 @@ befriend.filters = {
             },
             remove: function () {
                 let section = befriend.filters.sections.instruments;
-                const sectionData = befriend.filters.data.options?.['instruments'];
                 const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
 
                 let remove_els = section_el.querySelectorAll('.item .remove');
@@ -3587,9 +3600,7 @@ befriend.filters = {
             // Remove the clone
             section.removeChild(containerClone);
 
-            // Set the final height
-            // Add small padding to account for potential text wrapping
-            container.style.height = `${baseHeight + 5}px`;
+            container.style.height = `${baseHeight}px`;
         }
     },
     getSectionKey: function (section_el) {

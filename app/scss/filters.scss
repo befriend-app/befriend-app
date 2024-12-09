@@ -1269,7 +1269,7 @@
             $padding_lr: 20px;
 
             .filter-options {
-                @include filter-options;
+                max-height: 400px;
                 padding-left: 0;
                 padding-right: 0;
                 padding-top: 30px;
@@ -1445,8 +1445,8 @@
 
             .items-container {
                 padding: 15px $padding_lr;
-                max-height: 300px;
-                overflow-y: auto;
+                max-height: 200px;
+                overflow-y: scroll;
 
                 .items {
                     display: flex;
