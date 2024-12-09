@@ -105,6 +105,83 @@
             gap: 8px;
         }
 
+        .secondary {
+            $transition_ms: 300ms;
+            $br: 16px;
+
+            position: relative;
+            width: 100%;
+            cursor: pointer;
+
+            // Unselected state
+            &.unselected {
+                .current-selected {
+                    font-weight: 300;
+                }
+            }
+
+            // Selected display
+            .current-selected {
+                padding: 4px 8px;
+                border: 1px solid lighten(black, 82%);
+                border-radius: $br;
+                background: white;
+                font-size: 13px;
+                font-weight: 400;
+                transition: border-radius $transition_ms;
+            }
+
+            .arrow {
+                $h: 5px;
+                height: $h;
+                position: absolute;
+                right: 8px;
+                top: calc(50% - calc($h / 2));
+            }
+
+            // Options container
+            .options {
+                height: 0;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                border: 1px transparent;
+                border-top: none;
+                border-radius: 0 0 $br $br;
+                //box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                z-index: 3;
+                flex-direction: column;
+                padding: 0px 0;
+                gap: 0 0;
+                transition: all $transition_ms;
+                overflow-y: hidden;
+                box-sizing: border-box;
+                border-top: 1px transparent !important;
+                display: flex;
+
+                //opacity: 0;
+
+                // Individual option
+                .option {
+                    padding: 8px 8px;
+                    font-size: 13px;
+                    border-radius: 0 !important;
+                    box-sizing: border-box;
+                    transition: all $transition_ms;
+
+                    &:hover {
+                        background: #f5f5f5;
+                    }
+
+                    &.selected {
+                        background: darken($brand_color_b, 5%);
+                    }
+                }
+            }
+        }
+
         &.availability {
             $time_slots_p_tb: 16px;
 
@@ -1406,13 +1483,13 @@
                         &.mine {
                             cursor: default;
                             background: white;
-                            padding: 8px 0;
+                            padding: 8px 20px;
                             width: 100%;
 
                             .content {
                                 display: flex;
                                 align-items: center;
-                                gap: 8px;
+                                gap: 12px;
                                 text-align: center;
                             }
 
@@ -1443,7 +1520,8 @@
 
                             .name {
                                 font-weight: 500;
-                                flex: 1;
+                                //flex: 1;
+                                width: 130px;
                             }
 
                             .rank {
@@ -1555,6 +1633,7 @@
             .send-receive {
                 transform: initial;
                 position: absolute;
+                z-index: 2;
             }
         }
 

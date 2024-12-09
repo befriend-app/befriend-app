@@ -2641,7 +2641,7 @@ befriend.filters = {
             let categories_html = '';
             if (sectionData?.options.length > 0) {
                 categories_html = `
-                <div class="category-btn mine active" data-category="mine">Filters</div>`;
+                <div class="category-btn mine active" data-category="mine">My Filters</div>`;
 
                 for (let category of sectionData.categories.options) {
                     categories_html += `
@@ -2705,360 +2705,19 @@ befriend.filters = {
             requestAnimationFrame(() => {
                 befriend.filters.updateSectionHeights();
             });
-
-            this.initEvents(section_el);
         },
-        initEvents: function(section_el) {
-            const sectionData = befriend.filters.data.options?.['instruments'];
-
-            // Search input handling
-            const search_input = section_el.querySelector('.search-input');
-            const input_container = section_el.querySelector('.input-container');
-            const autocomplete_list = section_el.querySelector('.autocomplete-list');
-
-            let debounceTimer;
-
-            if (search_input) {
-                search_input.addEventListener('input', () => {
-                    clearTimeout(debounceTimer);
-
-                    let timeout = this.value ? 200 : 0;
-
-                    debounceTimer = setTimeout(async () => {
-                        const value = search_input.value.trim();
-                        if (value.length < sectionData.autoComplete.minChars) {
-                            befriend.filters.instruments.toggleAutocomplete(false);
-                            return;
-                        }
-
-                        try {
-                            const response = await befriend.auth.get(sectionData.autoComplete.endpoint, {
-                                search: value
-                            });
-
-                            if (response.data.items?.length) {
-                                // Filter out items that already exist in filters data
-                                const storedFilters = befriend.filters.data.filters?.instruments;
-                                const existingTokens = new Set();
-
-                                if (storedFilters?.items) {
-                                    for (let k in storedFilters.items) {
-                                        const item = storedFilters.items[k];
-                                        if (!item.deleted) {
-                                            let instrument = sectionData?.options.find(opt => opt.id === item.instrument_id);
-                                            if (instrument) {
-                                                existingTokens.add(instrument.token);
-                                            }
-                                        }
-                                    }
-                                }
-
-                                const filteredItems = response.data.items.filter(item => !existingTokens.has(item.token));
-
-                                if (filteredItems.length) {
-                                    const items_html = filteredItems.map(item => `
-                            <div class="item" data-token="${item.token}">
-                                <div class="name-meta">
-                                    <div class="name">${item.name}</div>
-                                </div>
-                            </div>
-                        `).join('');
-
-                                    autocomplete_list.innerHTML = items_html;
-                                    befriend.filters.instruments.toggleAutocomplete(true);
-                                } else {
-                                    autocomplete_list.innerHTML = '<div class="no-results">No results found</div>';
-                                    befriend.filters.instruments.toggleAutocomplete(true);
-                                }
-                            } else {
-                                autocomplete_list.innerHTML = '<div class="no-results">No results found</div>';
-                                befriend.filters.instruments.toggleAutocomplete(true);
-                            }
-                        } catch (e) {
-                            console.error('Error searching instruments:', e);
-                        }
-                    }, timeout);
-                });
-
-                console.log("autocomplete list")
-
-                autocomplete_list.addEventListener('click', async (e) => {
-                    console.log("here")
-                    const item = e.target.closest('.item');
-                    if (!item) return;
-
-                    const token = item.getAttribute('data-token');
-
-                    try {
-                        befriend.toggleSpinner(true);
-
-                        let r = await befriend.auth.put('/filters/instruments', {
-                            token,
-                            active: true
-                        });
-
-                        // Get current mine items
-                        const storedFilters = befriend.filters.data.filters?.instruments;
-
-                        if (!storedFilters?.items) {
-                            befriend.filters.data.filters.instruments = {
-                                items: {}
-                            }
-                        }
-
-                        let option = sectionData?.options.find(opt => opt.token === token);
-
-                        befriend.filters.data.filters.instruments.items[token] = {
-                            token,
-                            instrument_id: option.id,
-                            name: option.name,
-                            is_active: true
-                        }
-
-                        // Close autocomplete and clear input
-                        befriend.filters.instruments.toggleAutocomplete(false);
-                        search_input.value = '';
-
-                        // Switch to mine category and show updated items
-                        fireClick(category_mine);
-
-                        requestAnimationFrame(() => {
-                            befriend.filters.updateSectionHeights();
-                        });
-
-                        befriend.toggleSpinner(false);
-                    } catch (e) {
-                        console.error('Error adding instrument:', e);
-                        befriend.toggleSpinner(false);
-                    }
-                });
-
-                // Focus/blur handling
-                search_input.addEventListener('focus', () => {
-                    addClassEl('input-focus', input_container);
-
-                    const value = search_input.value.trim();
-                    if (value.length >= sectionData.autoComplete.minChars) {
-                        befriend.filters.instruments.toggleAutocomplete(true);
-                    }
-                });
-
-                search_input.addEventListener('blur', () => {
-                    removeClassEl('input-focus', input_container);
-
-                    setTimeout(function () {
-                        befriend.filters.instruments.toggleAutocomplete(false);
-                    }, 100);
-                });
-            }
-
-            // Category selection handling
-            const category_mine = section_el.querySelector(`.category-btn.mine`);
-            const category_btns = section_el.querySelectorAll('.category-btn');
-
-            for (let btn of category_btns) {
-                btn.addEventListener('click', async () => {
-                    removeElsClass(category_btns, 'active');
-                    addClassEl('active', btn);
-
-                    const category = btn.getAttribute('data-category');
-
-                    try {
-                        let items;
-                        if (category === 'mine') {
-                            const storedFilters = befriend.filters.data.filters?.instruments || {};
-                            items = Object.values(storedFilters.items || {})
-                                .filter(item => !item.deleted)
-                                .filter(Boolean);
-                        } else {
-                            items = sectionData?.options.filter(item => item.category === category);
-                        }
-
-                        this.renderItems(section_el, items || [], category === 'mine');
-
-                        requestAnimationFrame(() => {
-                            befriend.filters.updateSectionHeights();
-                        });
-                    } catch (e) {
-                        console.error('Error loading instruments:', e);
-                    }
-                });
-            }
-
-            // Item selection handling
-            const items_container = section_el.querySelector('.items-container');
-
-            if (items_container) {
-                items_container.addEventListener('click', async (e) => {
-                    const item = e.target.closest('.item');
-                    const removeBtn = e.target.closest('.remove');
-
-                    if (!item) return;
-
-                    let token = item.getAttribute('data-token');
-                    let wasSelected = elHasClass(item, 'active');
-
-                    if (elHasClass(item, 'any')) {
-                        if(wasSelected) {
-                            return;
-                        }
-
-                        try {
-                            befriend.toggleSpinner(true);
-
-                            await befriend.auth.put('/filters/instruments', {
-                                token: 'any',
-                                active: true
-                            });
-
-                            const anyButton = item;
-                            const otherItems = section_el.querySelectorAll('.item:not(.any)');
-
-                            addClassEl('active', anyButton);
-                            removeElsClass(otherItems, 'active');
-
-                            //update state data
-                            if(befriend.filters.data.filters?.instruments?.items) {
-                                for(let k in befriend.filters.data.filters.instruments.items) {
-                                    befriend.filters.data.filters.instruments.items[k].is_active = false;
-                                }
-                            }
-                        } catch (e) {
-                            console.error('Error setting any instrument:', e);
-                        }
-
-                        befriend.toggleSpinner(false);
-
-                        return;
-                    }
-
-                    if(removeBtn) {
-                        try {
-                            befriend.toggleSpinner(true);
-
-                            await befriend.auth.put('/filters/instruments', {
-                                token,
-                                active: wasSelected,
-                                is_delete: true
-                            });
-
-                            // Remove item and update Any button if needed
-                            item.remove();
-
-                            const activeItems = section_el.querySelectorAll('.item.mine.active');
-                            if (activeItems.length === 0) {
-                                const anyButton = section_el.querySelector('.item.any');
-                                if (anyButton) addClassEl('active', anyButton);
-                            }
-
-                            //update state data
-                            if(befriend.filters.data.filters?.instruments?.items) {
-                                for(let k in befriend.filters.data.filters.instruments.items) {
-                                    if(befriend.filters.data.filters.instruments.items[k].token === token) {
-                                        befriend.filters.data.filters.instruments.items[k].deleted = true;
-                                    }
-                                }
-                            }
-                        } catch (e) {
-                            console.error('Error removing instrument:', e);
-                        }
-
-                        befriend.toggleSpinner(false);
-
-                        requestAnimationFrame(function () {
-                            befriend.filters.updateSectionHeights();
-                        });
-
-                        return;
-                    }
-
-                    if (elHasClass(item, 'mine')) {
-                        toggleElClass(item, 'active');
-
-                        try {
-                            befriend.toggleSpinner(true);
-
-                            await befriend.auth.put('/filters/instruments', {
-                                token,
-                                active: !wasSelected,
-                            });
-
-                            const activeItems = section_el.querySelectorAll('.item.mine.active');
-
-                            const anyButton = section_el.querySelector('.item.any');
-
-                            if(anyButton) {
-                                if (activeItems.length === 0) {
-                                    addClassEl('active', anyButton);
-                                } else {
-                                    removeClassEl('active', anyButton);
-                                }
-                            }
-
-                            //update state data
-                            if(befriend.filters.data.filters?.instruments?.items) {
-                                for(let k in befriend.filters.data.filters.instruments.items) {
-                                    if(befriend.filters.data.filters.instruments.items[k].token === token) {
-                                        befriend.filters.data.filters.instruments.items[k].is_active = !wasSelected;
-                                    }
-                                }
-                            }
-                        } catch (e) {
-                            console.error('Error removing instrument:', e);
-                        }
-
-                        befriend.toggleSpinner(false);
-
-                        return;
-                    }
-
-                    //select category item option
-                    try {
-                        // Remove item from current view
-                        item.remove();
-                        befriend.toggleSpinner(true);
-
-                        let r = await befriend.auth.put('/filters/instruments', {
-                            token,
-                            active: true
-                        });
-
-                        // Get current mine items
-                        const storedFilters = befriend.filters.data.filters?.instruments;
-
-                        if(!storedFilters?.items) {
-                            befriend.filters.data.filters.instruments = {
-                                items: {}
-                            }
-                        }
-
-                        let option = sectionData?.options.find(opt => opt.token === token);
-
-                        befriend.filters.data.filters.instruments.items[token] = {
-                            token,
-                            instrument_id: option.id,
-                            name: option.name,
-                            is_active: true
-                        }
-
-                        fireClick(category_mine);
-
-                        requestAnimationFrame(function () {
-                            befriend.filters.updateSectionHeights();
-                        });
-
-                        befriend.toggleSpinner(false);
-                    } catch (e) {
-                        console.error('Error adding instrument:', e);
-                        befriend.toggleSpinner(false);
-                    }
-                });
-            }
+        initEvents: function() {
+            this.events.search();
+            this.events.categories();
+            this.events.items();
+            this.events.remove();
+            this.events.secondary();
         },
         renderItems: function(section_el, items, is_mine) {
             const storedFilters = befriend.filters.data.filters?.instruments;
             const sectionData = befriend.filters.data.options?.['instruments'];
             const items_container = section_el.querySelector('.items');
+            const secondary_options = sectionData?.secondary?.instruments?.options;
 
             let items_html = '';
             let hasActiveItems = false;
@@ -3094,14 +2753,33 @@ befriend.filters = {
             if (items?.length) {
                 items_html += items.map(item => {
                     if (is_mine) {
-                        console.log(item);
-
                         const isActive = !item.deleted && item.is_active;
+
+                        let secondary_html = '';
+                        if (secondary_options) {
+                            let secondary_options_html = '';
+                            let unselected = !item.secondary ? 'unselected' : '';
+
+                            for (let option of secondary_options) {
+                                let selected = item.secondary === option ? 'selected' : '';
+                                secondary_options_html += `<div class="option ${selected}" data-option="${option}">${option}</div>`;
+                            }
+
+                            secondary_html = `
+                        <div class="secondary ${unselected}" data-value="${item.secondary || ''}">
+                            <div class="current-selected">${item.secondary || sectionData.secondary.instruments.unselectedStr}</div>
+                            <svg class="arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 82.1 43.2">
+                                <path d="M41.1,43.2L0,2.2,2.1,0l39,39L80,0l2.1,2.2-41,41Z"/>
+                            </svg>
+                            <div class="options">${secondary_options_html}</div>
+                        </div>`;
+                        }
 
                         return `
                         <div class="item mine ${isActive ? 'active': ''}" data-token="${item.token}">
                             <div class="content">
                                 <div class="name">${item.name}</div>
+                                ${secondary_html}
                                 <div class="remove">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56"><path d="M28,0C12.5605,0,0,12.5605,0,28s12.5605,28,28,28,28-12.5605,28-28S43.4395,0,28,0ZM28,53c-13.7852,0-25-11.2148-25-25S14.2148,3,28,3s25,11.2148,25,25-11.2148,25-25,25ZM39.2627,16.7373c-.5859-.5859-1.5352-.5859-2.1211,0l-9.1416,9.1416-9.1416-9.1416c-.5859-.5859-1.5352-.5859-2.1211,0-.5859.5854-.5859,1.5356,0,2.1211l9.1416,9.1416-9.1416,9.1416c-.5859.5854-.5859,1.5356,0,2.1211.293.293.6768.4395,1.0605.4395s.7676-.1465,1.0605-.4395l9.1417-9.1416,9.1416,9.1416c.293.293.6768.4395,1.0605.4395s.7676-.1465,1.0605-.4395c.5859-.5854.5859-1.5356,0-2.1211l-9.1415-9.1416,9.1416-9.1416c.5859-.5855.5859-1.5356,0-2.1211Z"/></svg>
                                 </div>
@@ -3123,6 +2801,8 @@ befriend.filters = {
             }
 
             items_container.innerHTML = items_html;
+
+            this.initEvents();
         },
         toggleAutocomplete: function(show) {
             let section = befriend.filters.sections.instruments;
@@ -3146,6 +2826,396 @@ befriend.filters = {
                 removeClassEl('autocomplete-shown', autocomplete_container);
             }
         },
+        events: {
+            search: function () {
+                let section = befriend.filters.sections.instruments;
+                const sectionData = befriend.filters.data.options?.['instruments'];
+                const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+
+                const search_input = section_el.querySelector('.search-input');
+                const input_container = section_el.querySelector('.input-container');
+                const autocomplete_list = section_el.querySelector('.autocomplete-list');
+
+                const category_mine = section_el.querySelector(`.category-btn.mine`);
+
+                let debounceTimer;
+
+                if (search_input) {
+                    search_input.addEventListener('input', () => {
+                        clearTimeout(debounceTimer);
+
+                        let timeout = this.value ? 200 : 0;
+
+                        debounceTimer = setTimeout(async () => {
+                            const value = search_input.value.trim();
+                            if (value.length < sectionData.autoComplete.minChars) {
+                                befriend.filters.instruments.toggleAutocomplete(false);
+                                return;
+                            }
+
+                            try {
+                                const response = await befriend.auth.get(sectionData.autoComplete.endpoint, {
+                                    search: value
+                                });
+
+                                if (response.data.items?.length) {
+                                    // Filter out items that already exist in filters data
+                                    const storedFilters = befriend.filters.data.filters?.instruments;
+                                    const existingTokens = new Set();
+
+                                    if (storedFilters?.items) {
+                                        for (let k in storedFilters.items) {
+                                            const item = storedFilters.items[k];
+                                            if (!item.deleted) {
+                                                let instrument = sectionData?.options.find(opt => opt.id === item.instrument_id);
+                                                if (instrument) {
+                                                    existingTokens.add(instrument.token);
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    const filteredItems = response.data.items.filter(item => !existingTokens.has(item.token));
+
+                                    if (filteredItems.length) {
+                                        const items_html = filteredItems.map(item => `
+                            <div class="item" data-token="${item.token}">
+                                <div class="name-meta">
+                                    <div class="name">${item.name}</div>
+                                </div>
+                            </div>
+                        `).join('');
+
+                                        autocomplete_list.innerHTML = items_html;
+                                        befriend.filters.instruments.toggleAutocomplete(true);
+                                    } else {
+                                        autocomplete_list.innerHTML = '<div class="no-results">No results found</div>';
+                                        befriend.filters.instruments.toggleAutocomplete(true);
+                                    }
+                                } else {
+                                    autocomplete_list.innerHTML = '<div class="no-results">No results found</div>';
+                                    befriend.filters.instruments.toggleAutocomplete(true);
+                                }
+                            } catch (e) {
+                                console.error('Error searching instruments:', e);
+                            }
+                        }, timeout);
+                    });
+
+                    console.log("autocomplete list")
+
+                    autocomplete_list.addEventListener('click', async (e) => {
+                        console.log("here")
+                        const item = e.target.closest('.item');
+                        if (!item) return;
+
+                        const token = item.getAttribute('data-token');
+
+                        try {
+                            befriend.toggleSpinner(true);
+
+                            let r = await befriend.auth.put('/filters/instruments', {
+                                token,
+                                active: true
+                            });
+
+                            // Get current mine items
+                            const storedFilters = befriend.filters.data.filters?.instruments;
+
+                            if (!storedFilters?.items) {
+                                befriend.filters.data.filters.instruments = {
+                                    items: {}
+                                }
+                            }
+
+                            let option = sectionData?.options.find(opt => opt.token === token);
+
+                            befriend.filters.data.filters.instruments.items[token] = {
+                                token,
+                                instrument_id: option.id,
+                                name: option.name,
+                                is_active: true
+                            }
+
+                            // Close autocomplete and clear input
+                            befriend.filters.instruments.toggleAutocomplete(false);
+                            search_input.value = '';
+
+                            // Switch to mine category and show updated items
+                            fireClick(category_mine);
+
+                            requestAnimationFrame(() => {
+                                befriend.filters.updateSectionHeights();
+                            });
+
+                            befriend.toggleSpinner(false);
+                        } catch (e) {
+                            console.error('Error adding instrument:', e);
+                            befriend.toggleSpinner(false);
+                        }
+                    });
+
+                    // Focus/blur handling
+                    search_input.addEventListener('focus', () => {
+                        addClassEl('input-focus', input_container);
+
+                        const value = search_input.value.trim();
+                        if (value.length >= sectionData.autoComplete.minChars) {
+                            befriend.filters.instruments.toggleAutocomplete(true);
+                        }
+                    });
+
+                    search_input.addEventListener('blur', () => {
+                        removeClassEl('input-focus', input_container);
+
+                        setTimeout(function () {
+                            befriend.filters.instruments.toggleAutocomplete(false);
+                        }, 100);
+                    });
+                }
+            },
+            categories: function () {
+                let section = befriend.filters.sections.instruments;
+                const sectionData = befriend.filters.data.options?.['instruments'];
+                const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+
+                const category_btns = section_el.querySelectorAll('.category-btn');
+
+                for (let btn of category_btns) {
+                    btn.addEventListener('click', async () => {
+                        removeElsClass(category_btns, 'active');
+                        addClassEl('active', btn);
+
+                        const category = btn.getAttribute('data-category');
+
+                        try {
+                            let items;
+                            if (category === 'mine') {
+                                const storedFilters = befriend.filters.data.filters?.instruments || {};
+                                items = Object.values(storedFilters.items || {})
+                                    .filter(item => !item.deleted)
+                                    .filter(Boolean);
+                            } else {
+                                items = sectionData?.options.filter(item => item.category === category);
+                            }
+
+                            befriend.filters.instruments.renderItems(section_el, items || [], category === 'mine');
+
+                            requestAnimationFrame(() => {
+                                befriend.filters.updateSectionHeights();
+                            });
+                        } catch (e) {
+                            console.error('Error loading instruments:', e);
+                        }
+                    });
+                }
+            },
+            items: function () {
+                let section = befriend.filters.sections.instruments;
+                const sectionData = befriend.filters.data.options?.['instruments'];
+                const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+
+                let items_els = section_el.getElementsByClassName('item');
+
+                const category_mine = section_el.querySelector(`.category-btn.mine`);
+
+                for(let item of items_els) {
+                    if(item._listener) {
+                        continue;
+                    }
+
+                    item._listener = true;
+
+                    item.addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        let token = item.getAttribute('data-token');
+                        let wasSelected = elHasClass(item, 'active');
+
+                        if (elHasClass(item, 'any')) {
+                            if(wasSelected) {
+                                return;
+                            }
+
+                            try {
+                                befriend.toggleSpinner(true);
+
+                                await befriend.auth.put('/filters/instruments', {
+                                    token: 'any',
+                                    active: true
+                                });
+
+                                const anyButton = item;
+                                const otherItems = section_el.querySelectorAll('.item:not(.any)');
+
+                                addClassEl('active', anyButton);
+                                removeElsClass(otherItems, 'active');
+
+                                //update state data
+                                if(befriend.filters.data.filters?.instruments?.items) {
+                                    for(let k in befriend.filters.data.filters.instruments.items) {
+                                        befriend.filters.data.filters.instruments.items[k].is_active = false;
+                                    }
+                                }
+                            } catch (e) {
+                                console.error('Error setting any instrument:', e);
+                            }
+
+                            befriend.toggleSpinner(false);
+
+                            return;
+                        }
+
+                        if (elHasClass(item, 'mine')) {
+                            toggleElClass(item, 'active');
+
+                            try {
+                                befriend.toggleSpinner(true);
+
+                                await befriend.auth.put('/filters/instruments', {
+                                    token,
+                                    active: !wasSelected,
+                                });
+
+                                const activeItems = section_el.querySelectorAll('.item.mine.active');
+
+                                const anyButton = section_el.querySelector('.item.any');
+
+                                if(anyButton) {
+                                    if (activeItems.length === 0) {
+                                        addClassEl('active', anyButton);
+                                    } else {
+                                        removeClassEl('active', anyButton);
+                                    }
+                                }
+
+                                //update state data
+                                if(befriend.filters.data.filters?.instruments?.items) {
+                                    for(let k in befriend.filters.data.filters.instruments.items) {
+                                        if(befriend.filters.data.filters.instruments.items[k].token === token) {
+                                            befriend.filters.data.filters.instruments.items[k].is_active = !wasSelected;
+                                        }
+                                    }
+                                }
+                            } catch (e) {
+                                console.error('Error removing instrument:', e);
+                            }
+
+                            befriend.toggleSpinner(false);
+
+                            return;
+                        }
+
+                        //select category item option
+                        try {
+                            // Remove item from current view
+                            item.remove();
+                            befriend.toggleSpinner(true);
+
+                            let r = await befriend.auth.put('/filters/instruments', {
+                                token,
+                                active: true
+                            });
+
+                            // Get current mine items
+                            const storedFilters = befriend.filters.data.filters?.instruments;
+
+                            if(!storedFilters?.items) {
+                                befriend.filters.data.filters.instruments = {
+                                    items: {}
+                                }
+                            }
+
+                            let option = sectionData?.options.find(opt => opt.token === token);
+
+                            befriend.filters.data.filters.instruments.items[token] = {
+                                token,
+                                instrument_id: option.id,
+                                name: option.name,
+                                is_active: true
+                            }
+
+                            fireClick(category_mine);
+
+                            requestAnimationFrame(function () {
+                                befriend.filters.updateSectionHeights();
+                            });
+
+                            befriend.toggleSpinner(false);
+                        } catch (e) {
+                            console.error('Error adding instrument:', e);
+                            befriend.toggleSpinner(false);
+                        }
+                    });
+                }
+            },
+            remove: function () {
+                let section = befriend.filters.sections.instruments;
+                const sectionData = befriend.filters.data.options?.['instruments'];
+                const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+
+                let remove_els = section_el.querySelectorAll('.item .remove');
+
+                for(let remove_el of remove_els) {
+                    if(remove_el._listener) {
+                        continue;
+                    }
+
+                    remove_el._listener = true;
+
+                    remove_el.addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        let item = remove_el.closest('.item');
+
+                        let token = item.getAttribute('data-token');
+                        let wasSelected = elHasClass(item, 'active');
+
+                        try {
+                            befriend.toggleSpinner(true);
+
+                            await befriend.auth.put('/filters/instruments', {
+                                token,
+                                active: wasSelected,
+                                is_delete: true
+                            });
+
+                            // Remove item and update Any button if needed
+                            item.remove();
+
+                            const activeItems = section_el.querySelectorAll('.item.mine.active');
+
+                            if (activeItems.length === 0) {
+                                const anyButton = section_el.querySelector('.item.any');
+                                if (anyButton) addClassEl('active', anyButton);
+                            }
+
+                            //update state data
+                            if(befriend.filters.data.filters?.instruments?.items) {
+                                for(let k in befriend.filters.data.filters.instruments.items) {
+                                    if(befriend.filters.data.filters.instruments.items[k].token === token) {
+                                        befriend.filters.data.filters.instruments.items[k].deleted = true;
+                                    }
+                                }
+                            }
+                        } catch (e) {
+                            console.error('Error removing instrument:', e);
+                        }
+
+                        befriend.toggleSpinner(false);
+
+                        requestAnimationFrame(function () {
+                            befriend.filters.updateSectionHeights();
+                        });
+                    });
+                }
+            },
+            secondary: function () {
+
+            }
+        }
     },
     initSections: async function () {
         let sections_el = befriend.els.filters.querySelector('.sections');
