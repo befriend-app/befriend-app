@@ -38,3 +38,47 @@
         transform: translateX($width - $knob-size - 2 * $padding);
     }
 }
+
+@mixin filter-options {
+    max-height: 400px;
+    overflow-y: scroll;
+    padding-top: 40px;
+}
+
+@mixin filter-buttons {
+    margin: 10px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .options-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+}
+
+@mixin filter-button {
+    background-color: lighten(black, 95%);
+    padding: 7px 0px;
+    border-radius: 6px;
+    font-size: 15px;
+    transition: all 200ms;
+    border: 1px solid $color_lightgray;
+    cursor: pointer;
+    text-align: center;
+    @include flex-center-col;
+
+    &.selected {
+        background-color: $brand_color_b;
+        border: 1px solid darken($brand_color_a, 10%);
+    }
+
+    &.any {
+        width: 100%;
+    }
+
+    .name {
+        padding: 0 8px;
+    }
+}

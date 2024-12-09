@@ -1187,43 +1187,28 @@
             }
         }
 
-        &.life_stages, &.relationship {
+        &.life_stages, &.relationship, &.languages,
+        &.politics, &.religion, &.drinking, &.smoking {
+            .section-container {
+                position: relative;
+            }
+
+            .send-receive {
+                position: absolute;
+                transform: initial;
+                z-index: 2;
+            }
+
             .filter-options {
-                padding: $section_padding_tb $section_padding_lr;
+                @include filter-options;
             }
 
-            .life-stage-buttons, .relationship-buttons {
-                display: flex;
-                flex-direction: column;
-                gap: 12px;
-                margin: 10px 0;
-
-                .options-grid {
-                    display: grid;
-                    grid-template-columns: repeat(2, 1fr);
-                    gap: 12px 12px;
-                }
+            .buttons {
+                @include filter-buttons;
             }
 
-            .life-stage-button, .relationship-button {
-                background-color: lighten(black, 95%);
-                padding: 7px 0px;
-                border-radius: 6px;
-                font-size: 15px;
-                transition: all 200ms;
-                border: 1px solid $color_lightgray;
-                cursor: pointer;
-                text-align: center;
-                @include flex-center-col;
-
-                &.selected {
-                    background-color: $brand_color_b;
-                    border: 1px solid darken($brand_color_a, 10%);
-                }
-
-                &.any {
-                    width: 100%;
-                }
+            .button {
+                @include filter-button;
             }
         }
 

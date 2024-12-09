@@ -28,6 +28,11 @@ befriend.filters = {
                 befriend.filters.verifications.init();
                 befriend.filters.life_stages.init();
                 befriend.filters.relationship.init();
+                befriend.filters.languages.init();
+                befriend.filters.politics.init();
+                befriend.filters.religion.init();
+                befriend.filters.drinking.init();
+                befriend.filters.smoking.init();
 
                 befriend.filters.initSendReceive();
                 befriend.filters.initActiveEvents();
@@ -108,14 +113,47 @@ befriend.filters = {
         },
         life_stages: {
             token: 'life_stages',
+            endpoint: '/filters/life-stages',
             name: 'Life Stage',
             icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480.612 511.998"><path d="M353.336,304.254c-.597-6.81-4.287-12.756-10.124-16.315-7.295-4.446-16.499-4.113-23.453.851l-54.336,38.798-4.514-41.989c-1.378-12.815-12.136-22.479-25.024-22.479-12.507,0-23.227,9.344-24.933,21.734l-7.727,56.096-35.227-47.339c-4.688-6.301-12.454-9.719-20.27-8.916-7.967.817-14.724,5.649-18.073,12.924-3.349,7.276-2.626,15.55,1.934,22.134l58.567,84.569c-.742,43.266-21.788,96.837-22.005,97.383-.918,2.316-.63,4.937.77,6.998,1.4,2.061,3.73,3.295,6.221,3.295h113.93c2.637,0,5.081-1.381,6.441-3.639,1.361-2.258,1.439-5.065.208-7.396-.273-.512-26.729-51.326-24.576-112.704l75.063-66.176c5.128-4.521,7.727-11.019,7.128-17.829ZM336.262,310.802l-77.464,68.294c-1.52,1.34-2.434,3.236-2.537,5.259-2.547,50.02,12.68,93.11,21.021,112.606h-91.357v-.001c6.568-18.761,19.292-59.665,19.292-94.956,0-1.53-.467-3.024-1.338-4.281l-59.925-86.53c-2.163-3.123-1.166-6.133-.636-7.283.529-1.149,2.168-3.864,5.946-4.252,2.56-.263,5.125.86,6.669,2.934l46.201,62.086c1.822,2.449,4.945,3.555,7.904,2.794,2.957-.76,5.162-3.232,5.578-6.257l10.235-74.306c.687-4.986,5.001-8.747,10.034-8.747,5.187,0,9.516,3.889,10.071,9.046l5.89,54.783c.286,2.657,1.96,4.963,4.398,6.057,2.438,1.094,5.275.81,7.448-.741l64.807-46.275c2.038-1.457,4.742-1.556,6.884-.25,1.713,1.045,2.796,2.79,2.971,4.788s-.5871,3.905-2.0921,5.232Z"/><path d="M468.612,217.611c0-17.421-5.677-34.482-16.092-48.65,4.817-7.583,7.337-16.204,7.337-25.25,0-26.82-22.669-48.639-50.533-48.639-.222,0-.445.001-.668.004-10.156-33.16-42.274-56.599-78.83-56.599-7.579,0-15.043.987-22.268,2.941C293.669,16.054,266.317,0,236.067,0c-33.816,0-63.873,20.305-75.595,50.206-7.214-1.692-14.606-2.547-22.059-2.547-41.936,0-78.765,27.298-89.69,65.656-24.365,3.586-42.711,23.707-42.711,48.009,0,12.353,4.961,24.224,13.59,33.15C7.052,207.384,0,224.377,0,242.264c0,32.569,22.964,60.362,55.359,68.018,6.867,39.992,41.276,70.819,83.862,74.224,4.126.328,7.765-2.756,8.096-6.897.331-4.14-2.757-7.764-6.897-8.095-37.323-2.984-67.128-30.89-70.871-66.353-.357-3.379-2.935-6.098-6.288-6.636-27.941-4.479-48.221-27.299-48.221-54.261,0-16.238,7.505-31.574,20.592-42.073,1.84-1.477,2.881-3.731,2.811-6.089s-1.243-4.547-3.168-5.911c-9.039-6.409-14.223-16.202-14.223-26.867,0-18.053,14.919-32.772,33.963-33.508,3.431-.132,6.337-2.573,7.061-5.93,7.39-34.295,39.494-59.187,76.337-59.187,8.386,0,16.676,1.281,24.643,3.807,1.941.615,4.051.417,5.845-.55s3.118-2.621,3.669-4.583c7.667-27.28,33.778-46.333,63.498-46.333,26.63,0,50.458,15.11,60.704,38.495,1.584,3.619,5.703,5.394,9.421,4.062,7.562-2.707,15.514-4.079,23.633-4.079,31.812,0,59.476,21.487,65.778,51.091.823,3.867,4.5,6.43,8.412,5.88,1.762-.25,3.548-.377,5.308-.377,19.57,0,35.493,15.072,35.493,33.599,0,7.559-2.601,14.703-7.52,20.661-2.322,2.812-2.291,6.883.07,9.66,10.6,12.465,16.204,27.534,16.204,43.579,0,31.953-22.743,59.628-55.308,67.302-2.025.477-3.762,1.772-4.798,3.577-1.035,1.805-1.277,3.959-.666,5.948,6.404,20.864-.909,36.955-8.17,46.78-12.625,17.082-35.205,28.559-56.185,28.559-2.162,0-4.344-.101-6.485-.301-4.145-.38-7.8,2.654-8.186,6.79-.386,4.135,2.655,7.8,6.789,8.186,2.604.243,5.255.366,7.881.366,25.916,0,52.718-13.604,68.28-34.659,11.608-15.705,15.869-34.155,12.317-52.656,35.4319-11.516,59.5719-43.392,59.5719-79.892Z"/></svg>`
         },
         relationship: {
             token: 'relationship',
+            endpoint: '/filters/relationship',
             name: 'Relationship Status',
             icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 66 52.022"><g><path d="M58.545,29.362c-1.875-1.082-4.052-1.579-6.199-1.436-.948-1.935-2.469-3.567-4.344-4.65-1.659-.957-3.543-1.463-5.449-1.463-3.891,0-7.516,2.092-9.458,5.458-5.147,8.913,4.238,22.789,4.64,23.375.516.752,1.333,1.225,2.252,1.296.184.013,1.175.08,2.625.08,5.771,0,16.035-1.007,19.929-7.751,3.007-5.211,1.215-11.9-3.996-14.909ZM60.808,43.271c-3.392,5.874-12.856,6.751-18.196,6.751h-.002c-1.379,0-2.306-.063-2.479-.075-.303-.023-.576-.181-.748-.432-.373-.544-9.081-13.409-4.557-21.244,1.587-2.75,4.547-4.458,7.726-4.458,1.556,0,3.094.413,4.449,1.195,1.711.987,3.061,2.537,3.8,4.362.171.425.611.681,1.065.615,1.914-.269,3.964.12,5.677,1.108,4.258,2.459,5.722,7.922,3.265,12.178Z"/><path d="M31.959,44.327c-1.347.739-2.313,1.211-2.665,1.379-.805.385-1.785.385-2.588,0-2.529-1.209-24.706-12.259-24.706-27.706C2,9.178,9.178,2,18,2c3.411,0,6.666,1.058,9.411,3.059.351.256.827.256,1.178,0,2.746-2.001,6-3.059,9.411-3.059,8.822,0,16,7.178,16,16,0,2.359-.545,4.78-1.622,7.193-.225.505.002,1.096.506,1.32.504.228,1.096-.001,1.321-.506,1.191-2.671,1.795-5.364,1.795-8.007C56,8.075,47.925,0,38,0c-3.596,0-7.038,1.046-10,3.031-2.962-1.985-6.404-3.031-10-3.031C8.075,0,0,8.075,0,18c0,16.671,23.198,28.246,25.843,29.511.669.32,1.416.489,2.157.489s1.487-.169,2.157-.489c.368-.176,1.373-.667,2.764-1.43.484-.266.662-.873.396-1.357-.266-.485-.874-.665-1.358-.397Z"/></g></svg>`
-        }
+        },
+        languages: {
+            token: 'languages',
+            endpoint: '/filters/languages',
+            name: 'Languages',
+            icon: `<svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 682.6671 682.6666"><defs><style>.language-cls-1,.language-cls-2{fill:none;}.language-cls-2{stroke:#000;stroke-linecap:round;stroke-linejoin:round;stroke-width:26.6667px;}.language-cls-3{clip-path:url(#clippath);}</style><clipPath id="clippath"><rect class="language-cls-1" y="0" width="682.6666" height="682.6666"/></clipPath></defs><g id="g369"><g id="g371"><g class="language-cls-3"><g id="g373"><g id="g379"><path id="path381" class="language-cls-2" d="M177.3333,493.324l57.072-149.8493c1.1667-2.852,5.2027-2.856,6.3747-.0067l56.5533,149.856"/></g><g id="g383"><path id="path385" class="language-cls-2" d="M195.1324,456.0034h84.6893"/></g><g id="g387"><path id="path389" class="language-cls-2" d="M356,130h178.6667"/></g><g id="g391"><path id="path393" class="language-cls-2" d="M477.5027,130v12.9133c0,67.28-50.08,124.04-116.836,132.42h0"/></g><g id="g395"><path id="path397" class="language-cls-2" d="M413.164,130v12.9133c0,67.28,50.08,124.04,116.836,132.42h0"/></g><g id="g399"><path id="path401" class="language-cls-2" d="M445.3333,130v-48"/></g><g id="g403"><path id="path405" class="language-cls-2" d="M385.3338,13.3333h-106.616c-31.692,0-57.384,25.692-57.384,57.3853v215.896c0,31.6933,25.692,57.3853,57.384,57.3853h233.2827l99.948,85.3333v-85.3333h0c31.6933,0,57.3853-25.692,57.3853-57.3853V70.7187c0-31.6933-25.692-57.3853-57.3853-57.3853h-106.6147"/></g><g id="g407"><path id="path409" class="language-cls-2" d="M461.3333,344v182.6147c0,31.6933-25.692,57.3853-57.3853,57.3853h-233.2813l-99.948,85.3333v-85.3333h0c-31.6933,0-57.3853-25.692-57.3853-57.3853v-215.896c0-31.6933,25.692-57.3853,57.3853-57.3853h150.6147"/></g><g id="g411"><path id="path413" class="language-cls-2" d="M445.3333,13.3333h0"/></g></g></g></g></g></svg>`
+        },
+        politics: {
+            token: 'politics',
+            endpoint: '/filters/politics',
+            name: 'Politics',
+            icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 508.8916"><path d="M256,130.9697c13.2734,0,24.0664-10.7969,24.0664-24.0664s-10.7969-24.0703-24.0664-24.0703-24.0664,10.7969-24.0664,24.0703,10.7969,24.0664,24.0664,24.0664ZM256,97.833c5,0,9.0664,4.0703,9.0664,9.0703,0,4.9961-4.0664,9.0664-9.0664,9.0664s-9.0664-4.0664-9.0664-9.0664,4.0664-9.0703,9.0664-9.0703Z"/><path d="M504.5,460.7627h-9.0664v-25.6328c0-4.1406-3.3594-7.5-7.5-7.5h-25.6328v-25.6328c0-4.1406-3.3555-7.5-7.5-7.5h-9.0625v-164.1289h9.0625c4.1445,0,7.5-3.3594,7.5-7.5v-25.6328h25.6328c4.1445,0,7.5-3.3594,7.5-7.5v-33.1328c0-4.1406-3.3555-7.5-7.5-7.5h-14.2227L260.2695,1.333c-2.5664-1.7773-5.9688-1.7773-8.5391,0L38.293,149.1025h-14.2266c-4.1406,0-7.5,3.3555-7.5,7.5v33.1328c0,4.1406,3.3594,7.5,7.5,7.5h25.6328v25.6328c0,4.1406,3.3594,7.5,7.5,7.5h9.0664v164.1289h-9.0664c-4.1406,0-7.5,3.3555-7.5,7.5v25.6328h-25.6328c-4.1406,0-7.5,3.3594-7.5,7.5v25.6328H7.5c-4.1445,0-7.5,3.3555-7.5,7.5v33.1289c0,4.1445,3.3555,7.5,7.5,7.5h497c4.1445,0,7.5-3.3555,7.5-7.5v-33.1289c0-4.1406-3.3555-7.5-7.5-7.5ZM447.3008,427.6299h-67.832v-18.1328h67.832v18.1328ZM396.0312,394.4971v-164.1289h34.7031v164.1289h-34.7031ZM447.3008,215.3682h-67.832v-18.1328h67.832v18.1328ZM371.9688,230.3682h9.0625v164.1289h-9.0625c-4.1445,0-7.5,3.3555-7.5,7.5v25.6328h-59.5508v-25.6328c0-4.1445-3.3594-7.5-7.5-7.5h-9.0664v-164.1289h9.0664c4.1406,0,7.5-3.3594,7.5-7.5v-25.6328h59.5508v25.6328c0,4.1406,3.3555,7.5,7.5,7.5ZM222.0859,197.2354h67.832v18.1328h-67.832v-18.1328ZM238.6484,230.3682h34.7031v164.1289h-34.7031v-164.1289ZM289.918,409.4971v18.1328h-67.832v-18.1328h67.832ZM31.5664,164.1025h130.8828c4.1445,0,7.5-3.3594,7.5-7.5,0-4.1445-3.3555-7.5-7.5-7.5h-97.8047L256,16.6221l191.3594,132.4805h-254.9102c-4.1406,0-7.5,3.3555-7.5,7.5,0,4.1406,3.3594,7.5,7.5,7.5h287.9844v18.1328H31.5664v-18.1328ZM64.6992,197.2354h67.8359v18.1328h-67.8359v-18.1328ZM115.9688,230.3682v164.1289h-34.7031v-164.1289h34.7031ZM64.6992,409.4971h67.8359v18.1328h-67.8359v-18.1328ZM140.0352,394.4971h-9.0664v-164.1289h9.0664c4.1406,0,7.5-3.3594,7.5-7.5v-25.6328h59.5508v25.6328c0,4.1406,3.3555,7.5,7.5,7.5h9.0625v164.1289h-9.0625c-4.1445,0-7.5,3.3555-7.5,7.5v25.6328h-59.5508v-25.6328c0-4.1445-3.3594-7.5-7.5-7.5ZM31.5664,442.6299h448.8672v18.1328H31.5664v-18.1328ZM497,493.8955H15v-18.1328h482v18.1328Z"/></svg>`
+        },
+        religion: {
+            token: 'religion',
+            endpoint: '/filters/religion',
+            name: 'Religion',
+            icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 442.446 512.0022"><path d="M433.4083,352.6975c-12.6727-13.5867-34.0359-14.3288-47.6216-1.6581l-4.0142,3.7442-38.2011-24.9574,2.6532-57.7492c1.9611-42.6983-.126-56.3271-14.8928-97.2203-11.4286-31.6487-27.0185-71.1939-39.5442-102.9696-8.9655-22.7422-16.7079-42.3833-19.1921-49.7597-.011-.032-.021-.063-.033-.096-6.5324-18.77-23.6923-24.7454-37.265-20.9441-5.1623,1.4451-10.1495,4.4442-14.0728,8.8545-3.9232-4.4102-8.9095-7.4094-14.0728-8.8545-13.5747-3.7992-30.7327,2.1731-37.266,20.9431-.011.032-.022.063-.033.096-1.9891,5.9063-7.4224,19.8481-12.9977,34.0319-2.0201,5.1413.509,10.9456,5.6493,12.9657,5.1443,2.0241,10.9456-.51,12.9657-5.6483,6.5334-16.6239,11.3006-28.9276,13.3207-34.9149,2.6141-7.4494,8.3905-9.4935,12.9687-8.2124,4.7713,1.3361,9.0615,6.5394,6.8174,17.1389l-23.3573,100.4435c-5.0023,3.6432-9.8705,9.6745-13.8928,19.3201-11.5816,27.7755-21.3202,57.3991-26.7185,81.2705-1.2181,5.3883,2.1621,10.7416,7.5484,11.9607,5.3863,1.2181,10.7416-2.1611,11.9597-7.5484,5.1553-22.8002,14.5118-51.2238,25.6704-77.9843,5.2293-12.5397,9.7405-12.1307,11.4386-11.9797,5.4283.488,9.4485,5.3363,8.9615,10.8066-.458,5.1493-2.4601,23.9143-4.3972,42.0623-2.0351,19.065-3.9572,37.073-4.4302,42.3963-1.1651,13.0887,1.1351,28.9706,3.5702,45.7845,7.0584,48.7407,15.7859,109.046-49.2847,149.3422l-79.9074-74.5261,38.8581-25.3884c2.9632-1.9371,4.6823-5.2953,4.5203-8.8315l-2.9152-63.4555c-1.8441-40.1382-.176-51.0128,13.7258-89.5089,3.6082-9.9935,7.8054-21.2562,12.8307-34.4319,1.9681-5.1603-.62-10.9396-5.7803-12.9077s-10.9386.621-12.9077,5.7803c-5.0673,13.2877-9.3045,24.6594-12.9547,34.7659-14.7668,40.8932-16.8539,54.522-14.8928,97.2203l2.6521,57.7492-38.2011,24.9584-4.0132-3.7432c-13.5867-12.6737-34.9489-11.9296-47.6226,1.6581-12.6707,13.5867-11.9267,34.9499,1.6601,47.6216l110.052,102.6416c6.4834,6.0473,14.7348,9.0385,22.9703,9.0385,9.0235,0,18.026-3.5932,24.6513-10.6966,6.1383-6.5814,9.3465-15.1598,9.0335-24.1543-.25-7.1634-2.7151-13.9038-7.0314-19.4531,24.8324-16.2959,41.6203-36.427,50.8488-61.0123,9.2285,24.5863,26.0154,44.7164,50.8478,61.0123-4.3152,5.5493-6.7814,12.2897-7.0304,19.4531-.313,8.9945,2.8951,17.573,9.0335,24.1553,6.6264,7.1044,15.6269,10.6956,24.6513,10.6956,8.2345,0,16.4879-2.9922,22.9703-9.0385l110.052-102.6416v-.001c13.5897-12.6737,14.3338-34.0359,1.6621-47.6236h0ZM153.747,487.6608c-5.1503,5.5233-13.8328,5.8233-19.3531.674l-110.052-102.6426c-5.5213-5.1483-5.8233-13.8307-.674-19.3521,2.6921-2.8882,6.3503-4.3472,10.0185-4.3472,3.3462,0,6.7004,1.2161,9.3345,3.6732l110.052,102.6426c2.6751,2.4941,4.2182,5.8813,4.3452,9.5355.127,3.6562-1.1761,7.1424-3.6712,9.8165h0ZM206.7569,133.6225l14.4678-62.2144,14.4678,62.2144c-5.6003,1.2291-10.5616,4.0222-14.4678,7.8584-3.9052-3.8362-8.8675-6.6294-14.4678-7.8584h0ZM221.2247,250.8359c.247,3.3382.224,6.9804,0,10.9006-.223-3.9202-.247-7.5624,0-10.9006ZM237.5186,294.0182c2.4351-16.8139,4.7352-32.6958,3.5702-45.7845-.474-5.3233-2.3961-23.3313-4.4302-42.3973-1.9371-18.147-3.9392-36.912-4.3972-42.0623-.487-5.4703,3.5332-10.3176,8.9615-10.8066,1.7011-.15,6.2103-.56,11.4386,11.9797,11.1586,26.7615,20.5151,55.185,25.6704,77.9843,1.2181,5.3873,6.5724,8.7655,11.9597,7.5484,5.3873-1.2191,8.7665-6.5724,7.5484-11.9607-5.3983-23.8713-15.1368-53.4939-26.7194-81.2705-4.0222-9.6475-8.8895-15.6779-13.8928-19.3211l-23.3563-100.4405c-2.2431-10.5996,2.0461-15.8029,6.8174-17.1389,4.5783-1.2811,10.3566.765,12.9697,8.2154,2.6612,7.8894,10.1046,26.7695,19.5221,50.6578,12.4787,31.6547,28.0085,71.0499,39.3392,102.4276,13.9018,38.4961,15.5688,49.3707,13.7247,89.5089l-2.9152,63.4555c-.162,3.5362,1.5571,6.8954,4.5202,8.8315l38.8581,25.3884-79.9064,74.5261c-65.0686-40.2952-56.3411-100.6015-49.2827-149.3412h0ZM418.1074,385.6922l-110.052,102.6436c-5.5213,5.1483-14.2028,4.8463-19.353-.674-2.4951-2.6751-3.7982-6.1613-3.6712-9.8165s1.6701-7.0414,4.3452-9.5355l110.052-102.6436c2.6341-2.4571,5.9883-3.6732,9.3345-3.6732,3.6672,0,7.3254,1.4611,10.0175,4.3472,5.1503,5.5213,4.8483,14.2038-.673,19.3521h0Z"/><path d="M145.7376,110.8872c1.2841.551,2.6201.812,3.9342.812,3.8802,0,7.5714-2.2721,9.1965-6.0633l.003-.007c2.1751-5.0763-.177-10.9526-5.2543-13.1277-5.0763-2.1791-10.9576.179-13.1327,5.2553s.176,10.9546,5.2533,13.1307h0Z"/></svg>`
+        },
+        drinking: {
+            token: 'drinking',
+            endpoint: '/filters/drinking',
+            name: 'Drinking',
+            icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 405.3412 481.28"><g id="Layer_50"><path d="M366.9181,7.8375c-1.1103-4.5979-5.225-7.8373-9.955-7.8375H48.3781c-4.7301.0002-8.8447,3.2396-9.955,7.8375L6.0181,142.0375c-15.1216,61.6174-1.4029,126.7677,37.2825,177.055,35.9032,45.7209,90.9998,72.1802,149.13,71.6175v70.09h-78.9325c-5.6554,0-10.24,4.5846-10.24,10.24s4.5846,10.24,10.24,10.24h178.345c5.6554,0,10.24-4.5846,10.24-10.24s-4.5846-10.24-10.24-10.24h-78.9325v-70.09c58.1302.5627,113.2268-25.8967,149.13-71.6175,38.6853-50.2872,52.404-115.4374,37.2825-177.0547L366.9181,7.8375ZM56.4406,20.48h292.46l25.4525,105.4072c-52.6856,62.0859-125.3759,36.4453-184.025,15.703-16.1529-6.25-32.752-11.2792-49.6575-15.045-43.6736-7.8538-89.48,8.1125-114.4832,19.2247L56.4406,20.48ZM345.9506,306.4225c-32.3912,41.1647-82.1855,64.792-134.5575,63.8475h-17.445c-52.372.9445-102.1663-22.6828-134.5575-63.8475-29.7752-38.6391-43.2619-87.389-37.5794-135.8375,15.3066-7.8762,67.9428-32.3942,115.2294-23.8848,15.8103,3.6002,31.3379,8.3452,46.46,14.1975,31.89,11.2775,69.79,24.6825,107.505,24.6825,33.3133.7256,65.4775-12.1876,89.0406-35.7478,12.57,54.6694.0661,112.096-34.0956,156.5901h0Z"/></g></svg>`
+        },
+        smoking: {
+            token: 'smoking',
+            endpoint: '/filters/smoking',
+            name: 'Smoking',
+            icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 511.9995 512.0008"><path d="M431.1587,207.2378c24.542,24.542,29.457,62.551,11.952,92.432-2.207,3.768-1.714,8.532,1.217,11.768,1.94,2.142,4.652,3.287,7.415,3.287,1.41,0,2.834-.299,4.175-.916,10.358-4.764,19.734-11.304,27.869-19.437,37.541-37.542,37.541-98.626,0-136.167-23.823-23.822-29.274-59.803-13.565-89.533,2.103-3.981,1.287-8.876-1.994-11.959s-8.218-3.594-12.061-1.246l-13.867,8.471c-10.202,6.232-18.791,14.654-24.84,24.355-11.32,18.156-16.277,39.923-13.958,61.292,2.355,21.698,12.177,42.173,27.657,57.653ZM434.4307,98.8738c2.28-3.658,5.074-7.077,8.285-10.164-1.578,9.658-1.708,19.563-.314,29.277,2.972,20.711,12.392,39.509,27.243,54.36,28.89,28.89,29.72,75.377,2.488,105.276,5.208-30.166-4.193-61.89-26.831-84.528-25.249-25.247-29.719-63.992-10.871-94.221h0Z"/><path d="M509.0708,427.7397l-144.335-144.336c-3.905-3.905-10.237-3.905-14.143,0-3.905,3.905-3.905,10.237,0,14.143l100.018,100.018-53.048,53.047-229.393-229.394,53.047-53.047,65.737,65.737c3.905,3.905,10.238,3.905,14.142,0,3.905-3.905,3.905-10.237,0-14.142L84.2608,2.9287c-3.905-3.905-10.237-3.905-14.143,0L2.9287,70.1178c-3.905,3.905-3.905,10.237,0,14.143l424.811,424.811c1.953,1.953,4.512,2.929,7.071,2.929s5.119-.976,7.071-2.929l67.189-67.189c3.905-3.906,3.905-10.238,0-14.143h0ZM154.0278,207.0747l-19.452-19.452,53.047-53.047,19.452,19.452-53.047,53.047ZM77.1898,24.1417l96.291,96.291-53.047,53.047L24.1418,77.1897l53.048-53.048ZM434.8108,487.8578l-23.104-23.104,53.048-53.047,23.104,23.104-53.048,53.047Z"/><path d="M325.8448,268.6657c5.523,0,10-4.477,10-10v-.011c0-5.523-4.477-9.995-10-9.995s-10,4.482-10,10.005,4.477,10.001,10,10.001h0Z"/></svg>`
+        },
+
     },
     availability: {
         data: {},
@@ -2583,318 +2621,6 @@ befriend.filters = {
             }
         }
     },
-    life_stages: {
-        init: function() {
-            let section = befriend.filters.sections.life_stages;
-
-            const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
-            const filter_options = section_el.querySelector('.filter-options');
-
-            const filter_data = befriend.filters.data.filters?.['life_stages'];
-            const life_stages = befriend.filters.data.options?.life_stages || [];
-
-            // Determine if "Any" should be selected
-            let anySelected = false;
-
-            if (!filter_data) {
-                // No filter data exists at all - select Any
-                anySelected = true;
-            } else if (filter_data.items) {
-                const hasActiveSelections = filter_data.items &&
-                    Object.values(filter_data.items).some(item =>
-                        !item.deleted && !item.is_negative
-                    );
-
-                const everySelected = life_stages.every(stage => {
-                    return filter_data?.items &&
-                        Object.values(filter_data.items).some(item =>
-                            item.life_stage_id === stage.id &&
-                            !item.deleted &&
-                            !item.is_negative
-                        );
-                });
-
-                if(!hasActiveSelections || everySelected) {
-                    anySelected = true;
-                }
-            }
-
-            const anyOption = {
-                id: 0,
-                token: 'any',
-                name: 'Any'
-            };
-
-            let anyButtonHtml = `
-        <div class="life-stage-button any ${anySelected ? 'selected' : ''}" data-life-stage-token="any">
-            <div class="name">${anyOption.name}</div>
-        </div>`;
-
-            let life_stages_buttons_html = '';
-
-            for (let stage of life_stages) {
-                let selected = '';
-
-                const matchingItem = filter_data?.items ?
-                    Object.values(filter_data.items)
-                        .find(item => item.life_stage_id === stage.id) : null;
-
-                if (matchingItem && !matchingItem.is_negative && !matchingItem.deleted && !anySelected) {
-                    selected = 'selected';
-                }
-
-                life_stages_buttons_html += `
-        <div class="life-stage-button ${stage.token} ${selected}" data-life-stage-token="${stage.token}">
-            <div class="name">${stage.name}</div>
-        </div>`;
-            }
-
-            let html = `
-    <div class="filter-option" data-filter-token="${section.token}">
-        ${befriend.filters.sendReceiveHtml(true, true, true)}
-        
-        <div class="life-stage-buttons">
-            ${anyButtonHtml}
-            <div class="options-grid">
-                ${life_stages_buttons_html}
-            </div>
-        </div>
-    </div>
-`;
-
-            filter_options.innerHTML = html;
-
-            this.initEvents(section_el);
-        },
-        initEvents: function(section_el) {
-            const life_stage_buttons = section_el.querySelectorAll('.life-stage-button');
-            const anyButton = section_el.querySelector('.life-stage-button[data-life-stage-token="any"]');
-            const regularButtons = Array.from(life_stage_buttons)
-                .filter(btn => btn.getAttribute('data-life-stage-token') !== 'any');
-
-            for (let button of life_stage_buttons) {
-                if (button._listener) continue;
-                button._listener = true;
-
-                button.addEventListener('click', async function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    const life_stage_token = this.getAttribute('data-life-stage-token');
-                    const isAny = life_stage_token === 'any';
-                    const wasSelected = elHasClass(this, 'selected');
-
-                    try {
-                        if (isAny) {
-                            if(wasSelected) {
-                                return false;
-                            }
-
-                            if (!wasSelected) {
-                                // When selecting "Any", deselect all previously selected
-                                removeElsClass(regularButtons, 'selected');
-                                addClassEl('selected', this);
-
-                                await befriend.auth.put('/filters/life-stages', {
-                                    life_stage_token: life_stage_token,
-                                    active: !wasSelected
-                                });
-                            }
-                        } else {
-                            toggleElClass(this, 'selected');
-
-                            // Check if all regular buttons are now selected
-                            const allSelected = regularButtons.every(btn =>
-                                elHasClass(btn, 'selected')
-                            );
-
-                            if (allSelected) {
-                                addClassEl('selected', anyButton);
-                                removeElsClass(regularButtons, 'selected');
-
-                                await befriend.auth.put('/filters/life-stages', {
-                                    life_stage_token: life_stage_token,
-                                    active: !wasSelected
-                                });
-
-                                await befriend.auth.put('/filters/life-stages', {
-                                    life_stage_token: 'any',
-                                    active: true
-                                });
-                            } else {
-                                removeClassEl('selected', anyButton);
-
-                                await befriend.auth.put('/filters/life-stages', {
-                                    life_stage_token: life_stage_token,
-                                    active: !wasSelected
-                                });
-                            }
-                        }
-                    } catch (e) {
-                        console.error('Error updating life stage filter:', e);
-
-                        toggleElClass(this, 'selected');
-                    }
-                });
-            }
-        }
-    },
-    relationship: {
-        init: function() {
-            let section = befriend.filters.sections.relationship;
-
-            const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
-            const filter_options = section_el.querySelector('.filter-options');
-
-            const filter_data = befriend.filters.data.filters?.['relationship'];
-            const relationship_statuses = befriend.filters.data.options?.relationship || [];
-
-            // Determine if "Any" should be selected
-            let anySelected = false;
-
-            if (!filter_data) {
-                // No filter data exists at all - select Any
-                anySelected = true;
-            } else if (filter_data.items) {
-                const hasActiveSelections = filter_data.items &&
-                    Object.values(filter_data.items).some(item =>
-                        !item.deleted && !item.is_negative
-                    );
-
-                const everySelected = relationship_statuses.every(status => {
-                    return filter_data?.items &&
-                        Object.values(filter_data.items).some(item =>
-                            item.relationship_status_id === status.id &&
-                            !item.deleted &&
-                            !item.is_negative
-                        );
-                });
-
-                if(!hasActiveSelections || everySelected) {
-                    anySelected = true;
-                }
-            }
-
-            const anyOption = {
-                id: 0,
-                token: 'any',
-                name: 'Any'
-            };
-
-            let anyButtonHtml = `
-            <div class="relationship-button any ${anySelected ? 'selected' : ''}" data-relationship-token="any">
-                <div class="name">${anyOption.name}</div>
-            </div>`;
-
-            let relationship_buttons_html = '';
-
-            for (let status of relationship_statuses) {
-                let selected = '';
-
-                const matchingItem = filter_data?.items ?
-                    Object.values(filter_data.items)
-                        .find(item => item.relationship_status_id === status.id) : null;
-
-                if (matchingItem && !matchingItem.is_negative && !matchingItem.deleted && !anySelected) {
-                    selected = 'selected';
-                }
-
-                relationship_buttons_html += `
-                <div class="relationship-button ${status.token} ${selected}" data-relationship-token="${status.token}">
-                    <div class="name">${status.name}</div>
-                </div>`;
-            }
-
-            let html = `
-            <div class="filter-option" data-filter-token="${section.token}">
-                ${befriend.filters.sendReceiveHtml(true, true, true)}
-                
-                <div class="relationship-buttons">
-                    ${anyButtonHtml}
-                    <div class="options-grid">
-                        ${relationship_buttons_html}
-                    </div>
-                </div>
-            </div>
-        `;
-
-            filter_options.innerHTML = html;
-
-            this.initEvents(section_el);
-        },
-
-        initEvents: function(section_el) {
-            const relationship_buttons = section_el.querySelectorAll('.relationship-button');
-            const anyButton = section_el.querySelector('.relationship-button[data-relationship-token="any"]');
-            const regularButtons = Array.from(relationship_buttons)
-                .filter(btn => btn.getAttribute('data-relationship-token') !== 'any');
-
-            for (let button of relationship_buttons) {
-                if (button._listener) continue;
-                button._listener = true;
-
-                button.addEventListener('click', async function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    const relationship_token = this.getAttribute('data-relationship-token');
-                    const isAny = relationship_token === 'any';
-                    const wasSelected = elHasClass(this, 'selected');
-
-                    try {
-                        if (isAny) {
-                            if(wasSelected) {
-                                return false;
-                            }
-
-                            if (!wasSelected) {
-                                // When selecting "Any", deselect all previously selected
-                                removeElsClass(regularButtons, 'selected');
-                                addClassEl('selected', this);
-
-                                await befriend.auth.put('/filters/relationship', {
-                                    relationship_token: relationship_token,
-                                    active: !wasSelected
-                                });
-                            }
-                        } else {
-                            toggleElClass(this, 'selected');
-
-                            // Check if all regular buttons are now selected
-                            const allSelected = regularButtons.every(btn =>
-                                elHasClass(btn, 'selected')
-                            );
-
-                            if (allSelected) {
-                                addClassEl('selected', anyButton);
-                                removeElsClass(regularButtons, 'selected');
-
-                                await befriend.auth.put('/filters/relationship', {
-                                    relationship_token: relationship_token,
-                                    active: !wasSelected
-                                });
-
-                                await befriend.auth.put('/filters/relationship', {
-                                    relationship_token: 'any',
-                                    active: true
-                                });
-                            } else {
-                                removeClassEl('selected', anyButton);
-
-                                await befriend.auth.put('/filters/relationship', {
-                                    relationship_token: relationship_token,
-                                    active: !wasSelected
-                                });
-                            }
-                        }
-                    } catch (e) {
-                        console.error('Error updating relationship filter:', e);
-                        toggleElClass(this, 'selected');
-                    }
-                });
-            }
-        }
-    },
     initSections: async function () {
         let sections_el = befriend.els.filters.querySelector('.sections');
 
@@ -2992,8 +2718,16 @@ befriend.filters = {
                     this.classList.toggle('enabled');
 
                     // Get the filter type and option type
-                    const filterOption = this.closest('.filter-option');
-                    const filterToken = befriend.filters.getFilterToken(filterOption);
+                    let filterToken;
+                    let section = this.closest('.section');
+                    let filter_option = this.closest('.filter-option');
+
+                    if (filter_option) {
+                        filterToken = befriend.filters.getFilterToken(filter_option);
+                    } else if (section) {
+                        filterToken = befriend.filters.sections[section.getAttribute('data-key')]?.token;
+                    }
+
                     const optionType = this.classList.contains('send') ? 'send' : 'receive';
 
                     // Save the state
@@ -3230,6 +2964,12 @@ befriend.filters = {
 
             // Set send/receive states
             let send_receive = filter_option.querySelector('.send-receive');
+
+            //try to find send/receive on parent
+            if(!send_receive) {
+                send_receive = filter_option.closest('.section').querySelector('.send-receive');
+            }
+
             if (send_receive) {
                 let send_option = send_receive.querySelector('.option.send');
                 let receive_option = send_receive.querySelector('.option.receive');
@@ -3250,4 +2990,171 @@ befriend.filters = {
             }
         }
     },
+    createMultiSelectFilter(filterName) {
+        function getFilterNameStr() {
+            if(filterName.toLowerCase().startsWith('relationship')) {
+                return 'relationship_status';
+            }
+
+            return filterName.endsWith('s') ? filterName.substring(0, filterName.length - 1) : filterName;
+        }
+
+        let filterNameStr = getFilterNameStr();
+
+        let section = befriend.filters.sections[filterName];
+
+        return {
+            init: function () {
+                const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+                const filter_options = section_el.querySelector('.filter-options');
+
+                const filter_data = befriend.filters.data.filters?.[filterName];
+                const options = befriend.filters.data.options?.[filterName] || [];
+
+                // Determine if "Any" should be selected
+                let anySelected = false;
+
+                if (!filter_data) {
+                    anySelected = true;
+                } else if (filter_data.items) {
+                    const hasActiveSelections = filter_data.items &&
+                        Object.values(filter_data.items).some(item =>
+                            !item.deleted && !item.is_negative
+                        );
+
+                    const everySelected = options.every(option => {
+                        return filter_data?.items &&
+                            Object.values(filter_data.items).some(item =>
+                                item[`${filterNameStr}_id`] === option.id &&
+                                !item.deleted &&
+                                !item.is_negative
+                            );
+                    });
+
+                    if (!hasActiveSelections || everySelected) {
+                        anySelected = true;
+                    }
+                }
+
+                const anyButtonHtml = `
+                <div class="button any ${anySelected ? 'selected' : ''}" data-${filterNameStr}-token="any">
+                    <div class="name">Any</div>
+                </div>`;
+
+                let optionsHtml = '';
+
+                for (let option of options) {
+                    let selected = '';
+
+                    const matchingItem = filter_data?.items ?
+                        Object.values(filter_data.items)
+                            .find(item => item[`${filterNameStr}_id`] === option.id) : null;
+
+                    if (matchingItem && !matchingItem.is_negative && !matchingItem.deleted && !anySelected) {
+                        selected = 'selected';
+                    }
+
+                    optionsHtml += `
+                    <div class="button ${option.token} ${selected}" data-${filterNameStr}-token="${option.token}">
+                        <div class="name">${option.name}</div>
+                    </div>`;
+                }
+
+                let html = `
+                <div class="filter-option" data-filter-token="${section.token}">
+                    
+                    <div class="buttons">
+                        ${anyButtonHtml}
+                        <div class="options-grid">
+                            ${optionsHtml}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+                section_el.querySelector('.section-container')
+                    .insertAdjacentHTML(
+                        'afterbegin',
+                        befriend.filters.sendReceiveHtml(true, true, true)
+                );
+
+                filter_options.innerHTML = html;
+                this.initEvents(section_el);
+            },
+
+            initEvents: function (section_el) {
+                const optionButtons = section_el.querySelectorAll(`.button`);
+                const anyButton = section_el.querySelector(`.button[data-${filterNameStr}-token="any"]`);
+                const regularButtons = Array.from(optionButtons)
+                    .filter(btn => btn.getAttribute(`data-${filterNameStr}-token`) !== 'any');
+
+                for (let button of optionButtons) {
+                    if (button._listener) continue;
+                    button._listener = true;
+
+                    button.addEventListener('click', async function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const token = this.getAttribute(`data-${filterNameStr}-token`);
+                        const isAny = token === 'any';
+                        const wasSelected = elHasClass(this, 'selected');
+
+                        try {
+                            if (isAny) {
+                                if (wasSelected) return false;
+
+                                removeElsClass(regularButtons, 'selected');
+                                addClassEl('selected', this);
+
+                                await befriend.auth.put(section.endpoint, {
+                                    [`${filterNameStr}_token`]: token,
+                                    active: !wasSelected
+                                });
+                            } else {
+                                toggleElClass(this, 'selected');
+
+                                const allSelected = regularButtons.every(btn =>
+                                    elHasClass(btn, 'selected')
+                                );
+
+                                if (allSelected) {
+                                    addClassEl('selected', anyButton);
+                                    removeElsClass(regularButtons, 'selected');
+
+                                    await befriend.auth.put(section.endpoint, {
+                                        [`${filterNameStr}_token`]: token,
+                                        active: !wasSelected
+                                    });
+
+                                    await befriend.auth.put(section.endpoint, {
+                                        [`${filterNameStr}_token`]: 'any',
+                                        active: true
+                                    });
+                                } else {
+                                    removeClassEl('selected', anyButton);
+
+                                    await befriend.auth.put(section.endpoint, {
+                                        [`${filterNameStr}_token`]: token,
+                                        active: !wasSelected
+                                    });
+                                }
+                            }
+                        } catch (e) {
+                            console.error(`Error updating ${filterName} filter:`, e);
+                            toggleElClass(this, 'selected');
+                        }
+                    });
+                }
+            }
+        };
+    }
 };
+
+befriend.filters.life_stages = befriend.filters.createMultiSelectFilter('life_stages');
+befriend.filters.relationship = befriend.filters.createMultiSelectFilter('relationship');
+befriend.filters.languages = befriend.filters.createMultiSelectFilter('languages');
+befriend.filters.politics = befriend.filters.createMultiSelectFilter('politics');
+befriend.filters.religion = befriend.filters.createMultiSelectFilter('religion');
+befriend.filters.drinking = befriend.filters.createMultiSelectFilter('drinking');
+befriend.filters.smoking = befriend.filters.createMultiSelectFilter('smoking');
