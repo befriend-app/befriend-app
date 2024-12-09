@@ -80,6 +80,7 @@
             overflow-y: hidden;
             transition: height $filters_section_transition_ms;
             padding: 0;
+            position: relative;
         }
 
         .filter-option-name {
