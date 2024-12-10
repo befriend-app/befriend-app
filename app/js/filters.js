@@ -2740,7 +2740,7 @@ befriend.filters = {
 
                     secondaryItems += `
                 <div class="item ${item.token}" data-token="${item.token}">
-                    <div class="options">${secondary_options_html}</div>
+                    <div class="options" data-item-token="${item.token}">${secondary_options_html}</div>
                 </div>`;
                 }
             }
@@ -3095,22 +3095,15 @@ befriend.filters = {
                         e.preventDefault();
                         e.stopPropagation();
 
-                        //hide only secondary if open
+                        //hide if any section secondary is open
                         let token = item.getAttribute('data-token');
 
-                        let itemsContainer = item.closest('.items-container');
+                        let open_secondary = item.closest('.section')
+                            .querySelector(`.item-secondary-open`);
 
-                        if(itemsContainer) {
-                            let open_secondary = itemsContainer
-                                .querySelector(`.item-secondary-open[data-token="${token}"]`);
-
-                            if(open_secondary) {
-                                return befriend.filters.hideActiveSecondaryIf(e.target);
-                            }
+                        if(open_secondary) {
+                            return befriend.filters.hideActiveSecondaryIf(e.target);
                         }
-
-                        //hide other secondaries
-                        befriend.filters.hideActiveSecondaryIf(e.target);
 
                         let wasSelected = elHasClass(item, 'active');
 
@@ -3430,6 +3423,7 @@ befriend.filters = {
                             }
 
                             requestAnimationFrame(() => {
+                                befriend.filters.updateSecondaryPosition(section_el, options_el);
                                 befriend.filters.updateSectionHeights();
                             });
 
@@ -3652,6 +3646,22 @@ befriend.filters = {
                 }
             });
         }
+    },
+    updateSecondaryPosition: function (section_el, options_el) {
+        let secondary_container = section_el.querySelector('.secondary-container');
+        let secondaryContainerBox = secondary_container.getBoundingClientRect();
+        let item_token = options_el.getAttribute('data-item-token');
+        let item_el = section_el.querySelector(`.item.mine[data-token="${item_token}"]`);
+
+        let secondary_el = item_el.querySelector('.secondary');
+        let secondaryBox = secondary_el.getBoundingClientRect();
+
+        let offsetTop = secondaryBox.bottom - secondaryContainerBox.top;
+        let offsetLeft = secondaryBox.left - secondaryContainerBox.left;
+
+        options_el.style.width = `${secondary_el.offsetWidth}px`;
+        options_el.style.top = `${offsetTop}px`;
+        options_el.style.left = `${offsetLeft}px`;
     },
     updateSectionHeights: function (without_transition) {
         const sections_el = befriend.els.filters.querySelector('.sections');
@@ -4053,13 +4063,6 @@ befriend.filters = {
 
         // Get the options element for the clicked secondary
         let options_el = secondary_container.querySelector(`.options[data-item-token="${token}"]`);
-        if (!options_el) {
-            options_el = secondary_container.querySelector('.options');
-        }
-
-        let optionsBox = options_el.getBoundingClientRect();
-        let secondaryContainerBox = secondary_container.getBoundingClientRect();
-        let secondaryBox = secondary_el.getBoundingClientRect();
 
         let activeEl = befriend.filters.secondaries.activeEl;
 
@@ -4092,6 +4095,7 @@ befriend.filters = {
                     let active_options = active_section.querySelector(`.options[data-item-token="${active_item.getAttribute('data-token')}"]`);
 
                     removeClassEl('item-secondary-open', active_item);
+
                     if (active_options) {
                         active_options.style.height = '0';
                     }
@@ -4105,14 +4109,7 @@ befriend.filters = {
                 }
             }
 
-            let offsetTop = secondaryBox.bottom - secondaryContainerBox.top;
-            let offsetLeft = secondaryBox.left - secondaryContainerBox.left;
-
-            options_el.style.width = `${secondary_el.offsetWidth}px`;
-            options_el.style.top = `${offsetTop}px`;
-            options_el.style.left = `${offsetLeft}px`;
-
-            options_el.setAttribute('data-item-token', token);
+            befriend.filters.updateSecondaryPosition(section_el, options_el);
 
             // Set initial height of 0 before showing
             options_el.style.height = '0';
