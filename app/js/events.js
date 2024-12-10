@@ -146,6 +146,9 @@ befriend.events = {
 
                 befriend.me.toggleAutoComplete(null, false);
 
+                befriend.filters.hideActiveSecondaryIf();
+                befriend.me.hideActiveSecondaryIf();
+
                 //view specific logic
                 if (nav_name === 'filters') {
                     requestAnimationFrame(function () {

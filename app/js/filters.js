@@ -2789,7 +2789,10 @@ befriend.filters = {
                             }
 
                             secondary_html = `
-                        <div class="secondary ${unselected}" data-value="${selectedSecondary.join(',')}">
+                        <div class="secondary ${unselected}" 
+                            data-section="${befriend.filters.sections.instruments.token}"
+                            data-item-token="${item.token}">
+                            
                             <div class="current-selected">${currentText}</div>
                             <svg class="arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 82.1 43.2">
                                 <path d="M41.1,43.2L0,2.2,2.1,0l39,39L80,0l2.1,2.2-41,41Z"/>
@@ -4000,6 +4003,12 @@ befriend.filters = {
     },
     transitionSecondary: async function (secondary_el, show, on_internal) {
         let section_el = secondary_el.closest('.section');
+
+        if(!section_el) {
+            let section_key = secondary_el.getAttribute('data-section');
+            section_el = befriend.els.filters.querySelector(`.section.${section_key}`);
+        }
+
         let secondary_container = section_el.querySelector('.secondary-container');
         let options_el = secondary_el.querySelector('.options') || secondary_container.querySelector('.options');
         let item_el = secondary_el.closest('.item');
@@ -4074,7 +4083,7 @@ befriend.filters = {
             }, 300);
         }
     },
-    hideActiveSecondaryIf: function (target) {
+    hideActiveSecondaryIf: function (target = null) {
         let open_secondary_el = befriend.filters.secondaries.activeEl;
 
         if (open_secondary_el && !target?.closest('.secondary')) {

@@ -1242,7 +1242,7 @@ befriend.me = {
             }, 300);
         }
     },
-    hideActiveSecondaryIf: function (target) {
+    hideActiveSecondaryIf: function (target = null) {
         let open_secondary_el = befriend.me.secondaries.activeEl;
 
         if (open_secondary_el && !target?.closest('.secondary')) {
