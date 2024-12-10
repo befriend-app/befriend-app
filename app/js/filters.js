@@ -3088,12 +3088,30 @@ befriend.filters = {
                     item._listener = true;
 
                     item.addEventListener('click', async (e) => {
+                        if(e.target.closest('.secondary-container')) {
+                            return false;
+                        }
+
                         e.preventDefault();
                         e.stopPropagation();
 
+                        //hide only secondary if open
+                        let token = item.getAttribute('data-token');
+
+                        let itemsContainer = item.closest('.items-container');
+
+                        if(itemsContainer) {
+                            let open_secondary = itemsContainer
+                                .querySelector(`.item-secondary-open[data-token="${token}"]`);
+
+                            if(open_secondary) {
+                                return befriend.filters.hideActiveSecondaryIf(e.target);
+                            }
+                        }
+
+                        //hide other secondaries
                         befriend.filters.hideActiveSecondaryIf(e.target);
 
-                        let token = item.getAttribute('data-token');
                         let wasSelected = elHasClass(item, 'active');
 
                         if (elHasClass(item, 'any')) {
@@ -3313,6 +3331,8 @@ befriend.filters = {
                         e.preventDefault();
                         e.stopPropagation();
 
+                        console.log("secondary container")
+
                         const secondary_option = e.target.closest('.option');
                         if (!secondary_option) return;
 
@@ -3516,20 +3536,21 @@ befriend.filters = {
                     addClassEl('collapsed', section);
                     section_container.style.height = '0';
                     this.data.collapsed[section_key] = true;
-
-                    if(befriend.filters.secondaries.activeEl) {
-                        removeClassEl('secondary-open', section);
-                        //remove secondary classes
-                        befriend.filters.transitionSecondary(befriend.filters.secondaries.activeEl, false);
-                    }
-
-                    let secondaryItemsOpen = section.getElementsByClassName('item-secondary-open');
-
-                    removeElsClass(secondaryItemsOpen, 'item-secondary-open');
                 }
 
                 // Save collapsed state to local storage
                 befriend.user.setLocal('filters.collapsed', this.data.collapsed);
+
+                //remove secondaries
+                if(befriend.filters.secondaries.activeEl) {
+                    removeClassEl('secondary-open', section);
+                    //remove secondary classes
+                    befriend.filters.transitionSecondary(befriend.filters.secondaries.activeEl, false);
+                }
+
+                let secondaryItemsOpen = section.getElementsByClassName('item-secondary-open');
+
+                removeElsClass(secondaryItemsOpen, 'item-secondary-open');
             });
         }
     },
@@ -4024,9 +4045,17 @@ befriend.filters = {
         }
 
         let secondary_container = section_el.querySelector('.secondary-container');
-        let options_el = secondary_container.querySelector('.options');
         let item_el = secondary_el.closest('.item');
         let token = item_el.getAttribute('data-token');
+
+        // Find all items with open secondaries in the same section
+        const openSecondaryItems = section_el.querySelectorAll('.item-secondary-open');
+
+        // Get the options element for the clicked secondary
+        let options_el = secondary_container.querySelector(`.options[data-item-token="${token}"]`);
+        if (!options_el) {
+            options_el = secondary_container.querySelector('.options');
+        }
 
         let optionsBox = options_el.getBoundingClientRect();
         let secondaryContainerBox = secondary_container.getBoundingClientRect();
@@ -4039,20 +4068,41 @@ befriend.filters = {
         }
 
         if (show) {
+            // First set the current height of any open options before transitioning
+            openSecondaryItems.forEach(openItem => {
+                if (openItem !== item_el) {
+                    const openOptions = secondary_container.querySelector(`.options[data-item-token="${openItem.getAttribute('data-token')}"]`);
+                    if (openOptions) {
+                        // Set current height before transitioning to 0
+                        openOptions.style.height = `${openOptions.scrollHeight}px`;
+                        // Force reflow
+                        void openOptions.offsetHeight;
+                        // Now set height to 0 to trigger transition
+                        openOptions.style.height = '0';
+                        removeClassEl('item-secondary-open', openItem);
+                    }
+                }
+            });
+
+            // Handle active element from different section
             if (activeEl && activeEl !== secondary_el) {
                 let active_section = activeEl.closest('.section');
-                let active_item = activeEl.closest('.item');
-                let active_options = activeEl.querySelector('.options');
+                if (active_section !== section_el) {
+                    let active_item = activeEl.closest('.item');
+                    let active_options = active_section.querySelector(`.options[data-item-token="${active_item.getAttribute('data-token')}"]`);
 
-                removeClassEl('item-secondary-open', active_item);
-                active_options.style.height = '0';
-
-                setTimeout(() => {
-                    if (active_section !== section_el) {
-                        removeClassEl('secondary-open', active_section);
-                        active_options.style.removeProperty('height');
+                    removeClassEl('item-secondary-open', active_item);
+                    if (active_options) {
+                        active_options.style.height = '0';
                     }
-                }, 300);
+
+                    setTimeout(() => {
+                        removeClassEl('secondary-open', active_section);
+                        if (active_options) {
+                            active_options.style.removeProperty('height');
+                        }
+                    }, befriend.variables.secondary_transition_ms);
+                }
             }
 
             let offsetTop = secondaryBox.bottom - secondaryContainerBox.top;
@@ -4064,11 +4114,16 @@ befriend.filters = {
 
             options_el.setAttribute('data-item-token', token);
 
+            // Set initial height of 0 before showing
+            options_el.style.height = '0';
+            // Force reflow
+            void options_el.offsetHeight;
+
             addClassEl('secondary-open', section_el);
             addClassEl('item-secondary-open', item_el);
 
             requestAnimationFrame(() => {
-                setElHeightDynamic(options_el);
+                options_el.style.height = `${options_el.scrollHeight}px`;
             });
 
             befriend.filters.secondaries.activeEl = secondary_el;
@@ -4077,13 +4132,14 @@ befriend.filters = {
             options_el.style.height = `${currentHeight}px`;
             void options_el.offsetHeight;
 
-            // Then transition to 0
             options_el.style.height = '0';
 
             removeClassEl('item-secondary-open', item_el);
 
             secondary_el._transitionTimeout = setTimeout(function () {
-                removeClassEl('secondary-open', section_el);
+                if (!document.querySelector('.item-secondary-open')) {
+                    removeClassEl('secondary-open', section_el);
+                }
 
                 options_el.style.removeProperty('height');
 
