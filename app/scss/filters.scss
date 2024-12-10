@@ -125,7 +125,7 @@
                 border: 1px solid lighten(black, 82%);
                 border-radius: $secondary_br;
                 background: white;
-                font-size: 14px;
+                font-size: 13px;
                 font-weight: 400;
                 transition: border-radius $secondary_transition_ms;
             }
@@ -169,18 +169,20 @@
 
                 // Individual option
                 .option {
-                    padding: 8px 8px;
-                    font-size: 13px;
+                    padding: 8px 16px;
+                    font-size: 14px;
                     border-radius: 0 !important;
                     box-sizing: border-box;
                     transition: all $secondary_transition_ms;
+
+                    border-bottom: 1px solid lighten(black, 50%);
 
                     &:hover {
                         background: #f5f5f5;
                     }
 
                     &.selected {
-                        background: darken($brand_color_b, 5%);
+                        background: lighten($brand_color_b, 2%);
                     }
                 }
             }
@@ -1488,7 +1490,7 @@
                         &.mine {
                             cursor: default;
                             background: white;
-                            padding: 8px 20px;
+                            padding: 8px 15px;
                             width: 100%;
 
                             .content {
@@ -1526,7 +1528,7 @@
                             .name {
                                 font-weight: 500;
                                 //flex: 1;
-                                width: 130px;
+                                min-width: 100px;
                             }
 
                             .rank {
@@ -1690,8 +1692,8 @@
                 //position: initial;
             }
 
-            .filter-options {
-                //overflow-y: initial;
+            .items-container {
+                overflow-y: hidden;
             }
 
             .item-secondary-open {
@@ -1699,14 +1701,13 @@
                     .current-selected {
                         border-bottom-left-radius: 0 !important;
                         border-bottom-right-radius: 0 !important;
+                        border-bottom-color: transparent !important;
                     }
-                    .options {
-                        border: 1px solid $color_lightgray !important;
-                        border-top-color: transparent !important;
-                        z-index: 999;
-                        position: absolute;
-                        //opacity: 1;
-                    }
+                }
+
+                .options {
+                    border: 1px solid $color_lightgray !important;
+                    border-top-color: lighten(black, 50%) !important;
                 }
             }
 
