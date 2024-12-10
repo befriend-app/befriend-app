@@ -2644,49 +2644,49 @@ befriend.filters = {
             let categories_html = '';
             if (sectionData?.options.length > 0) {
                 categories_html = `
-                <div class="category-btn mine active" data-category="mine">My Filters</div>`;
+            <div class="category-btn mine active" data-category="mine">My Filters</div>`;
 
                 for (let category of sectionData.categories.options) {
                     categories_html += `
-                    <div class="category-btn" data-category="${category.name}" 
-                         ${category.token ? `data-category-token="${category.token}"` : ''}>
-                        <div class="heading-name">
-                            <div class="name">${category.name}</div>
-                        </div>
-                    </div>`;
+                <div class="category-btn" data-category="${category.name}" 
+                     ${category.token ? `data-category-token="${category.token}"` : ''}>
+                    <div class="heading-name">
+                        <div class="name">${category.name}</div>
+                    </div>
+                </div>`;
                 }
             }
 
             const html = `
-            <div class="filter-options-container">
-                <div class="search-container">
-                    <div class="autocomplete-container">
-                        <div class="input-container">
-                            <input type="text" class="search-input" 
-                                   placeholder="${sectionData?.autoComplete?.placeholders?.main || 'Search instruments'}">
-                            <div class="search-icon-container">
-                                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 611.9975 612.0095">
-                                    <path d="M606.203,578.714l-158.011-155.486c41.378-44.956,66.802-104.411,66.802-169.835-.02-139.954-115.296-253.393-257.507-253.393S0,113.439,0,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0,7.747-7.613,7.747-19.971.018-27.585ZM257.487,467.8c-120.326,0-217.869-95.993-217.869-214.407S137.161,38.986,257.487,38.986s217.869,95.993,217.869,214.407-97.542,214.407-217.869,214.407Z"/>
-                                </svg>
-                            </div>
+        <div class="filter-options-container">
+            <div class="search-container">
+                <div class="autocomplete-container">
+                    <div class="input-container">
+                        <input type="text" class="search-input" 
+                               placeholder="${sectionData?.autoComplete?.placeholders?.main || 'Search instruments'}">
+                        <div class="search-icon-container">
+                            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 611.9975 612.0095">
+                                <path d="M606.203,578.714l-158.011-155.486c41.378-44.956,66.802-104.411,66.802-169.835-.02-139.954-115.296-253.393-257.507-253.393S0,113.439,0,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0,7.747-7.613,7.747-19.971.018-27.585ZM257.487,467.8c-120.326,0-217.869-95.993-217.869-214.407S137.161,38.986,257.487,38.986s217.869,95.993,217.869,214.407-97.542,214.407-217.869,214.407Z"/>
+                            </svg>
                         </div>
-                        <div class="autocomplete-list"></div>
                     </div>
+                    <div class="autocomplete-list"></div>
                 </div>
-
-                ${categories_html ? `
-                    <div class="categories-container">
-                        <div class="category-filters">${categories_html}</div>
-                    </div>
-                ` : ''}
-
-                <div class="items-container">
-                    <div class="items cols-2"></div>
-                </div>
-                
-                <div class="secondary-container"></div>
             </div>
-        `;
+
+            ${categories_html ? `
+                <div class="categories-container">
+                    <div class="category-filters">${categories_html}</div>
+                </div>
+            ` : ''}
+
+            <div class="items-container">
+                <div class="items cols-2"></div>
+            </div>
+            
+            <div class="secondary-container"></div>
+        </div>
+    `;
 
             section_el.querySelector('.section-container')
                 .insertAdjacentHTML(
@@ -2697,6 +2697,8 @@ befriend.filters = {
             filter_options.innerHTML = html;
 
             let items = [];
+            let secondaryItems = '';
+            const secondary_options = sectionData?.secondary?.instruments?.options;
 
             // Initialize items for "mine" category
             if (storedFilters?.items) {
@@ -2704,6 +2706,48 @@ befriend.filters = {
                     .filter(item => !item.deleted)
                     .filter(Boolean);
             }
+
+            // Prepare secondary items HTML first
+            if (items?.length && secondary_options) {
+                for (let item of items) {
+                    const storedItem = Object.values(storedFilters?.items || {})
+                        .find(stored => stored.token === item.token);
+
+                    const selectedSecondary = storedItem?.secondary || [];
+                    let isAnyLevel = selectedSecondary.includes('any');
+                    let unselected = selectedSecondary.length === 0 ? 'unselected' : '';
+
+                    // Determine the display text
+                    let currentText;
+                    if (isAnyLevel) {
+                        currentText = 'Any Level';
+                    } else if (selectedSecondary.length) {
+                        currentText = selectedSecondary.join(', ');
+                    } else {
+                        currentText = sectionData.secondary.instruments.unselectedStr;
+                    }
+
+                    let secondary_options_html = '';
+
+                    // Add "Any Level" option first
+                    secondary_options_html += `<div class="option any-level ${isAnyLevel ? 'selected' : ''}" data-option="any">Any Level</div>`;
+
+                    // Add other options
+                    for (let option of secondary_options) {
+                        let selected = !isAnyLevel && selectedSecondary.includes(option) ? 'selected' : '';
+                        secondary_options_html += `<div class="option ${selected}" data-option="${option}">${option}</div>`;
+                    }
+
+                    secondaryItems += `
+                <div class="item ${item.token}" data-token="${item.token}">
+                    <div class="options">${secondary_options_html}</div>
+                </div>`;
+                }
+            }
+
+            // Add secondary items to container
+            const secondary_container = section_el.querySelector('.secondary-container');
+            secondary_container.innerHTML = secondaryItems;
 
             this.renderItems(section_el, items, true);
 
@@ -2760,58 +2804,29 @@ befriend.filters = {
                             .find(stored => stored.token === item.token);
                         const isActive = storedItem && !storedItem.deleted && storedItem.is_active;
 
-                        let secondary_html = '';
-                        if (secondary_options) {
-                            let secondary_options_html = '';
-                            const selectedSecondary = storedItem?.secondary || [];
-                            let isAnyLevel = selectedSecondary.includes('any');
-                            let unselected = selectedSecondary.length === 0 ? 'unselected' : '';
-
-                            // Determine the display text
-                            let currentText;
-                            if (isAnyLevel) {
-                                currentText = 'Any Level';
-                            } else if (selectedSecondary.length) {
-                                currentText = selectedSecondary.join(', ');
-                            } else {
-                                currentText = sectionData.secondary.instruments.unselectedStr;
-                            }
-
-                            // Add "Any Level" option first
-                            secondary_options_html += `<div class="option any-level ${isAnyLevel ? 'selected' : ''}" data-option="any">Any Level</div>`;
-
-                            // Add other options
-                            for (let option of secondary_options) {
-                                let selected = !isAnyLevel && selectedSecondary.includes(option) ? 'selected' : '';
-                                // Disable other options if "Any Level" is selected
-                                let disabled = isAnyLevel ? 'disabled' : '';
-                                secondary_options_html += `<div class="option ${selected} ${disabled}" data-option="${option}">${option}</div>`;
-                            }
-
-                            secondary_html = `
-                        <div class="secondary ${unselected}" 
-                            data-section="${befriend.filters.sections.instruments.token}"
-                            data-item-token="${item.token}">
-                            
-                            <div class="current-selected">${currentText}</div>
-                            <svg class="arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 82.1 43.2">
-                                <path d="M41.1,43.2L0,2.2,2.1,0l39,39L80,0l2.1,2.2-41,41Z"/>
-                            </svg>
-                            <div class="options">${secondary_options_html}</div>
-                        </div>`;
-                        }
-
                         return `
                     <div class="item mine ${isActive ? 'active': ''}" data-token="${item.token}">
                         <div class="content">
                             <div class="name">${item.name}</div>
-                            ${secondary_html}
+                            <div class="secondary ${storedItem?.secondary?.length === 0 ? 'unselected' : ''}" 
+                                 data-section="${befriend.filters.sections.instruments.token}"
+                                 data-item-token="${item.token}">
+                                <div class="current-selected">
+                                    ${storedItem?.secondary?.includes('any') ? 'Any Level' :
+                            storedItem?.secondary?.length ? storedItem.secondary.join(', ') :
+                                sectionData.secondary.instruments.unselectedStr}
+                                </div>
+                                <svg class="arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 82.1 43.2">
+                                    <path d="M41.1,43.2L0,2.2,2.1,0l39,39L80,0l2.1,2.2-41,41Z"/>
+                                </svg>
+                            </div>
                             <div class="remove">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56"><path d="M28,0C12.5605,0,0,12.5605,0,28s12.5605,28,28,28,28-12.5605,28-28S43.4395,0,28,0ZM28,53c-13.7852,0-25-11.2148-25-25S14.2148,3,28,3s25,11.2148,25,25-11.2148,25-25,25ZM39.2627,16.7373c-.5859-.5859-1.5352-.5859-2.1211,0l-9.1416,9.1416-9.1416-9.1416c-.5859-.5859-1.5352-.5859-2.1211,0-.5859.5854-.5859,1.5356,0,2.1211l9.1416,9.1416-9.1416,9.1416c-.5859.5854-.5859,1.5356,0,2.1211.293.293.6768.4395,1.0605.4395s.7676-.1465,1.0605-.4395l9.1417-9.1416,9.1416,9.1416c.293.293.6768.4395,1.0605.4395s.7676-.1465,1.0605-.4395c.5859-.5854.5859-1.5356,0-2.1211l-9.1415-9.1416,9.1416-9.1416c.5859-.5855.5859-1.5356,0-2.1211Z"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56">
+                                    <path d="M28,0C12.5605,0,0,12.5605,0,28s12.5605,28,28,28,28-12.5605,28-28S43.4395,0,28,0ZM28,53c-13.7852,0-25-11.2148-25-25S14.2148,3,28,3s25,11.2148,25,25-11.2148,25-25,25ZM39.2627,16.7373c-.5859-.5859-1.5352-.5859-2.1211,0l-9.1416,9.1416-9.1416-9.1416c-.5859-.5859-1.5352-.5859-2.1211,0-.5859.5854-.5859,1.5356,0,2.1211l9.1416,9.1416-9.1416,9.1416c-.5859.5854-.5859,1.5356,0,2.1211.293.293.6768.4395,1.0605.4395s.7676-.1465,1.0605-.4395l9.1417-9.1416,9.1416,9.1416c.293.293.6768.4395,1.0605.4395s.7676-.1465,1.0605-.4395c.5859-.5854.5859-1.5356,0-2.1211l-9.1415-9.1416,9.1416-9.1416c.5859-.5855.5859-1.5356,0-2.1211Z"/>
+                                </svg>
                             </div>
                         </div>
-                    </div>
-                `;
+                    </div>`;
                     }
 
                     if(item.token in added_item_tokens) {
@@ -2821,8 +2836,7 @@ befriend.filters = {
                     return `
                 <div class="item" data-token="${item.token}">
                     <div class="name">${item.name}</div>
-                </div>
-            `;
+                </div>`;
                 }).join('');
             }
 
@@ -4010,7 +4024,7 @@ befriend.filters = {
         }
 
         let secondary_container = section_el.querySelector('.secondary-container');
-        let options_el = secondary_el.querySelector('.options') || secondary_container.querySelector('.options');
+        let options_el = secondary_container.querySelector('.options');
         let item_el = secondary_el.closest('.item');
         let token = item_el.getAttribute('data-token');
 
@@ -4041,16 +4055,14 @@ befriend.filters = {
                 }, 300);
             }
 
-            let offsetTop = optionsBox.bottom - secondaryContainerBox.top;
-            let offsetLeft = optionsBox.left - secondaryContainerBox.left;
+            let offsetTop = secondaryBox.bottom - secondaryContainerBox.top;
+            let offsetLeft = secondaryBox.left - secondaryContainerBox.left;
 
             options_el.style.width = `${secondary_el.offsetWidth}px`;
             options_el.style.top = `${offsetTop}px`;
             options_el.style.left = `${offsetLeft}px`;
 
             options_el.setAttribute('data-item-token', token);
-
-            secondary_container.appendChild(options_el);
 
             addClassEl('secondary-open', section_el);
             addClassEl('item-secondary-open', item_el);
@@ -4080,7 +4092,7 @@ befriend.filters = {
                         befriend.filters.secondaries.activeEl = null;
                     }
                 }
-            }, 300);
+            }, befriend.variables.secondary_transition_ms);
         }
     },
     hideActiveSecondaryIf: function (target = null) {
