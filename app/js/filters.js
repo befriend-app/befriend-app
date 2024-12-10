@@ -2683,6 +2683,8 @@ befriend.filters = {
                 <div class="items-container">
                     <div class="items cols-2"></div>
                 </div>
+                
+                <div class="secondary-container"></div>
             </div>
         `;
 
@@ -3022,14 +3024,25 @@ befriend.filters = {
                         const category = btn.getAttribute('data-category');
 
                         try {
+                            const storedFilters = befriend.filters.data.filters?.instruments;
+
                             let items;
+
+                            let added_item_tokens = Object.values(storedFilters?.items || {})
+                                .reduce(function (acc, item) {
+                                    if(!item.deleted) {
+                                        acc[item.token] = item;
+                                    }
+
+                                    return acc;
+                                }, {});
+
                             if (category === 'mine') {
-                                const storedFilters = befriend.filters.data.filters?.instruments || {};
-                                items = Object.values(storedFilters.items || {})
+                                items = Object.values(storedFilters?.items || {})
                                     .filter(item => !item.deleted)
                                     .filter(Boolean);
                             } else {
-                                items = sectionData?.options.filter(item => item.category === category);
+                                items = sectionData?.options.filter(item => item.category === category && !added_item_tokens[item.token]);
                             }
 
                             befriend.filters.instruments.renderItems(section_el, items || [], category === 'mine');
@@ -3261,7 +3274,11 @@ befriend.filters = {
 
                         const secondary_option = e.target.closest('.option');
                         if (!secondary_option) {
-                            befriend.filters.transitionSecondary(secondary_el, !befriend.filters.secondaries.activeEl);
+                            befriend.filters.transitionSecondary(
+                                secondary_el,
+                                !befriend.filters.secondaries.activeEl ||
+                                befriend.filters.secondaries.activeEl !== secondary_el
+                            );
                             return;
                         }
 
@@ -3936,6 +3953,10 @@ befriend.filters = {
         let options_el = secondary_el.querySelector('.options');
         let section_el = secondary_el.closest('.section');
         let item_el = secondary_el.closest('.item');
+
+        let secondary_container = section_el.querySelector('.secondary-container');
+
+        console.log(secondary_container)
 
         let activeEl = befriend.filters.secondaries.activeEl;
 

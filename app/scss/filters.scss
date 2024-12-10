@@ -1447,6 +1447,7 @@
                 padding: 15px $padding_lr;
                 max-height: 200px;
                 overflow-y: scroll;
+                transition: padding 200ms;
 
                 .items {
                     display: flex;
@@ -1681,11 +1682,12 @@
             z-index: 3;
 
             .section-container {
-                overflow: visible !important;
+                //overflow: visible !important;
+                //position: initial;
             }
 
             .filter-options {
-                overflow-y: initial;
+                //overflow-y: initial;
             }
 
             .item-secondary-open {
@@ -1705,10 +1707,9 @@
             }
 
             .items-container {
-                overflow-y: initial !important;
+                //overflow-y: initial !important;
             }
         }
-
     }
 
     .send-receive {
