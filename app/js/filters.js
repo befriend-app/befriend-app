@@ -2931,8 +2931,6 @@ befriend.filters = {
                         }, timeout);
                     });
 
-                    console.log("autocomplete list")
-
                     autocomplete_list.addEventListener('click', async (e) => {
                         console.log("here")
                         const item = e.target.closest('.item');
@@ -3953,10 +3951,11 @@ befriend.filters = {
         let options_el = secondary_el.querySelector('.options');
         let section_el = secondary_el.closest('.section');
         let item_el = secondary_el.closest('.item');
-
         let secondary_container = section_el.querySelector('.secondary-container');
 
-        console.log(secondary_container)
+        let optionsBox = options_el.getBoundingClientRect();
+        let secondaryContainerBox = secondary_container.getBoundingClientRect();
+        let secondaryBox = secondary_el.getBoundingClientRect();
 
         let activeEl = befriend.filters.secondaries.activeEl;
 
@@ -3980,6 +3979,20 @@ befriend.filters = {
                     }
                 }, 300);
             }
+
+            let offsetTop = optionsBox.bottom - secondaryContainerBox.top;
+            let offsetLeft = optionsBox.left - secondaryContainerBox.left;
+
+            console.log({
+                secondaryContainerBox,
+                optionsBox
+            })
+
+            options_el.style.width = `${secondary_el.offsetWidth}px`;
+            options_el.style.top = `${offsetTop}px`;
+            options_el.style.left = `${offsetLeft}px`;
+
+            secondary_container.appendChild(options_el);
 
             addClassEl('secondary-open', section_el);
             addClassEl('item-secondary-open', item_el);
