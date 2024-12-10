@@ -2631,8 +2631,13 @@ befriend.filters = {
             }
         }
     },
-    // Initialize instruments section
     instruments: {
+        importance: {
+            min: 0,
+            default: 7,
+            max: 10,
+            current: {},
+        },
         init: function () {
             let section = befriend.filters.sections.instruments;
 
@@ -2707,8 +2712,15 @@ befriend.filters = {
                     .filter(Boolean);
             }
 
+            //set importance values if any
+            for(let item of items) {
+                if(typeof item.importance !== 'undefined') {
+                    this.importance.current[item.token] = item.importance;
+                }
+            }
+
             // Prepare secondary items HTML first
-            if (items?.length && secondary_options) {
+            if (secondary_options) {
                 for (let item of items) {
                     const storedItem = Object.values(storedFilters?.items || {})
                         .find(stored => stored.token === item.token);
@@ -2759,14 +2771,15 @@ befriend.filters = {
             this.events.search();
             this.events.categories();
             this.events.items();
+            this.events.importance();
             this.events.remove();
             this.events.secondary();
+
         },
         renderItems: function(section_el, items, is_mine) {
             const storedFilters = befriend.filters.data.filters?.instruments;
             const sectionData = befriend.filters.data.options?.['instruments'];
             const items_container = section_el.querySelector('.items');
-            const secondary_options = sectionData?.secondary?.instruments?.options;
 
             let items_html = '';
             let hasActiveItems = false;
@@ -2804,16 +2817,33 @@ befriend.filters = {
                             .find(stored => stored.token === item.token);
                         const isActive = storedItem && !storedItem.deleted && storedItem.is_active;
 
+                        let currentImportance = befriend.filters.instruments.importance.current[item.token] ||
+                            befriend.filters.instruments.importance.default;
+
+                        const position = ((currentImportance - befriend.filters.instruments.importance.min) /
+                            (befriend.filters.instruments.importance.max - befriend.filters.instruments.importance.min)) * 100;
+
                         return `
                     <div class="item mine ${isActive ? 'active': ''}" data-token="${item.token}">
+                        <div class="importance" title="Filter Importance: ${currentImportance}/${befriend.filters.instruments.importance.max}">
+                            <div class="indicator">
+                                <style>
+                                    .item[data-token="${item.token}"] .importance .indicator::after {
+                                        left: ${position}%;
+                                    }
+                                </style>
+                            </div>
+                        </div>
+                            
                         <div class="content">
                             <div class="name">${item.name}</div>
+                            
                             <div class="secondary ${storedItem?.secondary?.length === 0 ? 'unselected' : ''}" 
                                  data-section="${befriend.filters.sections.instruments.token}"
                                  data-item-token="${item.token}">
                                 <div class="current-selected">
                                     ${storedItem?.secondary?.includes('any') ? 'Any Level' :
-                            storedItem?.secondary?.length ? storedItem.secondary.join(', ') :
+                            storedItem?.secondary?.length ? `${storedItem.secondary.length} Selected` :
                                 sectionData.secondary.instruments.unselectedStr}
                                 </div>
                                 <svg class="arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 82.1 43.2">
@@ -2844,15 +2874,13 @@ befriend.filters = {
 
             this.initEvents();
         },
-        addItem: async function(token, section_el) {
+        addItem: async function(itemData = {}, section_el) {
             try {
+                let {id, token} = itemData;
                 befriend.toggleSpinner(true);
 
-                let section = befriend.filters.sections.instruments;
                 const sectionData = befriend.filters.data.options?.['instruments'];
                 const secondary_options = sectionData?.secondary?.instruments?.options;
-
-                const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
                 const category_mine = section_el.querySelector(`.category-btn.mine`);
 
                 await befriend.auth.put('/filters/instruments', {
@@ -2940,6 +2968,184 @@ befriend.filters = {
                 removeClassEl('autocomplete-shown', autocomplete_container);
             }
         },
+        showImportancePopup: function(itemToken, name, currentValue = 5) {
+            const popupHtml = `
+        <div class="importance-popup-overlay">
+            <div class="importance-popup">
+                <div class="popup-header">
+                    <div class="title">${name}</div>
+                    <div class="sub">Filter Importance</div>
+                </div>
+                
+                <div class="importance-slider">
+                    <div class="slider-container">
+                        <div class="slider-track"></div>
+                        <div class="slider-range"></div>
+                        <div class="thumb">
+                            <span class="thumb-value"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="popup-actions">
+                    <button class="cancel-btn">Cancel</button>
+                    <button class="save-btn">Save</button>
+                </div>
+            </div>
+        </div>`;
+
+            const popupEl = document.createElement('div');
+            popupEl.innerHTML = popupHtml;
+            document.body.appendChild(popupEl);
+
+            const overlay = popupEl.querySelector('.importance-popup-overlay');
+
+            // Force reflow
+            void overlay.offsetWidth;
+
+            // Activate elements with staggered animation
+            requestAnimationFrame(() => {
+                addClassEl('active', overlay);
+            });
+
+            const container = popupEl.querySelector('.slider-container');
+            const range = popupEl.querySelector('.slider-range');
+            const thumb = popupEl.querySelector('.thumb');
+            let isDragging = false;
+            let startY, startTop;
+
+            const setPosition = (value) => {
+                const percent = (value - this.importance.min) / (this.importance.max - this.importance.min);
+                const height = container.offsetHeight;
+                const position = height - (percent * height); // Invert for vertical
+                thumb.style.top = `${position}px`;
+                range.style.height = `${height - position}px`;
+                thumb.querySelector('.thumb-value').textContent = Math.round(value);
+            };
+
+            const getValueFromPosition = (position) => {
+                const height = container.offsetHeight;
+                const percent = 1 - (position / height); // Invert for vertical
+                return Math.min(Math.max(percent * (this.importance.max - this.importance.min) + this.importance.min, this.importance.min), this.importance.max);
+            };
+
+            function handleStart(e) {
+                isDragging = true;
+                startY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+                startTop = parseFloat(thumb.style.top) || 0;
+                e.preventDefault();
+            }
+
+            function handleMove(e) {
+                if (!isDragging) return;
+
+                const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+                const dy = clientY - startY;
+                const newTop = Math.min(Math.max(0, startTop + dy), container.offsetHeight);
+                const value = getValueFromPosition(newTop);
+                setPosition(value);
+            }
+
+            function handleEnd(e) {
+                isDragging = false;
+
+                let importancePopup = document.querySelector('.importance-popup-overlay');
+
+                if(importancePopup && !e.target.closest('.importance-popup')) {
+                    fireClick(importancePopup.querySelector('.cancel-btn'));
+                }
+            }
+
+            // Mouse events
+            thumb.addEventListener('mousedown', handleStart);
+            document.addEventListener('mousemove', handleMove);
+            document.addEventListener('mouseup', handleEnd);
+
+            // Touch events
+            thumb.addEventListener('touchstart', handleStart);
+            document.addEventListener('touchmove', handleMove);
+            document.addEventListener('touchend', handleEnd);
+
+            // Click track to set value
+            container.addEventListener('click', (e) => {
+                if (e.target === thumb) return;
+                const rect = container.getBoundingClientRect();
+                const clickPosition = e.clientY - rect.top;
+                const value = getValueFromPosition(clickPosition);
+                setPosition(value);
+            });
+
+            // Set initial position
+            setPosition(currentValue);
+
+            // Close popup handler
+            const closePopup = () => {
+                removeClassEl('active', overlay);
+
+                // Remove element after animation
+                setTimeout(() => {
+                    popupEl.remove();
+                }, 300);
+            };
+
+            // Handle save/cancel
+            const cancelBtn = popupEl.querySelector('.cancel-btn');
+            const saveBtn = popupEl.querySelector('.save-btn');
+
+            cancelBtn.addEventListener('click', closePopup);
+
+            saveBtn.addEventListener('click', () => {
+                const value = parseInt(thumb.innerText);
+                this.importance.current[itemToken] = value;
+                this.updateImportanceIndicator(itemToken, value);
+                this.saveImportance(itemToken, value);
+                closePopup();
+            });
+
+            // Close on overlay click
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    closePopup();
+                }
+            });
+
+            // ESC key to close
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closePopup();
+                }
+            });
+        },
+        updateImportanceIndicator: function(itemToken, importanceValue) {
+            const item = befriend.els.filters.querySelector(`.item.mine[data-token="${itemToken}"]`);
+            if (!item) return;
+
+            let importance_el = item.querySelector('.importance');
+            let indicator_el = importance_el.querySelector('.indicator');
+
+            const position = ((importanceValue - befriend.filters.instruments.importance.min) /
+                (befriend.filters.instruments.importance.max - befriend.filters.instruments.importance.min)) * 100;
+
+            importance_el.setAttribute('title', `Filter Importance: ${importanceValue}/${befriend.filters.instruments.importance.max}`)
+
+            indicator_el.innerHTML = `<style>
+                                        .item[data-token="${itemToken}"] .importance .indicator::after {
+                                            left: ${position}%;
+                                        }
+                                    </style>`;
+
+        },
+        saveImportance: async function (token, value) {
+            try {
+                await befriend.auth.put('/filters/instruments', {
+                    token,
+                    importance: parseInt(value)
+                });
+
+                //update data/ui
+            } catch (e) {
+                console.error('Error saving instrument importance:', e);
+            }
+        },
         events: {
             search: function () {
                 let section = befriend.filters.sections.instruments;
@@ -2977,6 +3183,15 @@ befriend.filters = {
                                 });
 
                                 if (response.data.items?.length) {
+                                    //merge results with options
+                                    for(let item of response.data.items) {
+                                        let existing_option = sectionData?.options.find(existing => existing.token === item.token);
+
+                                        if(!existing_option) {
+                                            sectionData.options.push(item);
+                                        }
+                                    }
+
                                     // Filter out items that already exist in filters data
                                     const storedFilters = befriend.filters.data.filters?.instruments;
                                     const existingTokens = new Set();
@@ -2997,7 +3212,7 @@ befriend.filters = {
 
                                     if (filteredItems.length) {
                                         const items_html = filteredItems.map(item => `
-                            <div class="item" data-token="${item.token}">
+                            <div class="item" data-id="${item.id}" data-token="${item.token}">
                                 <div class="name-meta">
                                     <div class="name">${item.name}</div>
                                 </div>
@@ -3021,13 +3236,16 @@ befriend.filters = {
                     });
 
                     autocomplete_list.addEventListener('click', async (e) => {
-                        console.log("here")
                         const item = e.target.closest('.item');
                         if (!item) return;
 
+                        const id = item.getAttribute('data-id');
                         const token = item.getAttribute('data-token');
 
-                        if (await befriend.filters.instruments.addItem(token, section_el)) {
+                        if (await befriend.filters.instruments.addItem({
+                            id,
+                            token
+                        }, section_el)) {
                             // Close autocomplete and clear input
                             befriend.filters.instruments.toggleAutocomplete(false);
                             search_input.value = '';
@@ -3222,10 +3440,35 @@ befriend.filters = {
                             item.remove();
 
                             //add item to server/my filters
-                            await befriend.filters.instruments.addItem(token, section_el);
+                            await befriend.filters.instruments.addItem({ token }, section_el);
                         } catch (e) {
                             console.error('Error adding instrument:', e);
                         }
+                    });
+                }
+            },
+            importance: function () {
+                let section = befriend.filters.sections.instruments;
+                const sectionData = befriend.filters.data.options?.['instruments'];
+                const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+
+                const importance_els = section_el.querySelectorAll('.importance');
+
+                for (let importance of importance_els) {
+                    if (importance._listener) continue;
+                    importance._listener = true;
+
+                    importance.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const item = importance.closest('.item');
+                        const token = item.getAttribute('data-token');
+                        let itemData = sectionData?.options.find(opt => opt.token === token);
+
+                        const currentValue = befriend.filters.instruments.importance.current[token] || befriend.filters.instruments.importance.default;
+
+                        befriend.filters.instruments.showImportancePopup(token, itemData?.name, currentValue);
                     });
                 }
             },
@@ -3251,14 +3494,12 @@ befriend.filters = {
                         let item = remove_el.closest('.item');
 
                         let token = item.getAttribute('data-token');
-                        let wasSelected = elHasClass(item, 'active');
 
                         try {
                             befriend.toggleSpinner(true);
 
                             await befriend.auth.put('/filters/instruments', {
                                 token,
-                                active: wasSelected,
                                 is_delete: true
                             });
 
@@ -3399,12 +3640,11 @@ befriend.filters = {
 
                             await befriend.auth.put('/filters/instruments', {
                                 token: itemToken,
-                                active: itemData.is_active,
                                 secondary: itemData.secondary
                             });
 
                             // Find the original secondary element
-                            const item = section_el.querySelector(`.item[data-token="${itemToken}"]`);
+                            const item = section_el.querySelector(`.item.mine[data-token="${itemToken}"]`);
                             const original_secondary = item?.querySelector('.secondary');
 
                             if (original_secondary) {
@@ -3420,7 +3660,7 @@ befriend.filters = {
                                 if (itemData.secondary.includes('any')) {
                                     textContent = 'Any Level';
                                 } else if (itemData.secondary.length) {
-                                    textContent = itemData.secondary.join(', ');
+                                    textContent = `${itemData.secondary.length} Selected`;
                                 } else {
                                     textContent = 'Skill Level';
                                 }
