@@ -2844,6 +2844,80 @@ befriend.filters = {
 
             this.initEvents();
         },
+        addItem: async function(token, section_el) {
+            try {
+                befriend.toggleSpinner(true);
+
+                let section = befriend.filters.sections.instruments;
+                const sectionData = befriend.filters.data.options?.['instruments'];
+                const secondary_options = sectionData?.secondary?.instruments?.options;
+
+                const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+                const category_mine = section_el.querySelector(`.category-btn.mine`);
+
+                await befriend.auth.put('/filters/instruments', {
+                    token,
+                    active: true
+                });
+
+                // Get current mine items
+                const storedFilters = befriend.filters.data.filters?.instruments;
+
+                if (!storedFilters?.items) {
+                    befriend.filters.data.filters.instruments = {
+                        items: {}
+                    }
+                }
+
+                let option = sectionData?.options.find(opt => opt.token === token);
+
+                befriend.filters.data.filters.instruments.items[token] = {
+                    token,
+                    instrument_id: option.id,
+                    name: option.name,
+                    is_active: true,
+                }
+
+                // Add secondary options for new item
+                if (secondary_options) {
+                    const secondary_container = section_el.querySelector('.secondary-container');
+
+                    // Create secondary options HTML
+                    let secondary_options_html = '';
+                    secondary_options_html += `<div class="option any-level" data-option="any">Any Level</div>`;
+
+                    // Add other options
+                    for (let opt of secondary_options) {
+                        secondary_options_html += `<div class="option" data-option="${opt}">${opt}</div>`;
+                    }
+
+                    // Create the secondary item container
+                    const secondaryItemHtml = `
+                <div class="item ${token}" data-token="${token}">
+                    <div class="options" data-item-token="${token}">
+                        ${secondary_options_html}
+                    </div>
+                </div>`;
+
+                    // Add to secondary container
+                    secondary_container.insertAdjacentHTML('beforeend', secondaryItemHtml);
+                }
+
+                // Switch to mine category and show updated items
+                fireClick(category_mine);
+
+                requestAnimationFrame(() => {
+                    befriend.filters.updateSectionHeights();
+                });
+
+                befriend.toggleSpinner(false);
+                return true;
+            } catch (e) {
+                console.error('Error adding instrument:', e);
+                befriend.toggleSpinner(false);
+                return false;
+            }
+        },
         toggleAutocomplete: function(show) {
             let section = befriend.filters.sections.instruments;
             const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
@@ -2875,8 +2949,6 @@ befriend.filters = {
                 const search_input = section_el.querySelector('.search-input');
                 const input_container = section_el.querySelector('.input-container');
                 const autocomplete_list = section_el.querySelector('.autocomplete-list');
-
-                const category_mine = section_el.querySelector(`.category-btn.mine`);
 
                 let debounceTimer;
 
@@ -2955,47 +3027,10 @@ befriend.filters = {
 
                         const token = item.getAttribute('data-token');
 
-                        try {
-                            befriend.toggleSpinner(true);
-
-                            let r = await befriend.auth.put('/filters/instruments', {
-                                token,
-                                active: true
-                            });
-
-                            // Get current mine items
-                            const storedFilters = befriend.filters.data.filters?.instruments;
-
-                            if (!storedFilters?.items) {
-                                befriend.filters.data.filters.instruments = {
-                                    items: {}
-                                }
-                            }
-
-                            let option = sectionData?.options.find(opt => opt.token === token);
-
-                            befriend.filters.data.filters.instruments.items[token] = {
-                                token,
-                                instrument_id: option.id,
-                                name: option.name,
-                                is_active: true
-                            }
-
+                        if (await befriend.filters.instruments.addItem(token, section_el)) {
                             // Close autocomplete and clear input
                             befriend.filters.instruments.toggleAutocomplete(false);
                             search_input.value = '';
-
-                            // Switch to mine category and show updated items
-                            fireClick(category_mine);
-
-                            requestAnimationFrame(() => {
-                                befriend.filters.updateSectionHeights();
-                            });
-
-                            befriend.toggleSpinner(false);
-                        } catch (e) {
-                            console.error('Error adding instrument:', e);
-                            befriend.toggleSpinner(false);
                         }
                     });
 
@@ -3185,41 +3220,11 @@ befriend.filters = {
                         try {
                             // Remove item from current view
                             item.remove();
-                            befriend.toggleSpinner(true);
 
-                            let r = await befriend.auth.put('/filters/instruments', {
-                                token,
-                                active: true
-                            });
-
-                            // Get current mine items
-                            const storedFilters = befriend.filters.data.filters?.instruments;
-
-                            if(!storedFilters?.items) {
-                                befriend.filters.data.filters.instruments = {
-                                    items: {}
-                                }
-                            }
-
-                            let option = sectionData?.options.find(opt => opt.token === token);
-
-                            befriend.filters.data.filters.instruments.items[token] = {
-                                token,
-                                instrument_id: option.id,
-                                name: option.name,
-                                is_active: true
-                            }
-
-                            fireClick(category_mine);
-
-                            requestAnimationFrame(function () {
-                                befriend.filters.updateSectionHeights();
-                            });
-
-                            befriend.toggleSpinner(false);
+                            //add item to server/my filters
+                            await befriend.filters.instruments.addItem(token, section_el);
                         } catch (e) {
                             console.error('Error adding instrument:', e);
-                            befriend.toggleSpinner(false);
                         }
                     });
                 }
@@ -3240,6 +3245,8 @@ befriend.filters = {
                     remove_el.addEventListener('click', async (e) => {
                         e.preventDefault();
                         e.stopPropagation();
+
+                        befriend.filters.hideActiveSecondaryIf();
 
                         let item = remove_el.closest('.item');
 
@@ -3323,8 +3330,6 @@ befriend.filters = {
                     secondary_container.addEventListener('click', async (e) => {
                         e.preventDefault();
                         e.stopPropagation();
-
-                        console.log("secondary container")
 
                         const secondary_option = e.target.closest('.option');
                         if (!secondary_option) return;
