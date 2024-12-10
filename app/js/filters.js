@@ -3347,6 +3347,11 @@ befriend.filters = {
                                                 // Remove the selection
                                                 removeArrItem(itemData.secondary, option_value);
                                                 removeClassEl('selected', secondary_option);
+
+                                                //set any if no options selected
+                                                if(!itemData.secondary.length) {
+                                                    itemData.secondary.push('any');
+                                                }
                                             }
                                         }
 
