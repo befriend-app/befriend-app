@@ -3258,10 +3258,14 @@ befriend.filters = {
                 }
             },
             secondary: function() {
+                const sectionData = befriend.filters.data.options?.['instruments'];
+                const secondary_options = sectionData?.secondary?.instruments?.options;
+
                 let section = befriend.filters.sections.instruments;
                 const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
                 let secondary_els = section_el.getElementsByClassName('secondary');
 
+                // Handle clicks on secondary elements (opening/closing)
                 for(let secondary_el of secondary_els) {
                     if(secondary_el._listener) continue;
                     secondary_el._listener = true;
@@ -3270,33 +3274,49 @@ befriend.filters = {
                         e.preventDefault();
                         e.stopPropagation();
 
-                        const secondary_option = e.target.closest('.option');
-                        if (!secondary_option) {
-                            befriend.filters.transitionSecondary(
-                                secondary_el,
-                                !befriend.filters.secondaries.activeEl ||
-                                befriend.filters.secondaries.activeEl !== secondary_el
-                            );
-                            return;
-                        }
+                        // Only handle direct clicks on the secondary element
+                        if (e.target.closest('.option')) return;
 
-                        const item = secondary_el.closest('.item');
-                        const token = item.getAttribute('data-token');
+                        // Toggle the secondary dropdown
+                        befriend.filters.transitionSecondary(
+                            secondary_el,
+                            !befriend.filters.secondaries.activeEl ||
+                            befriend.filters.secondaries.activeEl !== secondary_el
+                        );
+                    });
+                }
+
+                // Handle clicks in the secondary container
+                const secondary_container = section_el.querySelector('.secondary-container');
+
+                if (!secondary_container._listener) {
+                    secondary_container._listener = true;
+
+                    secondary_container.addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const secondary_option = e.target.closest('.option');
+                        if (!secondary_option) return;
+
+                        const options_el = secondary_option.closest('.options');
+                        if (!options_el) return;
+
+                        const itemToken = options_el.getAttribute('data-item-token');
                         const option_value = secondary_option.getAttribute('data-option');
                         const isAnyLevel = option_value === 'any';
-                        const anyOption = secondary_el.querySelector('.option.any-level');
-                        const otherOptions = secondary_el.querySelectorAll('.option:not(.any-level)');
+                        const anyOption = options_el.querySelector('.option.any-level');
+                        const otherOptions = options_el.querySelectorAll('.option:not(.any-level)');
+                        const wasSelected = elHasClass(secondary_option, 'selected');
 
                         let itemData;
 
                         try {
-                            let wasSelected = elHasClass(secondary_option, 'selected');
-
                             befriend.toggleSpinner(true);
 
                             if(befriend.filters.data.filters?.instruments?.items) {
                                 for(let k in befriend.filters.data.filters.instruments.items) {
-                                    if(befriend.filters.data.filters.instruments.items[k].token === token) {
+                                    if(befriend.filters.data.filters.instruments.items[k].token === itemToken) {
                                         itemData = befriend.filters.data.filters.instruments.items[k];
 
                                         // Initialize array if needed
@@ -3311,10 +3331,7 @@ befriend.filters = {
                                                 addClassEl('selected', anyOption);
                                                 removeElsClass(otherOptions, 'selected');
                                             } else {
-                                                return
-                                                // // If unselecting "Any Level"
-                                                // itemData.secondary = [];
-                                                // removeClassEl('selected', anyOption);
+                                                return;
                                             }
                                         } else {
                                             // If selecting a specific level
@@ -3338,31 +3355,39 @@ befriend.filters = {
                                 }
                             }
 
+                            itemData.secondary = befriend.filters.sortSecondary(secondary_options, itemData.secondary)
+
                             await befriend.auth.put('/filters/instruments', {
-                                token,
+                                token: itemToken,
                                 active: itemData.is_active,
                                 secondary: itemData.secondary
                             });
 
-                            // Update unselected class state
-                            if (itemData.secondary.length === 0) {
-                                addClassEl('unselected', secondary_el);
-                            } else {
-                                removeClassEl('unselected', secondary_el);
+                            // Find the original secondary element
+                            const item = section_el.querySelector(`.item[data-token="${itemToken}"]`);
+                            const original_secondary = item?.querySelector('.secondary');
+
+                            if (original_secondary) {
+                                // Update unselected class state
+                                if (itemData.secondary.length === 0) {
+                                    addClassEl('unselected', original_secondary);
+                                } else {
+                                    removeClassEl('unselected', original_secondary);
+                                }
+
+                                // Update displayed text
+                                let textContent;
+                                if (itemData.secondary.includes('any')) {
+                                    textContent = 'Any Level';
+                                } else if (itemData.secondary.length) {
+                                    textContent = itemData.secondary.join(', ');
+                                } else {
+                                    textContent = 'Skill Level';
+                                }
+                                original_secondary.querySelector('.current-selected').textContent = textContent;
                             }
 
-                            // Update displayed text
-                            let textContent;
-                            if (itemData.secondary.includes('any')) {
-                                textContent = 'Any Level';
-                            } else if (itemData.secondary.length) {
-                                textContent = itemData.secondary.join(', ');
-                            } else {
-                                textContent = 'Skill Level';
-                            }
-                            secondary_el.querySelector('.current-selected').textContent = textContent;
-
-                            requestAnimationFrame(function () {
+                            requestAnimationFrame(() => {
                                 befriend.filters.updateSectionHeights();
                             });
 
@@ -3375,6 +3400,27 @@ befriend.filters = {
                 }
             }
         }
+    },
+    sortSecondary: function (originalArr, currentArr) {
+        if (!Array.isArray(originalArr) || !Array.isArray(currentArr)) {
+            return currentArr;
+        }
+
+        return [...currentArr].sort((a, b) => {
+            // Keep 'any' at the start if it exists
+            if (a === 'any') return -1;
+            if (b === 'any') return 1;
+
+            // Get indices from original array
+            const indexA = originalArr.indexOf(a);
+            const indexB = originalArr.indexOf(b);
+
+            // Keep items not found in original array at the end
+            if (indexA === -1) return 1;
+            if (indexB === -1) return -1;
+
+            return indexA - indexB;
+        });
     },
     initSections: async function () {
         let sections_el = befriend.els.filters.querySelector('.sections');
@@ -3948,10 +3994,11 @@ befriend.filters = {
         };
     },
     transitionSecondary: async function (secondary_el, show, on_internal) {
-        let options_el = secondary_el.querySelector('.options');
         let section_el = secondary_el.closest('.section');
-        let item_el = secondary_el.closest('.item');
         let secondary_container = section_el.querySelector('.secondary-container');
+        let options_el = secondary_el.querySelector('.options') || secondary_container.querySelector('.options');
+        let item_el = secondary_el.closest('.item');
+        let token = item_el.getAttribute('data-token');
 
         let optionsBox = options_el.getBoundingClientRect();
         let secondaryContainerBox = secondary_container.getBoundingClientRect();
@@ -3983,14 +4030,11 @@ befriend.filters = {
             let offsetTop = optionsBox.bottom - secondaryContainerBox.top;
             let offsetLeft = optionsBox.left - secondaryContainerBox.left;
 
-            console.log({
-                secondaryContainerBox,
-                optionsBox
-            })
-
             options_el.style.width = `${secondary_el.offsetWidth}px`;
             options_el.style.top = `${offsetTop}px`;
             options_el.style.left = `${offsetLeft}px`;
+
+            options_el.setAttribute('data-item-token', token);
 
             secondary_container.appendChild(options_el);
 
