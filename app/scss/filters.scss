@@ -109,7 +109,8 @@
 
         .secondary {
             position: relative;
-            width: 100%;
+            width: 130px;
+            margin-left: auto;
             cursor: pointer;
 
             // Unselected state
@@ -196,6 +197,7 @@
                 &.active, &.selected {
                     .importance {
                         opacity: 1;
+                        visibility: visible;
                     }
                 }
 
@@ -215,6 +217,7 @@
                     z-index: 3;
                     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
                     opacity: 0;
+                    visibility: hidden;
                     @include flex-center-col;
 
                     .indicator {
@@ -1643,14 +1646,22 @@
             }
 
             .items-container {
+                $max_height: 200px;
+                $scroll_padding_tb: 0px;
                 padding: 15px $padding_lr;
-                max-height: 200px;
+                max-height: $max_height;
                 overflow-y: scroll;
                 transition: padding 200ms;
 
                 &.is-scrollable {
+                    max-height: calc($max_height - $scroll_padding_tb);
+
                     .items {
-                        padding-bottom: 20px;
+                        .item {
+                            &:last-child {
+                                margin-bottom: $scroll_padding_tb;
+                            }
+                        }
                     }
                 }
 
