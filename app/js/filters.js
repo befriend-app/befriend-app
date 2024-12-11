@@ -4892,7 +4892,11 @@ befriend.filters = {
                         try {
                             befriend.toggleSpinner(true);
 
-                            let tableKey = befriend.filters[section_key].getTableKey(token);
+                            let tableKey = item.getAttribute('data-table-key');
+
+                            if(!tableKey || true) {
+                                tableKey = befriend.filters[section_key].getTableKey(token);
+                            }
 
                             await befriend.auth.put(section.endpoint, {
                                 table_key: tableKey,

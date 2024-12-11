@@ -1662,12 +1662,11 @@
                         transition: all 200ms;
                         background: lighten(black, 97%);
                         font-size: 15px;
+                        width: 100%;
 
                         &:last-of-type {
                             //margin-bottom: 20px !important;
                         }
-
-                        width: 100%;
 
                         .name {
                             font-size: 14px;
