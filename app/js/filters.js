@@ -3359,7 +3359,6 @@ befriend.filters = {
             const items_container = section_el.querySelector('.items');
 
             let items_html = '';
-            let hasActiveItems = false;
 
             if (is_mine) {
                 const hasActiveNonDeletedItems = storedFilters?.items &&
@@ -3378,10 +3377,9 @@ befriend.filters = {
                 for(let k in storedFilters.items) {
                     let item = storedFilters.items[k];
                     if(!item.deleted && item.is_active) {
-                        let instrument = sectionData?.options.find(opt => opt.id === item.instrument_id);
-                        if(instrument) {
-                            added_item_tokens[instrument.token] = item;
-                            hasActiveItems = true;
+                        let option = sectionData?.options.find(opt => opt.id === item.instrument_id);
+                        if(option) {
+                            added_item_tokens[option.token] = item;
                         }
                     }
                 }
@@ -4054,19 +4052,25 @@ befriend.filters = {
     },
     work: {
         data: {
+            tableKey: null,
             tabs: [
-                { key: 'industries', name: 'Industries' },
-                { key: 'roles', name: 'Roles' }
+                { key: 'industries', col: 'work_industry_id', name: 'Industries', singular: 'Industry' },
+                { key: 'roles', col: 'work_role_id', name: 'Roles', singular: 'Role' }
             ],
-            activeTab: 'industries'
         },
         init: function () {
+            if(this?.data.tabs?.length) {
+                if(!this.data.tableKey) {
+                    this.data.tableKey = this.data.tabs[0].key;
+                }
+            }
+
             let section = befriend.filters.sections.work;
 
             const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
             const filter_options = section_el.querySelector('.filter-options');
             const sectionData = befriend.filters.data.options?.['work'];
-            const storedFilters = befriend.filters.data.filters?.work || {};
+            const storedFilters = this.getStoredFilter();
 
             let categories_html = '';
             if (sectionData?.options.length > 0) {
@@ -4132,93 +4136,71 @@ befriend.filters = {
 
             filter_options.innerHTML = html;
 
-            let items = [];
-            let secondaryItems = '';
-            const secondary_options = sectionData?.secondary?.work?.options;
+            let items = this.getStoredItems();
 
-            // Initialize items for "mine" category
-            if (storedFilters?.items) {
-                items = Object.values(storedFilters.items)
-                    .filter(item => !item.deleted)
-                    .filter(Boolean);
-            }
-
-            // Prepare secondary items HTML first
-            if (secondary_options) {
-                for (let item of items) {
-                    const storedItem = Object.values(storedFilters?.items || {})
-                        .find(stored => stored.token === item.token);
-
-                    const selectedSecondary = storedItem?.secondary || [];
-                    let isAnyLevel = selectedSecondary.includes('any');
-                    let unselected = selectedSecondary.length === 0 ? 'unselected' : '';
-
-                    // Determine the display text
-                    let currentText;
-                    if (isAnyLevel) {
-                        currentText = 'Any Level';
-                    } else if (selectedSecondary.length) {
-                        currentText = selectedSecondary.join(', ');
-                    } else {
-                        currentText = sectionData.secondary.work.unselectedStr;
-                    }
-
-                    let secondary_options_html = '';
-
-                    // Add "Any Level" option first
-                    secondary_options_html += `<div class="option any-level ${isAnyLevel ? 'selected' : ''}" data-option="any">Any Level</div>`;
-
-                    // Add other options
-                    for (let option of secondary_options) {
-                        let selected = !isAnyLevel && selectedSecondary.includes(option) ? 'selected' : '';
-                        secondary_options_html += `<div class="option ${selected}" data-option="${option}">${option}</div>`;
-                    }
-
-                    secondaryItems += `
-                <div class="item ${item.token}" data-token="${item.token}">
-                    <div class="options" data-item-token="${item.token}">${secondary_options_html}</div>
-                </div>`;
-                }
-            }
-
-            // Add secondary items to container
-            const secondary_container = section_el.querySelector('.secondary-container');
-            secondary_container.innerHTML = secondaryItems;
+            this.addTabs();
 
             requestAnimationFrame(() => {
                 befriend.filters.work.renderItems(section_el, items, true);
                 befriend.filters.updateSectionHeights();
             });
         },
+        getStoredFilter: function () {
+            return befriend.filters.data.filters?.work;
+        },
+        getStoredItems: function () {
+            let items = [];
+
+            const storedFilters = this.getStoredFilter();
+
+            if (storedFilters?.items) {
+                items = Object.values(storedFilters.items)
+                    .filter(item => item.table_key === this.data.tableKey)
+                    .filter(item => !item.deleted)
+                    .filter(Boolean);
+            }
+
+            return items;
+        },
+        getKeyCol: function (key) {
+            return befriend.filters.work.data?.tabs?.[key]?.col;
+        },
         renderItems: function(section_el, items, is_mine) {
-            const storedFilters = befriend.filters.data.filters?.work;
+            let tableKey = this.getTableKey();
+            let tab = this.data.tabs.find(tab => tab.key === tableKey);
+            
+            const storedFilters = this.getStoredFilter();
+
             const sectionData = befriend.filters.data.options?.['work'];
             const items_container = section_el.querySelector('.items');
 
             let items_html = '';
-            let hasActiveItems = false;
 
             if (is_mine) {
                 const hasActiveNonDeletedItems = storedFilters?.items &&
                     Object.values(storedFilters.items)
+                        .filter(item => item.table_key === tableKey)
                         .some(item => !item.deleted && item.is_active);
 
                 items_html = `
             <div class="item any ${!hasActiveNonDeletedItems ? 'active' : ''}" data-token="any">
-                <div class="name">Any Industry</div>
+                <div class="name">Any ${tab.singular}</div>
             </div>`;
             }
 
             let added_item_tokens = {};
 
+            let tableCol = this.getKeyCol(this.data.tableKey);
+
             if (storedFilters?.items) {
                 for(let k in storedFilters.items) {
                     let item = storedFilters.items[k];
+                    
                     if(!item.deleted && item.is_active) {
-                        let instrument = sectionData?.options.find(opt => opt.id === item.work_id);
-                        if(instrument) {
-                            added_item_tokens[instrument.token] = item;
-                            hasActiveItems = true;
+                        let option = sectionData?.options.find(opt => opt.id === item[tableCol]);
+                        
+                        if(option) {
+                            added_item_tokens[option.token] = item;
                         }
                     }
                 }
@@ -4236,18 +4218,6 @@ befriend.filters = {
                         <div class="content">
                             <div class="name">${item.name}</div>
                             
-                            <div class="secondary ${storedItem?.secondary?.length === 0 ? 'unselected' : ''}" 
-                                 data-section="${befriend.filters.sections.work.token}"
-                                 data-item-token="${item.token}">
-                                <div class="current-selected">
-                                    ${storedItem?.secondary?.includes('any') ? 'Any Level' :
-                            storedItem?.secondary?.length ? `${storedItem.secondary.length} Selected` :
-                                sectionData.secondary.work.unselectedStr}
-                                </div>
-                                <svg class="arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 82.1 43.2">
-                                    <path d="M41.1,43.2L0,2.2,2.1,0l39,39L80,0l2.1,2.2-41,41Z"/>
-                                </svg>
-                            </div>
                             <div class="remove">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56">
                                     <path d="M28,0C12.5605,0,0,12.5605,0,28s12.5605,28,28,28,28-12.5605,28-28S43.4395,0,28,0ZM28,53c-13.7852,0-25-11.2148-25-25S14.2148,3,28,3s25,11.2148,25,25-11.2148,25-25,25ZM39.2627,16.7373c-.5859-.5859-1.5352-.5859-2.1211,0l-9.1416,9.1416-9.1416-9.1416c-.5859-.5859-1.5352-.5859-2.1211,0-.5859.5854-.5859,1.5356,0,2.1211l9.1416,9.1416-9.1416,9.1416c-.5859.5854-.5859,1.5356,0,2.1211.293.293.6768.4395,1.0605.4395s.7676-.1465,1.0605-.4395l9.1417-9.1416,9.1416,9.1416c.293.293.6768.4395,1.0605.4395s.7676-.1465,1.0605-.4395c.5859-.5854.5859-1.5356,0-2.1211l-9.1415-9.1416,9.1416-9.1416c.5859-.5855.5859-1.5356,0-2.1211Z"/>
@@ -4270,9 +4240,41 @@ befriend.filters = {
 
             items_container.innerHTML = items_html;
 
+            if(is_mine) {
+                addClassEl('show-tabs', section_el);
+            } else {
+                removeClassEl('show-tabs', section_el);
+            }
+
             this.events.init();
 
             befriend.filters.importance.set();
+        },
+        addTabs: function () {
+            if(!this.data?.tabs?.length) {
+                return;
+            }
+
+            let section = befriend.filters.sections.work;
+            const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+
+            let html = ``;
+
+            for(let i = 0; i < this.data.tabs.length; i++) {
+                let tab = this.data.tabs[i];
+
+                html += `<div class="tab ${i === 0 ? 'active' : ''}" data-key="${tab.key}">
+                            <div class="name">${tab.name}</div>
+                        </div>`
+            }
+
+            let tabs_html = `<div class="tabs-container">${html}</div>`;
+
+            let categories_container = section_el.querySelector('.categories-container');
+
+            categories_container.insertAdjacentHTML('afterend', tabs_html);
+
+            this.events.tabs();
         },
         addItem: async function(itemData = {}, section_el) {
             try {
@@ -4280,10 +4282,14 @@ befriend.filters = {
                 befriend.toggleSpinner(true);
 
                 const sectionData = befriend.filters.data.options?.['work'];
-                const secondary_options = sectionData?.secondary?.work?.options;
                 const category_mine = section_el.querySelector(`.category-btn.mine`);
 
+                let table_key = this.getTableKey(token);
+
+                this.data.tableKey = table_key;
+
                 let response = await befriend.auth.put('/filters/work', {
+                    table_key,
                     token,
                     active: true
                 });
@@ -4291,7 +4297,7 @@ befriend.filters = {
                 let id = response?.data?.id;
 
                 // Get current mine items
-                const storedFilters = befriend.filters.data.filters?.work;
+                const storedFilters = this.getStoredFilter();
 
                 if (!storedFilters?.items) {
                     befriend.filters.data.filters.work = {
@@ -4301,37 +4307,15 @@ befriend.filters = {
 
                 let option = sectionData?.options.find(opt => opt.token === token);
 
+                let tableCol = this.getKeyCol(table_key);
+
                 befriend.filters.data.filters.work.items[id] = {
                     id,
                     token,
-                    work_id: option.id,
+                    table_key: table_key,
+                    [tableCol]: option.id,
                     name: option.name,
                     is_active: true,
-                }
-
-                // Add secondary options for new item
-                if (secondary_options) {
-                    const secondary_container = section_el.querySelector('.secondary-container');
-
-                    // Create secondary options HTML
-                    let secondary_options_html = '';
-                    secondary_options_html += `<div class="option any-level" data-option="any">Any Level</div>`;
-
-                    // Add other options
-                    for (let opt of secondary_options) {
-                        secondary_options_html += `<div class="option" data-option="${opt}">${opt}</div>`;
-                    }
-
-                    // Create the secondary item container
-                    const secondaryItemHtml = `
-                <div class="item ${token}" data-token="${token}">
-                    <div class="options" data-item-token="${token}">
-                        ${secondary_options_html}
-                    </div>
-                </div>`;
-
-                    // Add to secondary container
-                    secondary_container.insertAdjacentHTML('beforeend', secondaryItemHtml);
                 }
 
                 // Switch to mine category and show updated items
@@ -4371,13 +4355,53 @@ befriend.filters = {
                 removeClassEl('autocomplete-shown', autocomplete_container);
             }
         },
+        getTableKey: function (token) {
+            const sectionData = befriend.filters.data.options?.['work'];
+            return sectionData?.options.find(item => item.token === token)?.table_key || this.data.tableKey;
+        },
         events: {
             init: function () {
                 this.search();
                 this.categories();
                 this.items();
                 this.remove();
-                this.secondary();
+            },
+            tabs: function () {
+                let section = befriend.filters.sections.work;
+                const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+
+                let tabs_els = section_el.querySelector('.tabs-container').getElementsByClassName('tab');
+
+                for(let tab of tabs_els) {
+                    if(tab._listener) {
+                        continue;
+                    }
+
+                    tab._listener = true;
+
+                    tab.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        if(elHasClass(tab, 'active')) {
+                            return;
+                        }
+
+                        let key = tab.getAttribute('data-key');
+
+                        befriend.filters.work.data.tableKey = key;
+
+                        removeElsClass(tabs_els, 'active');
+
+                        addClassEl('active', tab);
+
+                        befriend.filters.work.renderItems(section_el, befriend.filters.work.getStoredItems(), true);
+
+                        requestAnimationFrame(function () {
+                            befriend.filters.updateSectionHeights();
+                        })
+                    });
+                }
             },
             search: function () {
                 let section = befriend.filters.sections.work;
@@ -4425,16 +4449,20 @@ befriend.filters = {
                                     }
 
                                     // Filter out items that already exist in filters data
-                                    const storedFilters = befriend.filters.data.filters?.work;
                                     const existingTokens = new Set();
+
+                                    const storedFilters = befriend.filters.data.filters?.[k];
+
+                                    let tableCol = befriend.filters.work.getKeyCol(k);
 
                                     if (storedFilters?.items) {
                                         for (let k in storedFilters.items) {
                                             const item = storedFilters.items[k];
                                             if (!item.deleted) {
-                                                let instrument = sectionData?.options.find(opt => opt.id === item.work_id);
-                                                if (instrument) {
-                                                    existingTokens.add(instrument.token);
+                                                let option = sectionData?.options.find(opt => opt.id === item[tableCol]);
+
+                                                if (option) {
+                                                    existingTokens.add(option.token);
                                                 }
                                             }
                                         }
@@ -4444,12 +4472,12 @@ befriend.filters = {
 
                                     if (filteredItems.length) {
                                         const items_html = filteredItems.map(item => `
-                            <div class="item" data-id="${item.id}" data-token="${item.token}">
-                                <div class="name-meta">
-                                    <div class="name">${item.name}</div>
-                                </div>
-                            </div>
-                        `).join('');
+                                        <div class="item" data-id="${item.id}" data-token="${item.token}">
+                                            <div class="name-meta">
+                                                <div class="name">${item.name}</div>
+                                            </div>
+                                        </div>
+                                        `).join('');
 
                                         autocomplete_list.innerHTML = items_html;
                                         befriend.filters.work.toggleAutocomplete(true);
@@ -4476,7 +4504,7 @@ befriend.filters = {
 
                         if (await befriend.filters.work.addItem({
                             id,
-                            token
+                            token,
                         }, section_el)) {
                             // Close autocomplete and clear input
                             befriend.filters.work.toggleAutocomplete(false);
@@ -4525,21 +4553,27 @@ befriend.filters = {
                         let category_token = btn.getAttribute('data-category-token')?.trim();
 
                         try {
-                            const storedFilters = befriend.filters.data.filters?.work;
+                            let added_item_tokens = new Set();
+
+                            const storedFilters = befriend.filters.work.getStoredFilter();
+
+                            if(storedFilters?.items) {
+                                for(let k in storedFilters.items) {
+                                    let item = storedFilters.items[k];
+
+                                    if(!item.deleted) {
+                                        added_item_tokens.add(item.token);
+                                    }
+                                }
+                            }
 
                             let items;
 
-                            let added_item_tokens = Object.values(storedFilters?.items || {})
-                                .reduce(function (acc, item) {
-                                    if(!item.deleted) {
-                                        acc[item.token] = item;
-                                    }
-
-                                    return acc;
-                                }, {});
-
                             if (category === 'mine') {
+                                let table_key = befriend.filters.work.getTableKey();
+
                                 items = Object.values(storedFilters?.items || {})
+                                    .filter(item => item.table_key === table_key)
                                     .filter(item => !item.deleted)
                                     .filter(Boolean);
                             } else {
@@ -4547,7 +4581,7 @@ befriend.filters = {
                                     .filter(
                                         item => category_token ? item.category_token === category_token : item.category?.toLowerCase() === category
                                     )
-                                    .filter(item => !added_item_tokens[item.token]);
+                                    .filter(item => !added_item_tokens.has(item.token));
                             }
 
                             befriend.filters.work.renderItems(section_el, items || [], category === 'mine');
@@ -4563,12 +4597,9 @@ befriend.filters = {
             },
             items: function () {
                 let section = befriend.filters.sections.work;
-                const sectionData = befriend.filters.data.options?.['work'];
                 const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
 
                 let items_els = section_el.getElementsByClassName('item');
-
-                const category_mine = section_el.querySelector(`.category-btn.mine`);
 
                 for(let item of items_els) {
                     if(item._listener) {
@@ -4588,13 +4619,6 @@ befriend.filters = {
                         //hide if any section secondary is open
                         let token = item.getAttribute('data-token');
 
-                        let open_secondary = item.closest('.section')
-                            .querySelector(`.item-secondary-open`);
-
-                        if(open_secondary) {
-                            return befriend.filters.hideActiveSecondaryIf(e.target);
-                        }
-
                         let wasSelected = elHasClass(item, 'active');
 
                         if (elHasClass(item, 'any')) {
@@ -4605,7 +4629,10 @@ befriend.filters = {
                             try {
                                 befriend.toggleSpinner(true);
 
+                                let tableKey = befriend.filters.work.getTableKey();
+
                                 await befriend.auth.put('/filters/work', {
+                                    table_key: tableKey,
                                     token: 'any',
                                     active: true
                                 });
@@ -4637,7 +4664,10 @@ befriend.filters = {
                             try {
                                 befriend.toggleSpinner(true);
 
+                                let tableKey = befriend.filters.work.getTableKey(token);
+
                                 await befriend.auth.put('/filters/work', {
+                                    table_key: tableKey,
                                     token,
                                     active: !wasSelected,
                                 });
@@ -4655,7 +4685,7 @@ befriend.filters = {
                                 }
 
                                 //update state data
-                                if(befriend.filters.data.filters?.work?.items) {
+                                if(befriend.filters.data.filters?.work.items) {
                                     for(let k in befriend.filters.data.filters.work.items) {
                                         if(befriend.filters.data.filters.work.items[k].token === token) {
                                             befriend.filters.data.filters.work.items[k].is_active = !wasSelected;
@@ -4710,7 +4740,10 @@ befriend.filters = {
                         try {
                             befriend.toggleSpinner(true);
 
+                            let tableKey = befriend.filters.work.getTableKey(token);
+
                             await befriend.auth.put('/filters/work', {
+                                table_key: tableKey,
                                 token,
                                 is_delete: true
                             });
@@ -4745,153 +4778,6 @@ befriend.filters = {
                     });
                 }
             },
-            secondary: function() {
-                const sectionData = befriend.filters.data.options?.['work'];
-                const secondary_options = sectionData?.secondary?.work?.options;
-
-                let section = befriend.filters.sections.work;
-                const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
-                let secondary_els = section_el.getElementsByClassName('secondary');
-
-                // Handle clicks on secondary elements (opening/closing)
-                for(let secondary_el of secondary_els) {
-                    if(secondary_el._listener) continue;
-                    secondary_el._listener = true;
-
-                    secondary_el.addEventListener('click', async (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        // Only handle direct clicks on the secondary element
-                        if (e.target.closest('.option')) return;
-
-                        // Toggle the secondary dropdown
-                        befriend.filters.transitionSecondary(
-                            secondary_el,
-                            !befriend.filters.secondaries.activeEl ||
-                            befriend.filters.secondaries.activeEl !== secondary_el
-                        );
-                    });
-                }
-
-                // Handle clicks in the secondary container
-                const secondary_container = section_el.querySelector('.secondary-container');
-
-                if (!secondary_container._listener) {
-                    secondary_container._listener = true;
-
-                    secondary_container.addEventListener('click', async (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        const secondary_option = e.target.closest('.option');
-                        if (!secondary_option) return;
-
-                        const options_el = secondary_option.closest('.options');
-                        if (!options_el) return;
-
-                        const itemToken = options_el.getAttribute('data-item-token');
-                        const option_value = secondary_option.getAttribute('data-option');
-                        const isAnyLevel = option_value === 'any';
-                        const anyOption = options_el.querySelector('.option.any-level');
-                        const otherOptions = options_el.querySelectorAll('.option:not(.any-level)');
-                        const wasSelected = elHasClass(secondary_option, 'selected');
-
-                        let itemData;
-
-                        try {
-                            befriend.toggleSpinner(true);
-
-                            if(befriend.filters.data.filters?.work?.items) {
-                                for(let k in befriend.filters.data.filters.work.items) {
-                                    if(befriend.filters.data.filters.work.items[k].token === itemToken) {
-                                        itemData = befriend.filters.data.filters.work.items[k];
-
-                                        // Initialize array if needed
-                                        if(!itemData.secondary || !Array.isArray(itemData.secondary)) {
-                                            itemData.secondary = [];
-                                        }
-
-                                        if (isAnyLevel) {
-                                            // If selecting "Any Level"
-                                            if (!wasSelected) {
-                                                itemData.secondary = ['any'];
-                                                addClassEl('selected', anyOption);
-                                                removeElsClass(otherOptions, 'selected');
-                                            } else {
-                                                return;
-                                            }
-                                        } else {
-                                            // If selecting a specific level
-                                            if (!wasSelected) {
-                                                // Remove 'any' if it was selected
-                                                removeArrItem(itemData.secondary, 'any');
-                                                removeClassEl('selected', anyOption);
-
-                                                // Add the new selection
-                                                itemData.secondary.push(option_value);
-                                                addClassEl('selected', secondary_option);
-                                            } else {
-                                                // Remove the selection
-                                                removeArrItem(itemData.secondary, option_value);
-                                                removeClassEl('selected', secondary_option);
-
-                                                //set any if no options selected
-                                                if(!itemData.secondary.length) {
-                                                    itemData.secondary.push('any');
-                                                }
-                                            }
-                                        }
-
-                                        break;
-                                    }
-                                }
-                            }
-
-                            itemData.secondary = befriend.filters.sortSecondary(secondary_options, itemData.secondary)
-
-                            await befriend.auth.put('/filters/work', {
-                                token: itemToken,
-                                secondary: itemData.secondary
-                            });
-
-                            // Find the original secondary element
-                            const item = section_el.querySelector(`.item.mine[data-token="${itemToken}"]`);
-                            const original_secondary = item?.querySelector('.secondary');
-
-                            if (original_secondary) {
-                                // Update unselected class state
-                                if (itemData.secondary.length === 0) {
-                                    addClassEl('unselected', original_secondary);
-                                } else {
-                                    removeClassEl('unselected', original_secondary);
-                                }
-
-                                // Update displayed text
-                                let textContent;
-                                if (itemData.secondary.includes('any')) {
-                                    textContent = 'Any Level';
-                                } else if (itemData.secondary.length) {
-                                    textContent = `${itemData.secondary.length} Selected`;
-                                } else {
-                                    textContent = 'Skill Level';
-                                }
-                                original_secondary.querySelector('.current-selected').textContent = textContent;
-                            }
-
-                            requestAnimationFrame(() => {
-                                befriend.filters.updateSecondaryPosition(section_el, options_el);
-                                befriend.filters.updateSectionHeights();
-                            });
-
-                        } catch (e) {
-                            console.error('Error updating secondary:', e);
-                        } finally {
-                            befriend.toggleSpinner(false);
-                        }
-                    });
-                }
-            }
         }
     },
     sortSecondary: function (originalArr, currentArr) {

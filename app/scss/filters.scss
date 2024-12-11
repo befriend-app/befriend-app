@@ -1359,6 +1359,16 @@
         &.is_interest {
             $padding_lr: 20px;
 
+            &.show-tabs {
+                .categories-container {
+                    border-bottom: 0;
+                }
+
+                .tabs-container {
+                    display: flex !important;
+                }
+            }
+
             .filter-options {
                 max-height: 400px;
                 padding-left: 0;
@@ -1556,6 +1566,42 @@
                                 font-size: 13px;
                             }
                         }
+                    }
+                }
+            }
+
+            .tabs-container {
+                $br: 16px;
+                display: none;
+                border-top-left-radius: $br;
+                border-top-right-radius: $br;
+                border-bottom: 1px solid $color_lightgray;
+
+                .tab {
+                    padding: 6px 0;
+                    flex-basis: 50%;
+                    @include flex-center-col;
+                    transition: all 200ms;
+                    background: lighten(black, 95%);
+                    font-size: 15px;
+                    font-weight: 500;
+                    border-top: 1px solid $color_lightgray;
+                    box-sizing: border-box;
+                    border-right: 1px solid $color_lightgray;
+
+                    &:first-of-type {
+                        border-top-left-radius: $br;
+                    }
+
+                    &:last-of-type {
+                        border-top-right-radius: $br;
+                    }
+
+                    &.active {
+                        background: $brand_color_a;
+                        color: white;
+                        border-bottom-color: $brand_color_a;
+                        border-right-color: transparent;
                     }
                 }
             }
