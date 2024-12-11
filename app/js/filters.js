@@ -6998,8 +6998,6 @@ befriend.filters = {
             let itemsContainerEl = section.querySelector('.items-container');
             const is_collapsed = elHasClass(section, 'collapsed');
 
-            removeClassEl('is-scrollable', itemsContainerEl);
-
             if (without_transition) {
                 container.style.transition = 'none';
                 setTimeout(() => {
@@ -7042,20 +7040,6 @@ befriend.filters = {
 
             //set height on container
             container.style.height = `${baseHeight}px`;
-
-            //see if items container is scrollable
-            if(itemsContainerEl) {
-                let clonedItemsContainer = containerClone.querySelector('.items-container');
-
-                removeClassEl('is-scrollable', clonedItemsContainer);
-
-                const scrollHeight = clonedItemsContainer.scrollHeight;
-                const clientHeight = clonedItemsContainer.clientHeight;
-
-                if(scrollHeight > clientHeight) {
-                    addClassEl('is-scrollable', itemsContainerEl);
-                }
-            }
 
             // Remove the clone
             section.removeChild(containerClone);

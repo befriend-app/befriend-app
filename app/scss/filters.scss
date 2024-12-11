@@ -1653,18 +1653,6 @@
                 overflow-y: scroll;
                 transition: padding 200ms;
 
-                &.is-scrollable {
-                    max-height: calc($max_height - $scroll_padding_tb);
-
-                    .items {
-                        .item {
-                            &:last-child {
-                                margin-bottom: $scroll_padding_tb;
-                            }
-                        }
-                    }
-                }
-
                 .items {
                     display: flex;
                     flex-wrap: wrap;
