@@ -8,13 +8,24 @@ befriend.filters = {
         activeEl: null,
     },
     sections: {
+        work: {
+            is_interest: true,
+            token: 'work',
+            name: 'Work',
+            icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 432"><path d="M456,72h-104v-32c-.0273-22.082-17.918-39.9727-40-40h-144c-22.082.0273-39.9727,17.918-40,40v32H24c-13.2539,0-24,10.7461-24,24v178.0781c.0508,10.1484,6.4453,19.1758,16,22.5859v111.3359c0,13.2539,10.7461,24,24,24h400c13.2539,0,24-10.7461,24-24v-111.3281c9.5547-3.4141,15.9531-12.4453,16-22.5938V96c0-13.2539-10.7461-24-24-24ZM144,40c0-13.2539,10.7461-24,24-24h144c13.2539,0,24,10.7461,24,24v32h-16v-32c0-4.418-3.582-8-8-8h-144c-4.418,0-8,3.582-8,8v32h-16v-32ZM304,72h-128v-24h128v24ZM448,408c0,4.418-3.582,8-8,8H40c-4.418,0-8-3.582-8-8v-108.5859l176,24.2734v20.3125c0,13.2539,10.7461,24,24,24h16c13.2539,0,24-10.7461,24-24v-20.3125l176-24.2734v108.5859ZM256,344c0,4.418-3.582,8-8,8h-16c-4.418,0-8-3.582-8-8v-48c0-4.418,3.582-8,8-8h16c4.418,0,8,3.582,8,8v48ZM464,274.0781c.0039,3.9883-2.9297,7.3711-6.8789,7.9297l-2.2188.3047-182.9023,25.2227v-11.5352c0-13.2539-10.7461-24-24-24h-16c-13.2539,0-24,10.7461-24,24v11.5352l-185.1133-25.5273c-3.9492-.5547-6.8906-3.9375-6.8867-7.9297V96c0-4.418,3.582-8,8-8h432c4.418,0,8,3.582,8,8v178.0781Z"/></svg>`,
+            importance: {
+                active: true,
+                default: 4
+            }
+        },
         instruments: {
+            is_interest: true,
             token: 'instruments',
             name: 'Instruments',
             icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512.0001 511.846"><path d="M488.9347,328.303c-3.9248-5.1988-5.3417-11.9144-3.8888-18.4131,1.6899-7.5056,2.4059-15.2383,2.1279-22.9809-1.3769-38.9381-27.6517-72.2395-64.6618-82.997v-112.7885l13.1074-23.5808c.62-1.1149.945-2.3689.945-3.6438V18.4981c0-10.1995-8.2976-18.4981-18.4981-18.4981h-41.341c-10.1995,0-18.4971,8.2976-18.4971,18.4981v45.3998c0,1.2749.325,2.5289.945,3.6438l13.1114,23.5868v112.7735c-14.4733,4.2218-27.7436,12.1014-38.4381,22.7929v-24.4898h7.4606c4.1418,0,7.4996-3.3578,7.4996-7.4996s-3.3578-7.4996-7.4996-7.4996h-189.8607c-4.1418,0-7.4996,3.3578-7.4996,7.4996s3.3578,7.4996,7.4996,7.4996h6.8387v56.7712c-32.3854,27.1607-50.8875,66.7107-50.8875,109.0927,0,34.4763,12.3204,66.1277,32.7854,90.7896l-23.5028,40.315c-2.0859,3.5788-.876,8.1696,2.7019,10.2565,1.1879.692,2.4869,1.0209,3.7708,1.0209,2.5809,0,5.0928-1.3329,6.4857-3.7238l21.204-36.3722c25.6367,24.8048,60.533,40.096,98.9382,40.096,16.5752,0,32.8164-2.8249,48.2726-8.3956,3.8968-1.4039,5.9167-5.7017,4.5128-9.5985-1.4039-3.8958-5.7007-5.9167-9.5985-4.5128-13.8203,4.9807-28.3506,7.5066-43.1869,7.5066-70.2396,0-127.3838-57.1442-127.3838-127.3838-1.3889-68.5977,58.7341-128.4877,127.3838-127.3838,22.5639,0,44.4948,5.9207,63.8279,17.1432-3.9528,10.2525-6.0497,21.216-6.0497,32.3244,0,6.8487.782,13.6893,2.3219,20.328,1.4089,6.0957-.006,12.5264-3.8788,17.6401-1.1,1.4509-2.1519,2.9279-3.1768,4.4188-11.7104-17.3601-31.6174-28.3366-53.0444-28.3366-35.2163,0-63.8669,28.6506-63.8669,63.8669s28.6506,63.8669,63.8669,63.8669c12.6944,0,25.0818-3.8608,35.5193-10.8335,11.0145,51.8505,57.2012,90.7456,112.1075,90.7446,64.8888.08,114.9144-53.6544,114.5914-114.5994-.001-25.1078-7.9756-48.9486-23.0639-68.9436h0ZM397.3972,310.3258c-3.4808,0-6.8637.42-10.1125,1.1899v-19.0731h20.229v19.0741c-3.2508-.771-6.6347-1.191-10.1165-1.191ZM387.2836,254.3356h20.229v23.1089h-20.229v-23.1089ZM387.2836,239.3363v-23.0989h20.229v23.0989h-20.229ZM407.5127,96.6833v28.3376h-20.229v-28.3376h20.229ZM407.5127,140.0212v23.1089h-20.229v-23.1089h20.229ZM407.5127,178.1293v23.1089h-20.229v-23.1089h20.229ZM373.2283,18.4981c0-1.9289,1.5689-3.4988,3.4978-3.4988h41.341c1.9289,0,3.4988,1.5689,3.4988,3.4988v43.4559l-10.9655,19.727h-26.4077l-10.9645-19.726V18.4981ZM318.847,243.5461c-11.5674-6.4307-23.9308-11.1715-36.7582-14.1493v-27.1887h36.7582v41.338ZM208.8524,202.2081v29.4026c-12.5024,3.7348-24.4368,9.2046-35.5683,16.3352v-45.7368h35.5683v-.001ZM223.8516,228.0199v-25.8107h43.2379v24.5458c-5.7157-.695-11.4924-1.0669-17.3092-1.0669-8.8046-.001-17.4681.789-25.9287,2.3319ZM249.7804,416.9376c-26.9457,0-48.8676-21.9219-48.8676-48.8676s21.9219-48.8676,48.8676-48.8676c18.9791,0,36.3982,11.2555,44.3348,28.3126-8.1446,16.8742-12.2754,36.5412-11.1184,56.3783-9.0516,8.4296-20.724,13.0444-33.2164,13.0444h0ZM468.1387,467.3632c-18.1821,18.4761-44.2438,29.6315-70.7306,29.4856-54.4493-.005-99.0442-44.0159-99.6001-98.5492-.245-21.7959,6.6927-43.2849,20.148-61.12,6.5677-8.6716,8.9506-19.6341,6.5367-30.0815-1.2839-5.5347-1.9359-11.2354-1.9359-16.9442,0-17.1741,5.9657-33.9513,16.7982-47.2397,8.6736-10.6395,20.14-18.6981,32.9294-23.2699v98.6182c-11.3124,7.9366-18.7281,21.066-18.7281,35.9032,0,16.1452,8.8346,30.9395,23.0569,38.6091,3.6468,1.9669,8.1946.604,10.1605-3.0418s.604-8.1946-3.0418-10.1605c-9.3615-5.0478-15.1763-14.7833-15.1763-25.4067,0-15.9032,12.9384-28.8406,28.8416-28.8406s28.8416,12.9374,28.8416,28.8406c0,10.7635-5.9277,20.558-15.4692,25.5627-3.6678,1.9239-5.0828,6.4577-3.1588,10.1245,1.3409,2.5569,3.9488,4.0178,6.6477,4.0178,1.174,0,2.3649-.276,3.4768-.859,14.4973-7.6036,23.5018-22.4889,23.5018-38.8461,0-14.8353-7.4146-27.9646-18.7251-35.9012v-98.6172c28.6096,10.1675,48.5776,36.8502,49.6726,67.7957.231,6.4597-.364,12.9034-1.7739,19.1641-2.4169,10.8135-.029,22.0159,6.5517,30.7325,13.1074,17.3702,20.036,38.0862,20.036,59.9101,0,26.4377-10.2495,51.3375-28.8596,70.1136h0Z"/><path d="M83.9885,203.3111c-4.1418,0-7.4996,3.3578-7.4996,7.4996v291.4828c0,4.1418,3.3578,7.4996,7.4996,7.4996s7.4996-3.3578,7.4996-7.4996V210.8107c0-4.1418-3.3578-7.4996-7.4996-7.4996Z"/><path d="M144.8315,153.5795c2.0519.569,4.1388.851,6.2117.851,3.9378,0,7.8306-1.0169,11.3515-3.0089,5.3747-3.0419,9.2436-7.9936,10.8965-13.9573l.028-.104c1.6499-5.9507.883-12.1874-2.1579-17.5621s-7.9936-9.2436-13.9453-10.8935L29.3371,73.4534c-5.9497-1.6479-12.1884-.883-17.5621,2.1579-5.3747,3.0419-9.2435,7.9936-10.8965,13.9573l-.028.104c-1.6499,5.9507-.883,12.1874,2.1579,17.5621,3.0409,5.3747,7.9936,9.2436,13.9453,10.8935l59.5361,16.5052v41.19c0,4.1418,3.3578,7.4996,7.4996,7.4996s7.4996-3.3578,7.4996-7.4996v-37.0322l53.3424,14.7883ZM15.3078,93.6674l.028-.104c.579-2.0899,1.9379-3.8298,3.8258-4.8978,1.8869-1.0679,4.0778-1.3379,6.1687-.758l127.8788,35.4513c4.3148,1.1959,6.8517,5.6797,5.6517,10.0065l-.028.104c-.579,2.0899-1.9379,3.8298-3.8258,4.8978-1.8869,1.0669-4.0778,1.3389-6.1687.758L20.9595,103.6739c-4.3148-1.1969-6.8517-5.6797-5.6517-10.0065h0Z"/><path d="M429.7225,432.4049h-65.6868c-4.1418,0-7.4996,3.3578-7.4996,7.4996s3.3578,7.4996,7.4996,7.4996h65.6868c4.1418,0,7.4996-3.3578,7.4996-7.4996s-3.3578-7.4996-7.4996-7.4996Z"/></svg>`,
             importance: {
                 active: true,
-                default: 7
+                default: 6
             }
         },
         availability: {
@@ -185,6 +196,7 @@ befriend.filters = {
                 befriend.filters.drinking.init();
                 befriend.filters.smoking.init();
 
+                befriend.filters.work.init();
                 befriend.filters.instruments.init();
 
                 befriend.filters.active.init();
@@ -3233,7 +3245,7 @@ befriend.filters = {
 
                 for (let category of sectionData.categories.options) {
                     categories_html += `
-                <div class="category-btn" data-category="${category.name}" 
+                <div class="category-btn" data-category="${category.name?.toLowerCase()}" 
                      ${category.token ? `data-category-token="${category.token}"` : ''}>
                     <div class="heading-name">
                         <div class="name">${category.name}</div>
@@ -3336,20 +3348,10 @@ befriend.filters = {
             const secondary_container = section_el.querySelector('.secondary-container');
             secondary_container.innerHTML = secondaryItems;
 
-            this.renderItems(section_el, items, true);
-
             requestAnimationFrame(() => {
+                befriend.filters.instruments.renderItems(section_el, items, true);
                 befriend.filters.updateSectionHeights();
             });
-        },
-        initEvents: function() {
-            this.events.search();
-            this.events.categories();
-            this.events.items();
-            this.events.importance();
-            this.events.remove();
-            this.events.secondary();
-
         },
         renderItems: function(section_el, items, is_mine) {
             const storedFilters = befriend.filters.data.filters?.instruments;
@@ -3431,7 +3433,7 @@ befriend.filters = {
 
             items_container.innerHTML = items_html;
 
-            this.initEvents();
+            this.events.init();
 
             befriend.filters.importance.set();
         },
@@ -3533,6 +3535,13 @@ befriend.filters = {
             }
         },
         events: {
+            init: function () {
+                this.search();
+                this.categories();
+                this.items();
+                this.remove();
+                this.secondary();
+            },
             search: function () {
                 let section = befriend.filters.sections.instruments;
                 const sectionData = befriend.filters.data.options?.['instruments'];
@@ -3675,7 +3684,7 @@ befriend.filters = {
                         removeElsClass(category_btns, 'active');
                         addClassEl('active', btn);
 
-                        const category = btn.getAttribute('data-category');
+                        let category = btn.getAttribute('data-category').toLowerCase();
 
                         try {
                             const storedFilters = befriend.filters.data.filters?.instruments;
@@ -3696,7 +3705,7 @@ befriend.filters = {
                                     .filter(item => !item.deleted)
                                     .filter(Boolean);
                             } else {
-                                items = sectionData?.options.filter(item => item.category === category && !added_item_tokens[item.token]);
+                                items = sectionData?.options.filter(item => item?.category?.toLowerCase() === category && !added_item_tokens[item.token]);
                             }
 
                             befriend.filters.instruments.renderItems(section_el, items || [], category === 'mine');
@@ -3830,31 +3839,6 @@ befriend.filters = {
                         } catch (e) {
                             console.error('Error adding instrument:', e);
                         }
-                    });
-                }
-            },
-            importance: function () {
-                let section = befriend.filters.sections.instruments;
-                const sectionData = befriend.filters.data.options?.['instruments'];
-                const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
-
-                const importance_els = section_el.querySelectorAll('.importance');
-
-                for (let importance of importance_els) {
-                    if (importance._listener) continue;
-                    importance._listener = true;
-
-                    importance.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        const item = importance.closest('.item');
-                        const token = item.getAttribute('data-token');
-                        let itemData = sectionData?.options.find(opt => opt.token === token);
-
-                        const currentValue = befriend.filters.instruments.importance.current[token] || befriend.filters.instruments.importance.default;
-
-                        befriend.filters.instruments.showImportancePopup(token, itemData?.name, currentValue);
                     });
                 }
             },
@@ -4068,6 +4052,848 @@ befriend.filters = {
             }
         }
     },
+    work: {
+        data: {
+            tabs: [
+                { key: 'industries', name: 'Industries' },
+                { key: 'roles', name: 'Roles' }
+            ],
+            activeTab: 'industries'
+        },
+        init: function () {
+            let section = befriend.filters.sections.work;
+
+            const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+            const filter_options = section_el.querySelector('.filter-options');
+            const sectionData = befriend.filters.data.options?.['work'];
+            const storedFilters = befriend.filters.data.filters?.work || {};
+
+            let categories_html = '';
+            if (sectionData?.options.length > 0) {
+                categories_html = `
+            <div class="category-btn mine active" data-category="mine">My Filters</div>`;
+
+                for (let category of sectionData.categories.options) {
+                    let heading_html = '';
+
+                    if(category.heading) {
+                        heading_html = `<div class="heading">${category.heading}</div>`;
+                    }
+
+                    categories_html += `
+                <div class="category-btn ${heading_html ? 'w-heading' : ''}" data-category="${category.name?.toLowerCase()} ${category.token ? `data-category-token="${category.token}"` : ''}" 
+                     ${category.token ? `data-category-token="${category.token}"` : ''}>
+                    <div class="heading-name">
+                        ${heading_html}
+                        <div class="name">${category.name}</div>
+                    </div>
+                </div>`;
+                }
+            }
+
+            const html = `
+                <div class="filter-options-container">
+                    <div class="filter-option" data-filter-token="${section.token}">
+                        <div class="search-container">
+                            <div class="autocomplete-container">
+                                <div class="input-container">
+                                    <input type="text" class="search-input" 
+                                           placeholder="${sectionData?.autoComplete?.placeholders?.main || 'Search work'}">
+                                    <div class="search-icon-container">
+                                        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 611.9975 612.0095">
+                                            <path d="M606.203,578.714l-158.011-155.486c41.378-44.956,66.802-104.411,66.802-169.835-.02-139.954-115.296-253.393-257.507-253.393S0,113.439,0,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0,7.747-7.613,7.747-19.971.018-27.585ZM257.487,467.8c-120.326,0-217.869-95.993-217.869-214.407S137.161,38.986,257.487,38.986s217.869,95.993,217.869,214.407-97.542,214.407-217.869,214.407Z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="autocomplete-list"></div>
+                            </div>
+                        </div>
+            
+                        ${categories_html ? `
+                            <div class="categories-container">
+                                <div class="category-filters">${categories_html}</div>
+                            </div>
+                        ` : ''}
+            
+                        <div class="items-container">
+                            <div class="items cols-2"></div>
+                        </div>
+                        
+                        <div class="secondary-container"></div>
+                    </div>
+                </div>
+            `;
+
+            section_el.querySelector('.section-container')
+                .insertAdjacentHTML(
+                    'afterbegin',
+                    befriend.filters.sendReceiveHtml(true, true, true)
+                );
+
+            filter_options.innerHTML = html;
+
+            let items = [];
+            let secondaryItems = '';
+            const secondary_options = sectionData?.secondary?.work?.options;
+
+            // Initialize items for "mine" category
+            if (storedFilters?.items) {
+                items = Object.values(storedFilters.items)
+                    .filter(item => !item.deleted)
+                    .filter(Boolean);
+            }
+
+            // Prepare secondary items HTML first
+            if (secondary_options) {
+                for (let item of items) {
+                    const storedItem = Object.values(storedFilters?.items || {})
+                        .find(stored => stored.token === item.token);
+
+                    const selectedSecondary = storedItem?.secondary || [];
+                    let isAnyLevel = selectedSecondary.includes('any');
+                    let unselected = selectedSecondary.length === 0 ? 'unselected' : '';
+
+                    // Determine the display text
+                    let currentText;
+                    if (isAnyLevel) {
+                        currentText = 'Any Level';
+                    } else if (selectedSecondary.length) {
+                        currentText = selectedSecondary.join(', ');
+                    } else {
+                        currentText = sectionData.secondary.work.unselectedStr;
+                    }
+
+                    let secondary_options_html = '';
+
+                    // Add "Any Level" option first
+                    secondary_options_html += `<div class="option any-level ${isAnyLevel ? 'selected' : ''}" data-option="any">Any Level</div>`;
+
+                    // Add other options
+                    for (let option of secondary_options) {
+                        let selected = !isAnyLevel && selectedSecondary.includes(option) ? 'selected' : '';
+                        secondary_options_html += `<div class="option ${selected}" data-option="${option}">${option}</div>`;
+                    }
+
+                    secondaryItems += `
+                <div class="item ${item.token}" data-token="${item.token}">
+                    <div class="options" data-item-token="${item.token}">${secondary_options_html}</div>
+                </div>`;
+                }
+            }
+
+            // Add secondary items to container
+            const secondary_container = section_el.querySelector('.secondary-container');
+            secondary_container.innerHTML = secondaryItems;
+
+            requestAnimationFrame(() => {
+                befriend.filters.work.renderItems(section_el, items, true);
+                befriend.filters.updateSectionHeights();
+            });
+        },
+        renderItems: function(section_el, items, is_mine) {
+            const storedFilters = befriend.filters.data.filters?.work;
+            const sectionData = befriend.filters.data.options?.['work'];
+            const items_container = section_el.querySelector('.items');
+
+            let items_html = '';
+            let hasActiveItems = false;
+
+            if (is_mine) {
+                const hasActiveNonDeletedItems = storedFilters?.items &&
+                    Object.values(storedFilters.items)
+                        .some(item => !item.deleted && item.is_active);
+
+                items_html = `
+            <div class="item any ${!hasActiveNonDeletedItems ? 'active' : ''}" data-token="any">
+                <div class="name">Any Industry</div>
+            </div>`;
+            }
+
+            let added_item_tokens = {};
+
+            if (storedFilters?.items) {
+                for(let k in storedFilters.items) {
+                    let item = storedFilters.items[k];
+                    if(!item.deleted && item.is_active) {
+                        let instrument = sectionData?.options.find(opt => opt.id === item.work_id);
+                        if(instrument) {
+                            added_item_tokens[instrument.token] = item;
+                            hasActiveItems = true;
+                        }
+                    }
+                }
+            }
+
+            if (items?.length) {
+                items_html += items.map(item => {
+                    if (is_mine) {
+                        const storedItem = Object.values(storedFilters?.items || {})
+                            .find(stored => stored.token === item.token);
+                        const isActive = storedItem && !storedItem.deleted && storedItem.is_active;
+
+                        return `
+                    <div class="item mine ${isActive ? 'active': ''}" data-id="${storedItem?.id}" data-token="${item.token}">
+                        <div class="content">
+                            <div class="name">${item.name}</div>
+                            
+                            <div class="secondary ${storedItem?.secondary?.length === 0 ? 'unselected' : ''}" 
+                                 data-section="${befriend.filters.sections.work.token}"
+                                 data-item-token="${item.token}">
+                                <div class="current-selected">
+                                    ${storedItem?.secondary?.includes('any') ? 'Any Level' :
+                            storedItem?.secondary?.length ? `${storedItem.secondary.length} Selected` :
+                                sectionData.secondary.work.unselectedStr}
+                                </div>
+                                <svg class="arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 82.1 43.2">
+                                    <path d="M41.1,43.2L0,2.2,2.1,0l39,39L80,0l2.1,2.2-41,41Z"/>
+                                </svg>
+                            </div>
+                            <div class="remove">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56">
+                                    <path d="M28,0C12.5605,0,0,12.5605,0,28s12.5605,28,28,28,28-12.5605,28-28S43.4395,0,28,0ZM28,53c-13.7852,0-25-11.2148-25-25S14.2148,3,28,3s25,11.2148,25,25-11.2148,25-25,25ZM39.2627,16.7373c-.5859-.5859-1.5352-.5859-2.1211,0l-9.1416,9.1416-9.1416-9.1416c-.5859-.5859-1.5352-.5859-2.1211,0-.5859.5854-.5859,1.5356,0,2.1211l9.1416,9.1416-9.1416,9.1416c-.5859.5854-.5859,1.5356,0,2.1211.293.293.6768.4395,1.0605.4395s.7676-.1465,1.0605-.4395l9.1417-9.1416,9.1416,9.1416c.293.293.6768.4395,1.0605.4395s.7676-.1465,1.0605-.4395c.5859-.5854.5859-1.5356,0-2.1211l-9.1415-9.1416,9.1416-9.1416c.5859-.5855.5859-1.5356,0-2.1211Z"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>`;
+                    }
+
+                    if(item.token in added_item_tokens) {
+                        return;
+                    }
+
+                    return `
+                <div class="item" data-token="${item.token}">
+                    <div class="name">${item.name}</div>
+                </div>`;
+                }).join('');
+            }
+
+            items_container.innerHTML = items_html;
+
+            this.events.init();
+
+            befriend.filters.importance.set();
+        },
+        addItem: async function(itemData = {}, section_el) {
+            try {
+                let {token} = itemData;
+                befriend.toggleSpinner(true);
+
+                const sectionData = befriend.filters.data.options?.['work'];
+                const secondary_options = sectionData?.secondary?.work?.options;
+                const category_mine = section_el.querySelector(`.category-btn.mine`);
+
+                let response = await befriend.auth.put('/filters/work', {
+                    token,
+                    active: true
+                });
+
+                let id = response?.data?.id;
+
+                // Get current mine items
+                const storedFilters = befriend.filters.data.filters?.work;
+
+                if (!storedFilters?.items) {
+                    befriend.filters.data.filters.work = {
+                        items: {}
+                    }
+                }
+
+                let option = sectionData?.options.find(opt => opt.token === token);
+
+                befriend.filters.data.filters.work.items[id] = {
+                    id,
+                    token,
+                    work_id: option.id,
+                    name: option.name,
+                    is_active: true,
+                }
+
+                // Add secondary options for new item
+                if (secondary_options) {
+                    const secondary_container = section_el.querySelector('.secondary-container');
+
+                    // Create secondary options HTML
+                    let secondary_options_html = '';
+                    secondary_options_html += `<div class="option any-level" data-option="any">Any Level</div>`;
+
+                    // Add other options
+                    for (let opt of secondary_options) {
+                        secondary_options_html += `<div class="option" data-option="${opt}">${opt}</div>`;
+                    }
+
+                    // Create the secondary item container
+                    const secondaryItemHtml = `
+                <div class="item ${token}" data-token="${token}">
+                    <div class="options" data-item-token="${token}">
+                        ${secondary_options_html}
+                    </div>
+                </div>`;
+
+                    // Add to secondary container
+                    secondary_container.insertAdjacentHTML('beforeend', secondaryItemHtml);
+                }
+
+                // Switch to mine category and show updated items
+                fireClick(category_mine);
+
+                requestAnimationFrame(() => {
+                    befriend.filters.updateSectionHeights();
+                });
+
+                befriend.toggleSpinner(false);
+                return true;
+            } catch (e) {
+                console.error('Error adding instrument:', e);
+                befriend.toggleSpinner(false);
+                return false;
+            }
+        },
+        toggleAutocomplete: function(show) {
+            let section = befriend.filters.sections.work;
+            const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+
+            const autocomplete_container = section_el.querySelector('.autocomplete-container');
+            const autocomplete_list = section_el.querySelector('.autocomplete-list');
+
+            if (!autocomplete_list) return;
+
+            if (show) {
+                addClassEl('autocomplete-shown', autocomplete_container);
+
+                // Reset scroll position
+                autocomplete_list.scrollTop = 0;
+
+                // Ensure input stays focused
+                const search_input = section_el.querySelector('.search-input');
+                if (search_input) search_input.focus();
+            } else {
+                removeClassEl('autocomplete-shown', autocomplete_container);
+            }
+        },
+        events: {
+            init: function () {
+                this.search();
+                this.categories();
+                this.items();
+                this.remove();
+                this.secondary();
+            },
+            search: function () {
+                let section = befriend.filters.sections.work;
+                const sectionData = befriend.filters.data.options?.['work'];
+                const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+
+                const search_input = section_el.querySelector('.search-input');
+                const input_container = section_el.querySelector('.input-container');
+                const autocomplete_list = section_el.querySelector('.autocomplete-list');
+
+                let debounceTimer;
+
+                if (search_input) {
+                    if(search_input._listener) {
+                        return;
+                    }
+
+                    search_input._listener = true;
+
+                    search_input.addEventListener('input', () => {
+                        clearTimeout(debounceTimer);
+
+                        let timeout = this.value ? 200 : 0;
+
+                        debounceTimer = setTimeout(async () => {
+                            const value = search_input.value.trim();
+                            if (value.length < sectionData.autoComplete.minChars) {
+                                befriend.filters.work.toggleAutocomplete(false);
+                                return;
+                            }
+
+                            try {
+                                const response = await befriend.auth.get(sectionData.autoComplete.endpoint, {
+                                    search: value
+                                });
+
+                                if (response.data.items?.length) {
+                                    //merge results with options
+                                    for(let item of response.data.items) {
+                                        let existing_option = sectionData?.options.find(existing => existing.token === item.token);
+
+                                        if(!existing_option) {
+                                            sectionData.options.push(item);
+                                        }
+                                    }
+
+                                    // Filter out items that already exist in filters data
+                                    const storedFilters = befriend.filters.data.filters?.work;
+                                    const existingTokens = new Set();
+
+                                    if (storedFilters?.items) {
+                                        for (let k in storedFilters.items) {
+                                            const item = storedFilters.items[k];
+                                            if (!item.deleted) {
+                                                let instrument = sectionData?.options.find(opt => opt.id === item.work_id);
+                                                if (instrument) {
+                                                    existingTokens.add(instrument.token);
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    const filteredItems = response.data.items.filter(item => !existingTokens.has(item.token));
+
+                                    if (filteredItems.length) {
+                                        const items_html = filteredItems.map(item => `
+                            <div class="item" data-id="${item.id}" data-token="${item.token}">
+                                <div class="name-meta">
+                                    <div class="name">${item.name}</div>
+                                </div>
+                            </div>
+                        `).join('');
+
+                                        autocomplete_list.innerHTML = items_html;
+                                        befriend.filters.work.toggleAutocomplete(true);
+                                    } else {
+                                        autocomplete_list.innerHTML = '<div class="no-results">No results found</div>';
+                                        befriend.filters.work.toggleAutocomplete(true);
+                                    }
+                                } else {
+                                    autocomplete_list.innerHTML = '<div class="no-results">No results found</div>';
+                                    befriend.filters.work.toggleAutocomplete(true);
+                                }
+                            } catch (e) {
+                                console.error('Error searching work:', e);
+                            }
+                        }, timeout);
+                    });
+
+                    autocomplete_list.addEventListener('click', async (e) => {
+                        const item = e.target.closest('.item');
+                        if (!item) return;
+
+                        const id = item.getAttribute('data-id');
+                        const token = item.getAttribute('data-token');
+
+                        if (await befriend.filters.work.addItem({
+                            id,
+                            token
+                        }, section_el)) {
+                            // Close autocomplete and clear input
+                            befriend.filters.work.toggleAutocomplete(false);
+                            search_input.value = '';
+                        }
+                    });
+
+                    // Focus/blur handling
+                    search_input.addEventListener('focus', () => {
+                        addClassEl('input-focus', input_container);
+
+                        const value = search_input.value.trim();
+                        if (value.length >= sectionData.autoComplete.minChars) {
+                            befriend.filters.work.toggleAutocomplete(true);
+                        }
+                    });
+
+                    search_input.addEventListener('blur', () => {
+                        removeClassEl('input-focus', input_container);
+
+                        setTimeout(function () {
+                            befriend.filters.work.toggleAutocomplete(false);
+                        }, 100);
+                    });
+                }
+            },
+            categories: function () {
+                let section = befriend.filters.sections.work;
+                const sectionData = befriend.filters.data.options?.['work'];
+                const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+
+                const category_btns = section_el.querySelectorAll('.category-btn');
+
+                for (let btn of category_btns) {
+                    if(btn._listener) {
+                        continue;
+                    }
+
+                    btn._listener = true;
+
+                    btn.addEventListener('click', async () => {
+                        removeElsClass(category_btns, 'active');
+                        addClassEl('active', btn);
+
+                        let category = btn.getAttribute('data-category')?.toLowerCase().trim();
+                        let category_token = btn.getAttribute('data-category-token')?.trim();
+
+                        try {
+                            const storedFilters = befriend.filters.data.filters?.work;
+
+                            let items;
+
+                            let added_item_tokens = Object.values(storedFilters?.items || {})
+                                .reduce(function (acc, item) {
+                                    if(!item.deleted) {
+                                        acc[item.token] = item;
+                                    }
+
+                                    return acc;
+                                }, {});
+
+                            if (category === 'mine') {
+                                items = Object.values(storedFilters?.items || {})
+                                    .filter(item => !item.deleted)
+                                    .filter(Boolean);
+                            } else {
+                                items = sectionData?.options
+                                    .filter(
+                                        item => category_token ? item.category_token === category_token : item.category?.toLowerCase() === category
+                                    )
+                                    .filter(item => !added_item_tokens[item.token]);
+                            }
+
+                            befriend.filters.work.renderItems(section_el, items || [], category === 'mine');
+
+                            requestAnimationFrame(() => {
+                                befriend.filters.updateSectionHeights();
+                            });
+                        } catch (e) {
+                            console.error('Error loading work:', e);
+                        }
+                    });
+                }
+            },
+            items: function () {
+                let section = befriend.filters.sections.work;
+                const sectionData = befriend.filters.data.options?.['work'];
+                const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+
+                let items_els = section_el.getElementsByClassName('item');
+
+                const category_mine = section_el.querySelector(`.category-btn.mine`);
+
+                for(let item of items_els) {
+                    if(item._listener) {
+                        continue;
+                    }
+
+                    item._listener = true;
+
+                    item.addEventListener('click', async (e) => {
+                        if(e.target.closest('.secondary-container')) {
+                            return false;
+                        }
+
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        //hide if any section secondary is open
+                        let token = item.getAttribute('data-token');
+
+                        let open_secondary = item.closest('.section')
+                            .querySelector(`.item-secondary-open`);
+
+                        if(open_secondary) {
+                            return befriend.filters.hideActiveSecondaryIf(e.target);
+                        }
+
+                        let wasSelected = elHasClass(item, 'active');
+
+                        if (elHasClass(item, 'any')) {
+                            if(wasSelected) {
+                                return;
+                            }
+
+                            try {
+                                befriend.toggleSpinner(true);
+
+                                await befriend.auth.put('/filters/work', {
+                                    token: 'any',
+                                    active: true
+                                });
+
+                                const anyButton = item;
+                                const otherItems = section_el.querySelectorAll('.item:not(.any)');
+
+                                addClassEl('active', anyButton);
+                                removeElsClass(otherItems, 'active');
+
+                                //update state data
+                                if(befriend.filters.data.filters?.work?.items) {
+                                    for(let k in befriend.filters.data.filters.work.items) {
+                                        befriend.filters.data.filters.work.items[k].is_active = false;
+                                    }
+                                }
+                            } catch (e) {
+                                console.error('Error setting any instrument:', e);
+                            }
+
+                            befriend.toggleSpinner(false);
+
+                            return;
+                        }
+
+                        if (elHasClass(item, 'mine')) {
+                            toggleElClass(item, 'active');
+
+                            try {
+                                befriend.toggleSpinner(true);
+
+                                await befriend.auth.put('/filters/work', {
+                                    token,
+                                    active: !wasSelected,
+                                });
+
+                                const activeItems = section_el.querySelectorAll('.item.mine.active');
+
+                                const anyButton = section_el.querySelector('.item.any');
+
+                                if(anyButton) {
+                                    if (activeItems.length === 0) {
+                                        addClassEl('active', anyButton);
+                                    } else {
+                                        removeClassEl('active', anyButton);
+                                    }
+                                }
+
+                                //update state data
+                                if(befriend.filters.data.filters?.work?.items) {
+                                    for(let k in befriend.filters.data.filters.work.items) {
+                                        if(befriend.filters.data.filters.work.items[k].token === token) {
+                                            befriend.filters.data.filters.work.items[k].is_active = !wasSelected;
+                                        }
+                                    }
+                                }
+                            } catch (e) {
+                                console.error('Error removing instrument:', e);
+                            }
+
+                            befriend.toggleSpinner(false);
+
+                            return;
+                        }
+
+                        //select category item option
+                        try {
+                            // Remove item from current view
+                            item.remove();
+
+                            //add item to server/my filters
+                            await befriend.filters.work.addItem({ token }, section_el);
+                        } catch (e) {
+                            console.error('Error adding instrument:', e);
+                        }
+                    });
+                }
+            },
+            remove: function () {
+                let section = befriend.filters.sections.work;
+                const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+
+                let remove_els = section_el.querySelectorAll('.item .remove');
+
+                for(let remove_el of remove_els) {
+                    if(remove_el._listener) {
+                        continue;
+                    }
+
+                    remove_el._listener = true;
+
+                    remove_el.addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        befriend.filters.hideActiveSecondaryIf();
+
+                        let item = remove_el.closest('.item');
+
+                        let token = item.getAttribute('data-token');
+
+                        try {
+                            befriend.toggleSpinner(true);
+
+                            await befriend.auth.put('/filters/work', {
+                                token,
+                                is_delete: true
+                            });
+
+                            // Remove item and update Any button if needed
+                            item.remove();
+
+                            const activeItems = section_el.querySelectorAll('.item.mine.active');
+
+                            if (activeItems.length === 0) {
+                                const anyButton = section_el.querySelector('.item.any');
+                                if (anyButton) addClassEl('active', anyButton);
+                            }
+
+                            //update state data
+                            if(befriend.filters.data.filters?.work?.items) {
+                                for(let k in befriend.filters.data.filters.work.items) {
+                                    if(befriend.filters.data.filters.work.items[k].token === token) {
+                                        befriend.filters.data.filters.work.items[k].deleted = true;
+                                    }
+                                }
+                            }
+                        } catch (e) {
+                            console.error('Error removing instrument:', e);
+                        }
+
+                        befriend.toggleSpinner(false);
+
+                        requestAnimationFrame(function () {
+                            befriend.filters.updateSectionHeights();
+                        });
+                    });
+                }
+            },
+            secondary: function() {
+                const sectionData = befriend.filters.data.options?.['work'];
+                const secondary_options = sectionData?.secondary?.work?.options;
+
+                let section = befriend.filters.sections.work;
+                const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+                let secondary_els = section_el.getElementsByClassName('secondary');
+
+                // Handle clicks on secondary elements (opening/closing)
+                for(let secondary_el of secondary_els) {
+                    if(secondary_el._listener) continue;
+                    secondary_el._listener = true;
+
+                    secondary_el.addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        // Only handle direct clicks on the secondary element
+                        if (e.target.closest('.option')) return;
+
+                        // Toggle the secondary dropdown
+                        befriend.filters.transitionSecondary(
+                            secondary_el,
+                            !befriend.filters.secondaries.activeEl ||
+                            befriend.filters.secondaries.activeEl !== secondary_el
+                        );
+                    });
+                }
+
+                // Handle clicks in the secondary container
+                const secondary_container = section_el.querySelector('.secondary-container');
+
+                if (!secondary_container._listener) {
+                    secondary_container._listener = true;
+
+                    secondary_container.addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const secondary_option = e.target.closest('.option');
+                        if (!secondary_option) return;
+
+                        const options_el = secondary_option.closest('.options');
+                        if (!options_el) return;
+
+                        const itemToken = options_el.getAttribute('data-item-token');
+                        const option_value = secondary_option.getAttribute('data-option');
+                        const isAnyLevel = option_value === 'any';
+                        const anyOption = options_el.querySelector('.option.any-level');
+                        const otherOptions = options_el.querySelectorAll('.option:not(.any-level)');
+                        const wasSelected = elHasClass(secondary_option, 'selected');
+
+                        let itemData;
+
+                        try {
+                            befriend.toggleSpinner(true);
+
+                            if(befriend.filters.data.filters?.work?.items) {
+                                for(let k in befriend.filters.data.filters.work.items) {
+                                    if(befriend.filters.data.filters.work.items[k].token === itemToken) {
+                                        itemData = befriend.filters.data.filters.work.items[k];
+
+                                        // Initialize array if needed
+                                        if(!itemData.secondary || !Array.isArray(itemData.secondary)) {
+                                            itemData.secondary = [];
+                                        }
+
+                                        if (isAnyLevel) {
+                                            // If selecting "Any Level"
+                                            if (!wasSelected) {
+                                                itemData.secondary = ['any'];
+                                                addClassEl('selected', anyOption);
+                                                removeElsClass(otherOptions, 'selected');
+                                            } else {
+                                                return;
+                                            }
+                                        } else {
+                                            // If selecting a specific level
+                                            if (!wasSelected) {
+                                                // Remove 'any' if it was selected
+                                                removeArrItem(itemData.secondary, 'any');
+                                                removeClassEl('selected', anyOption);
+
+                                                // Add the new selection
+                                                itemData.secondary.push(option_value);
+                                                addClassEl('selected', secondary_option);
+                                            } else {
+                                                // Remove the selection
+                                                removeArrItem(itemData.secondary, option_value);
+                                                removeClassEl('selected', secondary_option);
+
+                                                //set any if no options selected
+                                                if(!itemData.secondary.length) {
+                                                    itemData.secondary.push('any');
+                                                }
+                                            }
+                                        }
+
+                                        break;
+                                    }
+                                }
+                            }
+
+                            itemData.secondary = befriend.filters.sortSecondary(secondary_options, itemData.secondary)
+
+                            await befriend.auth.put('/filters/work', {
+                                token: itemToken,
+                                secondary: itemData.secondary
+                            });
+
+                            // Find the original secondary element
+                            const item = section_el.querySelector(`.item.mine[data-token="${itemToken}"]`);
+                            const original_secondary = item?.querySelector('.secondary');
+
+                            if (original_secondary) {
+                                // Update unselected class state
+                                if (itemData.secondary.length === 0) {
+                                    addClassEl('unselected', original_secondary);
+                                } else {
+                                    removeClassEl('unselected', original_secondary);
+                                }
+
+                                // Update displayed text
+                                let textContent;
+                                if (itemData.secondary.includes('any')) {
+                                    textContent = 'Any Level';
+                                } else if (itemData.secondary.length) {
+                                    textContent = `${itemData.secondary.length} Selected`;
+                                } else {
+                                    textContent = 'Skill Level';
+                                }
+                                original_secondary.querySelector('.current-selected').textContent = textContent;
+                            }
+
+                            requestAnimationFrame(() => {
+                                befriend.filters.updateSecondaryPosition(section_el, options_el);
+                                befriend.filters.updateSectionHeights();
+                            });
+
+                        } catch (e) {
+                            console.error('Error updating secondary:', e);
+                        } finally {
+                            befriend.toggleSpinner(false);
+                        }
+                    });
+                }
+            }
+        }
+    },
     sortSecondary: function (originalArr, currentArr) {
         if (!Array.isArray(originalArr) || !Array.isArray(currentArr)) {
             return currentArr;
@@ -4100,8 +4926,9 @@ befriend.filters = {
                     let section = this.sections[key];
 
                     let collapsed_class = this.data.collapsed[key] ? 'collapsed' : '';
+                    let interest_class = section.is_interest ? 'is_interest' : '';
 
-                    html += `<div class="section ${section.token} ${collapsed_class}" data-key="${key}">
+                    html += `<div class="section ${section.token} ${interest_class} ${collapsed_class}" data-key="${key}">
                         <div class="section-top">
                             <div class="section-icon">${section.icon ? section.icon : ''}</div>
                             <div class="section-name">${section.name}</div>
@@ -4386,7 +5213,6 @@ befriend.filters = {
                 filter_options.innerHTML = html;
                 this.initEvents(section_el);
             },
-
             initEvents: function (section_el) {
                 const optionButtons = section_el.querySelectorAll(`.button`);
                 const anyButton = section_el.querySelector(`.button[data-token="any"]`);

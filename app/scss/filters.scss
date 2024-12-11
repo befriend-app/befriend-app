@@ -1356,7 +1356,7 @@
             }
         }
 
-        &.instruments {
+        &.is_interest {
             $padding_lr: 20px;
 
             .filter-options {
@@ -1522,6 +1522,7 @@
                     cursor: pointer;
                     transition: all 200ms;
                     background: lighten(black, 95%);
+                    @include flex-center-col;
 
                     &.active {
                         background: $brand_color_b;
@@ -1530,6 +1531,31 @@
 
                     &.mine {
                         font-weight: 500;
+                    }
+
+                    .heading-name {
+                        display: flex;
+                        flex-direction: column;
+
+                        .heading {
+                            font-size: 11px;
+                            font-weight: 400;
+                            line-height: 13px;
+                        }
+
+                        .name {
+                            font-size: 15px;
+                        }
+                    }
+
+                    &.w-heading {
+                        padding: 5px 10px;
+
+                        .heading-name {
+                            .name {
+                                font-size: 13px;
+                            }
+                        }
                     }
                 }
             }
@@ -1554,6 +1580,12 @@
                         transition: all 200ms;
                         background: lighten(black, 97%);
                         font-size: 15px;
+
+                        width: 100%;
+
+                        .name {
+                            font-size: 14px;
+                        }
 
                         &.any {
                             padding: 8px 0;
