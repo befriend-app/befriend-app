@@ -4354,6 +4354,15 @@ befriend.filters = {
                 // Switch to mine category and show updated items
                 fireClick(category_mine);
 
+                //Select correct tab
+                let tabs_els = section_el.getElementsByClassName('tab');
+
+                for(let tab of tabs_els) {
+                    if(tab.getAttribute('data-key') === table_key && !elHasClass(tab, 'active')) {
+                        fireClick(tab);
+                    }
+                }
+
                 requestAnimationFrame(() => {
                     befriend.filters.updateSectionHeights();
                 });
@@ -4674,12 +4683,23 @@ befriend.filters = {
                                 const otherItems = section_el.querySelectorAll('.item:not(.any)');
 
                                 addClassEl('active', anyButton);
-                                removeElsClass(otherItems, 'active');
+
+                                for(let otherItem of otherItems) {
+                                    const storedItem = Object.values(befriend.filters.data.filters?.work?.items || {})
+                                        .find(item => item.id === parseInt(otherItem.getAttribute('data-id')));
+
+                                    if (storedItem && storedItem.table_key === tableKey) {
+                                        removeClassEl('active', otherItem);
+                                    }
+                                }
 
                                 //update state data
                                 if(befriend.filters.data.filters?.work?.items) {
                                     for(let k in befriend.filters.data.filters.work.items) {
-                                        befriend.filters.data.filters.work.items[k].is_active = false;
+                                        let item = befriend.filters.data.filters.work.items[k];
+                                        if(item.table_key === tableKey) {
+                                            item.is_active = false;
+                                        }
                                     }
                                 }
                             } catch (e) {
@@ -4707,7 +4727,12 @@ befriend.filters = {
                                     active: !wasSelected,
                                 });
 
-                                const activeItems = section_el.querySelectorAll('.item.mine.active');
+                                const activeItems = Array.from(section_el.querySelectorAll('.item.mine.active'))
+                                    .filter(item => {
+                                        const storedItem = Object.values(befriend.filters.data.filters?.work?.items || {})
+                                            .find(stored => stored.id === parseInt(item.getAttribute('data-id')));
+                                        return storedItem && storedItem.table_key === tableKey;
+                                    });
 
                                 const anyButton = section_el.querySelector('.item.any');
 
