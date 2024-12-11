@@ -3581,6 +3581,7 @@ befriend.filters = {
                                         let existing_option = sectionData?.options.find(existing => existing.token === item.token);
 
                                         if(!existing_option) {
+                                            item._is_internal = true;
                                             sectionData.options.push(item);
                                         }
                                     }
@@ -3703,7 +3704,11 @@ befriend.filters = {
                                     .filter(item => !item.deleted)
                                     .filter(Boolean);
                             } else {
-                                items = sectionData?.options.filter(item => item?.category?.toLowerCase() === category && !added_item_tokens[item.token]);
+                                items = sectionData?.options.filter(
+                                    item => item?.category?.toLowerCase() === category
+                                        && !added_item_tokens[item.token]
+                                        && !item._is_internal
+                                );
                             }
 
                             befriend.filters.instruments.renderItems(section_el, items || [], category === 'mine');
@@ -4242,6 +4247,7 @@ befriend.filters = {
 
             if(is_mine) {
                 addClassEl('show-tabs', section_el);
+                this.updateTabCount(section_el);
             } else {
                 removeClassEl('show-tabs', section_el);
             }
@@ -4264,7 +4270,9 @@ befriend.filters = {
                 let tab = this.data.tabs[i];
 
                 html += `<div class="tab ${i === 0 ? 'active' : ''}" data-key="${tab.key}">
-                            <div class="name">${tab.name}</div>
+                            <div class="name-count">
+                                <div class="name">${tab.name}</div>
+                            </div>
                         </div>`
             }
 
@@ -4275,6 +4283,31 @@ befriend.filters = {
             categories_container.insertAdjacentHTML('afterend', tabs_html);
 
             this.events.tabs();
+        },
+        updateTabCount: function(section_el) {
+            const storedFilters = this.getStoredFilter();
+            const tabs = section_el.querySelectorAll('.tab');
+
+            for(let tab of tabs) {
+                const key = tab.getAttribute('data-key');
+
+                const count = Object.values(storedFilters?.items || {})
+                    .filter(item => item.table_key === key && !item.deleted && item.is_active)
+                    .length;
+
+                const countEl = tab.querySelector('.count');
+
+                if (count > 0) {
+                    if (countEl) {
+                        countEl.textContent = count;
+                    } else {
+                        const countHtml = `<div class="count">${count}</div>`;
+                        tab.insertAdjacentHTML('beforeend', countHtml);
+                    }
+                } else if (countEl) {
+                    countEl.remove();
+                }
+            }
         },
         addItem: async function(itemData = {}, section_el) {
             try {
@@ -4444,6 +4477,7 @@ befriend.filters = {
                                         let existing_option = sectionData?.options.find(existing => existing.token === item.token);
 
                                         if(!existing_option) {
+                                            item._is_internal = true;
                                             sectionData.options.push(item);
                                         }
                                     }
@@ -4451,15 +4485,13 @@ befriend.filters = {
                                     // Filter out items that already exist in filters data
                                     const existingTokens = new Set();
 
-                                    const storedFilters = befriend.filters.data.filters?.[k];
-
-                                    let tableCol = befriend.filters.work.getKeyCol(k);
+                                    const storedFilters = befriend.filters.work.getStoredFilter();
 
                                     if (storedFilters?.items) {
                                         for (let k in storedFilters.items) {
                                             const item = storedFilters.items[k];
                                             if (!item.deleted) {
-                                                let option = sectionData?.options.find(opt => opt.id === item[tableCol]);
+                                                let option = sectionData?.options.find(opt => opt.token === item.token);
 
                                                 if (option) {
                                                     existingTokens.add(option.token);
@@ -4581,7 +4613,8 @@ befriend.filters = {
                                     .filter(
                                         item => category_token ? item.category_token === category_token : item.category?.toLowerCase() === category
                                     )
-                                    .filter(item => !added_item_tokens.has(item.token));
+                                    .filter(item => !added_item_tokens.has(item.token))
+                                    .filter(item => !item._is_internal);
                             }
 
                             befriend.filters.work.renderItems(section_el, items || [], category === 'mine');
@@ -4655,6 +4688,8 @@ befriend.filters = {
 
                             befriend.toggleSpinner(false);
 
+                            befriend.filters.work.updateTabCount(section_el);
+
                             return;
                         }
 
@@ -4697,6 +4732,8 @@ befriend.filters = {
                             }
 
                             befriend.toggleSpinner(false);
+
+                            befriend.filters.work.updateTabCount(section_el);
 
                             return;
                         }
@@ -4771,6 +4808,8 @@ befriend.filters = {
                         }
 
                         befriend.toggleSpinner(false);
+
+                        befriend.filters.work.updateTabCount(section_el);
 
                         requestAnimationFrame(function () {
                             befriend.filters.updateSectionHeights();
