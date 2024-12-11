@@ -150,6 +150,14 @@ befriend.filters = {
         return new Promise(async (resolve, reject) => {
             console.log("[init] Filters");
 
+            this.life_stages = this.createMultiSelectFilter('life_stages');
+            this.relationship = this.createMultiSelectFilter('relationship');
+            this.languages = this.createMultiSelectFilter('languages');
+            this.politics = this.createMultiSelectFilter('politics');
+            this.religion = this.createMultiSelectFilter('religion');
+            this.drinking = this.createMultiSelectFilter('drinking');
+            this.smoking = this.createMultiSelectFilter('smoking');
+
             try {
                 if (befriend.user.local.data?.filters?.collapsed) {
                     this.data.collapsed = befriend.user.local.data.filters.collapsed;
@@ -157,7 +165,7 @@ befriend.filters = {
 
                 await befriend.filters.getData();
 
-                befriend.filters.initSections();
+                await befriend.filters.initSections();
                 befriend.filters.initCollapsible();
 
                 befriend.filters.availability.init();
@@ -168,7 +176,7 @@ befriend.filters = {
                 befriend.filters.distance.init();
                 befriend.filters.activity_types.init();
                 befriend.filters.verifications.init();
-                befriend.filters.instruments.init();
+
                 befriend.filters.life_stages.init();
                 befriend.filters.relationship.init();
                 befriend.filters.languages.init();
@@ -176,6 +184,8 @@ befriend.filters = {
                 befriend.filters.religion.init();
                 befriend.filters.drinking.init();
                 befriend.filters.smoking.init();
+
+                befriend.filters.instruments.init();
 
                 befriend.filters.active.init();
                 befriend.filters.sendReceive.init();
@@ -460,10 +470,19 @@ befriend.filters = {
             let section = befriend.filters.sections[section_key];
             let storedData = befriend.filters.data.filters?.[section.token];
 
+            if(this.values[section_key] && token in this.values[section_key]) {
+                return this.values[section_key][token];
+            }
+
+            if(!(section_key in this.values)) {
+                this.values[section_key] = {};
+            }
+
             let storedItem = Object.values(storedData?.items || {})
                 .find(stored => stored.token === token);
 
             if(isNumeric(storedItem?.importance)) {
+                this.values[section_key][token] = storedItem.importance;
                 return storedItem.importance;
             }
 
@@ -496,8 +515,6 @@ befriend.filters = {
                     continue;
                 }
 
-                let storedData = befriend.filters.data.filters?.[section.token];
-
                 let section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
 
                 let items_container = section_el.querySelector('.items-container');
@@ -519,9 +536,6 @@ befriend.filters = {
 
                     let importance_el = item.querySelector('.importance');
 
-                    let storedItem = Object.values(storedData?.items || {})
-                        .find(stored => stored.token === item_token);
-
                     if(!importance_el) {
                         let value = this.getValue(section.token, item_token);
 
@@ -533,9 +547,6 @@ befriend.filters = {
 
                 this.initForSection(section);
             }
-        },
-        updateItems: function () {
-
         },
         initForSection: function(section) {
             if (!section.importance?.active) return;
@@ -564,10 +575,6 @@ befriend.filters = {
             }
         },
         showImportancePopup: function(sectionToken, item, name, currentValue = 7) {
-            console.log({
-                item
-            });
-
             const popupHtml = `
             <div class="importance-popup-overlay">
                 <div class="importance-popup">
@@ -2226,9 +2233,6 @@ befriend.filters = {
                         } catch (e) {
                             console.error('Error updating gender filter:', e);
 
-                            console.log({
-                                wasSelected, isAny, genderToken
-                            })
                             // Revert UI state on error
                             toggleElClass(this, 'selected');
 
@@ -3428,20 +3432,24 @@ befriend.filters = {
             items_container.innerHTML = items_html;
 
             this.initEvents();
+
+            befriend.filters.importance.set();
         },
         addItem: async function(itemData = {}, section_el) {
             try {
-                let {id, token} = itemData;
+                let {token} = itemData;
                 befriend.toggleSpinner(true);
 
                 const sectionData = befriend.filters.data.options?.['instruments'];
                 const secondary_options = sectionData?.secondary?.instruments?.options;
                 const category_mine = section_el.querySelector(`.category-btn.mine`);
 
-                await befriend.auth.put('/filters/instruments', {
+                let response = await befriend.auth.put('/filters/instruments', {
                     token,
                     active: true
                 });
+
+                let id = response?.data?.id;
 
                 // Get current mine items
                 const storedFilters = befriend.filters.data.filters?.instruments;
@@ -3454,7 +3462,8 @@ befriend.filters = {
 
                 let option = sectionData?.options.find(opt => opt.token === token);
 
-                befriend.filters.data.filters.instruments.items[token] = {
+                befriend.filters.data.filters.instruments.items[id] = {
+                    id,
                     token,
                     instrument_id: option.id,
                     name: option.name,
@@ -4081,16 +4090,18 @@ befriend.filters = {
         });
     },
     initSections: async function () {
-        let sections_el = befriend.els.filters.querySelector('.sections');
+        return new Promise(async (resolve, reject) => {
+            try {
+                let sections_el = befriend.els.filters.querySelector('.sections');
 
-        let html = '';
+                let html = '';
 
-        for (let key in this.sections) {
-            let section = this.sections[key];
+                for (let key in this.sections) {
+                    let section = this.sections[key];
 
-            let collapsed_class = this.data.collapsed[key] ? 'collapsed' : '';
+                    let collapsed_class = this.data.collapsed[key] ? 'collapsed' : '';
 
-            html += `<div class="section ${section.token} ${collapsed_class}" data-key="${key}">
+                    html += `<div class="section ${section.token} ${collapsed_class}" data-key="${key}">
                         <div class="section-top">
                             <div class="section-icon">${section.icon ? section.icon : ''}</div>
                             <div class="section-name">${section.name}</div>
@@ -4107,11 +4118,20 @@ befriend.filters = {
                             <div class="filter-options"></div>
                         </div>
                     </div>`;
-        }
+                }
 
-        sections_el.innerHTML = html;
+                sections_el.innerHTML = html;
 
-        requestAnimationFrame(this.updateSectionHeights);
+                await rafAwait();
+
+                befriend.filters.updateSectionHeights();
+            } catch(e) {
+                console.error(e);
+            }
+
+            return resolve();
+        });
+
     },
     initCollapsible: function () {
         let sections = befriend.els.filters.getElementsByClassName('section');
@@ -4339,7 +4359,7 @@ befriend.filters = {
                     }
 
                     optionsHtml += `
-                    <div class="item button ${option.token} ${selected}" data-token="${option.token}">
+                    <div class="item button ${option.token} ${selected}" ${matchingItem?.id ? `data-id="${matchingItem.id}"` : ''} data-token="${option.token}">
                         <div class="name">${option.name}</div>
                     </div>`;
                 }
@@ -4386,13 +4406,15 @@ befriend.filters = {
                         const wasSelected = elHasClass(this, 'selected');
 
                         try {
+                            let response;
+
                             if (isAny) {
                                 if (wasSelected) return false;
 
                                 removeElsClass(regularButtons, 'selected');
                                 addClassEl('selected', this);
 
-                                await befriend.auth.put(section.endpoint, {
+                                response = await befriend.auth.put(section.endpoint, {
                                     [`${filterNameStr}_token`]: token,
                                     active: !wasSelected
                                 });
@@ -4407,7 +4429,7 @@ befriend.filters = {
                                     addClassEl('selected', anyButton);
                                     removeElsClass(regularButtons, 'selected');
 
-                                    await befriend.auth.put(section.endpoint, {
+                                    response = await befriend.auth.put(section.endpoint, {
                                         [`${filterNameStr}_token`]: token,
                                         active: !wasSelected
                                     });
@@ -4419,10 +4441,30 @@ befriend.filters = {
                                 } else {
                                     removeClassEl('selected', anyButton);
 
-                                    await befriend.auth.put(section.endpoint, {
+                                    response = await befriend.auth.put(section.endpoint, {
                                         [`${filterNameStr}_token`]: token,
                                         active: !wasSelected
                                     });
+                                }
+                            }
+
+                            //add id to item
+                            if(response?.data?.id) {
+                                if(!button.getAttribute('data-id')) {
+                                    button.setAttribute('data-id', response.data.id);
+
+                                    // Initialize or update filters data structure
+                                    if (!befriend.filters.data.filters[filterName]) {
+                                        befriend.filters.data.filters[filterName] = {
+                                            items: {}
+                                        };
+                                    }
+
+                                    // Add new item to local data
+                                    befriend.filters.data.filters[filterName].items[response.data.id] = {
+                                        id: response.data.id,
+                                        token
+                                    };
                                 }
                             }
                         } catch (e) {
@@ -4559,11 +4601,3 @@ befriend.filters = {
         }
     },
 };
-
-befriend.filters.life_stages = befriend.filters.createMultiSelectFilter('life_stages');
-befriend.filters.relationship = befriend.filters.createMultiSelectFilter('relationship');
-befriend.filters.languages = befriend.filters.createMultiSelectFilter('languages');
-befriend.filters.politics = befriend.filters.createMultiSelectFilter('politics');
-befriend.filters.religion = befriend.filters.createMultiSelectFilter('religion');
-befriend.filters.drinking = befriend.filters.createMultiSelectFilter('drinking');
-befriend.filters.smoking = befriend.filters.createMultiSelectFilter('smoking');
