@@ -44,7 +44,7 @@ befriend.filters = {
             name: 'Gender',
             icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 495.114 512.0002"><path d="M454.451,247.8192h-.073c-13.284,0-24.795,7.735-30.268,18.937l-45.856-45.857c17.131-27.83,24.362-61.106,20.364-93.722-4.077-33.256-19.752-64.327-44.138-87.49C327.157,13.7342,291.226-.3898,253.256.0082c-37.944.367-73.621,15.142-100.462,41.604-10.967,10.813-19.99,23.062-26.911,36.323C55.163,85.8582,0,146.0072,0,218.8132c0,32.31,11.16,63.918,31.423,89.001,2.604,3.224,7.329,3.728,10.556,1.122,3.225-2.605,3.728-7.331,1.122-10.556-18.113-22.421-28.088-50.678-28.088-79.567,0-62.004,44.747-113.739,103.639-124.638-4.224,11.334-7.025,23.223-8.298,35.451-36.733,12.982-63.124,48.058-63.124,89.187,0,52.13,42.411,94.54,94.539,94.54,27.254,0,51.841-11.602,69.109-30.114,9.004,2.857,18.299,4.846,27.752,5.888,2.697.297,5.398.511,8.1.656-18.324,27.087-46.928,46.927-80.842,53.471-3.532.681-6.084,3.773-6.084,7.37v39.504c0,4.146,3.36,7.506,7.506,7.506h20.567c9.961,0,18.065,8.091,18.065,18.035,0,9.961-8.104,18.065-18.065,18.065h-20.567c-4.146,0-7.506,3.36-7.506,7.506v37.702c0,4.837-1.871,9.371-5.262,12.763-3.414,3.406-7.95,5.283-12.773,5.283-9.962,0-18.065-8.095-18.065-18.045v-37.703c0-4.146-3.36-7.506-7.506-7.506h-20.567c-9.951,0-18.045-8.104-18.045-18.065,0-9.944,8.095-18.035,18.045-18.035h20.567c4.146,0,7.506-3.36,7.506-7.506v-39.504c0-3.597-2.552-6.689-6.084-7.37-18.301-3.531-35.248-10.904-50.374-21.912-3.35-2.439-8.046-1.702-10.485,1.652-2.44,3.351-1.701,8.046,1.652,10.485,15.232,11.086,32.121,18.877,50.28,23.205v25.938h-13.061c-18.228,0-33.058,14.825-33.058,33.047,0,18.239,14.83,33.078,33.058,33.078h13.061v30.195c0,18.228,14.839,33.058,33.078,33.058,8.827,0,17.13-3.434,23.384-9.674,6.232-6.233,9.664-14.538,9.664-23.384v-30.195h13.061c18.239,0,33.078-14.839,33.078-33.078,0-18.222-14.839-33.047-33.078-33.047h-13.063v-25.94c38.689-9.24,70.649-34.11,89.68-67.038,23.34-1.609,46.152-8.808,66.098-21.086l45.857,45.858c-11.203,5.476-18.938,17.003-18.938,30.34,0,18.561,15.102,33.663,33.664,33.663h73.501c12.922,0,23.435-10.513,23.435-23.435v-73.502c0-18.561-15.101-33.663-33.663-33.663h0ZM141.768,298.3412c-43.851,0-79.527-35.676-79.527-79.528,0-32.4,19.481-60.307,47.33-72.694.301,38.311,15.34,74.264,42.476,101.402,12.571,12.57,27.343,22.659,43.415,29.846-14.159,13-33.002,20.974-53.694,20.974ZM473.102,354.9842c0,4.644-3.779,8.422-8.422,8.422h-73.501c-10.284,0-18.651-8.366-18.651-18.724,0-10.284,8.367-18.65,18.651-18.65,3.036,0,5.773-1.829,6.935-4.634s.52-6.033-1.626-8.181l-55.471-55.471c-2.831-2.831-6.565-4.295-10.347-4.295-2.669,0-5.364.729-7.782,2.223-24.487,15.123-53.823,21.712-82.611,18.531-29.64-3.269-56.478-16.167-77.611-37.301-24.69-24.689-38.218-57.515-38.095-92.432.124-34.913,13.891-67.646,38.764-92.169,49.205-48.512,130.719-49.308,180.808-1.732,21.866,20.77,35.922,48.625,39.575,78.432,3.594,29.313-2.921,59.211-18.346,84.187-3.608,5.845-2.756,13.3,2.072,18.129l55.47,55.47c2.147,2.146,5.374,2.788,8.181,1.626,2.805-1.161,4.634-3.899,4.634-6.935,0-10.284,8.366-18.65,18.65-18.65h.073c10.284,0,18.65,8.366,18.65,18.65v73.504Z"/><path d="M343.921,122.2012c-4.088.689-6.844,4.561-6.155,8.649,4.532,26.895-4.259,54.448-23.517,73.705-9.013,9.014-19.581,15.54-30.845,19.611.068-1.778.114-3.56.114-5.352,0-59.901-37.337-111.238-89.953-131.97.484-.508.951-1.026,1.449-1.524,32.873-32.873,86.362-32.873,119.235,0,4.909,4.909,9.192,10.386,12.729,16.279,2.134,3.555,6.744,4.705,10.3,2.572,3.554-2.134,4.706-6.745,2.572-10.3-4.168-6.943-9.21-13.392-14.985-19.168-38.728-38.726-101.74-38.726-140.468,0-38.726,38.727-38.726,101.74,0,140.468,19.364,19.363,44.798,29.045,70.234,29.045s50.87-9.682,70.234-29.045c22.685-22.686,33.041-55.14,27.704-86.815-.688-4.088-4.552-6.843-8.648-6.155h0ZM170.367,144.6202c29.757,11.514,50.929,40.415,50.929,74.193,0,1.175-.034,2.342-.087,3.504-9.516-4.097-18.434-10.002-26.194-17.763-16.518-16.517-24.729-38.238-24.648-59.934ZM235.938,227.1062c.239-2.734.37-5.498.37-8.293,0-41.627-27.039-77.044-64.467-89.64,1.983-10.5,5.974-20.687,11.957-29.954,49.287,17.38,84.707,64.424,84.707,119.593,0,3.122-.125,6.219-.351,9.293-10.685,1.724-21.634,1.39-32.216-.999h0Z"/></svg>`,
             importance: {
-                active: true,
+                active: false,
                 default: 10
             }
         },
@@ -179,8 +179,7 @@ befriend.filters = {
 
                 befriend.filters.active.init();
                 befriend.filters.sendReceive.init();
-
-                befriend.filters.importance.set();
+                befriend.filters.importance.init();
             } catch (e) {
                 console.error(e);
             }
@@ -454,8 +453,86 @@ befriend.filters = {
         max: 10,
         default: 7,
         values: {}, //per section
-        set: function () {
+        init: function () {
+            this.set();
+        },
+        getValue: function (section_key, token) {
+            let section = befriend.filters.sections[section_key];
+            let storedData = befriend.filters.data.filters?.[section.token];
 
+            let storedItem = Object.values(storedData?.items || {})
+                .find(stored => stored.token === token);
+
+            if(isNumeric(storedItem?.importance)) {
+                return storedItem.importance;
+            }
+
+            return section.importance?.default || this.default;
+        },
+        set: function () {
+            //set existing data
+            for(let k in befriend.filters.data.filters) {
+                let filterData = befriend.filters.data.filters[k];
+
+                if(!(k in this.values)) {
+                    this.values[k] = {};
+                }
+
+                if(filterData.items) {
+                    for(let id in filterData.items) {
+                        let itemData = filterData.items[id];
+
+                        if(typeof itemData.importance !== 'undefined') {
+                            this.values[k][id] = itemData.importance;
+                        }
+                    }
+                }
+            }
+
+            for(let key in befriend.filters.sections) {
+                let section = befriend.filters.sections[key];
+
+                if(!section?.importance?.active) {
+                    continue;
+                }
+
+                let storedData = befriend.filters.data.filters?.[section.token];
+
+                let section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+
+                let items_container = section_el.querySelector('.items-container');
+
+                if(!items_container) {
+                    console.error("Need correct HTML structure", section.token);
+                    continue;
+                }
+
+                let items_els = items_container.getElementsByClassName('item');
+
+                for(let item of items_els) {
+                    let item_token = item.getAttribute('data-token');
+
+                    //skip any
+                    if(item_token === 'any') {
+                        continue;
+                    }
+
+                    let importance_el = item.querySelector('.importance');
+
+                    let storedItem = Object.values(storedData?.items || {})
+                        .find(stored => stored.token === item_token);
+
+                    if(!importance_el) {
+                        let value = this.getValue(section.token, item_token);
+
+                        let importance_html = this.getImportanceHtml(section.token, item_token, value);
+
+                        item.insertAdjacentHTML('afterbegin', importance_html);
+                    }
+                }
+
+                this.initForSection(section);
+            }
         },
         updateItems: function () {
 
@@ -475,15 +552,22 @@ befriend.filters = {
                     e.stopPropagation();
 
                     const item = importance.closest('.item');
+                    const id = item.getAttribute('data-id');
                     const token = item.getAttribute('data-token');
                     const name = item.querySelector('.name')?.textContent;
-                    const currentValue = this.values[token] || this.default;
+                    const currentValue = befriend.filters.importance.getValue(section.token, token);
 
-                    befriend.filters.importance.showImportancePopup(section.token, token, name, currentValue);
+                    befriend.filters.importance.showImportancePopup(section.token, {
+                        id, token
+                    }, name, currentValue);
                 });
             }
         },
-        showImportancePopup: function(sectionToken, itemToken, name, currentValue = 7) {
+        showImportancePopup: function(sectionToken, item, name, currentValue = 7) {
+            console.log({
+                item
+            });
+
             const popupHtml = `
             <div class="importance-popup-overlay">
                 <div class="importance-popup">
@@ -601,9 +685,9 @@ befriend.filters = {
                     this.values[sectionToken] = {};
                 }
 
-                this.values[sectionToken][itemToken] = value;
-                befriend.filters.importance.updateIndicator(sectionToken, itemToken, value);
-                befriend.filters.importance.saveValue(sectionToken, itemToken, value);
+                this.values[sectionToken][item.token] = value;
+                befriend.filters.importance.updateIndicator(sectionToken, item.token, value);
+                befriend.filters.importance.saveValue(sectionToken, item.id, value);
                 closePopup();
             });
 
@@ -638,10 +722,11 @@ befriend.filters = {
                 }
             </style>`;
         },
-        saveValue: async function(itemToken, value) {
+        saveValue: async function(sectionToken, itemId, value) {
             try {
                 await befriend.auth.put('/filters/importance', {
-                    filter_item_token: itemToken,
+                    section: sectionToken,
+                    filter_item_id: parseInt(itemId),
                     importance: parseInt(value)
                 });
             } catch (e) {
@@ -2060,7 +2145,7 @@ befriend.filters = {
                     }
 
                     gender_buttons_html += `
-                        <div class="gender-button ${gender.token} ${selected}" data-gender-token="${gender.token}">
+                        <div class="item gender-button ${gender.token} ${selected}" data-token="${gender.token}">
                             <div class="name">${gender.name}</div>
                         </div>`;
                 }
@@ -2070,7 +2155,7 @@ befriend.filters = {
                 <div class="filter-option" data-filter-token="${section.token}">
                     ${befriend.filters.sendReceiveHtml(true, true, true)}
                     
-                    <div class="gender-buttons">
+                    <div class="items-container gender-buttons">
                         ${gender_buttons_html}
                     </div>
                 </div>
@@ -2091,9 +2176,9 @@ befriend.filters = {
                         e.preventDefault();
                         e.stopPropagation();
 
-                        let genderToken = this.getAttribute('data-gender-token');
+                        let genderToken = this.getAttribute('data-token');
                         let isAny = genderToken === 'any';
-                        const anyButton = section_el.querySelector('.gender-button[data-gender-token="any"]');
+                        const anyButton = section_el.querySelector('.gender-button[data-token="any"]');
                         const wasSelected = elHasClass(this, 'selected');
 
                         // If selecting "Any", deselect all others
@@ -2117,7 +2202,7 @@ befriend.filters = {
                         let allSelected = true;
 
                         for(let btn of genderButtons) {
-                            if(btn.getAttribute('data-gender-token') === 'any' && !wasSelected) {
+                            if(btn.getAttribute('data-token') === 'any' && !wasSelected) {
                                 continue;
                             }
 
@@ -3129,12 +3214,6 @@ befriend.filters = {
         }
     },
     instruments: {
-        importance: {
-            min: 0,
-            default: 7,
-            max: 10,
-            current: {},
-        },
         init: function () {
             let section = befriend.filters.sections.instruments;
 
@@ -3209,13 +3288,6 @@ befriend.filters = {
                 items = Object.values(storedFilters.items)
                     .filter(item => !item.deleted)
                     .filter(Boolean);
-            }
-
-            //set importance values if any
-            for(let item of items) {
-                if(typeof item.importance !== 'undefined') {
-                    this.importance.current[item.token] = item.importance;
-                }
             }
 
             // Prepare secondary items HTML first
@@ -3316,24 +3388,8 @@ befriend.filters = {
                             .find(stored => stored.token === item.token);
                         const isActive = storedItem && !storedItem.deleted && storedItem.is_active;
 
-                        let currentImportance = befriend.filters.instruments.importance.current[item.token] ||
-                            befriend.filters.instruments.importance.default;
-
-                        const position = ((currentImportance - befriend.filters.instruments.importance.min) /
-                            (befriend.filters.instruments.importance.max - befriend.filters.instruments.importance.min)) * 100;
-
                         return `
-                    <div class="item mine ${isActive ? 'active': ''}" data-token="${item.token}">
-                        <div class="importance" title="Filter Importance: ${currentImportance}/${befriend.filters.instruments.importance.max}">
-                            <div class="indicator">
-                                <style>
-                                    .item[data-token="${item.token}"] .importance .indicator::after {
-                                        left: ${position}%;
-                                    }
-                                </style>
-                            </div>
-                        </div>
-                            
+                    <div class="item mine ${isActive ? 'active': ''}" data-id="${storedItem?.id}" data-token="${item.token}">
                         <div class="content">
                             <div class="name">${item.name}</div>
                             
@@ -3465,184 +3521,6 @@ befriend.filters = {
                 if (search_input) search_input.focus();
             } else {
                 removeClassEl('autocomplete-shown', autocomplete_container);
-            }
-        },
-        showImportancePopup: function(itemToken, name, currentValue = 5) {
-            const popupHtml = `
-        <div class="importance-popup-overlay">
-            <div class="importance-popup">
-                <div class="popup-header">
-                    <div class="title">${name}</div>
-                    <div class="sub">Filter Importance</div>
-                </div>
-                
-                <div class="importance-slider">
-                    <div class="slider-container">
-                        <div class="slider-track"></div>
-                        <div class="slider-range"></div>
-                        <div class="thumb">
-                            <span class="thumb-value"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="popup-actions">
-                    <button class="cancel-btn">Cancel</button>
-                    <button class="save-btn">Save</button>
-                </div>
-            </div>
-        </div>`;
-
-            const popupEl = document.createElement('div');
-            popupEl.innerHTML = popupHtml;
-            document.body.appendChild(popupEl);
-
-            const overlay = popupEl.querySelector('.importance-popup-overlay');
-
-            // Force reflow
-            void overlay.offsetWidth;
-
-            // Activate elements with staggered animation
-            requestAnimationFrame(() => {
-                addClassEl('active', overlay);
-            });
-
-            const container = popupEl.querySelector('.slider-container');
-            const range = popupEl.querySelector('.slider-range');
-            const thumb = popupEl.querySelector('.thumb');
-            let isDragging = false;
-            let startY, startTop;
-
-            const setPosition = (value) => {
-                const percent = (value - this.importance.min) / (this.importance.max - this.importance.min);
-                const height = container.offsetHeight;
-                const position = height - (percent * height); // Invert for vertical
-                thumb.style.top = `${position}px`;
-                range.style.height = `${height - position}px`;
-                thumb.querySelector('.thumb-value').textContent = Math.round(value);
-            };
-
-            const getValueFromPosition = (position) => {
-                const height = container.offsetHeight;
-                const percent = 1 - (position / height); // Invert for vertical
-                return Math.min(Math.max(percent * (this.importance.max - this.importance.min) + this.importance.min, this.importance.min), this.importance.max);
-            };
-
-            function handleStart(e) {
-                isDragging = true;
-                startY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
-                startTop = parseFloat(thumb.style.top) || 0;
-                e.preventDefault();
-            }
-
-            function handleMove(e) {
-                if (!isDragging) return;
-
-                const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
-                const dy = clientY - startY;
-                const newTop = Math.min(Math.max(0, startTop + dy), container.offsetHeight);
-                const value = getValueFromPosition(newTop);
-                setPosition(value);
-            }
-
-            function handleEnd(e) {
-                isDragging = false;
-
-                let importancePopup = document.querySelector('.importance-popup-overlay');
-
-                if(importancePopup && !e.target.closest('.importance-popup')) {
-                    fireClick(importancePopup.querySelector('.cancel-btn'));
-                }
-            }
-
-            // Mouse events
-            thumb.addEventListener('mousedown', handleStart);
-            document.addEventListener('mousemove', handleMove);
-            document.addEventListener('mouseup', handleEnd);
-
-            // Touch events
-            thumb.addEventListener('touchstart', handleStart);
-            document.addEventListener('touchmove', handleMove);
-            document.addEventListener('touchend', handleEnd);
-
-            // Click track to set value
-            container.addEventListener('click', (e) => {
-                if (e.target === thumb) return;
-                const rect = container.getBoundingClientRect();
-                const clickPosition = e.clientY - rect.top;
-                const value = getValueFromPosition(clickPosition);
-                setPosition(value);
-            });
-
-            // Set initial position
-            setPosition(currentValue);
-
-            // Close popup handler
-            const closePopup = () => {
-                removeClassEl('active', overlay);
-
-                // Remove element after animation
-                setTimeout(() => {
-                    popupEl.remove();
-                }, 300);
-            };
-
-            // Handle save/cancel
-            const cancelBtn = popupEl.querySelector('.cancel-btn');
-            const saveBtn = popupEl.querySelector('.save-btn');
-
-            cancelBtn.addEventListener('click', closePopup);
-
-            saveBtn.addEventListener('click', () => {
-                const value = parseInt(thumb.innerText);
-                this.importance.current[itemToken] = value;
-                this.updateImportanceIndicator(itemToken, value);
-                this.saveImportance(itemToken, value);
-                closePopup();
-            });
-
-            // Close on overlay click
-            overlay.addEventListener('click', (e) => {
-                if (e.target === overlay) {
-                    closePopup();
-                }
-            });
-
-            // ESC key to close
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    closePopup();
-                }
-            });
-        },
-        updateImportanceIndicator: function(itemToken, importanceValue) {
-            const item = befriend.els.filters.querySelector(`.item.mine[data-token="${itemToken}"]`);
-            if (!item) return;
-
-            let importance_el = item.querySelector('.importance');
-            let indicator_el = importance_el.querySelector('.indicator');
-
-            const position = ((importanceValue - befriend.filters.instruments.importance.min) /
-                (befriend.filters.instruments.importance.max - befriend.filters.instruments.importance.min)) * 100;
-
-            importance_el.setAttribute('title', `Filter Importance: ${importanceValue}/${befriend.filters.instruments.importance.max}`)
-
-            indicator_el.innerHTML = `<style>
-                                        .item[data-token="${itemToken}"] .importance .indicator::after {
-                                            left: ${position}%;
-                                        }
-                                    </style>`;
-
-        },
-        saveImportance: async function (token, value) {
-            try {
-                await befriend.auth.put('/filters/instruments', {
-                    token,
-                    importance: parseInt(value)
-                });
-
-                //update data/ui
-            } catch (e) {
-                console.error('Error saving instrument importance:', e);
             }
         },
         events: {
@@ -4443,7 +4321,7 @@ befriend.filters = {
                 }
 
                 const anyButtonHtml = `
-                <div class="button any ${anySelected ? 'selected' : ''}" data-${filterNameStr}-token="any">
+                <div class="item button any ${anySelected ? 'selected' : ''}" data-token="any">
                     <div class="name">Any</div>
                 </div>`;
 
@@ -4461,18 +4339,19 @@ befriend.filters = {
                     }
 
                     optionsHtml += `
-                    <div class="button ${option.token} ${selected}" data-${filterNameStr}-token="${option.token}">
+                    <div class="item button ${option.token} ${selected}" data-token="${option.token}">
                         <div class="name">${option.name}</div>
                     </div>`;
                 }
 
                 let html = `
                 <div class="filter-option" data-filter-token="${section.token}">
-                    
-                    <div class="buttons">
-                        ${anyButtonHtml}
-                        <div class="options-grid">
-                            ${optionsHtml}
+                    <div class="items-container">
+                        <div class="buttons">
+                            ${anyButtonHtml}
+                            <div class="options-grid">
+                                ${optionsHtml}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -4490,9 +4369,9 @@ befriend.filters = {
 
             initEvents: function (section_el) {
                 const optionButtons = section_el.querySelectorAll(`.button`);
-                const anyButton = section_el.querySelector(`.button[data-${filterNameStr}-token="any"]`);
+                const anyButton = section_el.querySelector(`.button[data-token="any"]`);
                 const regularButtons = Array.from(optionButtons)
-                    .filter(btn => btn.getAttribute(`data-${filterNameStr}-token`) !== 'any');
+                    .filter(btn => btn.getAttribute(`data-token`) !== 'any');
 
                 for (let button of optionButtons) {
                     if (button._listener) continue;
@@ -4502,7 +4381,7 @@ befriend.filters = {
                         e.preventDefault();
                         e.stopPropagation();
 
-                        const token = this.getAttribute(`data-${filterNameStr}-token`);
+                        const token = this.getAttribute(`data-token`);
                         const isAny = token === 'any';
                         const wasSelected = elHasClass(this, 'selected');
 

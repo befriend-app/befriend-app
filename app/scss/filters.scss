@@ -188,6 +188,91 @@
             }
         }
 
+        .items-container {
+            .item {
+                position: relative;
+
+                &.active, &.selected {
+                    .importance {
+                        opacity: 1;
+                    }
+                }
+
+                .importance {
+                    $dim_w: 40px;
+                    $dim_h: 20px;
+                    position: absolute;
+                    top: calc($dim_h / -2 - 2px);
+                    left: calc($dim_w / -2 );
+                    width: $dim_w;
+                    height: $dim_h;
+                    border-radius: 16px;
+                    background-color: white;
+                    border: 1px solid $brand_color_a;
+                    cursor: pointer;
+                    transition: all 200ms;
+                    z-index: 3;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                    opacity: 0;
+                    @include flex-center-col;
+
+                    .indicator {
+                        width: 70%;
+                        height: 2px;
+                        background: darken($brand_color_b, 20%);
+                        position: relative;
+                        border-radius: 1px;
+
+                        &::after {
+                            content: '';
+                            position: absolute;
+                            width: 10px;
+                            height: 10px;
+                            background: #2563eb;
+                            border: 0px solid white;
+                            border-radius: 50%;
+                            top: 50%;
+                            transform: translate(-50%, -50%);
+                            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                            transition: top 200ms ease;
+                        }
+                    }
+
+                    &:hover .indicator::after {
+                        //transform: translate(-50%, -50%) scale(1.1);
+                    }
+
+                    .container {
+                        display: flex;
+                        flex-direction: column;
+                        position: relative;
+                    }
+
+                    .icon {
+                        border-radius: 50%;
+                        width: 22px;
+                        height: 22px;
+                        @include flex-center-col;
+                        border: 1px solid lighten(black, 50%);
+                        position: absolute;
+                        top: -20px;
+                        left: -25px;
+                        background-color: white;
+                    }
+
+                    svg {
+                        height: 16px;
+                        @include flex-center-col;
+
+                    }
+
+                    .importance-name {
+                        font-size: 12px;
+                    }
+                }
+            }
+        }
+
         &.availability {
             $time_slots_p_tb: 16px;
 
@@ -1469,86 +1554,6 @@
                         transition: all 200ms;
                         background: lighten(black, 97%);
                         font-size: 15px;
-
-                        &.active {
-                            .importance {
-                                opacity: 1;
-                            }
-                        }
-
-                        .importance {
-                            $dim_w: 40px;
-                            $dim_h: 24px;
-                            //position: absolute;
-                            position: absolute;
-                            top: calc($dim_h / -2);
-                            left: calc($dim_w / -2);
-                            width: $dim_w;
-                            height: $dim_h;
-                            border-radius: 16px;
-                            background-color: white;
-                            border: 1px solid $brand_color_a;
-                            cursor: pointer;
-                            transition: all 200ms;
-                            z-index: 3;
-                            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                            opacity: 0;
-                            @include flex-center-col;
-
-                            .indicator {
-                                width: 70%;
-                                height: 2px;
-                                background: darken($brand_color_b, 20%);
-                                position: relative;
-                                border-radius: 1px;
-
-                                &::after {
-                                    content: '';
-                                    position: absolute;
-                                    width: 10px;
-                                    height: 10px;
-                                    background: #2563eb;
-                                    border: 0px solid white;
-                                    border-radius: 50%;
-                                    top: 50%;
-                                    transform: translate(-50%, -50%);
-                                    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-                                    transition: top 200ms ease;
-                                }
-                            }
-
-                            &:hover .indicator::after {
-                                //transform: translate(-50%, -50%) scale(1.1);
-                            }
-
-                            .container {
-                                display: flex;
-                                flex-direction: column;
-                                position: relative;
-                            }
-
-                            .icon {
-                                border-radius: 50%;
-                                width: 22px;
-                                height: 22px;
-                                @include flex-center-col;
-                                border: 1px solid lighten(black, 50%);
-                                position: absolute;
-                                top: -20px;
-                                left: -25px;
-                                background-color: white;
-                            }
-
-                            svg {
-                                height: 16px;
-                                @include flex-center-col;
-
-                            }
-
-                            .importance-name {
-                                font-size: 12px;
-                            }
-                        }
 
                         &.any {
                             padding: 8px 0;
