@@ -1648,6 +1648,12 @@
                 overflow-y: scroll;
                 transition: padding 200ms;
 
+                &.is-scrollable {
+                    .items {
+                        padding-bottom: 15px;
+                    }
+                }
+
                 .items {
                     display: flex;
                     flex-wrap: wrap;

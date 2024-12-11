@@ -5871,7 +5871,10 @@ befriend.filters = {
 
         for (let section of sections) {
             const container = section.querySelector('.section-container');
+            let itemsContainerEl = section.querySelector('.items-container');
             const is_collapsed = elHasClass(section, 'collapsed');
+
+            removeClassEl('is-scrollable', itemsContainerEl);
 
             if (without_transition) {
                 container.style.transition = 'none';
@@ -5896,10 +5899,10 @@ befriend.filters = {
             const secondaryOptions = containerClone.querySelectorAll('.secondary .options');
 
             // Temporarily set their height to 0 to exclude from measurement
-            secondaryOptions.forEach(options => {
-                options.style.height = '0';
-                options.style.position = 'absolute'; // Ensure they don't affect layout
-            });
+            for(let option of secondaryOptions) {
+                option.style.height = '0';
+                option.style.position = 'absolute'; // Ensure they don't affect layout
+            }
 
             // Get the height excluding expanded dropdowns
             const baseHeight = containerClone.offsetHeight;
@@ -5908,15 +5911,30 @@ befriend.filters = {
             const currentSelectedEls = containerClone.querySelectorAll('.current-selected');
             let maxCurrentSelectedHeight = 0;
 
-            currentSelectedEls.forEach(el => {
+            for(let el of currentSelectedEls) {
                 const height = el.offsetHeight;
                 maxCurrentSelectedHeight = Math.max(maxCurrentSelectedHeight, height);
-            });
+            }
+
+            //set height on container
+            container.style.height = `${baseHeight}px`;
+
+            //see if items container is scrollable
+            if(itemsContainerEl) {
+                let clonedItemsContainer = containerClone.querySelector('.items-container');
+
+                removeClassEl('is-scrollable', clonedItemsContainer);
+
+                const scrollHeight = clonedItemsContainer.scrollHeight;
+                const clientHeight = clonedItemsContainer.clientHeight;
+
+                if(scrollHeight > clientHeight) {
+                    addClassEl('is-scrollable', itemsContainerEl);
+                }
+            }
 
             // Remove the clone
             section.removeChild(containerClone);
-
-            container.style.height = `${baseHeight}px`;
         }
     },
     getSectionKey: function (section_el) {
