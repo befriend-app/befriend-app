@@ -1470,6 +1470,12 @@
                         background: lighten(black, 97%);
                         font-size: 15px;
 
+                        &.active {
+                            .importance {
+                                opacity: 1;
+                            }
+                        }
+
                         .importance {
                             $dim_w: 40px;
                             $dim_h: 24px;
@@ -1486,8 +1492,8 @@
                             transition: all 200ms;
                             z-index: 3;
                             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                            opacity: 0;
                             @include flex-center-col;
-
 
                             .indicator {
                                 width: 70%;
