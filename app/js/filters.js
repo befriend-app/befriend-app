@@ -8,6 +8,17 @@ befriend.filters = {
         activeEl: null,
     },
     sections: {
+        sports: {
+            is_interest: true,
+            token: 'sports',
+            name: 'Sports',
+            endpoint: `/filters/sports`,
+            icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 480"><path d="M240,0C107.4531,0,0,107.4531,0,240s107.4531,240,240,240,240-107.4531,240-240C479.8516,107.5156,372.4844.1484,240,0ZM425.8633,115.1211l-16.6328,70.7031-87.6289,29.207-73.6016-58.8711v-86.7461l84-33.5977c38.0312,17.2305,70.5234,44.6836,93.8633,79.3047ZM427.1992,362.7617l-79.3359,12.5273-43.1992-57.0664,22.0078-88,86.6562-28.8789,49.6406,59.5664c-3.3828,36.3711-15.668,71.3516-35.7695,101.8516ZM132.4883,375.3438l-79.6875-12.582c-20.1016-30.5078-32.3828-65.4961-35.7617-101.875l49.6016-59.5664,86.6562,28.8789,22.0078,88.0469-42.8164,57.0977ZM16.0703,237.0156c.4258-35.6875,9.4297-70.7539,26.25-102.2305l12.9766,55.1992-39.2266,47.0312ZM190.2461,312l-21.2227-84.9766,70.9766-56.7773,70.9922,56.8008-21.2383,84.9531h-99.5078ZM424.7031,189.9531l12.9766-55.1992c16.8203,31.4766,25.8242,66.5391,26.25,102.2305l-39.2266-47.0312ZM310.1836,27.3203l-70.1836,28.0703-70.5586-27.9414c45.6719-15.2227,95.043-15.2656,140.7422-.1289ZM147.6172,36l84.3828,33.4414v86.7188l-73.6016,58.8711-87.6289-29.207-16.6328-70.7031c23.2617-34.4961,55.6133-61.8789,93.4805-79.1211ZM66.168,381.0703l65.0312,10.2734,39.3281,61.6016c-40.9609-13.4531-77.1875-38.4023-104.3594-71.875ZM193.4648,459.1055l-47.7383-74.7383,42.2734-56.3672h104l42.8789,56.6406-41.5977,72.9023c-32.7227,8.0586-66.8438,8.6055-99.8086,1.6016l-.0078-.0391ZM315.5039,450.8711l34.0977-59.6719,64.2617-10.1367c-25.8164,31.793-59.8281,55.9297-98.3594,69.8086Z"/></svg>`,
+            importance: {
+                active: true,
+                default: 7
+            }
+        },
         music: {
             is_interest: true,
             token: 'music',
@@ -200,6 +211,7 @@ befriend.filters = {
                 befriend.filters.drinking.init();
                 befriend.filters.smoking.init();
 
+                befriend.filters.sports.init();
                 befriend.filters.music.init();
                 befriend.filters.work.init();
                 befriend.filters.instruments.init();
@@ -4437,6 +4449,885 @@ befriend.filters = {
         },
         events: {
             key: 'music',
+            init: function () {
+                this.search();
+                this.categories();
+                this.items();
+                this.remove();
+            },
+            tabs: function () {
+                let section_key = this.key;
+                let section = befriend.filters.sections[section_key];
+                const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+
+                let tabs_els = section_el.querySelector('.tabs-container').getElementsByClassName('tab');
+
+                for(let tab of tabs_els) {
+                    if(tab._listener) {
+                        continue;
+                    }
+
+                    tab._listener = true;
+
+                    tab.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        if(elHasClass(tab, 'active')) {
+                            return;
+                        }
+
+                        let key = tab.getAttribute('data-key');
+
+                        befriend.filters[section_key].data.tableKey = key;
+
+                        removeElsClass(tabs_els, 'active');
+
+                        addClassEl('active', tab);
+
+                        befriend.filters[section_key].renderItems(section_el, befriend.filters[section_key].getStoredItems(), true);
+
+                        requestAnimationFrame(function () {
+                            befriend.filters.updateSectionHeights();
+                        })
+                    });
+                }
+            },
+            search: function () {
+                let section_key = this.key;
+                let section = befriend.filters.sections[section_key];
+                const sectionData = befriend.filters.data.options?.[section_key];
+                const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+
+                const search_input = section_el.querySelector('.search-input');
+                const input_container = section_el.querySelector('.input-container');
+                const autocomplete_list = section_el.querySelector('.autocomplete-list');
+
+                let debounceTimer;
+
+                if (search_input) {
+                    if(search_input._listener) {
+                        return;
+                    }
+
+                    search_input._listener = true;
+
+                    search_input.addEventListener('input', () => {
+                        clearTimeout(debounceTimer);
+
+                        let timeout = this.value ? 200 : 0;
+
+                        debounceTimer = setTimeout(async () => {
+                            const value = search_input.value.trim();
+                            if (value.length < sectionData.autoComplete.minChars) {
+                                befriend.filters[section_key].toggleAutocomplete(false);
+                                return;
+                            }
+
+                            let name = befriend.filters[section_key].getActiveCategory()?.getAttribute('data-category');
+
+                            let category = befriend.filters[section_key].getCategoryByName(name);
+
+                            console.log(category)
+
+                            try {
+                                const response = await befriend.auth.get(sectionData.autoComplete.endpoint, {
+                                    search: value,
+                                    category: category
+                                });
+
+                                if (response.data.items?.length) {
+                                    //merge results with options
+                                    for(let item of response.data.items) {
+                                        let existing_option = sectionData?.options.find(existing => existing.token === item.token);
+
+                                        if(!existing_option) {
+                                            item._is_internal = true;
+                                            sectionData.options.push(item);
+                                        }
+                                    }
+
+                                    // Filter out items that already exist in filters data
+                                    const existingTokens = new Set();
+
+                                    const storedFilters = befriend.filters[section_key].getStoredFilter();
+
+                                    if (storedFilters?.items) {
+                                        for (let k in storedFilters.items) {
+                                            const item = storedFilters.items[k];
+                                            if (!item.deleted) {
+                                                let option = sectionData?.options.find(opt => opt.token === item.token);
+
+                                                if (option) {
+                                                    existingTokens.add(option.token);
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    const filteredItems = response.data.items.filter(item => !existingTokens.has(item.token));
+
+                                    if (filteredItems.length) {
+                                        const items_html = filteredItems.map(item => `
+                                        <div class="item" data-id="${item.id}" data-token="${item.token}">
+                                            <div class="name-meta">
+                                                <div class="name">${item.name}</div>
+                                            </div>
+                                        </div>
+                                        `).join('');
+
+                                        autocomplete_list.innerHTML = items_html;
+                                        befriend.filters[section_key].toggleAutocomplete(true);
+                                    } else {
+                                        autocomplete_list.innerHTML = '<div class="no-results">No results found</div>';
+                                        befriend.filters[section_key].toggleAutocomplete(true);
+                                    }
+                                } else {
+                                    autocomplete_list.innerHTML = '<div class="no-results">No results found</div>';
+                                    befriend.filters[section_key].toggleAutocomplete(true);
+                                }
+                            } catch (e) {
+                                console.error(`Error searching ${section_key}:`, e);
+                            }
+                        }, timeout);
+                    });
+
+                    autocomplete_list.addEventListener('click', async (e) => {
+                        const item = e.target.closest('.item');
+                        if (!item) return;
+
+                        const id = item.getAttribute('data-id');
+                        const token = item.getAttribute('data-token');
+
+                        if (await befriend.filters[section_key].addItem({
+                            id,
+                            token,
+                        }, section_el)) {
+                            // Close autocomplete and clear input
+                            befriend.filters[section_key].toggleAutocomplete(false);
+                            search_input.value = '';
+                        }
+                    });
+
+                    // Focus/blur handling
+                    search_input.addEventListener('focus', () => {
+                        addClassEl('input-focus', input_container);
+
+                        const value = search_input.value.trim();
+                        if (value.length >= sectionData.autoComplete.minChars) {
+                            befriend.filters[section_key].toggleAutocomplete(true);
+                        }
+                    });
+
+                    search_input.addEventListener('blur', () => {
+                        removeClassEl('input-focus', input_container);
+
+                        setTimeout(function () {
+                            befriend.filters[section_key].toggleAutocomplete(false);
+                        }, 100);
+                    });
+                }
+            },
+            categories: function () {
+                let section_key = this.key;
+                let section = befriend.filters.sections[section_key];
+                const sectionData = befriend.filters.data.options?.[section_key];
+                const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+
+                const category_btns = section_el.querySelectorAll('.category-btn');
+
+                for (let btn of category_btns) {
+                    if(btn._listener) {
+                        continue;
+                    }
+
+                    btn._listener = true;
+
+                    btn.addEventListener('click', async () => {
+                        removeElsClass(category_btns, 'active');
+                        addClassEl('active', btn);
+
+                        let category = btn.getAttribute('data-category')?.toLowerCase().trim();
+                        let category_token = btn.getAttribute('data-category-token')?.trim();
+
+                        try {
+                            let added_item_tokens = new Set();
+
+                            const storedFilters = befriend.filters[section_key].getStoredFilter();
+
+                            if(storedFilters?.items) {
+                                for(let k in storedFilters.items) {
+                                    let item = storedFilters.items[k];
+
+                                    if(!item.deleted) {
+                                        added_item_tokens.add(item.token);
+                                    }
+                                }
+                            }
+
+                            let items;
+
+                            let categoryTableKey = null;
+
+                            if (category === 'mine') {
+                                let table_key = befriend.filters[section_key].getTableKey();
+
+                                items = Object.values(storedFilters?.items || {})
+                                    .filter(item => item.table_key === table_key)
+                                    .filter(item => !item.deleted)
+                                    .filter(Boolean);
+                            } else {
+                                categoryTableKey = btn.getAttribute('data-table-key');
+
+                                // 1. find in category cache
+                                items = befriend.filters[section_key]?.data?.categories[category_token];
+
+                                //2. (or) find in section data
+                                if(!items?.length) {
+                                    items = sectionData?.options
+                                        .filter(
+                                            item => category_token ? item.category_token === category_token : item.category?.toLowerCase() === category
+                                        )
+                                        .filter(item => !added_item_tokens.has(item.token))
+                                        .filter(item => !item._is_internal);
+                                }
+
+                                //3. (or) dynamic endpoint data
+                                if(!items?.length) {
+                                    befriend.toggleSpinner(true);
+
+                                    let data = await befriend.me.getCategoryOptions(
+                                        sectionData.categories.endpoint,
+                                        category_token,
+                                    );
+
+                                    items = data.items;
+
+                                    //add items to options for lookup
+                                    for(let item of data.items) {
+                                        let existing_option = sectionData?.options.find(existing => existing.token === item.token);
+
+                                        if(!existing_option) {
+                                            sectionData.options.push(item);
+                                        }
+                                    }
+
+                                    befriend.toggleSpinner(false);
+
+                                    befriend.filters[section_key].data.categories[category_token] = items;
+                                }
+                            }
+
+                            befriend.filters[section_key].renderItems(section_el, items || [], category === 'mine', categoryTableKey);
+
+                            requestAnimationFrame(() => {
+                                befriend.filters.updateSectionHeights();
+                            });
+                        } catch (e) {
+                            console.error(`Error loading ${section_key}:`, e);
+                        }
+                    });
+                }
+            },
+            items: function () {
+                let section_key = this.key;
+                let section = befriend.filters.sections[section_key];
+                const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+
+                let items_els = section_el.getElementsByClassName('item');
+
+                for(let item of items_els) {
+                    if(item._listener) {
+                        continue;
+                    }
+
+                    item._listener = true;
+
+                    item.addEventListener('click', async (e) => {
+                        if(e.target.closest('.secondary-container')) {
+                            return false;
+                        }
+
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        let token = item.getAttribute('data-token');
+                        let tableKey = item.getAttribute('data-table-key');
+
+                        let wasSelected = elHasClass(item, 'active');
+
+                        //any selection
+                        if (elHasClass(item, 'any')) {
+                            if(wasSelected) {
+                                return;
+                            }
+
+                            try {
+                                befriend.toggleSpinner(true);
+
+                                if(!tableKey) {
+                                    tableKey = befriend.filters[section_key].getTableKey();
+                                }
+
+                                await befriend.auth.put(section.endpoint, {
+                                    table_key: tableKey,
+                                    token: 'any',
+                                    active: true
+                                });
+
+                                const anyButton = item;
+                                const otherItems = section_el.querySelectorAll('.item:not(.any)');
+
+                                addClassEl('active', anyButton);
+
+                                for(let otherItem of otherItems) {
+                                    const storedItem = Object.values(befriend.filters.data.filters?.[section_key]?.items || {})
+                                        .find(item => item.id === parseInt(otherItem.getAttribute('data-id')));
+
+                                    if (storedItem && storedItem.table_key === tableKey) {
+                                        removeClassEl('active', otherItem);
+                                    }
+                                }
+
+                                //update state data
+                                if(befriend.filters.data.filters?.[section_key]?.items) {
+                                    for(let k in befriend.filters.data.filters[section_key].items) {
+                                        let item = befriend.filters.data.filters[section_key].items[k];
+                                        if(item.table_key === tableKey) {
+                                            item.is_active = false;
+                                        }
+                                    }
+                                }
+                            } catch (e) {
+                                console.error('Error setting any instrument:', e);
+                            }
+
+                            befriend.toggleSpinner(false);
+
+                            befriend.filters[section_key].updateTabCount(section_el);
+
+                            return;
+                        } //end any
+
+                        //my filter item selection
+                        if (elHasClass(item, 'mine')) {
+                            toggleElClass(item, 'active');
+
+                            try {
+                                befriend.toggleSpinner(true);
+
+                                console.log(tableKey);
+
+                                if(!tableKey) {
+                                    tableKey = befriend.filters[section_key].getTableKey(token);
+                                }
+
+                                await befriend.auth.put(section.endpoint, {
+                                    table_key: tableKey,
+                                    token,
+                                    active: !wasSelected,
+                                });
+
+                                const activeItems = Array.from(section_el.querySelectorAll('.item.mine.active'))
+                                    .filter(item => {
+                                        const storedItem = Object.values(befriend.filters.data.filters?.[section_key]?.items || {})
+                                            .find(stored => stored.id === parseInt(item.getAttribute('data-id')));
+                                        return storedItem && storedItem.table_key === tableKey;
+                                    });
+
+                                const anyButton = section_el.querySelector('.item.any');
+
+                                if(anyButton) {
+                                    if (activeItems.length === 0) {
+                                        addClassEl('active', anyButton);
+                                    } else {
+                                        removeClassEl('active', anyButton);
+                                    }
+                                }
+
+                                //update state data
+                                if(befriend.filters.data.filters?.[section_key].items) {
+                                    for(let k in befriend.filters.data.filters[section_key].items) {
+                                        if(befriend.filters.data.filters[section_key].items[k].token === token) {
+                                            befriend.filters.data.filters[section_key].items[k].is_active = !wasSelected;
+                                        }
+                                    }
+                                }
+                            } catch (e) {
+                                console.error('Error removing instrument:', e);
+                            }
+
+                            befriend.toggleSpinner(false);
+
+                            befriend.filters[section_key].updateTabCount(section_el);
+
+                            return;
+                        }
+
+                        //select category item option
+                        try {
+                            // Remove item from current view
+                            item.remove();
+
+                            //add item to server/my filters
+                            await befriend.filters[section_key].addItem({ token, tableKey }, section_el);
+                        } catch (e) {
+                            console.error('Error adding instrument:', e);
+                        }
+                    });
+                }
+            },
+            remove: function () {
+                let section_key = this.key;
+                let section = befriend.filters.sections[section_key];
+                const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+
+                let remove_els = section_el.querySelectorAll('.item .remove');
+
+                for(let remove_el of remove_els) {
+                    if(remove_el._listener) {
+                        continue;
+                    }
+
+                    remove_el._listener = true;
+
+                    remove_el.addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        befriend.filters.hideActiveSecondaryIf();
+
+                        let item = remove_el.closest('.item');
+
+                        let token = item.getAttribute('data-token');
+
+                        try {
+                            befriend.toggleSpinner(true);
+
+                            let tableKey = item.getAttribute('data-table-key');
+
+                            if(!tableKey || true) {
+                                tableKey = befriend.filters[section_key].getTableKey(token);
+                            }
+
+                            await befriend.auth.put(section.endpoint, {
+                                table_key: tableKey,
+                                token,
+                                is_delete: true
+                            });
+
+                            // Remove item and update Any button if needed
+                            item.remove();
+
+                            const activeItems = section_el.querySelectorAll('.item.mine.active');
+
+                            if (activeItems.length === 0) {
+                                const anyButton = section_el.querySelector('.item.any');
+                                if (anyButton) addClassEl('active', anyButton);
+                            }
+
+                            //update state data
+                            if(befriend.filters.data.filters?.[section_key]?.items) {
+                                for(let k in befriend.filters.data.filters[section_key].items) {
+                                    if(befriend.filters.data.filters[section_key].items[k].token === token) {
+                                        befriend.filters.data.filters[section_key].items[k].deleted = true;
+                                    }
+                                }
+                            }
+                        } catch (e) {
+                            console.error('Error removing instrument:', e);
+                        }
+
+                        befriend.toggleSpinner(false);
+
+                        befriend.filters[section_key].updateTabCount(section_el);
+
+                        requestAnimationFrame(function () {
+                            befriend.filters.updateSectionHeights();
+                        });
+                    });
+                }
+            },
+        }
+    },
+    sports: {
+        key: 'sports',
+        data: {
+            tableKey: null,
+            tabs: [
+                { key: 'teams', col: 'sport_team_id', name: 'Teams', singular: 'Team' },
+                { key: 'leagues', col: 'sport_league_id', name: 'Leagues', singular: 'League' },
+                { key: 'play', col: 'sport_play_id', name: 'Play', singular: 'Sport' },
+            ],
+            categories: {}
+        },
+        init: function () {
+            if(this?.data.tabs?.length) {
+                if(!this.data.tableKey) {
+                    this.data.tableKey = this.data.tabs[0].key;
+                }
+            }
+
+            let section = befriend.filters.sections[this.key];
+
+            const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+            const filter_options = section_el.querySelector('.filter-options');
+            const sectionData = befriend.filters.data.options?.[this.key];
+
+            let categories_html = '';
+            if (sectionData?.options.length > 0) {
+                categories_html = `
+                    <div class="category-btn mine active" data-category="mine">
+                        My Filters
+                    </div>`;
+
+                for (let category of sectionData.categories.options) {
+                    let heading_html = '';
+
+                    if(category.heading) {
+                        heading_html = `<div class="heading">${category.heading}</div>`;
+                    }
+
+                    categories_html += `
+                        <div class="category-btn ${heading_html ? 'w-heading' : ''}" 
+                             ${category.table_key ? `data-table-key="${category.table_key}"` : ''} 
+                             data-category="${category.name?.toLowerCase()}"
+                             ${category.token ? `data-category-token="${category.token}"` : ''}>
+                            <div class="heading-name">
+                                ${heading_html}
+                                <div class="name">${category.name}</div>
+                            </div>
+                        </div>`;
+                }
+            }
+
+            const html = `
+                <div class="filter-options-container">
+                    <div class="filter-option" data-filter-token="${section.token}">
+                        <div class="search-container">
+                            <div class="autocomplete-container">
+                                <div class="input-container">
+                                    <input type="text" class="search-input" 
+                                           placeholder="${sectionData?.autoComplete?.placeholders?.main || 'Search sports'}">
+                                    <div class="search-icon-container">
+                                        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 611.9975 612.0095">
+                                            <path d="M606.203,578.714l-158.011-155.486c41.378-44.956,66.802-104.411,66.802-169.835-.02-139.954-115.296-253.393-257.507-253.393S0,113.439,0,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0,7.747-7.613,7.747-19.971.018-27.585ZM257.487,467.8c-120.326,0-217.869-95.993-217.869-214.407S137.161,38.986,257.487,38.986s217.869,95.993,217.869,214.407-97.542,214.407-217.869,214.407Z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="autocomplete-list"></div>
+                            </div>
+                        </div>
+            
+                        ${categories_html ? `
+                            <div class="categories-container">
+                                <div class="category-filters">${categories_html}</div>
+                            </div>
+                        ` : ''}
+            
+                        <div class="items-container">
+                            <div class="items cols-2"></div>
+                        </div>
+                        
+                        <div class="secondary-container"></div>
+                    </div>
+                </div>
+            `;
+
+            section_el.querySelector('.section-container')
+                .insertAdjacentHTML(
+                    'afterbegin',
+                    befriend.filters.sendReceiveHtml(true, true, true)
+                );
+
+            filter_options.innerHTML = html;
+
+            let items = this.getStoredItems();
+
+            this.addTabs();
+
+            requestAnimationFrame(() => {
+                befriend.filters[this.key].renderItems(section_el, items, true);
+                befriend.filters.updateSectionHeights();
+            });
+        },
+        addTabs: function () {
+            if(!this.data?.tabs?.length) {
+                return;
+            }
+
+            let section = befriend.filters.sections[this.key];
+            const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+
+            let html = ``;
+
+            for(let i = 0; i < this.data.tabs.length; i++) {
+                let tab = this.data.tabs[i];
+
+                html += `<div class="tab ${i === 0 ? 'active' : ''}" data-key="${tab.key}">
+                            <div class="name-count">
+                                <div class="name">${tab.name}</div>
+                            </div>
+                        </div>`
+            }
+
+            let tabs_html = `<div class="tabs-container">${html}</div>`;
+
+            let categories_container = section_el.querySelector('.categories-container');
+
+            categories_container.insertAdjacentHTML('afterend', tabs_html);
+
+            this.events.tabs();
+        },
+        getStoredFilter: function () {
+            return befriend.filters.data.filters?.[this.key];
+        },
+        getStoredItems: function () {
+            let items = [];
+
+            const storedFilters = this.getStoredFilter();
+
+            if (storedFilters?.items) {
+                items = Object.values(storedFilters.items)
+                    .filter(item => item.table_key === this.data.tableKey)
+                    .filter(item => !item.deleted)
+                    .filter(Boolean);
+            }
+
+            return items;
+        },
+        getKeyCol: function (key) {
+            return befriend.filters[this.key].data?.tabs?.[key]?.col;
+        },
+        renderItems: function(section_el, items, is_mine, tableKey) {
+            if(!tableKey) {
+                tableKey = this.getTableKey();
+            }
+
+            let tab = this.data.tabs.find(tab => tab.key === tableKey);
+
+            const storedFilters = this.getStoredFilter();
+
+            const sectionData = befriend.filters.data.options?.[this.key];
+            const items_container = section_el.querySelector('.items');
+
+            let items_html = '';
+
+            if (is_mine) {
+                const hasActiveNonDeletedItems = storedFilters?.items &&
+                    Object.values(storedFilters.items)
+                        .filter(item => item.table_key === tableKey)
+                        .some(item => !item.deleted && item.is_active);
+
+                items_html = `
+            <div class="item any ${!hasActiveNonDeletedItems ? 'active' : ''}" data-token="any">
+                <div class="name">Any ${tab.singular}</div>
+            </div>`;
+            }
+
+            let added_item_tokens = {};
+
+            let tableCol = this.getKeyCol(this.data.tableKey);
+
+            if (storedFilters?.items) {
+                for(let k in storedFilters.items) {
+                    let item = storedFilters.items[k];
+
+                    if(!item.deleted && item.is_active) {
+                        let option = sectionData?.options.find(opt => opt.id === item[tableCol]);
+
+                        if(option) {
+                            added_item_tokens[option.token] = item;
+                        }
+                    }
+                }
+            }
+
+            if (items?.length) {
+                items_html += items.map(item => {
+                    if (is_mine) {
+                        const storedItem = Object.values(storedFilters?.items || {})
+                            .find(stored => stored.token === item.token);
+                        const isActive = storedItem && !storedItem.deleted && storedItem.is_active;
+
+                        return `
+                    <div class="item mine ${isActive ? 'active': ''}" data-id="${storedItem?.id}" data-token="${item.token}" data-table-key="${tableKey}">
+                        <div class="content">
+                            <div class="name">${item.name}</div>
+                            
+                            <div class="remove">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56">
+                                    <path d="M28,0C12.5605,0,0,12.5605,0,28s12.5605,28,28,28,28-12.5605,28-28S43.4395,0,28,0ZM28,53c-13.7852,0-25-11.2148-25-25S14.2148,3,28,3s25,11.2148,25,25-11.2148,25-25,25ZM39.2627,16.7373c-.5859-.5859-1.5352-.5859-2.1211,0l-9.1416,9.1416-9.1416-9.1416c-.5859-.5859-1.5352-.5859-2.1211,0-.5859.5854-.5859,1.5356,0,2.1211l9.1416,9.1416-9.1416,9.1416c-.5859.5854-.5859,1.5356,0,2.1211.293.293.6768.4395,1.0605.4395s.7676-.1465,1.0605-.4395l9.1417-9.1416,9.1416,9.1416c.293.293.6768.4395,1.0605.4395s.7676-.1465,1.0605-.4395c.5859-.5854.5859-1.5356,0-2.1211l-9.1415-9.1416,9.1416-9.1416c.5859-.5855.5859-1.5356,0-2.1211Z"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>`;
+                    }
+
+                    if(item.token in added_item_tokens) {
+                        return;
+                    }
+
+                    return `
+                <div class="item" data-token="${item.token}" data-table-key="${tableKey}">
+                    <div class="name">${item.name}</div>
+                </div>`;
+                }).join('');
+            }
+
+            items_container.innerHTML = items_html;
+
+            if(is_mine) {
+                addClassEl('show-tabs', section_el);
+                this.updateTabCount(section_el);
+            } else {
+                removeClassEl('show-tabs', section_el);
+            }
+
+            this.events.init();
+
+            befriend.filters.importance.set();
+        },
+        updateTabCount: function(section_el) {
+            const storedFilters = this.getStoredFilter();
+            const tabs = section_el.querySelectorAll('.tab');
+
+            for(let tab of tabs) {
+                const key = tab.getAttribute('data-key');
+
+                const count = Object.values(storedFilters?.items || {})
+                    .filter(item => item.table_key === key && !item.deleted && item.is_active)
+                    .length;
+
+                const countEl = tab.querySelector('.count');
+
+                if (count > 0) {
+                    if (countEl) {
+                        countEl.textContent = count;
+                    } else {
+                        const countHtml = `<div class="count">${count}</div>`;
+                        tab.insertAdjacentHTML('beforeend', countHtml);
+                    }
+                } else if (countEl) {
+                    countEl.remove();
+                }
+            }
+        },
+        addItem: async function(itemData = {}, section_el) {
+            try {
+                let {token, tableKey} = itemData;
+                befriend.toggleSpinner(true);
+
+                const section = befriend.filters.sections[this.key];
+                const sectionData = befriend.filters.data.options?.[this.key];
+                const category_mine = section_el.querySelector(`.category-btn.mine`);
+
+                if(!tableKey) {
+                    tableKey = this.getTableKey(token);
+                }
+
+                this.data.tableKey = tableKey;
+
+                let response = await befriend.auth.put(section.endpoint, {
+                    table_key: tableKey,
+                    token,
+                    active: true
+                });
+
+                let id = response?.data?.id;
+
+                // Get current mine items
+                const storedFilters = this.getStoredFilter();
+
+                if (!storedFilters?.items) {
+                    befriend.filters.data.filters[this.key] = {
+                        items: {}
+                    }
+                }
+
+                let option = sectionData?.options.find(opt => opt.token === token);
+
+                let tableCol = this.getKeyCol(tableKey);
+
+                befriend.filters.data.filters[this.key].items[id] = {
+                    id,
+                    token,
+                    table_key: tableKey,
+                    [tableCol]: option.id,
+                    name: option.name,
+                    is_active: true,
+                }
+
+                // Switch to mine category and show updated items
+                fireClick(category_mine);
+
+                //Select correct tab
+                let tabs_els = section_el.getElementsByClassName('tab');
+
+                for(let tab of tabs_els) {
+                    if(tab.getAttribute('data-key') === tableKey && !elHasClass(tab, 'active')) {
+                        fireClick(tab);
+                    }
+                }
+
+                requestAnimationFrame(() => {
+                    befriend.filters.updateSectionHeights();
+                });
+
+                befriend.toggleSpinner(false);
+                return true;
+            } catch (e) {
+                console.error('Error adding instrument:', e);
+                befriend.toggleSpinner(false);
+                return false;
+            }
+        },
+        toggleAutocomplete: function(show) {
+            let section = befriend.filters.sections[this.key];
+            const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+
+            const autocomplete_container = section_el.querySelector('.autocomplete-container');
+            const autocomplete_list = section_el.querySelector('.autocomplete-list');
+
+            if (!autocomplete_list) return;
+
+            if (show) {
+                addClassEl('autocomplete-shown', autocomplete_container);
+
+                // Reset scroll position
+                autocomplete_list.scrollTop = 0;
+
+                // Ensure input stays focused
+                const search_input = section_el.querySelector('.search-input');
+                if (search_input) search_input.focus();
+            } else {
+                removeClassEl('autocomplete-shown', autocomplete_container);
+            }
+        },
+        getTableKey: function (token) {
+            const sectionData = befriend.filters.data.options?.[this.key];
+            return sectionData?.options.find(item => item.token === token)?.table_key || this.data.tableKey;
+        },
+        getActiveCategory: function () {
+            let section_el = befriend.els.filters.querySelector(`.section.${this.key}`);
+
+            return section_el.querySelector(`.category-btn.active`);
+        },
+        getCategoryByName: function (name) {
+            name = name?.trim().toLowerCase();
+
+            const sectionData = befriend.filters.data.options?.[this.key];
+
+            if(sectionData?.categories?.options) {
+                for(let category of sectionData.categories.options) {
+                    if(category.name.toLowerCase() === name) {
+                        return category;
+                    }
+                }
+            }
+        },
+        events: {
+            key: 'sports',
             init: function () {
                 this.search();
                 this.categories();
