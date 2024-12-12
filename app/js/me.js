@@ -584,6 +584,7 @@ befriend.me = {
             let table_data = section_data.data.tables ? section_data.data.tables[0] : null;
 
             let autocomplete_html = '';
+            let my_items_category = '';
             let categories_html = '';
             let tabs_html = '';
             let items_html = '';
@@ -616,7 +617,7 @@ befriend.me = {
 
                 //categories
                 if (section_data.data?.categories?.options) {
-                    categories_html = `<div class="category-btn mine active" data-category="mine">
+                    my_items_category = `<div class="category-btn mine active" data-category="mine">
                                                 ${section_data.data.myStr}
                                         </div>`;
 
@@ -652,6 +653,7 @@ befriend.me = {
                     }
 
                     categories_html = `<div class="categories-container">
+                                        <div class="category-mine">${my_items_category}</div>
                                         <div class="category-filters">${categories_html}</div>
                                     </div>`;
                 }

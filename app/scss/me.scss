@@ -804,22 +804,36 @@ html.#{$class_confirm_me_action} {
             }
 
             .categories-container {
-                //margin-top: -$padding_tb;
-                padding-top: $padding_tb;
-                max-height: 100px;
+                padding: 0;
+                width: 100%;
                 overflow-x: hidden;
-                overflow-y: scroll;
                 position: relative;
                 border-bottom: 1px solid $color_lightgray;
-                //transition: border-bottom-color 300ms;
+            }
+
+            .category-mine {
+                width: calc(100% - #{$padding_lr_inner * 2});
+                margin-top: $padding_tb;
+                padding-left: 0;
+                padding-right: 0;
+                margin-left: auto;
+                margin-right: auto;
+                font-weight: 500;
+
+                .category-btn {
+                    padding: 6px 0;
+                    font-size: 14px;
+                }
             }
 
             .category-filters {
                 display: flex;
                 gap: 8px;
-                margin-bottom: $padding_tb;
                 flex-wrap: wrap;
-                padding: 0 $padding_lr_inner;
+                padding: $padding_tb $padding_lr_inner;
+                max-height: 80px;
+                overflow-y: scroll;
+                z-index: 2;
             }
 
             .category-btn {

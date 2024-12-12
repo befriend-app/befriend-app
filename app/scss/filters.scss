@@ -1830,7 +1830,7 @@
                                     border-radius: 50%;
                                     background-color: white;
                                     path {
-                                        fill: black;
+                                        fill: lighten(black, 40%);
                                     }
                                 }
                             }
