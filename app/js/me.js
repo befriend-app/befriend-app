@@ -587,6 +587,7 @@ befriend.me = {
             let my_items_category = '';
             let categories_html = '';
             let tabs_html = '';
+            let secondary_container_html = '';
             let items_html = '';
 
             if (section_data.data) {
@@ -669,6 +670,17 @@ befriend.me = {
                     tabs_html = `<div class="tabs">${tabs_html}</div>`;
                 }
 
+                //secondary container
+                if(section_data.data.secondary) {
+                    let secondary_keys = Object.keys(section_data.data.secondary);
+
+                    if(secondary_keys.length) {
+                        if(section_data.data.secondary[secondary_keys[0]].options?.length) {
+                            secondary_container_html = `<div class="secondary-container"></div>`;
+                        }
+                    }
+                }
+
                 //options/items
                 if (['buttons'].includes(section_type)) {
                     if (section_data.data?.options?.length) {
@@ -749,6 +761,7 @@ befriend.me = {
                                     ${autocomplete_html}
                                     ${categories_html}
                                     ${tabs_html}
+                                    ${secondary_container_html}
                                     <div class="items-container">
                                         <div class="items ${row_cols_class}">
                                             ${items_html}
@@ -1185,10 +1198,59 @@ befriend.me = {
             removeClassEl('show-menu', el);
         }
     },
+    generateSecondaryOptionsHtml: function(section_data, table_key, item) {
+        const secondary_options = section_data.data?.secondary?.[table_key]?.options;
+        if (!secondary_options) return '';
+
+        let secondary_options_html = '';
+
+        for (let option of secondary_options) {
+            let selected = item.secondary === option ? 'selected' : '';
+            secondary_options_html += `<div class="option ${selected}" data-option="${option}">
+            ${option}
+        </div>`;
+        }
+
+        return `<div data-token="${item.token}" class="item ${item.token} ${!item.secondary ? 'unselected' : ''}">
+                    <div class="current-selected">
+                            ${item.secondary ? item.secondary : 
+                            section_data.data?.secondary?.[table_key]?.unselectedStr}
+                    </div>
+                    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 82.1 43.2">
+                            <path d="M41.1,43.2L0,2.2,2.1,0l39,39L80,0l2.1,2.2-41,41Z"/>
+                        </svg>
+                    <div class="options" data-item-token="${item.token}">
+                        ${secondary_options_html}
+                    </div>
+                </div>`;
+    },
+    updateSecondaryPosition: function (section_el, options_el) {
+        let secondary_container = section_el.querySelector('.secondary-container');
+        let secondaryContainerBox = secondary_container.getBoundingClientRect();
+        let item_token = options_el.getAttribute('data-item-token');
+        let secondary_item = secondary_container.querySelector(`.item[data-token="${item_token}"]`)
+        let item_el = section_el.querySelector(`.item.mine[data-token="${item_token}"]`);
+
+        let secondary_el = item_el.querySelector('.secondary');
+        let secondaryBox = secondary_el.getBoundingClientRect();
+
+        let offsetTop = secondaryBox.top - secondaryContainerBox.top;
+        let offsetLeft = secondaryBox.left - secondaryContainerBox.left;
+
+        secondary_item.style.width = `${secondary_el.offsetWidth}px`;
+        secondary_item.style.top = `${offsetTop}px`;
+        secondary_item.style.left = `${offsetLeft}px`;
+    },
     transitionSecondary: async function (secondary_el, show, on_internal) {
-        let options_el = secondary_el.querySelector('.options');
         let section_el = secondary_el.closest('.section');
+        let secondary_container = section_el.querySelector('.secondary-container');
         let item_el = secondary_el.closest('.item');
+        let current_selected_el = secondary_el.querySelector('.current-selected');
+        let token = item_el.getAttribute('data-token');
+
+        // Get the options element for the secondary
+        let options_el = secondary_container.querySelector(`.options[data-item-token="${token}"]`);
+        let options_item_el = options_el.closest('.item');
 
         let activeEl = befriend.me.secondaries.activeEl;
 
@@ -1197,51 +1259,62 @@ befriend.me = {
         }
 
         if (show) {
+            // Handle showing the secondary, including positioning
             if (activeEl && activeEl !== secondary_el) {
                 let active_section = activeEl.closest('.section');
-                let active_item = activeEl.closest('.item');
-                let active_options = activeEl.querySelector('.options');
+                if (active_section !== section_el) {
+                    let active_item = activeEl.closest('.item');
+                    let active_options = active_section.querySelector(
+                        `.options[data-item-token="${active_item.getAttribute('data-token')}"]`
+                    );
 
-                removeClassEl('item-secondary-open', active_item);
-                active_options.style.height = '0';
-
-                setTimeout(() => {
-                    if (active_section !== section_el) {
-                        removeClassEl('secondary-open', active_section);
-                        active_options.style.removeProperty('height');
+                    // Hide previous active secondary
+                    removeClassEl('item-secondary-open', active_item);
+                    if (active_options) {
+                        removeClassEl('item-secondary-open', active_options.closest('.item'));
+                        active_options.style.height = '0';
                     }
-                }, 300);
+
+                    setTimeout(() => {
+                        removeClassEl('secondary-open', active_section);
+                        if (active_options) {
+                            active_options.style.removeProperty('height');
+                        }
+                    }, befriend.variables.secondary_transition_ms);
+                }
             }
 
-            addClassEl('secondary-open', section_el);
-            addClassEl('item-secondary-open', item_el);
+            befriend.me.updateSecondaryPosition(section_el, options_el);
 
             requestAnimationFrame(() => {
-                setElHeightDynamic(options_el);
+                addClassEl('secondary-open', section_el);
+                addClassEl('item-secondary-open', item_el);
+                addClassEl('item-secondary-open', options_item_el);
+
+                options_item_el.style.height = `${options_el.scrollHeight + current_selected_el.scrollHeight + 2}px`;
+                options_el.style.height = `${options_el.scrollHeight}px`;
             });
 
             befriend.me.secondaries.activeEl = secondary_el;
         } else {
-            const currentHeight = options_el.scrollHeight;
-            options_el.style.height = `${currentHeight}px`;
+            // Handle hiding the secondary
+            options_el.style.height = `${options_el.scrollHeight}px`;
             void options_el.offsetHeight;
-
-            // Then transition to 0
             options_el.style.height = '0';
 
             removeClassEl('item-secondary-open', item_el);
+            removeClassEl('item-secondary-open', options_item_el);
 
-            secondary_el._transitionTimeout = setTimeout(function () {
-                removeClassEl('secondary-open', section_el);
-
+            secondary_el._transitionTimeout = setTimeout(() => {
+                if (!document.querySelector('.item-secondary-open')) {
+                    removeClassEl('secondary-open', section_el);
+                }
                 options_el.style.removeProperty('height');
 
-                if (!on_internal) {
-                    if (secondary_el === activeEl) {
-                        befriend.me.secondaries.activeEl = null;
-                    }
+                if (!on_internal && secondary_el === activeEl) {
+                    befriend.me.secondaries.activeEl = null;
                 }
-            }, 300);
+            }, befriend.variables.secondary_transition_ms);
         }
     },
     hideActiveSecondaryIf: function (target = null) {
@@ -1451,7 +1524,6 @@ befriend.me = {
 
         let favorite_html = '';
         let secondary_html = '';
-        let secondary_options_html = '';
 
         let secondary_options = section_data.data?.secondary?.[table_key]?.options;
 
@@ -1466,41 +1538,39 @@ befriend.me = {
                             </div>`;
         }
 
-        //secondary
+        // Secondary UI in the item itself
         if (secondary_options) {
-            let unselected = '';
+                let unselected = !item.secondary ? 'unselected' : '';
 
-            if (!item.secondary) {
-                unselected = 'unselected';
-            }
-
-            for (let option of secondary_options) {
-                let selected = item.secondary === option ? 'selected' : '';
-
-                secondary_options_html += `<div class="option ${selected}" data-option="${option}">${option}</div>`;
-            }
-
-            secondary_html = `<div class="secondary ${unselected}" data-value="${item.secondary ? item.secondary : ''}">
-                                                    <div class="current-selected">${item.secondary ? item.secondary : section_data.data?.secondary?.[table_key]?.unselectedStr}</div>
-                                                    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 82.1 43.2"><path d="M41.1,43.2L0,2.2,2.1,0l39,39L80,0l2.1,2.2-41,41Z"/></svg>
-                                                    <div class="options">${secondary_options_html}</div>
-                                                </div>`;
+                secondary_html = `<div class="secondary ${unselected}" 
+                                      data-section="${section_key}"
+                                      data-item-token="${item.token}">
+                                    <div class="current-selected">
+                                        ${item.secondary ? item.secondary : section_data.data?.secondary?.[table_key]?.unselectedStr}
+                                    </div>
+                                    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 82.1 43.2">
+                                        <path d="M41.1,43.2L0,2.2,2.1,0l39,39L80,0l2.1,2.2-41,41Z"/>
+                                    </svg>
+                                </div>`;
         }
 
-        return `<div class="item mine ${isFavorable ? 'favorable' : ''} ${item.is_favorite ? 'is-favorite' : ''}" data-token="${item.token}" data-table-key="${item.table_key ? item.table_key : ''}">
-                                                            <div class="content">
-                                                                    <div class="rank">${isNumeric(item.favorite_position) ? item.favorite_position : ''}</div>
-                                                                    <div class="name-favorite">
-                                                                        ${favorite_html}
-                                                                        <div class="name">${item.name}</div>
-                                                                    </div>
-                                                                
-                                                                    ${secondary_html}
-                                                                    <div class="remove">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 121.805 14.619"><path d="M7.308,14.619h107.188c4.037,0,7.309-3.272,7.309-7.31s-3.271-7.309-7.309-7.309H7.308C3.272.001,0,3.273,0,7.31s3.272,7.309,7.308,7.309Z"/></svg>
-                                                                    </div>
-                                                            </div>
-                                                        </div>`;
+            return `<div class="item mine ${isFavorable ? 'favorable' : ''} ${item.is_favorite ? 'is-favorite' : ''} ${secondary_html ? 'has-secondary' : ''}" 
+                                 data-token="${item.token}" 
+                                 data-table-key="${item.table_key || ''}">
+                        <div class="content">
+                            <div class="rank">${isNumeric(item.favorite_position) ? item.favorite_position : ''}</div>
+                            <div class="name-favorite">
+                                ${favorite_html}
+                                <div class="name">${item.name}</div>
+                            </div>
+                            ${secondary_html}
+                            <div class="remove">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 121.805 14.619">
+                                    <path d="M7.308,14.619h107.188c4.037,0,7.309-3.272,7.309-7.31s-3.271-7.309-7.309-7.309H7.308C3.272.001,0,3.273,0,7.31s3.272,7.309,7.308,7.309Z"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>`;
     },
     sectionItemOptionHtml: function (section_key, table_key, item) {
         if(typeof item.is_visible !== 'undefined' && !item.is_visible) {
@@ -1536,6 +1606,7 @@ befriend.me = {
                 let section_data = befriend.me.getActiveSection(section_key);
                 let table_key = befriend.me.getSectionTableKey(section_key);
                 let items_html = '';
+                let secondaryItems = '';
 
                 // Extract filter parameters
                 const {
@@ -1601,6 +1672,19 @@ befriend.me = {
                         removeClassEl('no-items', section_el);
                     } else {
                         addClassEl('no-items', section_el);
+                    }
+
+                    // Generate secondary items HTML
+                    const secondary_container = section_el.querySelector('.secondary-container');
+                    if (secondary_container && section_data.data?.secondary?.[table_key]?.options) {
+                        for (let token in section_data.items) {
+                            let item = section_data.items[token];
+                            // Filter by tab if needed
+                            if (tab_key && item.table_key && item.table_key !== tab_key) {
+                                continue;
+                            }
+                            secondaryItems += befriend.me.generateSecondaryOptionsHtml(section_data, table_key, item);
+                        }
                     }
                 } else {
                     removeClassEl('my-items', section_el);
@@ -1681,6 +1765,12 @@ befriend.me = {
                 // Update DOM
                 let section_items_el = section_el.querySelector('.items');
                 section_items_el.innerHTML = items_html;
+
+                // Update secondary container
+                const secondary_container = section_el.querySelector('.secondary-container');
+                if (secondary_container) {
+                    secondary_container.innerHTML = secondaryItems;
+                }
 
                 //update row-cols class
                 let rowColCls = befriend.me.getRowColsClass(section_data, category);

@@ -577,6 +577,8 @@ html.#{$class_confirm_me_action} {
         position: relative;
 
         .section {
+            $secondary_br: 12px;
+
             border: 1px solid $color_lightgray;
             padding: 0;
             border-radius: $section_br;
@@ -688,22 +690,25 @@ html.#{$class_confirm_me_action} {
             &.secondary-open {
                 z-index: 3;
 
-                .item-secondary-open {
-                    .secondary {
-                        .current-selected {
-                            border-bottom-left-radius: 0 !important;
-                            border-bottom-right-radius: 0 !important;
-                        }
-                        .options {
-                            border: 1px solid $color_lightgray !important;
-                            border-top-color: transparent !important;
-                            //opacity: 1;
-                        }
-                    }
+                .items-container {
+                    overflow-y: hidden;
                 }
 
-                .items-container {
-                    overflow-y: initial !important;
+                .item-secondary-open {
+                    .current-selected {
+                        border-bottom-left-radius: 0 !important;
+                        border-bottom-right-radius: 0 !important;
+                        border-bottom-color: transparent !important;
+                    }
+
+                    .options {
+                        border: 1px solid $color_lightgray !important;
+                        border-top-color: lighten(black, 50%) !important;
+                    }
+
+                    .arrow {
+                        transform: rotate(180deg);
+                    }
                 }
             }
 
@@ -1357,6 +1362,7 @@ html.#{$class_confirm_me_action} {
 
                     &.favorable {
                         padding: 4px 8px;
+
                         .name-favorite {
                             display: flex;
                             align-items: center;
@@ -1367,8 +1373,8 @@ html.#{$class_confirm_me_action} {
                             padding: 0 !important;
                         }
 
-                        .secondary {
-                            margin-bottom: 5px;
+                        &.has-secondary {
+                            padding-bottom: 9px;
                         }
                     }
 
@@ -1464,9 +1470,6 @@ html.#{$class_confirm_me_action} {
                 }
 
                 .secondary {
-                    $transition_ms: 300ms;
-                    $br: 16px;
-
                     position: relative;
                     width: 100%;
                     cursor: pointer;
@@ -1481,13 +1484,14 @@ html.#{$class_confirm_me_action} {
 
                     // Selected display
                     .current-selected {
-                        padding: 4px 8px;
+                        padding: 6px 16px;
                         border: 1px solid lighten(black, 82%);
-                        border-radius: $br;
+                        border-radius: $secondary_br;
                         background: white;
-                        font-size: 12px;
+                        font-size: 13px;
                         font-weight: 400;
-                        transition: border-radius $transition_ms;
+                        transition: border-radius $secondary_transition_ms;
+                        text-align: center;
                     }
 
                     .arrow {
@@ -1495,48 +1499,99 @@ html.#{$class_confirm_me_action} {
                         height: $h;
                         position: absolute;
                         right: 8px;
-                        top: calc(50% - calc($h / 2));
+                        top: 14px;
+                        transform-origin: center;
+                        transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+                    }
+                }
+            }
+
+            .secondary-container {
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 20;
+
+                &.unselected {
+                    .current-selected {
+                        font-weight: 300;
+                    }
+                }
+
+                .item {
+                    height: 0;
+                    overflow-y: hidden;
+                    position: relative;
+
+                    &.unselected {
+                        .current-selected {
+                            font-weight: 300;
+                        }
                     }
 
-                    // Options container
-                    .options {
-                        height: 0;
-                        position: absolute;
-                        top: 100%;
-                        left: 0;
-                        right: 0;
-                        background: white;
-                        border: 1px transparent;
-                        border-top: none;
-                        border-radius: 0 0 $br $br;
-                        //box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                        z-index: 3;
-                        flex-direction: column;
-                        padding: 0px 0;
-                        gap: 0 0;
-                        transition: all $transition_ms;
-                        overflow-y: hidden;
+                    &:not(.item-secondary-open) {
+                        height: 0 !important;
+                    }
+                }
+
+                // Selected display
+                .current-selected {
+                    padding: 6px 16px;
+                    border: 1px solid lighten(black, 82%);
+                    border-radius: $secondary_br;
+                    background: white;
+                    font-size: 13px;
+                    font-weight: 400;
+                    transition: border-radius $secondary_transition_ms;
+                    text-align: center;
+                }
+
+                .arrow {
+                    $h: 5px;
+                    height: $h;
+                    position: absolute;
+                    right: 8px;
+                    top: 14px;
+                    transform-origin: center;
+                    transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+                }
+
+                .options {
+                    height: 0;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    background: white;
+                    border: 1px transparent;
+                    border-radius: 0 0 $secondary_br $secondary_br;
+                    z-index: 3;
+                    flex-direction: column;
+                    padding: 0px 0;
+                    gap: 0 0;
+                    transition: height $secondary_transition_ms;
+                    overflow-y: hidden;
+                    box-sizing: border-box;
+                    border-top: 1px transparent;
+                    display: flex;
+
+                    //opacity: 0;
+
+                    // Individual option
+                    .option {
+                        padding: 8px 16px;
+                        font-size: 14px;
+                        border-radius: 0 !important;
                         box-sizing: border-box;
-                        border-top: 1px transparent !important;
-                        display: flex;
+                        transition: all $secondary_transition_ms;
 
-                        //opacity: 0;
+                        border-bottom: 1px solid lighten(black, 50%);
 
-                        // Individual option
-                        .option {
-                            padding: 8px 8px;
-                            font-size: 13px;
-                            border-radius: 0 !important;
-                            box-sizing: border-box;
-                            transition: all $transition_ms;
+                        &:hover {
+                            background: #f5f5f5;
+                        }
 
-                            &:hover {
-                                background: #f5f5f5;
-                            }
-
-                            &.selected {
-                                background: darken($brand_color_b, 5%);
-                            }
+                        &.selected {
+                            background: lighten($brand_color_b, 2%);
                         }
                     }
                 }

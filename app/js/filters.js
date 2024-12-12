@@ -3417,10 +3417,10 @@ befriend.filters = {
                             <div class="secondary ${storedItem?.secondary?.length === 0 ? 'unselected' : ''}" 
                                  data-section="${befriend.filters.sections.instruments.token}"
                                  data-item-token="${item.token}">
-                                <div class="current-selected">
+                                <div class="current-selected ${storedItem?.secondary?.length === 0 ? 'unselected' : ''}">
                                     ${storedItem?.secondary?.includes('any') ? 'Any Level' :
-                            storedItem?.secondary?.length ? `${storedItem.secondary.length} Selected` :
-                                sectionData.secondary.instruments.unselectedStr}
+                                        storedItem?.secondary?.length ? `${storedItem.secondary.length} Selected` :
+                                    sectionData.secondary.instruments.unselectedStr}
                                 </div>
                                 <svg class="arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 82.1 43.2">
                                     <path d="M41.1,43.2L0,2.2,2.1,0l39,39L80,0l2.1,2.2-41,41Z"/>
@@ -5153,7 +5153,15 @@ befriend.filters = {
                         }
 
                         secondaryItems += `
-                    <div class="item ${item.token}" data-token="${item.token}">
+                    <div class="item ${item.token} ${!storedItem?.secondary?.length ? 'unselected' : '' }" data-token="${item.token}">
+                        <div class="current-selected">
+                                    ${storedItem?.secondary?.includes('any') ? 'Any Level' :
+                            storedItem?.secondary?.length ? `${storedItem.secondary.length} Selected` :
+                                sectionData.secondary?.[tableKey]?.unselectedStr}
+                        </div>
+                        <svg class="arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 82.1 43.2">
+                            <path d="M41.1,43.2L0,2.2,2.1,0l39,39L80,0l2.1,2.2-41,41Z"/>
+                        </svg>
                         <div class="options" data-item-token="${item.token}">${secondary_options_html}</div>
                     </div>`;
                     }
@@ -5191,7 +5199,7 @@ befriend.filters = {
                             <div class="name">${item.name}</div>
                             
                             ${secondary_options ? `
-                                <div class="secondary ${storedItem?.secondary?.length === 0 ? 'unselected' : ''}" 
+                                <div class="secondary ${!storedItem?.secondary?.length ? 'unselected' : ''}" 
                                      data-section="${befriend.filters.sections[this.key].token}"
                                      data-item-token="${item.token}">
                                     <div class="current-selected">
@@ -5931,28 +5939,21 @@ befriend.filters = {
                 }
             },
             secondary: function() {
-                let sectionKey = this.key;
-                let tableKey = befriend.filters[this.key].getTableKey();
+                const sectionKey = this.key;
                 const sectionData = befriend.filters.data.options?.[sectionKey];
-                const secondary_options = sectionData?.secondary?.[tableKey]?.options;
-
-                let section = befriend.filters.sections[this.key];
+                const section = befriend.filters.sections[sectionKey];
                 const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
-                let secondary_els = section_el.getElementsByClassName('secondary');
 
-                // Handle clicks on secondary elements (opening/closing)
+                // Handle clicks on secondary elements in the items container
+                const secondary_els = section_el.getElementsByClassName('secondary');
                 for(let secondary_el of secondary_els) {
-                    if(secondary_el._listener) continue;
+                    if (secondary_el._listener) continue;
                     secondary_el._listener = true;
 
-                    secondary_el.addEventListener('click', async (e) => {
+                    secondary_el.addEventListener('click', (e) => {
                         e.preventDefault();
                         e.stopPropagation();
 
-                        // Only handle direct clicks on the secondary element
-                        if (e.target.closest('.option')) return;
-
-                        // Toggle the secondary dropdown
                         befriend.filters.transitionSecondary(
                             secondary_el,
                             !befriend.filters.secondaries.activeEl ||
@@ -5963,13 +5964,33 @@ befriend.filters = {
 
                 // Handle clicks in the secondary container
                 const secondary_container = section_el.querySelector('.secondary-container');
-
                 if (!secondary_container._listener) {
                     secondary_container._listener = true;
 
                     secondary_container.addEventListener('click', async (e) => {
                         e.preventDefault();
                         e.stopPropagation();
+
+                        // Handle clicks on current-selected in secondary container
+                        const clicked_current_selected = e.target.closest('.current-selected');
+                        if (clicked_current_selected) {
+                            const secondary_item = clicked_current_selected.closest('.item');
+                            if (!secondary_item) return;
+
+                            const itemToken = secondary_item.getAttribute('data-token');
+                            const original_item = section_el.querySelector(`.item.mine[data-token="${itemToken}"]`);
+                            if (!original_item) return;
+
+                            const secondary_el = original_item.querySelector('.secondary');
+                            if (!secondary_el) return;
+
+                            befriend.filters.transitionSecondary(
+                                secondary_el,
+                                !befriend.filters.secondaries.activeEl ||
+                                befriend.filters.secondaries.activeEl !== secondary_el
+                            );
+                            return;
+                        }
 
                         const secondary_option = e.target.closest('.option');
                         if (!secondary_option) return;
@@ -5984,6 +6005,7 @@ befriend.filters = {
                         const anyOption = options_el.querySelector('.option.any-level');
                         const otherOptions = options_el.querySelectorAll('.option:not(.any-level)');
                         const wasSelected = elHasClass(secondary_option, 'selected');
+                        const tableKey = item_el.getAttribute('data-table-key');
 
                         let itemData;
 
@@ -5992,9 +6014,8 @@ befriend.filters = {
 
                             if(befriend.filters.data.filters?.[sectionKey]?.items) {
                                 for(let k in befriend.filters.data.filters[sectionKey].items) {
-                                    itemData = befriend.filters.data.filters[sectionKey].items[k];
-
-                                    if(itemData.token === itemToken) {
+                                    if(befriend.filters.data.filters[sectionKey].items[k].token === itemToken) {
+                                        itemData = befriend.filters.data.filters[sectionKey].items[k];
 
                                         // Initialize array if needed
                                         if(!itemData.secondary || !Array.isArray(itemData.secondary)) {
@@ -6028,6 +6049,7 @@ befriend.filters = {
                                                 //set any if no options selected
                                                 if(!itemData.secondary.length) {
                                                     itemData.secondary.push('any');
+                                                    addClassEl('selected', anyOption);
                                                 }
                                             }
                                         }
@@ -6037,9 +6059,10 @@ befriend.filters = {
                                 }
                             }
 
-                            itemData.secondary = befriend.filters.sortSecondary(secondary_options, itemData.secondary);
-
-                            let tableKey = item_el.getAttribute('data-table-key');
+                            itemData.secondary = befriend.filters.sortSecondary(
+                                sectionData?.secondary?.[tableKey]?.options,
+                                itemData.secondary
+                            );
 
                             await befriend.auth.put(section.endpoint, {
                                 token: itemToken,
@@ -6047,32 +6070,42 @@ befriend.filters = {
                                 table_key: tableKey
                             });
 
-                            // Find the original secondary element
+                            // Update text content for both current-selected elements
+                            let textContent;
+                            if (itemData.secondary.includes('any')) {
+                                textContent = 'Any Level';
+                            } else if (itemData.secondary.length) {
+                                textContent = `${itemData.secondary.length} Selected`;
+                            } else {
+                                textContent = sectionData.secondary?.[tableKey]?.unselectedStr;
+                            }
+
+                            // Update original item's secondary element
                             const original_secondary = item_el?.querySelector('.secondary');
-
                             if (original_secondary) {
-                                if (itemData.secondary.length === 0) {
-                                    addClassEl('unselected', original_secondary);
-                                } else {
-                                    removeClassEl('unselected', original_secondary);
-                                }
-
-                                // Update displayed text
-                                let textContent;
-                                if (itemData.secondary.includes('any')) {
-                                    textContent = 'Any Level';
-                                } else if (itemData.secondary.length) {
-                                    textContent = `${itemData.secondary.length} Selected`;
-                                } else {
-                                    textContent = 'Skill Level';
-                                }
                                 original_secondary.querySelector('.current-selected').textContent = textContent;
+                            }
+
+                            // Update secondary container's current-selected
+                            const secondary_item = secondary_container.querySelector(`.item[data-token="${itemToken}"]`);
+                            const secondary_current_selected = secondary_item?.querySelector('.current-selected');
+                            if (secondary_current_selected) {
+                                secondary_current_selected.textContent = textContent;
+                            }
+
+                            if (itemData.secondary.length === 0) {
+                                addClassEl('unselected', original_secondary);
+                                addClassEl('unselected', secondary_item);
+                            } else {
+                                removeClassEl('unselected', original_secondary);
+                                removeClassEl('unselected', secondary_item);
                             }
 
                             requestAnimationFrame(() => {
                                 befriend.filters.updateSecondaryPosition(section_el, options_el);
                                 befriend.filters.updateSectionHeights();
                             });
+
                         } catch (e) {
                             console.error('Error updating secondary:', e);
                         } finally {
@@ -7001,17 +7034,18 @@ befriend.filters = {
         let secondary_container = section_el.querySelector('.secondary-container');
         let secondaryContainerBox = secondary_container.getBoundingClientRect();
         let item_token = options_el.getAttribute('data-item-token');
+        let secondary_item = secondary_container.querySelector(`.item[data-token="${item_token}"]`)
         let item_el = section_el.querySelector(`.item.mine[data-token="${item_token}"]`);
 
         let secondary_el = item_el.querySelector('.secondary');
         let secondaryBox = secondary_el.getBoundingClientRect();
 
-        let offsetTop = secondaryBox.bottom - secondaryContainerBox.top;
+        let offsetTop = secondaryBox.top - secondaryContainerBox.top;
         let offsetLeft = secondaryBox.left - secondaryContainerBox.left;
 
-        options_el.style.width = `${secondary_el.offsetWidth}px`;
-        options_el.style.top = `${offsetTop}px`;
-        options_el.style.left = `${offsetLeft}px`;
+        secondary_item.style.width = `${secondary_el.offsetWidth}px`;
+        secondary_item.style.top = `${offsetTop}px`;
+        secondary_item.style.left = `${offsetLeft}px`;
     },
     updateSectionHeights: function (without_transition) {
         const sections_el = befriend.els.filters.querySelector('.sections');
@@ -7294,6 +7328,7 @@ befriend.filters = {
 
         let secondary_container = section_el.querySelector('.secondary-container');
         let item_el = secondary_el.closest('.item');
+        let current_selected_el = secondary_el.querySelector('.current-selected');
         let token = item_el.getAttribute('data-token');
 
         // Find all items with open secondaries in the same section
@@ -7336,6 +7371,7 @@ befriend.filters = {
             // Handle active element from different section
             if (activeEl && activeEl !== secondary_el) {
                 let active_section = activeEl.closest('.section');
+
                 if (active_section !== section_el) {
                     let active_item = activeEl.closest('.item');
                     let active_options = active_section.querySelector(`.options[data-item-token="${active_item.getAttribute('data-token')}"]`);
@@ -7371,6 +7407,7 @@ befriend.filters = {
             addClassEl('item-secondary-open', options_item_el);
 
             requestAnimationFrame(() => {
+                options_item_el.style.height = `${options_el.scrollHeight + current_selected_el.scrollHeight}px`;
                 options_el.style.height = `${options_el.scrollHeight}px`;
             });
 

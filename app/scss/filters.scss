@@ -139,7 +139,9 @@
                 height: $h;
                 position: absolute;
                 right: 8px;
-                top: calc(50% - calc($h / 2));
+                top: 14px;
+                transform-origin: center;
+                transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
             }
         }
 
@@ -148,9 +150,46 @@
             top: 0;
             left: 0;
 
+            .item {
+                height: 0;
+                overflow-y: hidden;
+                position: relative;
+
+                &.unselected {
+                    .current-selected {
+                        font-weight: 300;
+                    }
+                }
+
+                &:not(.item-secondary-open) {
+                    height: 0 !important;
+                }
+            }
+
+            // Selected display
+            .current-selected {
+                padding: 6px 16px;
+                border: 1px solid lighten(black, 82%);
+                border-radius: $secondary_br;
+                background: white;
+                font-size: 13px;
+                font-weight: 400;
+                transition: border-radius $secondary_transition_ms;
+                text-align: center;
+            }
+
+            .arrow {
+                $h: 5px;
+                height: $h;
+                position: absolute;
+                right: 8px;
+                top: 14px;
+                transform-origin: center;
+                transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
             .options {
                 height: 0;
-                position: absolute;
                 top: 0;
                 left: 0;
                 right: 0;
@@ -1363,7 +1402,7 @@
         }
 
         &.is_interest {
-            $max_height: 430px;
+            $max_height: 440px;
             $categories_max_height: 80px;
             $tabs_height: 35px;
 
@@ -1969,22 +2008,20 @@
             }
 
             .item-secondary-open {
-                .secondary {
-                    .current-selected {
-                        border-bottom-left-radius: 0 !important;
-                        border-bottom-right-radius: 0 !important;
-                        border-bottom-color: transparent !important;
-                    }
+                .current-selected {
+                    border-bottom-left-radius: 0 !important;
+                    border-bottom-right-radius: 0 !important;
+                    border-bottom-color: transparent !important;
                 }
 
                 .options {
                     border: 1px solid $color_lightgray !important;
                     border-top-color: lighten(black, 50%) !important;
                 }
-            }
 
-            .secondary-container {
-
+                .arrow {
+                    transform: rotate(180deg);
+                }
             }
         }
     }
