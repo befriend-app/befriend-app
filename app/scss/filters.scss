@@ -1418,6 +1418,20 @@
                 }
             }
 
+            &.has-filter-list {
+                .items-container {
+                    margin-top: 15px;
+                    padding-top: 15px !important;
+                    border-top: 1px solid $color_lightgray;
+                }
+
+                &.autocomplete-select-open, &.autocomplete-shown {
+                    .section-container {
+                        overflow-y: visible;
+                    }
+                }
+            }
+
             &:not(.has-tabs) {
                 .items-container {
                     padding-top: 10px;
@@ -1491,6 +1505,12 @@
                 padding: 15px $interest_padding_lr;
                 padding-bottom: 0;
 
+                &.has-select {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px 0;
+                }
+
                 .input-container {
                     width: 100%;
                     display: flex;
@@ -1545,6 +1565,38 @@
                     z-index: 10;
                     display: none;
                     flex-direction: column;
+
+                    .group {
+                        $bc: $brand_color_a;
+
+                        max-height: $autocomplete_group_max_h;
+                        border-top: 1px solid $bc;
+                        overflow-y: hidden;
+
+                        &:first-of-type {
+                            border-top: 0;
+                        }
+
+                        .group-list {
+                            overflow-y: scroll;
+                            height: calc(100% - #{$autocomplete_group_header_h});
+                        }
+
+                        .group-name {
+                            height: $autocomplete_group_header_h;
+                            line-height: $autocomplete_group_header_h;
+                            font-weight: 300;
+                            text-align: center;
+                            background: lighten($brand_color_a, 48%);
+                            border-bottom: 1px solid $bc;
+                            @include flex-center-col;
+                        }
+
+                        .location {
+                            font-weight: 600;
+                            font-size: 12px;
+                        }
+                    }
 
                     .item {
                         padding: 8px 12px;
@@ -1611,6 +1663,128 @@
                             overflow-wrap: break-word;
                             white-space: normal;
                             word-spacing: 0;
+                        }
+                    }
+                }
+
+                .select-container {
+                    $br: 6px;
+                    position: relative;
+                    margin: 0 auto;
+                    width: 100%;
+
+                    &.open {
+                        .select-dropdown {
+                            display: flex;
+                            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                            border: 1px solid $color_lightgray;
+                        }
+                    }
+
+                    &.no-items {
+                        .no-results {
+                            display: flex !important;
+                            justify-content: center;
+                        }
+                    }
+
+                    .selected-container {
+                        padding: 6px 12px;
+                        background: white;
+                        border: 1px solid $color_lightgray;
+                        border-radius: $br;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        position: relative;
+                        box-sizing: border-box;
+
+                        .selected-name {
+                            font-size: 14px;
+                        }
+
+                        .select-arrow {
+                            position: absolute;
+                            right: 8px;
+                            top: 50%;
+                            transform: translateY(-50%) rotate(0deg);
+                            transition: transform 200ms;
+                            @include flex-center-col;
+
+                            svg {
+                                height: 7px;
+                            }
+                        }
+                    }
+
+                    .select-dropdown {
+                        $pl: 20px;
+                        display: none;
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        background: white;
+                        border-radius: $br;
+                        z-index: 10;
+                        flex-direction: column;
+                        box-sizing: border-box;
+
+                        .select-search-container {
+                            padding: 0 0;
+                            border-bottom: 1px solid $color_lightgray;
+                            position: relative;
+                        }
+
+                        .select-input {
+                            $pr: 16px;
+                            $ptb: 10px;
+                            width: calc(100% - calc($pl + $pr));
+                            padding: $ptb 12px $ptb $pl;
+                            border: 0;
+                            outline: none;
+                            font-size: 15px;
+                        }
+
+                        .search-icon {
+                            height: 13px;
+                            position: absolute;
+                            right: 5px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            display: none;
+                        }
+
+                        .select-list {
+                            //padding: 10px 0;
+                            max-height: 240px;
+                            overflow-y: auto;
+                            margin: 0;
+                            list-style: none;
+
+                            .item {
+                                padding: 8px 12px;
+                                padding-left: $pl;
+                                cursor: pointer;
+                                display: flex;
+                                align-items: center;
+                                border-bottom: 1px solid $color_lightgray;
+
+                                .emoji {
+                                    font-size: 14px;
+                                    margin-right: 10px;
+                                }
+
+                                .name {
+                                    font-size: 16px;
+                                }
+                            }
+                        }
+
+                        .no-results {
+                            display: none;
+                            padding: 15px 0;
                         }
                     }
                 }
@@ -2001,6 +2175,12 @@
                 transform: initial;
                 position: absolute;
                 z-index: 2;
+            }
+        }
+
+        &.schools {
+            .autocomplete-list {
+                max-height: fit-content !important;
             }
         }
 

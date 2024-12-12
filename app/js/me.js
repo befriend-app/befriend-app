@@ -105,7 +105,7 @@ befriend.me = {
 
                 befriend.filters.data.filters = data.filters;
 
-                if (data.country) {
+                if (data.me.country) {
                     befriend.me.data.country = data.country;
                 }
 
@@ -457,22 +457,21 @@ befriend.me = {
         let filterListObj = befriend.me.autoComplete.selected.filterList;
 
         if (key === 'schools') {
-            if (befriend.me.data.country) {
-                selected_str = befriend.me.data.country.name;
-
-                filterListObj[key] = {
-                    item: befriend.me.data.country,
-                };
-            } else if (
-                befriend.user.local.data.me &&
+            if (befriend.user.local.data.me &&
                 befriend.user.local.data.me.filterList &&
-                befriend.user.local.data.me.filterList[key]
-            ) {
+                befriend.user.local.data.me.filterList[key] ) {
+
                 filterListObj[key] = {
                     item: befriend.user.local.data.me.filterList[key],
                 };
 
                 selected_str = befriend.user.local.data.me.filterList[key].name;
+            } else if (befriend.me.data?.me?.country?.name) {
+                selected_str = befriend.me.data.me.country.name;
+
+                filterListObj[key] = {
+                    item: befriend.me.data.me.country,
+                };
             }
         }
 
@@ -608,7 +607,9 @@ befriend.me = {
                                         </div>
                                     </div>
 
-                                    <div class="autocomplete-list"></div>
+                                    <div class="autocomplete-list-container">
+                                        <div class="autocomplete-list"></div>
+                                    </div>
                                 </div>
                                 
                                 ${select_list}
@@ -834,6 +835,8 @@ befriend.me = {
                     hash_token =
                         befriend.me.autoComplete.selected.filterList[section_key].item[filterKey];
                 }
+
+                debugger;
 
                 befriend.toggleSpinner(true);
 
@@ -3143,6 +3146,7 @@ befriend.me = {
                 el._listener = true;
 
                 el.addEventListener('input', function (e) {
+                    console.log("me input")
                     let section_key = el.closest('.section').getAttribute('data-key');
 
                     befriend.me.updateAutoCompleteSelectList(section_key);

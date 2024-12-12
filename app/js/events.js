@@ -103,6 +103,7 @@ befriend.events = {
                 }
             } else if(befriend.isViewShown('filters')) {
                 befriend.filters.hideActiveSecondaryIf(e.target);
+                befriend.filters.hideActiveAutoCompleteSelectIf(e.target);
             }
         });
     },
@@ -147,6 +148,7 @@ befriend.events = {
                 befriend.me.toggleAutoComplete(null, false);
 
                 befriend.filters.hideActiveSecondaryIf();
+                befriend.filters.hideActiveAutoCompleteSelectIf();
                 befriend.me.hideActiveSecondaryIf();
 
                 //view specific logic

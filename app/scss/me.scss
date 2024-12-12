@@ -947,10 +947,6 @@ html.#{$class_confirm_me_action} {
                     display: flex;
                     flex-direction: column;
                     gap: 10px 0;
-
-                    .autocomplete-container {
-                        //flex-basis: 70%;
-                    }
                 }
 
                 .autocomplete-container {
@@ -1009,7 +1005,7 @@ html.#{$class_confirm_me_action} {
                     }
 
                     .selected-container {
-                        padding: 4px 12px;
+                        padding: 6px 12px;
                         background: white;
                         border: 1px solid $color_lightgray;
                         border-radius: $br;
@@ -1639,7 +1635,7 @@ html.#{$class_confirm_me_action} {
 
                 .autocomplete-list {
                     $bc: $brand_color_a;
-                    max-height: fit-content !important;
+                    max-height: 70vh !important;
                     //overflow-y: initial !important;
 
                     .group {
@@ -1670,6 +1666,12 @@ html.#{$class_confirm_me_action} {
                             font-weight: 600;
                             font-size: 12px;
                         }
+                    }
+
+                    .item {
+                        flex-direction: column;
+                        padding: 8px 12px;
+                        gap: 2px;
                     }
                 }
 
