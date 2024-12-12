@@ -1635,24 +1635,29 @@ html.#{$class_confirm_me_action} {
 
                 .autocomplete-list {
                     $bc: $brand_color_a;
-                    max-height: 70vh !important;
-                    //overflow-y: initial !important;
+                    max-height: 60vh !important;
+                    overflow-y: auto; // Enable main container scrolling
 
                     .group {
-                        max-height: $autocomplete_group_max_h;
                         border-top: 1px solid $bc;
-                        overflow-y: hidden;
+                        height: auto; // Allow groups to have natural height
+                        max-height: none; // Remove previous max-height constraint
 
                         &:first-of-type {
                             border-top: 0;
                         }
 
                         .group-list {
-                            overflow-y: scroll;
-                            height: calc(100% - #{$autocomplete_group_header_h});
+                            height: auto; // Let content determine height
+                            max-height: 220px; // Limit individual group height
+                            overflow-y: auto; // Enable scrolling within group
+                            border-bottom: 1px solid lighten($bc, 30%);
                         }
 
                         .group-name {
+                            position: sticky; // Keep group header visible while scrolling
+                            top: 0;
+                            z-index: 1;
                             height: $autocomplete_group_header_h;
                             line-height: $autocomplete_group_header_h;
                             font-weight: 300;

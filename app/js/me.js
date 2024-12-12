@@ -607,9 +607,7 @@ befriend.me = {
                                         </div>
                                     </div>
 
-                                    <div class="autocomplete-list-container">
-                                        <div class="autocomplete-list"></div>
-                                    </div>
+                                    <div class="autocomplete-list"></div>
                                 </div>
                                 
                                 ${select_list}
@@ -835,8 +833,6 @@ befriend.me = {
                     hash_token =
                         befriend.me.autoComplete.selected.filterList[section_key].item[filterKey];
                 }
-
-                debugger;
 
                 befriend.toggleSpinner(true);
 
