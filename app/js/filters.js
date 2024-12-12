@@ -3623,12 +3623,12 @@ befriend.filters = {
 
                                     if (filteredItems.length) {
                                         const items_html = filteredItems.map(item => `
-                            <div class="item" data-id="${item.id}" data-token="${item.token}">
-                                <div class="name-meta">
-                                    <div class="name">${item.name}</div>
-                                </div>
-                            </div>
-                        `).join('');
+                                        <div class="item" data-id="${item.id}" data-token="${item.token}">
+                                            <div class="name-meta">
+                                                <div class="name">${item.name}</div>
+                                            </div>
+                                        </div>
+                                    `).join('');
 
                                         autocomplete_list.innerHTML = items_html;
                                         befriend.filters.instruments.toggleAutocomplete(true);
@@ -4083,15 +4083,17 @@ befriend.filters = {
             categories: {}
         },
         init: function () {
+            let section = befriend.filters.sections[this.key];
+            const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+
             if(this?.data.tabs?.length) {
                 if(!this.data.tableKey) {
                     this.data.tableKey = this.data.tabs[0].key;
                 }
+
+                addClassEl('has-tabs', section_el);
             }
 
-            let section = befriend.filters.sections[this.key];
-
-            const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
             const filter_options = section_el.querySelector('.filter-options');
             const sectionData = befriend.filters.data.options?.[this.key];
 
@@ -4528,8 +4530,6 @@ befriend.filters = {
 
                             let category = befriend.filters[section_key].getCategoryByName(name);
 
-                            console.log(category)
-
                             try {
                                 const response = await befriend.auth.get(sectionData.autoComplete.endpoint, {
                                     search: value,
@@ -4816,8 +4816,6 @@ befriend.filters = {
                             try {
                                 befriend.toggleSpinner(true);
 
-                                console.log(tableKey);
-
                                 if(!tableKey) {
                                     tableKey = befriend.filters[section_key].getTableKey(token);
                                 }
@@ -4962,15 +4960,17 @@ befriend.filters = {
             categories: {}
         },
         init: function () {
+            let section = befriend.filters.sections[this.key];
+            const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+
             if(this?.data.tabs?.length) {
                 if(!this.data.tableKey) {
                     this.data.tableKey = this.data.tabs[0].key;
                 }
+
+                addClassEl('has-tabs', section_el);
             }
 
-            let section = befriend.filters.sections[this.key];
-
-            const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
             const filter_options = section_el.querySelector('.filter-options');
             const sectionData = befriend.filters.data.options?.[this.key];
 
@@ -5482,8 +5482,6 @@ befriend.filters = {
 
                             let category = befriend.filters[section_key].getCategoryByName(name);
 
-                            console.log(category)
-
                             try {
                                 const response = await befriend.auth.get(sectionData.autoComplete.endpoint, {
                                     search: value,
@@ -5522,13 +5520,32 @@ befriend.filters = {
                                     const filteredItems = response.data.items.filter(item => !existingTokens.has(item.token));
 
                                     if (filteredItems.length) {
-                                        const items_html = filteredItems.map(item => `
-                                        <div class="item" data-id="${item.id}" data-token="${item.token}">
-                                            <div class="name-meta">
-                                                <div class="name">${item.name}</div>
-                                            </div>
-                                        </div>
-                                        `).join('');
+                                        const items_html = filteredItems.map(item => {
+                                            let meta_html = '';
+                                            if (item.meta) {
+                                                meta_html = `<div class="meta">${item.meta}</div>`;
+                                            }
+
+                                            let label_html = '';
+                                            if (item.label) {
+                                                label_html = `
+                                                <div class="label">
+                                                    <div class="text">${item.label}</div>
+                                                </div>`;
+                                            }
+
+                                            return `
+                                                <div class="item ${label_html ? 'has-label' : ''}" 
+                                                     data-id="${item.id}" 
+                                                     data-token="${item.token}"
+                                                     data-table-key="${item.table_key || ''}">
+                                                    <div class="name-meta">
+                                                        <div class="name">${item.name}</div>
+                                                        ${meta_html}
+                                                    </div>
+                                                    ${label_html}
+                                                </div>`;
+                                        }).join('');
 
                                         autocomplete_list.innerHTML = items_html;
                                         befriend.filters[section_key].toggleAutocomplete(true);
@@ -5776,8 +5793,6 @@ befriend.filters = {
 
                             try {
                                 befriend.toggleSpinner(true);
-
-                                console.log(tableKey);
 
                                 if(!tableKey) {
                                     tableKey = befriend.filters[section_key].getTableKey(token);
@@ -6071,15 +6086,18 @@ befriend.filters = {
             ],
         },
         init: function () {
+            let section = befriend.filters.sections.work;
+
+            const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+
             if(this?.data.tabs?.length) {
                 if(!this.data.tableKey) {
                     this.data.tableKey = this.data.tabs[0].key;
                 }
+
+                addClassEl('has-tabs', section_el);
             }
 
-            let section = befriend.filters.sections.work;
-
-            const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
             const filter_options = section_el.querySelector('.filter-options');
             const sectionData = befriend.filters.data.options?.['work'];
 
