@@ -695,19 +695,21 @@ html.#{$class_confirm_me_action} {
                 }
 
                 .item-secondary-open {
-                    .current-selected {
-                        border-bottom-left-radius: 0 !important;
-                        border-bottom-right-radius: 0 !important;
-                        border-bottom-color: transparent !important;
-                    }
-
                     .options {
                         border: 1px solid $color_lightgray !important;
                         border-top-color: lighten(black, 50%) !important;
                     }
 
-                    .arrow {
-                        transform: rotate(180deg);
+                    &:not(.closing-secondary) {
+                        .current-selected {
+                            border-bottom-left-radius: 0 !important;
+                            border-bottom-right-radius: 0 !important;
+                            border-bottom-color: transparent !important;
+                        }
+
+                        .arrow {
+                            transform: rotate(180deg);
+                        }
                     }
                 }
             }
@@ -1503,6 +1505,12 @@ html.#{$class_confirm_me_action} {
                         transform-origin: center;
                         transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
                     }
+
+                    &.closing-secondary {
+                        .arrow {
+                            transform: rotate(0deg) !important;
+                        }
+                    }
                 }
             }
 
@@ -1531,6 +1539,16 @@ html.#{$class_confirm_me_action} {
 
                     &:not(.item-secondary-open) {
                         height: 0 !important;
+                    }
+
+                    &.closing-secondary {
+                        .options {
+                            border-top-color: transparent !important;
+                        }
+
+                        .arrow {
+                            transform: rotate(0deg) !important;
+                        }
                     }
                 }
 

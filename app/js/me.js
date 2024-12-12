@@ -1302,10 +1302,16 @@ befriend.me = {
             void options_el.offsetHeight;
             options_el.style.height = '0';
 
-            removeClassEl('item-secondary-open', item_el);
-            removeClassEl('item-secondary-open', options_item_el);
+            addClassEl('closing-secondary', options_item_el);
+            addClassEl('closing-secondary', item_el);
 
             secondary_el._transitionTimeout = setTimeout(() => {
+                removeClassEl('closing-secondary', options_item_el);
+                removeClassEl('closing-secondary', item_el);
+
+                removeClassEl('item-secondary-open', item_el);
+                removeClassEl('item-secondary-open', options_item_el);
+
                 if (!document.querySelector('.item-secondary-open')) {
                     removeClassEl('secondary-open', section_el);
                 }
