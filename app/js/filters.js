@@ -29,6 +29,27 @@ befriend.filters = {
                 ],
             }
         },
+        tv_shows: {
+            is_interest: true,
+            token: 'tv_shows',
+            name: 'TV Shows',
+            icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 422"><path d="M504.5,0H7.5C3.358,0,0,3.357,0,7.5v347c0,4.143,3.358,7.5,7.5,7.5h188.5c4.142,0,7.5-3.357,7.5-7.5s-3.358-7.5-7.5-7.5H15V15h482v332h-45v-15h22.5c4.142,0,7.5-3.357,7.5-7.5V37.5c0-4.143-3.358-7.5-7.5-7.5H37.5c-4.142,0-7.5,3.357-7.5,7.5v287c0,4.143,3.358,7.5,7.5,7.5h309.5v15h-121c-4.142,0-7.5,3.357-7.5,7.5v22.5h-82.5c-20.678,0-37.5,16.822-37.5,37.5,0,4.143,3.358,7.5,7.5,7.5h300c4.142,0,7.5-3.357,7.5-7.5,0-20.678-16.822-37.5-37.5-37.5h-82.5v-15h211c4.142,0,7.5-3.357,7.5-7.5V7.5c0-4.143-3.358-7.5-7.5-7.5ZM437,347h-15v-15h15v15ZM407,332v15h-15v-15h15ZM45,45h422v272H45V45ZM362,332h15v15h-15v-15ZM397.215,407H114.785c3.095-8.73,11.437-15,21.215-15h240c9.778,0,18.12,6.27,21.215,15ZM278.5,377h-45v-15h45v15Z"/><path d="M337.75,174.505l-117-67.55c-2.32-1.34-5.18-1.34-7.5,0s-3.75,3.815-3.75,6.495v135.1c0,2.68,1.43,5.155,3.75,6.495,1.16.67,2.455,1.005,3.75,1.005s2.59-.335,3.75-1.005l117-67.55c2.32-1.34,3.75-3.815,3.75-6.495s-1.43-5.155-3.75-6.495h0ZM224.5,235.56v-109.12l94.5,54.56-94.5,54.56Z"/></svg>`,
+            importance: {
+                active: true,
+                default: 6
+            },
+            config: {
+                endpoint: `/filters/tv-shows`,
+                key: 'tv_shows',
+                hasDynamicCategories: true,
+                hasTabs: true,
+                hasTableKey: true,
+                tabs: [
+                    { key: 'shows', col: 'tv_show_id', name: 'Shows', singular: 'Show' },
+                    { key: 'genres', col: 'tv_show_genre_id', name: 'Genres', singular: 'Genre' },
+                ],
+            }
+        },
         sports: {
             is_interest: true,
             token: 'sports',
@@ -257,6 +278,7 @@ befriend.filters = {
                 await befriend.filters.getData();
 
                 this.movies = this.createInterestsFilter(this.sections.movies.config);
+                this.tv_shows = this.createInterestsFilter(this.sections.tv_shows.config);
                 this.music = this.createInterestsFilter(this.sections.music.config);
                 this.instruments = this.createInterestsFilter(this.sections.instruments.config);
                 this.sports = this.createInterestsFilter(this.sections.sports.config);
@@ -291,6 +313,7 @@ befriend.filters = {
                 befriend.filters.smoking.init();
 
                 befriend.filters.movies.init();
+                befriend.filters.tv_shows.init();
                 befriend.filters.sports.init();
                 befriend.filters.music.init();
                 befriend.filters.work.init();
@@ -3916,15 +3939,17 @@ befriend.filters = {
                         let heading_html = category.heading ?
                             `<div class="heading">${category.heading}</div>` : '';
 
-                        if(category.heading) {
-                            heading_html = `<div class="heading">${category.heading}</div>`;
-                        }
+                        let image_html = category.image
+                            ? `<div class="image">${category.image}</div>`
+                            : '';
 
                         categories_html += `
                         <div class="category-btn ${heading_html ? 'w-heading' : ''}" 
                              ${category.table_key ? `data-table-key="${category.table_key}"` : ''} 
                              data-category="${category.name?.toLowerCase()}"
                              ${category.token ? `data-category-token="${category.token}"` : ''}>
+                            
+                            ${image_html}
                             <div class="heading-name">
                                 ${heading_html}
                                 <div class="name">${category.name}</div>
@@ -4119,13 +4144,13 @@ befriend.filters = {
 
                 // Generate items HTML
                 if (items?.length) {
-                    items_html += items.map(item => {
+                    for(let item of items) {
                         if (is_mine) {
                             const storedItem = Object.values(storedFilters?.items || {})
                                 .find(stored => stored.token === item.token);
                             const isActive = storedItem && !storedItem.deleted && storedItem.is_active;
 
-                            return `
+                            items_html += `
                             <div class="item mine ${isActive ? 'active' : ''}" 
                                  data-id="${storedItem?.id}" 
                                  data-token="${item.token}"
@@ -4155,19 +4180,30 @@ befriend.filters = {
                                     </div>
                                 </div>
                             </div>`;
-                        }
+                        } else if(!(added_item_tokens[item.token])) {
+                            let label = '';
+                            let meta = '';
 
-                        if (item.token in added_item_tokens) {
-                            return;
-                        }
+                            if (item.label) {
+                                label = `<div class="label">${item.label}</div>`;
+                            }
 
-                        return `
-                        <div class="item" 
-                             data-token="${item.token}"
-                             ${config.hasTableKey ? `data-table-key="${tableKey}"` : ''}>
-                            <div class="name">${item.name}</div>
-                        </div>`;
-                    }).join('');
+                            if (item.meta) {
+                                meta = `<div class="meta">${item.meta}</div>`;
+                            }
+
+                            items_html += `
+                            <div class="item" data-token="${item.token}"
+                                 ${config.hasTableKey ? `data-table-key="${tableKey}"` : ''}>
+                                <div class="name-label">
+                                    <div class="name">${item.name}</div>
+                                    ${label}
+                                </div>
+                                                
+                                ${meta}
+                            </div>`;
+                        }
+                    }
                 }
 
                 items_container.innerHTML = items_html;
@@ -4464,13 +4500,17 @@ befriend.filters = {
                                         .filter(item => !existingTokens.has(item.token));
 
                                     if (filteredItems.length) {
-                                        const items_html = filteredItems.map(item => {
+                                        let items_html = '';
+
+                                        for(let item of filteredItems) {
                                             let meta_html = '';
+
                                             if (item.meta) {
                                                 meta_html = `<div class="meta">${item.meta}</div>`;
                                             }
 
                                             let label_html = '';
+
                                             if (item.label) {
                                                 label_html = `
                                                 <div class="label">
@@ -4478,9 +4518,9 @@ befriend.filters = {
                                                 </div>`;
                                             }
 
-                                            return `
+                                            items_html += `
                                                 <div class="item ${label_html ? 'has-label' : ''}" 
-                                                     data-id="${item.id}" 
+                                                     data-id="${item.id || ''}" 
                                                      data-token="${item.token}"
                                                      data-table-key="${item.table_key || ''}">
                                                     <div class="name-meta">
@@ -4489,7 +4529,7 @@ befriend.filters = {
                                                     </div>
                                                     ${label_html}
                                                 </div>`;
-                                        }).join('');
+                                        }
 
                                         autocomplete_list.innerHTML = items_html;
                                         befriend.filters[config.key].toggleAutocomplete(true);

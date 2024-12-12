@@ -1652,7 +1652,7 @@
                     cursor: pointer;
                     transition: all 200ms;
                     background: lighten(black, 95%);
-                    @include flex-center-col;
+                    @include flex-center;
 
                     &.active {
                         background: $brand_color_b;
@@ -1664,13 +1664,23 @@
                         width: 100%;
                     }
 
+                    &.w-heading {
+                        padding: 5px 10px;
+
+                        .heading-name {
+                            .name {
+                                font-size: 13px;
+                            }
+                        }
+                    }
+
                     .heading-name {
                         display: flex;
                         flex-direction: column;
 
                         .heading {
                             font-size: 11px;
-                            font-weight: 400;
+                            font-weight: 500;
                             line-height: 13px;
                         }
 
@@ -1679,12 +1689,21 @@
                         }
                     }
 
-                    &.w-heading {
-                        padding: 5px 10px;
+                    .image {
+                        margin-right: 8px;
+                        @include flex-center-col;
 
-                        .heading-name {
-                            .name {
-                                font-size: 13px;
+                        svg {
+                            height: 18px;
+                            max-width: 32px;
+                            @include flex-center-col;
+
+                            &.netflix {
+                                margin-right: 2px;
+                            }
+
+                            &.amazon {
+                                width: 25px;
                             }
                         }
                     }
@@ -1792,8 +1811,24 @@
                             //margin-bottom: 20px !important;
                         }
 
+                        .name-label {
+                            display: flex;
+                            align-items: center;
+                            gap: 0 10px;
+                        }
+
                         .name {
-                            font-size: 14px;
+                            font-size: 15px;
+                        }
+
+                        .label {
+                            border-radius: 6px;
+                            padding: 4px 12px;
+                            background: lighten($color_lightgray, 20%);
+                            border: 1px solid darken($color_lightgray, 20%);
+                            min-width: fit-content;
+                            margin-left: auto;
+                            font-size: 13px;
                         }
 
                         &.any {
