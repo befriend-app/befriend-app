@@ -1691,6 +1691,8 @@
                 border-top-left-radius: $br;
                 border-top-right-radius: $br;
                 border-bottom: 1px solid $color_lightgray;
+                position: relative;
+                z-index: 2;
 
                 .tab {
                     padding: 6px 0;

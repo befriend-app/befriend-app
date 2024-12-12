@@ -7407,7 +7407,7 @@ befriend.filters = {
             addClassEl('item-secondary-open', options_item_el);
 
             requestAnimationFrame(() => {
-                options_item_el.style.height = `${options_el.scrollHeight + current_selected_el.scrollHeight}px`;
+                options_item_el.style.height = `${options_el.scrollHeight + current_selected_el.scrollHeight + 2}px`;
                 options_el.style.height = `${options_el.scrollHeight}px`;
             });
 
@@ -7429,7 +7429,7 @@ befriend.filters = {
                 removeClassEl('item-secondary-open', item_el);
                 removeClassEl('item-secondary-open', options_item_el);
 
-                if (!document.querySelector('.item-secondary-open')) {
+                if (!befriend.els.filters.querySelector('.item-secondary-open')) {
                     removeClassEl('secondary-open', section_el);
                 }
 

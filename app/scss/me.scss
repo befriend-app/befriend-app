@@ -1208,6 +1208,8 @@ html.#{$class_confirm_me_action} {
                 border-bottom: 1px solid $color_lightgray;
                 border-top-left-radius: $br;
                 border-top-right-radius: $br;
+                position: relative;
+                z-index: 22;
 
                 .tab {
                     padding: 6px 0;
