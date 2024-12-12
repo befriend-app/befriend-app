@@ -4097,9 +4097,11 @@ befriend.filters = {
             const filter_options = section_el.querySelector('.filter-options');
             const sectionData = befriend.filters.data.options?.[this.key];
 
+            let my_filters_category = '';
             let categories_html = '';
+
             if (sectionData?.options.length > 0) {
-                categories_html = `
+                my_filters_category = `
                     <div class="category-btn mine active" data-category="mine">
                         My Filters
                     </div>`;
@@ -4144,6 +4146,7 @@ befriend.filters = {
             
                         ${categories_html ? `
                             <div class="categories-container">
+                                <div class="category-mine">${my_filters_category}</div>
                                 <div class="category-filters">${categories_html}</div>
                             </div>
                         ` : ''}
@@ -4974,9 +4977,11 @@ befriend.filters = {
             const filter_options = section_el.querySelector('.filter-options');
             const sectionData = befriend.filters.data.options?.[this.key];
 
+            let my_filters_category = '';
             let categories_html = '';
+
             if (sectionData?.options.length > 0) {
-                categories_html = `
+                my_filters_category = `
                     <div class="category-btn mine active" data-category="mine">
                         My Filters
                     </div>`;
@@ -5021,6 +5026,7 @@ befriend.filters = {
             
                         ${categories_html ? `
                             <div class="categories-container">
+                                <div class="category-mine">${my_filters_category}</div>
                                 <div class="category-filters">${categories_html}</div>
                             </div>
                         ` : ''}

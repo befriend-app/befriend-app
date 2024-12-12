@@ -1,6 +1,8 @@
 #filters {
     $section_padding_lr: 20px;
     $section_padding_tb: 10px;
+    $interest_padding_lr: 15px;
+
     $option_padding_lr: 12px;
     $option_padding_tb: 10px;
     $option_br: 10px;
@@ -206,7 +208,7 @@
                     $dim_h: 20px;
                     position: absolute;
                     top: calc($dim_h / -2 - 2px);
-                    left: calc($dim_w / -2 );
+                    left: -$interest_padding_lr;
                     width: $dim_w;
                     height: $dim_h;
                     border-radius: 16px;
@@ -1361,9 +1363,9 @@
         }
 
         &.is_interest {
-            $max_height: 400px;
+            $max_height: 430px;
+            $categories_max_height: 80px;
             $tabs_height: 35px;
-            $padding_lr: 20px;
 
             &.has-tabs {
                 .filter-options {
@@ -1435,7 +1437,7 @@
             .search-container {
                 $br: 6px;
 
-                padding: 15px;
+                padding: 15px $interest_padding_lr;
                 padding-bottom: 0;
 
                 .input-container {
@@ -1564,18 +1566,31 @@
             }
 
             .categories-container {
-                padding: 12px $padding_lr;
+                $padding_tb: 12px;
+                padding: 0 $interest_padding_lr;
                 border-bottom: 1px solid $color_lightgray;
                 width: 100%;
                 box-sizing: border-box;
-                max-height: 100px;
                 overflow-x: hidden;
-                overflow-y: scroll;
+
+                .category-mine {
+                    width: 100%;
+                    margin-top: $padding_tb;
+
+                    .category-btn {
+                        padding-left: 0;
+                        padding-right: 0;
+                    }
+                }
 
                 .category-filters {
+                    padding: $padding_tb 0;
                     display: flex;
                     flex-wrap: wrap;
                     gap: 8px;
+                    max-height: $categories_max_height;
+                    overflow-y: scroll;
+                    z-index: 2;
                 }
 
                 .category-btn {
@@ -1595,6 +1610,7 @@
 
                     &.mine {
                         font-weight: 500;
+                        width: 100%;
                     }
 
                     .heading-name {
@@ -1698,7 +1714,7 @@
             .items-container {
                 $max_height: 200px;
                 $scroll_padding_tb: 0px;
-                padding: 15px $padding_lr;
+                padding: 15px $interest_padding_lr;
                 max-height: $max_height;
                 overflow-y: scroll;
                 transition: padding 200ms;
