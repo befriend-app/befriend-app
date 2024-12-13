@@ -9,15 +9,65 @@
     $border_color: lighten(black, 80%);
 
     background-color: $app_background;
-
+    position: relative;
     min-height: 100vh;
     min-height: 100dvh;
+    //padding-left: 0 !important;
+    //padding-right: 0 !important;
+
+    .filters-nav {
+        position: fixed;
+        z-index: 50;
+        display: flex;
+        width: calc(100% - $app_margin_lr * 2);
+        //top: var(--sbh);
+
+        .nav-scroll {
+            overflow-x: scroll;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .nav-buttons {
+            display: flex;
+
+            .nav-button {
+                $br: 8px;
+                $bc: $color_lightgray;
+                @include flex-center-col;
+                padding: 8px 14px;
+                border: 1px solid $bc;
+                border-right-color: transparent;
+                width: fit-content;
+                white-space: nowrap;
+                background: white;
+                transition: all 220ms;
+                font-size: 15px;
+                font-weight: 400;
+
+                &.active {
+                    background-color: $brand_color_b;
+                }
+
+                &:first-of-type {
+                    border-top-left-radius: $br;
+                    border-bottom-left-radius: $br;
+                }
+
+                &:last-of-type {
+                    border-top-right-radius: $br;
+                    border-bottom-right-radius: $br;
+                    border-right-color: $bc;
+                }
+            }
+        }
+    }
 
     .sections {
         display: flex;
         flex-direction: column;
         gap: 20px 0;
-        padding-top: 10px;
+        padding-top: 60px;
 
         .group {
             .group-name {

@@ -93,6 +93,9 @@ befriend.styles = {
             }
         });
     },
+    getVariableValue: function (var_string) {
+        return parseFloat(getComputedStyle(befriend.els.app).getPropertyValue(`--${var_string}`));
+    },
     getInsetHeight: function () {
         let inset_height = getComputedStyle(document.documentElement).getPropertyValue('--sat');
 

@@ -3448,22 +3448,40 @@ befriend.filters = {
                     groups[groupKey].sections.push({key, ...section});
                 }
 
+                //navigation
+                let navHtml = ``;
+
+                // Add navigation buttons
+                for (let groupKey in groups) {
+                    let group = groups[groupKey];
+                    navHtml += `
+                    <div class="nav-button" data-group="${groupKey}">
+                        ${group.name}
+                    </div>`;
+                }
+
+                navHtml = `<div class="filters-nav">
+                                <div class="nav-scroll">
+                                    <div class="nav-buttons">${navHtml}</div>
+                                </div>
+                           </div>`;
+
+                sections_el.insertAdjacentHTML('beforebegin', navHtml);
+
                 let html = '';
 
                 // Generate HTML for each group and its sections
                 for (let groupKey in groups) {
                     let group = groups[groupKey];
 
-                    html += `<div class="group ${groupKey}">
-                    <div class="group-name">${group.name}</div>
-                    <div class="group-sections">`;
+                    let section_html = '';
 
                     // Add sections within this group
                     for (let section of group.sections) {
                         let collapsed_class = this.data.collapsed[section.key] ? 'collapsed' : '';
                         let interest_class = section.is_interest ? 'is_interest' : '';
 
-                        html += `<div class="section ${section.token} ${interest_class} ${collapsed_class}" data-key="${section.key}">
+                        section_html += `<div class="section ${section.token} ${interest_class} ${collapsed_class}" data-key="${section.key}">
                         <div class="section-top">
                             <div class="section-icon">${section.icon ? section.icon : ''}</div>
                             <div class="section-name">${section.name}</div>
@@ -3484,19 +3502,124 @@ befriend.filters = {
                     </div>`;
                     }
 
-                    html += `</div></div>`;
+                    html += `<div class="group ${groupKey}" data-group="${groupKey}">
+                                <div class="group-name">${group.name}</div>
+                                <div class="group-sections">${section_html}</div>
+                            </div>`;
                 }
 
                 sections_el.innerHTML = html;
 
                 await rafAwait();
 
+                befriend.filters.initNavigation();
+
                 befriend.filters.updateSectionHeights();
+
+
             } catch(e) {
                 console.error(e);
             }
 
             return resolve();
+        });
+    },
+    initNavigation: function() {
+        const nav = befriend.els.filters.querySelector('.filters-nav');
+        const navButtons = nav.querySelectorAll('.nav-button');
+        const sections = befriend.els.filters.querySelector('.sections');
+        const groups = sections.querySelectorAll('.group');
+        let isScrolling = false;  // Flag to track programmatic scrolling
+
+        // Set first button as active initially
+        if (navButtons.length) {
+            addClassEl('active', navButtons[0]);
+        }
+
+        let groupOffsetTop = befriend.styles.getVariableValue('view-top') + 60;
+
+        // Add click handlers to nav buttons
+        for(let button of navButtons) {
+            button.addEventListener('click', () => {
+                const groupKey = button.getAttribute('data-group');
+                const targetGroup = sections.querySelector(`.group[data-group="${groupKey}"]`);
+
+                if (targetGroup) {
+                    removeElsClass(navButtons, 'active');
+                    addClassEl('active', button);
+
+                    isScrolling = true;
+
+                    // Get the absolute position of the target group relative to the document
+                    const targetOffset = targetGroup.getBoundingClientRect().top + window.pageYOffset;
+
+                    // Add padding and scroll
+                    window.scrollTo({
+                        top: targetOffset - groupOffsetTop,
+                        behavior: 'smooth'
+                    });
+
+                    // Reset scrolling flag after animation completes
+                    setTimeout(() => {
+                        isScrolling = false;
+                    }, 500);
+                }
+            });
+        }
+
+        // Track scroll position and update active button
+        let scrollTimeout;
+        window.addEventListener('scroll', () => {
+            // Skip scroll handling if we're programmatically scrolling
+            if (isScrolling) return;
+
+            if (scrollTimeout) {
+                clearTimeout(scrollTimeout);
+            }
+
+            scrollTimeout = setTimeout(() => {
+                const scrollPosition = window.scrollY;
+
+                // Find the currently visible group
+                let activeGroup = null;
+
+                for(let group of groups) {
+                    // Get the distance from the top of the viewport to the group
+                    const rect = group.getBoundingClientRect();
+
+                    if (rect.top <= groupOffsetTop && rect.bottom > groupOffsetTop) {
+                        activeGroup = group;
+                        break;
+                    }
+                }
+
+                // Update active button
+                if (activeGroup) {
+                    const groupKey = activeGroup.getAttribute('data-group');
+
+                    for(let button of navButtons) {
+                        if (button.getAttribute('data-group') === groupKey) {
+                            addClassEl('active', button);
+
+                            // Scroll button into view if needed
+                            const buttonLeft = button.offsetLeft;
+                            const buttonWidth = button.offsetWidth;
+                            const navWidth = nav.offsetWidth;
+                            const navScroll = nav.querySelector('.nav-scroll');
+                            const scrollLeft = navScroll.scrollLeft;
+
+                            if (buttonLeft < scrollLeft || buttonLeft + buttonWidth > scrollLeft + navWidth) {
+                                navScroll.scrollTo({
+                                    left: buttonLeft - (navWidth / 2) + (buttonWidth / 2),
+                                    behavior: 'smooth'
+                                });
+                            }
+                        } else {
+                            removeClassEl('active', button);
+                        }
+                    }
+                }
+            }, 10);
         });
     },
     initCollapsible: function () {
