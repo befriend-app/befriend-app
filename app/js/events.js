@@ -103,7 +103,24 @@ befriend.events = {
                 }
             } else if(befriend.isViewShown('filters')) {
                 befriend.filters.hideActiveSecondaryIf(e.target);
-                befriend.filters.hideActiveAutoCompleteSelectIf(e.target);
+
+                if(befriend.filters.getActiveAutoCompleteEl()) {
+                    if(!e.target.closest('.autocomplete-container')) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        befriend.filters.hideActiveAutoCompleteIf(e.target);
+                    }
+                }
+
+                if(befriend.filters.getActiveAutoCompleteSelectEl()) {
+                    if(!e.target.closest('.select-container')) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        befriend.filters.hideActiveAutoCompleteSelectIf(e.target);
+                    }
+                }
             }
         });
     },
@@ -148,6 +165,7 @@ befriend.events = {
                 befriend.me.toggleAutoComplete(null, false);
 
                 befriend.filters.hideActiveSecondaryIf();
+                befriend.filters.hideActiveAutoCompleteIf();
                 befriend.filters.hideActiveAutoCompleteSelectIf();
                 befriend.me.hideActiveSecondaryIf();
 

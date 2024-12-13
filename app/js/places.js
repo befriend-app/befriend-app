@@ -235,7 +235,7 @@ befriend.places = {
         befriend.places.setIsOpen();
         befriend.html.setPlacesHours();
     },
-    getAutocompleteSessionToken: function () {
+    getAutoCompleteSessionToken: function () {
         if (befriend.places.autoComplete.session_token) {
             return befriend.places.autoComplete.session_token;
         }
@@ -260,7 +260,7 @@ befriend.places = {
             }
 
             try {
-                let session_token = befriend.places.getAutocompleteSessionToken();
+                let session_token = befriend.places.getAutoCompleteSessionToken();
 
                 let params = {
                     session_token: session_token,

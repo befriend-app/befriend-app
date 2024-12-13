@@ -998,10 +998,10 @@ befriend.me = {
         return new Promise(async (resolve, reject) => {
             search_value = search_value ? search_value.trim() : '';
 
-            let sectionAutocomplete = befriend.me.getSectionAutoComplete(section_key);
+            let sectionAutoComplete = befriend.me.getSectionAutoComplete(section_key);
 
-            let minChars = isNumeric(sectionAutocomplete.minChars)
-                ? sectionAutocomplete.minChars
+            let minChars = isNumeric(sectionAutoComplete.minChars)
+                ? sectionAutoComplete.minChars
                 : befriend.me.autoComplete.minChars;
 
             if (search_value.length < minChars) {
@@ -3078,10 +3078,10 @@ befriend.me = {
 
                     let section_key = el.closest('.section').getAttribute('data-key');
 
-                    let sectionAutocomplete = befriend.me.getSectionAutoComplete(section_key);
+                    let sectionAutoComplete = befriend.me.getSectionAutoComplete(section_key);
 
-                    let minChars = isNumeric(sectionAutocomplete.minChars)
-                        ? sectionAutocomplete.minChars
+                    let minChars = isNumeric(sectionAutoComplete.minChars)
+                        ? sectionAutoComplete.minChars
                         : befriend.me.autoComplete.minChars;
 
                     if (el.value.length >= minChars) {

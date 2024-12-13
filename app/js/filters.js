@@ -3460,7 +3460,11 @@ befriend.filters = {
                 e.preventDefault();
                 e.stopPropagation();
 
-                if(befriend.filters.getActiveAutocompleteSelectEl()) {
+                if(befriend.filters.getActiveAutoCompleteEl()) {
+                    return befriend.filters.hideActiveAutoCompleteIf(e.target);
+                }
+
+                if(befriend.filters.getActiveAutoCompleteSelectEl()) {
                     return befriend.filters.hideActiveAutoCompleteSelectIf(e.target);
                 }
 
@@ -3728,11 +3732,22 @@ befriend.filters = {
             befriend.filters.transitionSecondary(open_secondary_el, false);
         }
     },
-    getActiveAutocompleteSelectEl: function () {
+    getActiveAutoCompleteEl: function () {
+        return befriend.els.filters.querySelector('.autocomplete-container.autocomplete-shown');
+    },
+    getActiveAutoCompleteSelectEl: function () {
         return befriend.els.filters.querySelector('.search-container .select-container.open');
     },
+    hideActiveAutoCompleteIf: function (target = null) {
+        let open_el = this.getActiveAutoCompleteEl();
+
+        if(open_el && !target?.closest('.autocomplete-complete-container')) {
+            let section_key = open_el.closest('.section')?.getAttribute('data-key');
+            befriend.filters[section_key].toggleAutoComplete(false);
+        }
+    },
     hideActiveAutoCompleteSelectIf: function (target = null) {
-        let open_select_el = this.getActiveAutocompleteSelectEl();
+        let open_select_el = this.getActiveAutoCompleteSelectEl();
 
         if(open_select_el && !target?.closest('.select-container')) {
             let section_key = open_select_el.closest('.section')?.getAttribute('data-key');
@@ -4446,7 +4461,7 @@ befriend.filters = {
                     !stored.deleted && stored.token === item.token
                 );
             },
-            toggleAutocomplete: function(show) {
+            toggleAutoComplete: function(show) {
                 let section = befriend.filters.sections[this.key];
                 const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
 
@@ -4732,7 +4747,7 @@ befriend.filters = {
                         debounceTimer = setTimeout(async () => {
                             const value = search_input.value.trim();
                             if (value.length < sectionData.autoComplete.minChars) {
-                                befriend.filters[config.key].toggleAutocomplete(false);
+                                befriend.filters[config.key].toggleAutoComplete(false);
                                 return;
                             }
 
@@ -4837,8 +4852,6 @@ befriend.filters = {
                                         .filter(item => !existingTokens.has(item.token));
 
                                     if (filteredItems.length) {
-                                        let items_html = '';
-
                                         for(let item of filteredItems) {
                                             let meta_html = '';
 
@@ -4867,11 +4880,6 @@ befriend.filters = {
                                                     ${label_html}
                                                 </div>`;
                                         }
-
-                                        befriend.filters[config.key].toggleAutocomplete(true);
-                                    } else {
-                                        autocomplete_list.innerHTML = '<div class="no-results">No results found</div>';
-                                        befriend.filters[config.key].toggleAutocomplete(true);
                                     }
                                 }
 
@@ -4881,7 +4889,7 @@ befriend.filters = {
 
                                 autocomplete_list.innerHTML = items_html;
 
-                                befriend.filters[config.key].toggleAutocomplete(true);
+                                befriend.filters[config.key].toggleAutoComplete(true);
                             } catch (e) {
                                 console.error(`Error searching ${config.key}:`, e);
                             }
@@ -4898,7 +4906,7 @@ befriend.filters = {
                         const tableKey = item.getAttribute('data-table-key');
 
                         if (await befriend.filters[config.key].addItem({ id, token, tableKey }, section_el)) {
-                            befriend.filters[config.key].toggleAutocomplete(false);
+                            befriend.filters[config.key].toggleAutoComplete(false);
                             search_input.value = '';
                         }
                     });
@@ -4907,14 +4915,14 @@ befriend.filters = {
                     search_input.addEventListener('focus', () => {
                         addClassEl('input-focus', input_container);
                         if (search_input.value.length >= sectionData.autoComplete.minChars) {
-                            befriend.filters[config.key].toggleAutocomplete(true);
+                            befriend.filters[config.key].toggleAutoComplete(true);
                         }
                     });
 
                     search_input.addEventListener('blur', () => {
                         removeClassEl('input-focus', input_container);
                         setTimeout(() => {
-                            befriend.filters[config.key].toggleAutocomplete(false);
+                            // befriend.filters[config.key].toggleAutoComplete(false);
                         }, 100);
                     });
                 },
@@ -5049,7 +5057,11 @@ befriend.filters = {
                                 return befriend.filters.hideActiveSecondaryIf(e.target);
                             }
 
-                            if(befriend.filters.getActiveAutocompleteSelectEl()) {
+                            if(befriend.filters.getActiveAutoCompleteEl()) {
+                                return befriend.filters.hideActiveAutoCompleteIf(e.target);
+                            }
+
+                            if(befriend.filters.getActiveAutoCompleteSelectEl()) {
                                 return befriend.filters.hideActiveAutoCompleteSelectIf(e.target);
                             }
 
@@ -5176,6 +5188,7 @@ befriend.filters = {
                             e.stopPropagation();
 
                             befriend.filters.hideActiveSecondaryIf();
+                            befriend.filters.hideActiveAutoCompleteIf();
                             befriend.filters.hideActiveAutoCompleteSelectIf();
 
                             const item = remove_el.closest('.item');
@@ -5246,6 +5259,7 @@ befriend.filters = {
                             e.preventDefault();
                             e.stopPropagation();
 
+                            befriend.filters.hideActiveAutoCompleteIf();
                             befriend.filters.hideActiveAutoCompleteSelectIf();
 
                             befriend.filters.transitionSecondary(
@@ -5464,17 +5478,6 @@ befriend.filters = {
                             befriend.filters[config.key].selectAutoCompleteFilterItem(id);
                         });
                     }
-
-                    document.body.addEventListener('click', function (e) {
-                        if(befriend.filters.getActiveAutocompleteSelectEl()) {
-                            if(!e.target.closest('.select-container')) {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                
-                                befriend.filters.hideActiveAutoCompleteSelectIf(e.target);
-                            }
-                        }
-                    });
                 },
             },
         }
