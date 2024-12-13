@@ -16,8 +16,22 @@
     .sections {
         display: flex;
         flex-direction: column;
-        gap: 10px 0;
+        gap: 20px 0;
         padding-top: 10px;
+
+        .group {
+            .group-name {
+                font-size: 18px;
+                font-weight: 300;
+                margin-bottom: 10px;
+            }
+
+            .group-sections {
+                display: flex;
+                flex-direction: column;
+                gap: 10px 0;
+            }
+        }
     }
 
     .section {
@@ -30,6 +44,7 @@
         position: relative;
 
         .section-top {
+            $icon_width: 30px;
             display: flex;
             align-items: center;
             cursor: pointer;
@@ -38,7 +53,11 @@
             transition: border $filters_section_transition_ms;
 
             .section-icon {
-                margin-right: 12px;
+                width: $icon_width;
+
+                margin-left: -6px;
+                margin-right: 10px;
+
                 @include flex-center-col;
 
                 svg {
@@ -47,6 +66,7 @@
             }
 
             .section-name {
+                //margin-left: 30px;
                 font-size: 17px;
                 font-weight: 500;
                 margin-right: auto;
