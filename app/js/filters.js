@@ -84,7 +84,6 @@ befriend.filters = {
             }
         },
         movies: {
-            is_interest: true,
             token: 'movies',
             name: 'Movies',
             group: 'interests',
@@ -106,7 +105,6 @@ befriend.filters = {
             }
         },
         tv_shows: {
-            is_interest: true,
             token: 'tv_shows',
             name: 'TV Shows',
             group: 'interests',
@@ -128,7 +126,6 @@ befriend.filters = {
             }
         },
         sports: {
-            is_interest: true,
             token: 'sports',
             name: 'Sports',
             group: 'interests',
@@ -152,7 +149,6 @@ befriend.filters = {
             }
         },
         music: {
-            is_interest: true,
             token: 'music',
             name: 'Music',
             group: 'interests',
@@ -174,7 +170,6 @@ befriend.filters = {
             }
         },
         instruments: {
-            is_interest: true,
             token: 'instruments',
             name: 'Instruments',
             group: 'interests',
@@ -190,7 +185,6 @@ befriend.filters = {
             }
         },
         schools: {
-            is_interest: true,
             token: 'schools',
             name: 'Schools',
             group: 'schools_work',
@@ -207,7 +201,6 @@ befriend.filters = {
             }
         },
         work: {
-            is_interest: true,
             token: 'work',
             name: 'Work',
             group: 'schools_work',
@@ -2763,144 +2756,242 @@ befriend.filters = {
         }
     },
     networks: {
+        classes: {
+            open: 'show-dropdown',
+            removing: 'removing-dropdown'
+        },
+        els: {
+            section: null,
+            dropdown: null
+        },
         init: function() {
             let section = befriend.filters.sections.networks;
+            this.els.section = befriend.els.filters.querySelector(`.section.${section.token}`);
 
-            const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
-            const filter_options = section_el.querySelector('.filter-options');
+            const filter_options = this.els.section.querySelector('.filter-options');
 
             // Get stored filter values if they exist
             const filter_data = befriend.filters.data.filters?.['networks'];
+            const networks = befriend.filters.data.options?.networks?.networks || [];
 
-            let html = `
+            // Find currently selected network
+            let selected_network = 'Any Network';
+
+            if (filter_data?.items) {
+                const activeNetwork = Object.values(filter_data.items)
+                    .find(item => !item.is_negative && !item.deleted);
+                if (activeNetwork) {
+                    const networkData = networks.find(n => n.network_token === activeNetwork.network_token);
+                    if (networkData) {
+                        selected_network = networkData.network_name;
+                    }
+                }
+            }
+
+            const html = `
             <div class="filter-option" data-filter-token="${section.token}">
                 ${befriend.filters.sendReceiveHtml(true, true, true)}
-                
-                <div class="items-container">
-                    <div class="buttons">
-                        <div class="item button any ${!filter_data?.items ? 'selected' : ''}" data-token="any">
-                            <div class="name">Any Network</div>
+                <div class="select-container">
+                    <div class="selected-container">
+                        <span class="selected-name">${selected_network}</span>
+                        <div class="select-arrow">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360.0005 192.001"><path id="Down_Arrow" d="M176.001,192.001c-4.092,0-8.188-1.564-11.312-4.688L4.689,27.313C-1.563,21.061-1.563,10.937,4.689,4.689s16.376-6.252,22.624,0l148.688,148.688L324.689,4.689c6.252-6.252,16.376-6.252,22.624,0s6.252,16.376,0,22.624l-160,160c-3.124,3.124-7.22,4.688-11.312,4.688h0Z"/></svg>
                         </div>
-                        
-                        <div class="item button verified" data-token="verified">
-                            <div class="name">Any Verified</div>
-                        </div>
-                        
-                        <div class="options-grid">
-                            ${befriend.filters.data.options?.networks?.networks?.map(network => {
-                const isSelected = filter_data?.items ?
-                    Object.values(filter_data.items)
-                        .some(item => item.network_token === network.network_token &&
-                            !item.is_negative && !item.deleted) : false;
-
-                return `
-                                    <div class="item button ${isSelected ? 'selected' : ''}" 
-                                         data-token="${network.network_token}">
-                                        <div class="name-meta">
-                                            <div class="name">${network.network_name}</div>
-                                            <div class="meta">
-                                                ${network.persons_count.toLocaleString()} people
-                                                ${network.is_verified ? ' • Verified' : ''}
-                                            </div>
-                                        </div>
-                                    </div>`;
-            }).join('') || ''}
-                        </div>
+                    </div>
+                    <div class="select-dropdown">
+                        <div class="select-list"></div>
                     </div>
                 </div>
             </div>`;
 
-            section_el.querySelector('.section-container')
-                .insertAdjacentHTML('afterbegin',
-                    befriend.filters.sendReceiveHtml(true, true, true)
-                );
-
             filter_options.innerHTML = html;
 
-            this.initEvents(section_el);
+            requestAnimationFrame(() => {
+                // Initialize dropdown height to 0
+                this.els.dropdown = this.els.section.querySelector('.select-dropdown');
+                this.els.dropdown.style.height = '0';
+            });
+
+            this.initEvents();
+        },
+        formatNetworksList: function(networks) {
+            // First any verified networks
+            const anyVerified = {
+                network_token: 'any_verified',
+                network_name: 'Verified Networks',
+                is_verified: true,
+                is_special: true
+            };
+
+            // Then any networks
+            const any = {
+                network_token: 'any',
+                network_name: 'Any Network',
+                is_special: true
+            };
+
+            // Sort remaining networks by verified status then person count
+            const sortedNetworks = [...networks].sort((a, b) => {
+                if (a.is_verified !== b.is_verified) {
+                    return b.is_verified - a.is_verified;
+                }
+                return b.persons_count - a.persons_count;
+            });
+
+            return [any, anyVerified, ...sortedNetworks];
+        },
+        setDropdownHeight: function(shouldOpen) {
+            if (shouldOpen) {
+                // Set height to auto temporarily to get full height
+                this.els.dropdown.style.height = 'auto';
+                const fullHeight = this.els.dropdown.offsetHeight;
+
+                // Reset to 0 then animate to full height
+                this.els.dropdown.style.height = '0';
+                void this.els.dropdown.offsetHeight; // Force reflow
+                this.els.dropdown.style.height = `${fullHeight}px`;
+            } else {
+                this.els.dropdown.style.height = '0';
+            }
+        },
+        toggleDropdown: function(show) {
+            if(!show && !elHasClass(this.els.section, this.classes.open)) {
+                return;
+            }
+
+            console.log({
+                dropdown: show
+            })
+
+            clearTimeout(this.els.dropdown._timeout);
+
+            if(show) {
+                addClassEl(this.classes.open, this.els.section);
+
+                requestAnimationFrame(() => {
+                    befriend.filters.networks.setDropdownHeight(true);
+                });
+            } else {
+                addClassEl(this.classes.removing, this.els.section);
+                removeClassEl(this.classes.open, this.els.section);
+
+                requestAnimationFrame(() => {
+                    befriend.filters.networks.setDropdownHeight(false);
+                });
+
+                this.els.dropdown._timeout = setTimeout(function () {
+                    removeClassEl(befriend.filters.networks.classes.removing, befriend.filters.networks.els.section);
+                }, befriend.variables.secondary_transition_ms);
+            }
+        },
+        isDropdownShown: function () {
+            return elHasClass(this.els.section, this.classes.open);
+        },
+        initEvents: function() {
+            const selectContainer = this.els.section.querySelector('.select-container');
+            const selectedContainer = selectContainer.querySelector('.selected-container');
+            const dropdown = selectContainer.querySelector('.select-dropdown');
+            const networks = befriend.filters.data.options?.networks?.networks || [];
+
+            selectedContainer.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (!befriend.filters.networks.isDropdownShown()) {
+                    const formattedNetworks = this.formatNetworksList(networks);
+                    let listHtml = '';
+
+                    for(let network of formattedNetworks) {
+                        listHtml += `<div class="item" data-token="${network.network_token}">
+                                        ${network.app_icon ? `
+                                            <div class="network-icon">
+                                                <img src="${network.app_icon}" alt="${network.network_name}" />
+                                            </div>
+                                        ` : ''}
+                                        <div class="item-content">
+                                            <div class="name">${network.network_name}</div>
+                                            ${!network.is_special ? `
+                                                <div class="meta">${network.persons_count.toLocaleString()} persons</div>
+                                            ` : ''}
+                                        </div>
+                                        ${network.is_verified ? `
+                                            <div class="verified-badge">Verified</div>
+                                        ` : ''}
+                                    </div>`;
+                    }
+
+                    dropdown.querySelector('.select-list').innerHTML = listHtml;
+
+                    befriend.filters.networks.toggleDropdown(true);
+                } else {
+                    befriend.filters.networks.toggleDropdown(false);
+                }
+            });
+
+            // Handle network selection
+            dropdown.addEventListener('click', async (e) => {
+                console.log("Dropdown click");
+                e.preventDefault();
+                e.stopPropagation();
+
+                const item = e.target.closest('.item');
+                if (!item) return;
+
+                const token = item.getAttribute('data-token');
+                const networkName = item.querySelector('.name').textContent;
+
+                try {
+                    befriend.toggleSpinner(true);
+
+                    await befriend.auth.put('/filters/networks', {
+                        network_token: token,
+                        active: true
+                    });
+
+                    selectedContainer.querySelector('.selected-name').textContent = networkName;
+
+                    // Update stored filter data
+                    if (!befriend.filters.data.filters.networks) {
+                        befriend.filters.data.filters.networks = { items: {} };
+                    }
+
+                    // Clear existing active networks
+                    for (let key in befriend.filters.data.filters.networks.items) {
+                        befriend.filters.data.filters.networks.items[key].is_negative = true;
+                    }
+
+                    // Add new selection
+                    befriend.filters.data.filters.networks.items[token] = {
+                        network_token: token,
+                        is_negative: false,
+                        deleted: false
+                    };
+
+                } catch(e) {
+                    console.error('Error updating networks filter:', e);
+                } finally {
+                    befriend.toggleSpinner(false);
+                }
+            });
+
+            // Add hover effects for items
+            dropdown.addEventListener('mouseover', (e) => {
+                const item = e.target.closest('.item');
+                if (item) {
+                    const items = dropdown.getElementsByClassName('item');
+                    removeElsClass(items, 'hover');
+                    addClassEl('hover', item);
+                }
+            });
+
+            // Initial setup to handle open/closed state
+            selectContainer.addEventListener('transitionend', () => {
+                if (!befriend.filters.networks.isDropdownShown()) {
+                    dropdown.querySelector('.select-list').innerHTML = '';
+                }
+            });
         },
 
-        initEvents: function(section_el) {
-            const buttons = section_el.querySelectorAll('.button');
-
-            for(let button of buttons) {
-                if(button._listener) continue;
-                button._listener = true;
-
-                button.addEventListener('click', async (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    const token = button.getAttribute('data-token');
-                    const wasSelected = elHasClass(button, 'selected');
-                    const isAny = token === 'any';
-                    const isVerified = token === 'verified';
-
-                    try {
-                        if(isAny) {
-                            if(wasSelected) return;
-
-                            // Deselect all other buttons
-                            const otherButtons = section_el.querySelectorAll('.button:not(.any)');
-                            removeElsClass(otherButtons, 'selected');
-                            addClassEl('selected', button);
-
-                            await befriend.auth.put('/filters/networks', {
-                                network_token: token,
-                                active: true
-                            });
-
-                        } else if(isVerified) {
-                            toggleElClass(button, 'selected');
-
-                            // Deselect "Any" if this is being selected
-                            if(!wasSelected) {
-                                const anyButton = section_el.querySelector('.button.any');
-                                removeClassEl('selected', anyButton);
-                            }
-
-                            await befriend.auth.put('/filters/networks', {
-                                network_token: token,
-                                active: !wasSelected
-                            });
-
-                        } else {
-                            toggleElClass(button, 'selected');
-
-                            // Deselect "Any" when selecting specific network
-                            const anyButton = section_el.querySelector('.button.any');
-                            removeClassEl('selected', anyButton);
-
-                            await befriend.auth.put('/filters/networks', {
-                                network_token: token,
-                                active: !wasSelected
-                            });
-
-                            // If all networks are selected, select "Any" instead
-                            const networkButtons = section_el.querySelectorAll('.button:not(.any):not(.verified)');
-                            const allSelected = Array.from(networkButtons)
-                                .every(btn => elHasClass(btn, 'selected'));
-
-                            if(allSelected) {
-                                addClassEl('selected', anyButton);
-                                removeElsClass(networkButtons, 'selected');
-
-                                await befriend.auth.put('/filters/networks', {
-                                    network_token: 'any',
-                                    active: true
-                                });
-                            }
-                        }
-
-                    } catch(e) {
-                        console.error('Error updating networks filter:', e);
-
-                        // Revert UI state on error
-                        toggleElClass(button, 'selected');
-                    }
-                });
-            }
-        }
     },
     reviews: {
         min: 0,
@@ -3778,9 +3869,8 @@ befriend.filters = {
                     // Add sections within this group
                     for (let section of group.sections) {
                         let collapsed_class = this.data.collapsed[section.key] ? 'collapsed' : '';
-                        let interest_class = section.is_interest ? 'is_interest' : '';
 
-                        section_html += `<div class="section ${section.token} ${interest_class} ${collapsed_class}" data-key="${section.key}">
+                        section_html += `<div class="section ${section.token} ${collapsed_class}" data-key="${section.key}">
                         <div class="section-top">
                             <div class="section-icon">${section.icon ? section.icon : ''}</div>
                             <div class="section-name">${section.name}</div>
@@ -3948,6 +4038,8 @@ befriend.filters = {
             section_top.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
+
+                befriend.filters.networks.toggleDropdown(false);
 
                 if(befriend.filters.getActiveAutoCompleteEl()) {
                     return befriend.filters.hideActiveAutoCompleteIf(e.target);
@@ -4263,6 +4355,9 @@ befriend.filters = {
         return {
             init: function () {
                 const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+
+                addClassEl('multi-select', section_el);
+                
                 const filter_options = section_el.querySelector('.filter-options');
 
                 const filter_data = befriend.filters.data.filters?.[filterName];
@@ -4456,6 +4551,8 @@ befriend.filters = {
             init: function () {
                 let section = befriend.filters.sections[this.key];
                 const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
+
+                addClassEl('is_interest', section_el);
 
                 if (config.hasTabs) {
                     if (!this.data.tableKey) {

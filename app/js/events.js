@@ -104,6 +104,15 @@ befriend.events = {
             } else if(befriend.isViewShown('filters')) {
                 befriend.filters.hideActiveSecondaryIf(e.target);
 
+                if(befriend.filters.networks.isDropdownShown()) {
+                    if(!e.target.closest('.select-dropdown')) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        befriend.filters.networks.toggleDropdown(false);
+                    }
+                }
+
                 if(befriend.filters.getActiveAutoCompleteEl()) {
                     if(!e.target.closest('.autocomplete-container')) {
                         e.preventDefault();
@@ -167,6 +176,7 @@ befriend.events = {
                 befriend.filters.hideActiveSecondaryIf();
                 befriend.filters.hideActiveAutoCompleteIf();
                 befriend.filters.hideActiveAutoCompleteSelectIf();
+                befriend.filters.networks.toggleDropdown(false);
                 befriend.me.hideActiveSecondaryIf();
 
                 //view specific logic
