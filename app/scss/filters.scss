@@ -32,10 +32,10 @@
             display: flex;
 
             .nav-button {
-                $br: 8px;
+                $br: 12px;
                 $bc: $color_lightgray;
                 @include flex-center-col;
-                padding: 8px 14px;
+                padding: 8px 16px;
                 border: 1px solid $bc;
                 border-right-color: transparent;
                 width: fit-content;
@@ -47,6 +47,7 @@
 
                 &.active {
                     background-color: $brand_color_b;
+                    border: 1px solid $brand_color_a;
                 }
 
                 &:first-of-type {
