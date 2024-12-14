@@ -2711,6 +2711,7 @@ befriend.filters = {
                         <div class="activity level_1_activity" data-id="${level_1_id}" data-token="${activity.token}">
                             ${chevron_html}
                             ${checkboxHtml(is_checked)}
+                            ${activity.sub && Object.keys(activity.sub).length ? this.getCircleHtml('level-1') : ''}
                             <div class="activity_wrapper ${center_class}">
                                 ${icon_html}
                                 <div class="name">${activity.name}</div>
@@ -2736,6 +2737,14 @@ befriend.filters = {
                                                 ${html}
                                             </div>
                                         </div>`;
+
+            //set number of activity types selected if not all/none
+            let level_1_activities = section_el.getElementsByClassName('level_1_activity');
+            for (let activity_el of level_1_activities) {
+                if (activity_el.getAttribute('data-token') !== 'all') {
+                    this.updateCircleStates(activity_el);
+                }
+            }
 
             let last_row = lastArrItem(
                 section_el.getElementsByClassName('level_1_row'),
@@ -2936,10 +2945,39 @@ befriend.filters = {
 
                     try {
                         befriend.filters.data.filters[section.token] = await befriend.filters.activity_types.updateServer(updateTokens, !wasSelected);
-
-                        console.log(befriend.filters.data.filters[section.token]);
                     } catch(e) {
                         console.error(e);
+                    }
+
+                    //Update circle count
+                    if (elHasClass(activity_el, 'level_2_activity')) {
+                        let level_2_el = activity_el.closest('.level_2');
+                        let parent_id = level_2_el.getAttribute('data-parent-id');
+
+                        const parent_activity = section_el.querySelector(
+                            `.level_1_activity[data-id="${parent_id}"]`
+                        );
+
+                        if (parent_activity) {
+                            befriend.filters.activity_types.updateCircleStates(parent_activity);
+                        }
+                    } else if (elHasClass(activity_el, 'level_3_activity')) {
+                        let level_3_el = activity_el.closest('.level_3');
+                        let level_2_id = level_3_el.getAttribute('data-level-2-id');
+
+                        const level_2_activity = section_el.querySelector(
+                            `.level_2_activity[data-id="${level_2_id}"]`
+                        );
+                        if (level_2_activity) {
+                            befriend.filters.activity_types.updateCircleStates(level_2_activity);
+                            const parent_id = level_2_activity.closest('.level_2').getAttribute('data-parent-id');
+                            const level_1_activity = section_el.querySelector(
+                                `.level_1_activity[data-id="${parent_id}"]`
+                            );
+                            if (level_1_activity) {
+                                befriend.filters.activity_types.updateCircleStates(level_1_activity);
+                            }
+                        }
                     }
 
                     //set all to selected if no negatives
@@ -3124,6 +3162,8 @@ befriend.filters = {
                             <div class="activity level_2_activity" data-id="${level_2_id}" data-token="${activity.token}">
                                 ${chevron_html}
                                 ${checkboxHtml(is_checked)}
+                                ${activity.sub && Object.keys(activity.sub).length ? befriend.filters.activity_types.getCircleHtml('level-2') : ''}
+
                                 <div class="activity_wrapper ${no_icon_class}">
                                     ${icon_html}
                                     <div class="name">${activity.name}</div>
@@ -3143,10 +3183,11 @@ befriend.filters = {
                                                 ${level_2_html}
                                             </div>`;
 
-                    const level2Activities = level_2_el.querySelectorAll('.level_2_activity');
+                    const level2Activities = level_2_el.getElementsByClassName('level_2_activity');
 
                     for(let activity_el of level2Activities) {
                         befriend.filters.activity_types.initCheckboxState(this, activity_el);
+                        befriend.filters.activity_types.updateCircleStates(activity_el);
                     }
 
                     befriend.filters.activity_types.updateLevelHeight(2);
@@ -3319,7 +3360,88 @@ befriend.filters = {
 
                  resolve();
             });
-        }
+        },
+        getCircleHtml: function (level) {
+            return `
+                <div class="circle ${level}-circle">
+                    <div class="count"></div>
+                </div>
+            `;
+        },
+        updateCircleStates: function (activity_el) {
+            const level = elHasClass(activity_el, 'level_1_activity') ? 1 : 2;
+            const circle = activity_el.querySelector(`.circle.level-${level}-circle`);
+            if (!circle) return;
+
+            const activity_id = activity_el.getAttribute('data-id');
+            let sub_activities;
+
+            if (level === 1) {
+                sub_activities = befriend.activities.types.data[activity_id]?.sub;
+            } else {
+                const parent_id = activity_el.closest('.level_2').getAttribute('data-parent-id');
+                sub_activities = befriend.activities.types.data[parent_id]?.sub[activity_id]?.sub;
+            }
+
+            if (!sub_activities) return;
+
+            let checked_count = 0;
+            let total_count = 0;
+            let all_sub_checked = true;
+
+            if (level === 1) {
+                // Count level 2 items for UI display
+                for (let level_2_id in sub_activities) {
+                    if (sub_activities[level_2_id]?.name?.toLowerCase() === 'any') {
+                        continue;
+                    }
+                    total_count++;
+                    const is_checked = !befriend.filters.activity_types.getNegativeState(level_2_id);
+                    if (is_checked) {
+                        checked_count++;
+                    }
+
+                    // Check sub-activities state without affecting counts
+                    if (sub_activities[level_2_id].sub) {
+                        for (let level_3_id in sub_activities[level_2_id].sub) {
+                            if (sub_activities[level_2_id].sub[level_3_id].name?.toLowerCase() === 'any') {
+                                continue;
+                            }
+                            const is_sub_checked = !befriend.filters.activity_types.getNegativeState(level_3_id);
+                            if (!is_sub_checked) {
+                                all_sub_checked = false;
+                            }
+                        }
+                    }
+                }
+
+                // Show circle unless everything is checked
+                if (checked_count === total_count && all_sub_checked) {
+                    removeClassEl('active', circle);
+                } else {
+                    circle.querySelector('.count').textContent = checked_count;
+                    addClassEl('active', circle);
+                }
+            } else { //level 2
+                for (let sub_id in sub_activities) {
+                    if (sub_activities[sub_id]?.name?.toLowerCase() === 'any') {
+                        continue;
+                    }
+                    total_count++;
+                    const is_checked = !befriend.filters.activity_types.getNegativeState(sub_id);
+                    if (is_checked) {
+                        checked_count++;
+                    }
+                }
+
+                if (checked_count === 0 || checked_count === total_count) {
+                    removeClassEl('active', circle);
+                } else {
+                    circle.querySelector('.count').textContent = checked_count;
+                    addClassEl('active', circle);
+                }
+            }
+        },
     },
     verifications: {
         options: {

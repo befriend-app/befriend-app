@@ -1038,15 +1038,16 @@
         }
 
         &.activity_types {
+            $padding_lr: 20px;
+            $padding_tb: 15px;
+
             .filter-options {
-                padding-top: 0;
-                padding-bottom: 0;
+                padding: 0;
             }
 
             .activities-wrapper {
                 display: flex;
                 justify-content: center;
-
                 max-height: 400px;
                 overflow-y: scroll;
             }
@@ -1124,20 +1125,55 @@
                         height: 5px;
                     }
                 }
+
+                .circle {
+                    $dim: 20px;
+                    position: absolute;
+                    right: calc($dim / -2);
+                    bottom: -8px;
+                    width: $dim;
+                    height: $dim;
+                    border-radius: 50%;
+                    //border: 2px solid $brand_color_a;
+                    background-color: $brand_color_a;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 11px;
+                    transition: all 200ms ease;
+                    color: white;
+                    opacity: 0;
+                    visibility: hidden;
+
+                    .count {
+                        font-weight: 600;
+                        transition: all 200ms ease;
+                    }
+
+                    &.active {
+                        opacity: 1;
+                        visibility: visible;
+                    }
+
+                    &.level-2-circle {
+                        border: 1px solid $brand_color_a;
+                        background-color: lighten($brand_color_b, 0%);
+                        color: black;
+                    }
+                }
             }
 
             .level_1 {
                 $dim: 65px;
                 display: flex;
                 flex-wrap: wrap;
-                overflow-x: hidden;
-                //padding: 0;
-                padding-top: 20px;
-                padding-bottom: 20px;
+                overflow-x: visible;
+                padding: $padding_tb $padding_lr;
+                width: calc(100% - $padding_lr * 2);
 
                 .level_1_row {
-                    display: grid;
                     width: 100%;
+                    display: grid;
                     margin-bottom: 8px;
                     grid-template-columns: repeat($filter_activity_row_items, 1fr);
                     grid-gap: $activity_gap_tb $activity_gap_lr;
