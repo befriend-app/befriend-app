@@ -2935,7 +2935,9 @@ befriend.filters = {
                     befriend.filters.activity_types.updateFilterData(updateIds, !wasSelected);
 
                     try {
-                        await befriend.filters.activity_types.updateServer(updateTokens, !wasSelected);
+                        befriend.filters.data.filters[section.token] = await befriend.filters.activity_types.updateServer(updateTokens, !wasSelected);
+
+                        console.log(befriend.filters.data.filters[section.token]);
                     } catch(e) {
                         console.error(e);
                     }
@@ -3305,10 +3307,12 @@ befriend.filters = {
         updateServer: function (updateTokens, is_active) {
             return new Promise(async (resolve, reject) => {
                  try {
-                      await befriend.auth.put(`/filters/activity-types`, {
+                      let r = await befriend.auth.put(`/filters/activity-types`, {
                           activities: updateTokens,
                           active: is_active
                       });
+
+                      resolve(r.data);
                  } catch(e) {
                      console.error(e);
                  }
