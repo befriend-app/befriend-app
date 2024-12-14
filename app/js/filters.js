@@ -2854,6 +2854,12 @@ befriend.filters = {
                     updateTokens[token] = !wasSelected;
 
                     if(wasSelected) {
+                        // Remove active state from circle
+                        const circle = activity_el.querySelector('.circle');
+                        if (circle) {
+                            removeClassEl('active', circle);
+                        }
+
                         // Uncheck all child elements
                         if(next_level_el) {
                             befriend.filters.activity_types.toggleCheckboxes(false, false, next_level_el, updateTokens, updateIds);
@@ -2923,6 +2929,9 @@ befriend.filters = {
                             updateIds.push(parseInt(parent_id));
                             updateTokens[parent_token] = true;
                             addClassEl('checked', parent_activity.querySelector('.checkbox'));
+
+                            // Update circle state for parent when enabling
+                            befriend.filters.activity_types.updateCircleStates(parent_activity);
 
                             // For level 3, also check level 1 parent
                             if(elHasClass(activity_el, 'level_3_activity')) {
@@ -3003,6 +3012,7 @@ befriend.filters = {
 
             if(checkboxes) {
                 for(let checkbox of checkboxes) {
+                    let activity_el = checkbox.closest('.activity');
                     let id = checkbox.closest('.activity').getAttribute('data-id');
                     let token = checkbox.closest('.activity').getAttribute('data-token');
 
@@ -3013,8 +3023,14 @@ befriend.filters = {
 
                     if(is_active) {
                         addClassEl('checked', checkbox);
+                        befriend.filters.activity_types.updateCircleStates(activity_el);
                     } else {
                         removeClassEl('checked', checkbox);
+
+                        const circle = activity_el.querySelector('.circle');
+                        if (circle) {
+                            removeClassEl('active', circle);
+                        }
                     }
                 }
             }
@@ -3034,9 +3050,9 @@ befriend.filters = {
                     if(token === 'all') {
                         if(!elHasClass(el, 'active')) {
                             addClassEl('active', el);
-                            befriend.filters.activity_types.toggleCheckboxes(true, true);
 
                             befriend.filters.activity_types.updateFilterData(null, true, true);
+                            befriend.filters.activity_types.toggleCheckboxes(true, true);
 
                             await befriend.filters.activity_types.updateServer({
                                 [token]: true
@@ -3372,6 +3388,13 @@ befriend.filters = {
             const level = elHasClass(activity_el, 'level_1_activity') ? 1 : 2;
             const circle = activity_el.querySelector(`.circle.level-${level}-circle`);
             if (!circle) return;
+
+            // Check if parent checkbox is enabled
+            const checkbox = activity_el.querySelector('.checkbox');
+            if (!checkbox || !elHasClass(checkbox, 'checked')) {
+                removeClassEl('active', circle);
+                return;
+            }
 
             const activity_id = activity_el.getAttribute('data-id');
             let sub_activities;
