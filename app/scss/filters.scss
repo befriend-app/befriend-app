@@ -1213,6 +1213,13 @@
                     }
                 }
             }
+
+            .checkbox {
+                margin-right: 12px;
+                .inner {
+                    background-color: white !important;
+                }
+            }
         }
 
         &.reviews {

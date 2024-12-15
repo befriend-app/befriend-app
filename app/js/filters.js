@@ -2775,39 +2775,50 @@ befriend.filters = {
             const networks = befriend.filters.data.options?.networks?.networks || [];
 
             // Find currently selected network
-            let selected_network = 'Any Network';
+            let selected_network = 'Verified Networks';
 
             if (filter_data?.items) {
-                const activeNetwork = Object.values(filter_data.items)
-                    .find(item => !item.is_negative && !item.deleted);
-                if (activeNetwork) {
-                    const networkData = networks.find(n => n.network_token === activeNetwork.network_token);
-                    if (networkData) {
-                        selected_network = networkData.network_name;
+                // Look for verified network first
+                const activeNetworks = Object.values(filter_data.items)
+                    .filter(item => !item.is_negative && !item.deleted);
+
+                if (activeNetworks.length) {
+                    const verifiedNetwork = networks.find(n =>
+                        n.is_verified && activeNetworks.some(an => an.network_token === n.network_token)
+                    );
+
+                    if (verifiedNetwork) {
+                        selected_network = verifiedNetwork.network_name;
+                    } else {
+                        const firstNetwork = networks.find(n =>
+                            activeNetworks[0].network_token === n.network_token
+                        );
+                        if (firstNetwork) {
+                            selected_network = firstNetwork.network_name;
+                        }
                     }
                 }
             }
 
             const html = `
-            <div class="filter-option" data-filter-token="${section.token}">
-                ${befriend.filters.sendReceiveHtml(true, true, true)}
-                <div class="select-container">
-                    <div class="selected-container">
-                        <span class="selected-name">${selected_network}</span>
-                        <div class="select-arrow">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360.0005 192.001"><path id="Down_Arrow" d="M176.001,192.001c-4.092,0-8.188-1.564-11.312-4.688L4.689,27.313C-1.563,21.061-1.563,10.937,4.689,4.689s16.376-6.252,22.624,0l148.688,148.688L324.689,4.689c6.252-6.252,16.376-6.252,22.624,0s6.252,16.376,0,22.624l-160,160c-3.124,3.124-7.22,4.688-11.312,4.688h0Z"/></svg>
-                        </div>
-                    </div>
-                    <div class="select-dropdown">
-                        <div class="select-list"></div>
+        <div class="filter-option" data-filter-token="${section.token}">
+            ${befriend.filters.sendReceiveHtml(true, true, true)}
+            <div class="select-container">
+                <div class="selected-container">
+                    <span class="selected-name">${selected_network}</span>
+                    <div class="select-arrow">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360.0005 192.001"><path id="Down_Arrow" d="M176.001,192.001c-4.092,0-8.188-1.564-11.312-4.688L4.689,27.313C-1.563,21.061-1.563,10.937,4.689,4.689s16.376-6.252,22.624,0l148.688,148.688L324.689,4.689c6.252-6.252,16.376-6.252,22.624,0s6.252,16.376,0,22.624l-160,160c-3.124,3.124-7.22,4.688-11.312,4.688h0Z"/></svg>
                     </div>
                 </div>
-            </div>`;
+                <div class="select-dropdown">
+                    <div class="select-list"></div>
+                </div>
+            </div>
+        </div>`;
 
             filter_options.innerHTML = html;
 
             requestAnimationFrame(() => {
-                // Initialize dropdown height to 0
                 this.els.dropdown = this.els.section.querySelector('.select-dropdown');
                 this.els.dropdown.style.height = '0';
             });
@@ -2819,7 +2830,6 @@ befriend.filters = {
             const anyVerified = {
                 network_token: 'any_verified',
                 network_name: 'Verified Networks',
-                is_verified: true,
                 is_special: true
             };
 
@@ -2842,13 +2852,10 @@ befriend.filters = {
         },
         setDropdownHeight: function(shouldOpen) {
             if (shouldOpen) {
-                // Set height to auto temporarily to get full height
                 this.els.dropdown.style.height = 'auto';
                 const fullHeight = this.els.dropdown.offsetHeight;
-
-                // Reset to 0 then animate to full height
                 this.els.dropdown.style.height = '0';
-                void this.els.dropdown.offsetHeight; // Force reflow
+                void this.els.dropdown.offsetHeight;
                 this.els.dropdown.style.height = `${fullHeight}px`;
             } else {
                 this.els.dropdown.style.height = '0';
@@ -2858,10 +2865,6 @@ befriend.filters = {
             if(!show && !elHasClass(this.els.section, this.classes.open)) {
                 return;
             }
-
-            console.log({
-                dropdown: show
-            })
 
             clearTimeout(this.els.dropdown._timeout);
 
@@ -2879,13 +2882,29 @@ befriend.filters = {
                     befriend.filters.networks.setDropdownHeight(false);
                 });
 
-                this.els.dropdown._timeout = setTimeout(function () {
-                    removeClassEl(befriend.filters.networks.classes.removing, befriend.filters.networks.els.section);
+                this.els.dropdown._timeout = setTimeout(() => {
+                    removeClassEl(this.classes.removing, this.els.section);
                 }, befriend.variables.secondary_transition_ms);
             }
         },
         isDropdownShown: function () {
             return elHasClass(this.els.section, this.classes.open);
+        },
+        updateSelectedDisplay: function(selectedContainer, activeItems) {
+            if (activeItems.length === 0 || activeItems[0].getAttribute('data-token') === 'any') {
+                selectedContainer.querySelector('.selected-name').textContent = 'Any Network';
+            } else if (activeItems[0].getAttribute('data-token') === 'any_verified') {
+                selectedContainer.querySelector('.selected-name').textContent = 'Verified Networks';
+            } else {
+                // Prioritize verified network for display
+                const verifiedNetwork = Array.from(activeItems)
+                    .find(activeItem => activeItem.querySelector('.verified-badge'));
+
+                selectedContainer.querySelector('.selected-name').textContent =
+                    verifiedNetwork ?
+                        verifiedNetwork.querySelector('.name').textContent :
+                        activeItems[0].querySelector('.name').textContent;
+            }
         },
         initEvents: function() {
             const selectContainer = this.els.section.querySelector('.select-container');
@@ -2897,40 +2916,48 @@ befriend.filters = {
                 e.preventDefault();
                 e.stopPropagation();
 
-                if (!befriend.filters.networks.isDropdownShown()) {
+                if (!this.isDropdownShown()) {
                     const formattedNetworks = this.formatNetworksList(networks);
+                    const filter_data = befriend.filters.data.filters?.['networks'];
+
                     let listHtml = '';
 
                     for(let network of formattedNetworks) {
-                        listHtml += `<div class="item" data-token="${network.network_token}">
-                                        ${network.app_icon ? `
-                                            <div class="network-icon">
-                                                <img src="${network.app_icon}" alt="${network.network_name}" />
-                                            </div>
-                                        ` : ''}
-                                        <div class="item-content">
-                                            <div class="name">${network.network_name}</div>
-                                            ${!network.is_special ? `
-                                                <div class="meta">${network.persons_count.toLocaleString()} persons</div>
-                                            ` : ''}
-                                        </div>
-                                        ${network.is_verified ? `
-                                            <div class="verified-badge">Verified</div>
-                                        ` : ''}
-                                    </div>`;
+                        const isActive = filter_data?.items ?
+                            Object.values(filter_data.items).some(item =>
+                                !item.deleted &&
+                                !item.is_negative &&
+                                item.network_token === network.network_token
+                            ) : false;
+
+                        listHtml += `<div class="item ${isActive ? 'active' : ''}" data-token="${network.network_token}">
+                        ${checkboxHtml(isActive)}
+                        ${network.app_icon ? `
+                            <div class="network-icon">
+                                <img src="${network.app_icon}" alt="${network.network_name}" />
+                            </div>
+                        ` : ''}
+                        <div class="item-content">
+                            <div class="name">${network.network_name}</div>
+                            ${!network.is_special ? `
+                                <div class="meta">${network.persons_count.toLocaleString()} persons</div>
+                            ` : ''}
+                        </div>
+                        ${network.is_verified ? `
+                            <div class="verified-badge">Verified</div>
+                        ` : ''}
+                    </div>`;
                     }
 
                     dropdown.querySelector('.select-list').innerHTML = listHtml;
-
-                    befriend.filters.networks.toggleDropdown(true);
+                    this.toggleDropdown(true);
                 } else {
-                    befriend.filters.networks.toggleDropdown(false);
+                    this.toggleDropdown(false);
                 }
             });
 
             // Handle network selection
             dropdown.addEventListener('click', async (e) => {
-                console.log("Dropdown click");
                 e.preventDefault();
                 e.stopPropagation();
 
@@ -2938,37 +2965,78 @@ befriend.filters = {
                 if (!item) return;
 
                 const token = item.getAttribute('data-token');
-                const networkName = item.querySelector('.name').textContent;
 
                 try {
                     befriend.toggleSpinner(true);
 
-                    await befriend.auth.put('/filters/networks', {
-                        network_token: token,
-                        active: true
-                    });
+                    const wasActive = elHasClass(item, 'active');
 
-                    selectedContainer.querySelector('.selected-name').textContent = networkName;
+                    if (token === 'any' || token === 'any_verified') {
+                        // Deselect all other networks
+                        dropdown.querySelectorAll('.item.active').forEach(networkItem => {
+                            if (networkItem !== item) {
+                                removeClassEl('active', networkItem);
+                                const checkbox = networkItem.querySelector('.checkbox');
+                                if (checkbox) removeClassEl('checked', checkbox);
+                            }
+                        });
+                    } else {
+                        // Deselect special items if selecting a regular network
+                        const specialItems = dropdown.querySelectorAll('.item[data-token="any"], .item[data-token="any_verified"]');
+                        specialItems.forEach(specialItem => {
+                            removeClassEl('active', specialItem);
+                            const checkbox = specialItem.querySelector('.checkbox');
+                            if (checkbox) removeClassEl('checked', checkbox);
+                        });
+                    }
 
-                    // Update stored filter data
+                    // Toggle active state and checkbox
+                    toggleElClass(item, 'active');
+                    const checkbox = item.querySelector('.checkbox');
+
+                    if (checkbox) {
+                        toggleElClass(checkbox, 'checked');
+                    }
+
+                    // Update server
+                    //todo
+                    // await befriend.auth.put('/filters/networks', {
+                    //     network_token: token,
+                    //     active: !wasActive
+                    // });
+
+                    // Update filter data
                     if (!befriend.filters.data.filters.networks) {
                         befriend.filters.data.filters.networks = { items: {} };
                     }
 
-                    // Clear existing active networks
-                    for (let key in befriend.filters.data.filters.networks.items) {
-                        befriend.filters.data.filters.networks.items[key].is_negative = true;
+                    if (!wasActive) {
+                        befriend.filters.data.filters.networks.items[token] = {
+                            network_token: token,
+                            is_negative: false,
+                            deleted: false
+                        };
+                    } else {
+                        befriend.filters.data.filters.networks.items[token] = {
+                            network_token: token,
+                            is_negative: true,
+                            deleted: false
+                        };
                     }
 
-                    // Add new selection
-                    befriend.filters.data.filters.networks.items[token] = {
-                        network_token: token,
-                        is_negative: false,
-                        deleted: false
-                    };
+                    // Update selected name display
+                    const activeItems = dropdown.querySelectorAll('.item.active');
+                    this.updateSelectedDisplay(selectedContainer, activeItems);
 
                 } catch(e) {
                     console.error('Error updating networks filter:', e);
+                    toggleElClass(item, 'active');
+
+                    const checkbox = item.querySelector('.checkbox');
+
+                    if (checkbox) {
+                        toggleElClass(checkbox, 'checked');
+                    }
                 } finally {
                     befriend.toggleSpinner(false);
                 }
@@ -2986,12 +3054,11 @@ befriend.filters = {
 
             // Initial setup to handle open/closed state
             selectContainer.addEventListener('transitionend', () => {
-                if (!befriend.filters.networks.isDropdownShown()) {
+                if (!this.isDropdownShown()) {
                     dropdown.querySelector('.select-list').innerHTML = '';
                 }
             });
-        },
-
+        }
     },
     reviews: {
         min: 0,
