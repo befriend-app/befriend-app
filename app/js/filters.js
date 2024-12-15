@@ -2771,11 +2771,22 @@ befriend.filters = {
             const filter_options = this.els.section.querySelector('.filter-options');
 
             // Get stored filter values if they exist
-            const filter_data = befriend.filters.data.filters?.['networks'];
+            let filter_data = befriend.filters.data.filters?.['networks'];
             const networks = befriend.filters.data.options?.networks?.networks || [];
 
             // Find currently selected network
             let selected_network = 'Verified Networks';
+
+            // If no filter data exists yet, create initial state with verified networks selected
+            if (typeof filter_data?.is_all_verified === 'undefined') {
+                if(!filter_data) {
+                    filter_data = befriend.filters.data.filters.networks = {};
+                }
+
+                if(!filter_data?.items || !(Object.keys(filter_data?.items).length)) {
+                    filter_data.is_all_verified = true;
+                }
+            }
 
             if (filter_data?.items) {
                 // Look for verified network first
@@ -2825,27 +2836,38 @@ befriend.filters = {
 
             this.initEvents();
         },
+        getByToken: function (token) {
+            return befriend.filters.data.options?.networks?.networks?.find(network => network.network_token === token);
+        },
         formatNetworksList: function(networks) {
-            // First any verified networks
-            const anyVerified = {
-                network_token: 'any_verified',
-                network_name: 'Verified Networks',
-                is_special: true
-            };
-
-            // Then any networks
             const any = {
                 network_token: 'any',
                 network_name: 'Any Network',
                 is_special: true
             };
 
-            // Sort remaining networks by verified status then person count
+            const anyVerified = {
+                network_token: 'any_verified',
+                network_name: 'Verified Networks',
+                is_special: true
+            };
+
+            // Sort remaining networks by:
+            // self, befriend, verified w/ priority, by priority
             const sortedNetworks = [...networks].sort((a, b) => {
+                if (a.is_self !== b.is_self) {
+                    return b.is_self - a.is_self;
+                }
+
+                if (a.is_befriend !== b.is_befriend) {
+                    return b.is_befriend - a.is_befriend;
+                }
+
                 if (a.is_verified !== b.is_verified) {
                     return b.is_verified - a.is_verified;
                 }
-                return b.persons_count - a.persons_count;
+
+                return a.priority - b.priority;
             });
 
             return [any, anyVerified, ...sortedNetworks];
@@ -2891,19 +2913,35 @@ befriend.filters = {
             return elHasClass(this.els.section, this.classes.open);
         },
         updateSelectedDisplay: function(selectedContainer, activeItems) {
-            if (activeItems.length === 0 || activeItems[0].getAttribute('data-token') === 'any') {
+            if (activeItems.length === 0) {
                 selectedContainer.querySelector('.selected-name').textContent = 'Any Network';
-            } else if (activeItems[0].getAttribute('data-token') === 'any_verified') {
-                selectedContainer.querySelector('.selected-name').textContent = 'Verified Networks';
-            } else {
-                // Prioritize verified network for display
-                const verifiedNetwork = Array.from(activeItems)
-                    .find(activeItem => activeItem.querySelector('.verified-badge'));
+                return;
+            }
 
+            // Check for "Any Network" first
+            const anyNetwork = Array.from(activeItems)
+                .find(item => item.getAttribute('data-token') === 'any');
+            if (anyNetwork) {
+                selectedContainer.querySelector('.selected-name').textContent = 'Any Network';
+                return;
+            }
+
+            // Check for "Verified Networks"
+            const verifiedNetworks = Array.from(activeItems)
+                .find(item => item.getAttribute('data-token') === 'any_verified');
+            if (verifiedNetworks) {
+                selectedContainer.querySelector('.selected-name').textContent = 'Verified Networks';
+                return;
+            }
+
+            // Handle multiple custom networks
+            if (activeItems.length > 1) {
+                const firstNetwork = activeItems[0].querySelector('.name').textContent;
                 selectedContainer.querySelector('.selected-name').textContent =
-                    verifiedNetwork ?
-                        verifiedNetwork.querySelector('.name').textContent :
-                        activeItems[0].querySelector('.name').textContent;
+                    `${firstNetwork} (+${activeItems.length - 1})`;
+            } else {
+                selectedContainer.querySelector('.selected-name').textContent =
+                    activeItems[0].querySelector('.name').textContent;
             }
         },
         initEvents: function() {
@@ -2923,12 +2961,22 @@ befriend.filters = {
                     let listHtml = '';
 
                     for(let network of formattedNetworks) {
-                        const isActive = filter_data?.items ?
-                            Object.values(filter_data.items).some(item =>
-                                !item.deleted &&
-                                !item.is_negative &&
-                                item.network_token === network.network_token
-                            ) : false;
+                        let isActive = false;
+
+                        if(filter_data?.is_any_network) {
+                            isActive = true;
+                        } else if(filter_data?.is_all_verified) {
+                            if(network.network_token === 'any_verified' || network.is_verified) {
+                                isActive = true;
+                            }
+                        } else {
+                            isActive = filter_data?.items ?
+                                Object.values(filter_data.items).some(item =>
+                                    !item.deleted &&
+                                    !item.is_negative &&
+                                    item.network_token === network.network_token
+                                ) : false;
+                        }
 
                         listHtml += `<div class="item ${isActive ? 'active' : ''}" data-token="${network.network_token}">
                         ${checkboxHtml(isActive)}
@@ -2961,73 +3009,161 @@ befriend.filters = {
                 e.preventDefault();
                 e.stopPropagation();
 
+                const filter_data = befriend.filters.data.filters?.['networks'];
+
                 const item = e.target.closest('.item');
                 if (!item) return;
 
                 const token = item.getAttribute('data-token');
+                let network = befriend.filters.networks.getByToken(token);
 
                 try {
+                    // Prevent deselecting own network
+                    if (network?.is_self && elHasClass(item, 'active')) {
+                        return;
+                    }
+
                     befriend.toggleSpinner(true);
 
                     const wasActive = elHasClass(item, 'active');
-
-                    if (token === 'any' || token === 'any_verified') {
-                        // Deselect all other networks
-                        dropdown.querySelectorAll('.item.active').forEach(networkItem => {
-                            if (networkItem !== item) {
-                                removeClassEl('active', networkItem);
-                                const checkbox = networkItem.querySelector('.checkbox');
-                                if (checkbox) removeClassEl('checked', checkbox);
-                            }
-                        });
-                    } else {
-                        // Deselect special items if selecting a regular network
-                        const specialItems = dropdown.querySelectorAll('.item[data-token="any"], .item[data-token="any_verified"]');
-                        specialItems.forEach(specialItem => {
-                            removeClassEl('active', specialItem);
-                            const checkbox = specialItem.querySelector('.checkbox');
-                            if (checkbox) removeClassEl('checked', checkbox);
-                        });
-                    }
-
-                    // Toggle active state and checkbox
-                    toggleElClass(item, 'active');
                     const checkbox = item.querySelector('.checkbox');
+                    let networkItems = dropdown.querySelectorAll('.item')
 
-                    if (checkbox) {
-                        toggleElClass(checkbox, 'checked');
-                    }
+                    if (token === 'any') {
+                        if(!wasActive) {
+                            // Select all networks
+                            for(let networkItem of networkItems) {
+                                addClassEl('active', networkItem);
+                                const cb = networkItem.querySelector('.checkbox');
+                                if (cb) {
+                                    addClassEl('checked', cb);
+                                }
+                            }
+                        } else {
+                            removeClassEl('active', item);
+                            removeClassEl('checked', checkbox);
 
-                    // Update server
-                    //todo
-                    // await befriend.auth.put('/filters/networks', {
-                    //     network_token: token,
-                    //     active: !wasActive
-                    // });
+                            let wasAllVerifiedSelected = filter_data?.is_all_verified;
 
-                    // Update filter data
-                    if (!befriend.filters.data.filters.networks) {
-                        befriend.filters.data.filters.networks = { items: {} };
-                    }
+                            for(let networkItem of networkItems) {
+                                const cb = networkItem.querySelector('.checkbox');
+                                let token = networkItem.getAttribute('data-token');
 
-                    if (!wasActive) {
-                        befriend.filters.data.filters.networks.items[token] = {
-                            network_token: token,
-                            is_negative: false,
-                            deleted: false
-                        };
+                                if(token === 'any') {
+                                    continue;
+                                }
+
+                                if(token === 'any_verified') {
+                                    if(!wasAllVerifiedSelected) {
+                                        removeClassEl('active', networkItem);
+                                        removeClassEl('checked', cb);
+                                    }
+
+                                    continue;
+                                }
+
+                                let network = befriend.filters.networks.getByToken(token);
+
+                                if(!network || network.is_self) {
+                                    continue;
+                                }
+
+                                if(wasAllVerifiedSelected) {
+                                    if(network.is_verified) {
+                                        continue;
+                                    }
+                                }
+
+                                let wasActive = filter_data?.items ?
+                                    Object.values(filter_data.items).some(item =>
+                                        !item.deleted &&
+                                        !item.is_negative &&
+                                        item.network_token === network.network_token
+                                    ) : false;
+
+                                if(!wasActive) {
+                                    removeClassEl('active', networkItem);
+                                    removeClassEl('checked', cb);
+                                }
+                            }
+                        }
+
+                    } else if (token === 'any_verified') {
+                        if(!wasActive) {
+                            addClassEl('active', item);
+                            addClassEl('checked', checkbox);
+
+                            for(let networkItem of networkItems) {
+                                const cb = networkItem.querySelector('.checkbox');
+                                let token = networkItem.getAttribute('data-token');
+
+                                if(['any', 'any_verified'].includes(token)) {
+                                    continue;
+                                }
+
+                                let network = befriend.filters.networks.getByToken(token);
+
+                                if(network.is_verified) {
+                                    addClassEl('active', networkItem);
+                                    addClassEl('checked', cb);
+                                }
+                            }
+                        } else {
+                            removeClassEl('active', item);
+                            removeClassEl('checked', checkbox);
+
+                            for(let networkItem of networkItems) {
+                                const cb = networkItem.querySelector('.checkbox');
+                                let token = networkItem.getAttribute('data-token');
+
+                                if(['any', 'any_verified'].includes(token)) {
+                                    continue;
+                                }
+
+                                let network = befriend.filters.networks.getByToken(token);
+
+                                if(!network || network.is_self) {
+                                    continue;
+                                }
+
+                                let wasActive = filter_data?.items ?
+                                    Object.values(filter_data.items).some(item =>
+                                        !item.deleted &&
+                                        !item.is_negative &&
+                                        item.network_token === network.network_token
+                                    ) : false;
+
+                                if(!wasActive) {
+                                    removeClassEl('active', networkItem);
+                                    removeClassEl('checked', cb);
+                                }
+                            }
+                        }
                     } else {
-                        befriend.filters.data.filters.networks.items[token] = {
-                            network_token: token,
-                            is_negative: true,
-                            deleted: false
-                        };
+                        // Regular network selection/deselection
+
+                        if (!wasActive) {
+                            // Add selection
+                            addClassEl('active', item);
+
+                            if (checkbox) {
+                                addClassEl('checked', checkbox);
+                            }
+                        } else {
+                            removeClassEl('active', item);
+
+                            if (checkbox) {
+                                removeClassEl('checked', checkbox);
+                            }
+                        }
                     }
+
+                    // Update filter data and server
+                    await this.updateNetworkState(token, !wasActive);
 
                     // Update selected name display
                     const activeItems = dropdown.querySelectorAll('.item.active');
                     this.updateSelectedDisplay(selectedContainer, activeItems);
-
                 } catch(e) {
                     console.error('Error updating networks filter:', e);
                     toggleElClass(item, 'active');
@@ -3057,6 +3193,86 @@ befriend.filters = {
                 if (!this.isDropdownShown()) {
                     dropdown.querySelector('.select-list').innerHTML = '';
                 }
+            });
+        },
+        updateNetworkState: async function(token, isActive) {
+            let filter_data = befriend.filters.data.filters.networks;
+
+            if (!filter_data) {
+                filter_data = befriend.filters.data.filters.networks = {};
+            }
+
+            if (!filter_data.items) {
+                filter_data.items = {};
+            }
+
+            if(token === 'any') {
+                filter_data.is_any_network = isActive;
+            } else if(token === 'any_verified') {
+                filter_data.is_all_verified = isActive;
+                filter_data.is_any_network = false;
+            } else {
+                // Update local state
+                befriend.filters.data.filters.networks.items[token] = {
+                    network_token: token,
+                    is_negative: !isActive,
+                    deleted: false
+                };
+
+                const networks = befriend.filters.data.options?.networks?.networks || [];
+                const regularNetworks = networks;
+                const verifiedNetworks = networks.filter(n => n.is_verified);
+
+                // Check current state of all networks
+                const activeNetworks = Object.values(filter_data.items)
+                    .filter(item => !item.deleted && !item.is_negative)
+                    .map(item => item.network_token);
+
+                // Check if all networks are selected
+                const allNetworksSelected = regularNetworks.every(network =>
+                    network.is_self || activeNetworks.includes(network.network_token)
+                );
+
+                // Check if all verified networks are selected
+                const allVerifiedSelected = verifiedNetworks.every(network =>
+                    network.is_self || activeNetworks.includes(network.network_token)
+                );
+
+                // Update any_network state
+                if(allNetworksSelected) {
+                    filter_data.is_any_network = true;
+                    filter_data.is_all_verified = true;
+                } else {
+                    filter_data.is_any_network = false;
+
+                    // Only keep all_verified true if it was already true and all verified networks are still selected
+                    if(filter_data.is_all_verified && !allVerifiedSelected) {
+                        filter_data.is_all_verified = false;
+                    }
+                }
+
+                let anyItem = this.els.dropdown.querySelector('.item[data-token="any"]');
+                let anyVerifiedItem = this.els.dropdown.querySelector('.item[data-token="any_verified"]');
+
+                //enable/disable any/verified network selection after data update
+                if(elHasClass(anyItem, 'active') && !filter_data.is_any_network) {
+                    fireClick(anyItem);
+                } else if(filter_data.is_any_network && !elHasClass(anyItem, 'active')) {
+                    fireClick(anyItem);
+                } else if(elHasClass(anyVerifiedItem, 'active') && !filter_data.is_all_verified) {
+                    fireClick(anyVerifiedItem);
+                } else if(filter_data.is_all_verified && !elHasClass(anyVerifiedItem, 'active')) {
+                    fireClick(anyVerifiedItem);
+                }
+            }
+
+            // Update server
+            return;
+            await befriend.auth.put('/filters/networks', {
+                network_token: token,
+                active: isActive,
+                is_any_network: filter_data.is_any_network,
+                is_all_verified: filter_data.is_all_verified
             });
         }
     },

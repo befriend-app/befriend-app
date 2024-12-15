@@ -1095,8 +1095,6 @@
                     }
                 }
 
-
-
                 .select-dropdown {
                     border: 1px solid $bc !important;
                 }
@@ -1169,8 +1167,12 @@
                             border-bottom: none;
                         }
 
-                        &:hover, &.hover {
-                            background-color: $brand_color_b;
+                        &.active {
+                            background-color: lighten($brand_color_b, 3%);
+
+                            .meta {
+                                color: lighten(black, 30%) !important;
+                            }
                         }
 
                         .network-icon {
@@ -1198,13 +1200,15 @@
                             .meta {
                                 font-size: 12px;
                                 color: $color_gray;
+                                transition: color 200ms;
                             }
                         }
 
                         .verified-badge {
-                            padding: 4px 8px;
-                            border-radius: 4px;
-                            background: lighten($brand_color_b, 5%);
+                            padding: 5px 10px;
+                            border-radius: 6px;
+                            background: lighten($brand_color_b, 6%);
+                            border: 1px solid lighten($brand_color_a, 10%);
                             color: $brand_color_a;
                             font-size: 12px;
                             font-weight: 500;
@@ -1216,6 +1220,7 @@
 
             .checkbox {
                 margin-right: 12px;
+
                 .inner {
                     background-color: white !important;
                 }
