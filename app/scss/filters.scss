@@ -1136,6 +1136,28 @@
                             height: 100%;
                         }
                     }
+
+                    .selected-name {
+                        display: flex;
+                        align-items: center;
+                        position: relative;
+
+                        .plus {
+                            $dim: 25px;
+                            position: absolute;
+                            font-size: 12px;
+                            color: lighten(black, 50%);
+                            right: calc($dim * -1 - 6px);
+                            top: -6px;
+                            border-radius: 50%;
+                            width: $dim;
+                            height: $dim;
+                            background-color: $brand_color_a;
+                            color: white;
+                            //border: 1px solid $brand_color_a;
+                            @include flex-center-col;
+                        }
+                    }
                 }
 
                 .select-dropdown {
