@@ -2969,7 +2969,7 @@ befriend.filters = {
             const selectContainer = this.els.section.querySelector('.select-container');
             const selectedContainer = selectContainer.querySelector('.selected-container');
             const dropdown = selectContainer.querySelector('.select-dropdown');
-            const networks = befriend.filters.data.options?.networks?.networks || [];
+            const { networks, counts } = befriend.filters.data.options?.networks;
 
             selectedContainer.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -2983,6 +2983,17 @@ befriend.filters = {
 
                     for(let network of formattedNetworks) {
                         let isActive = false;
+                        let persons_count = network.persons_count;
+
+                        if(network.network_token === 'any') {
+                            persons_count = counts.all;
+                        } else if(network.network_token === 'any_verified') {
+                            persons_count = counts.verified;
+                        }
+
+                        if(persons_count){
+                            persons_count = persons_count.toLocaleString();
+                        }
 
                         if(network.is_self) {
                             isActive = true;
@@ -3013,9 +3024,7 @@ befriend.filters = {
                         ` : ''}
                         <div class="item-content">
                             <div class="name">${network.network_name}</div>
-                            ${!network.is_special ? `
-                                <div class="meta">${network.persons_count.toLocaleString()} persons</div>
-                            ` : ''}
+                            <div class="meta">${persons_count} persons</div>
                         </div>
                         ${network.is_verified ? `
                             <div class="verified-badge">Verified</div>
