@@ -24,10 +24,10 @@ befriend.me = {
         },
     },
     modes: {
-        selected: 'solo', // default
+        selected: 'mode-solo', // default
         options: [
             {
-                id: 'solo',
+                id: 'mode-solo',
                 name: `<div class="text">Solo</div>`,
                 description: 'Just me',
                 icon: `
@@ -35,7 +35,7 @@ befriend.me = {
                 `,
             },
             {
-                id: 'plus-one',
+                id: 'mode-partner',
                 name: `
                     <svg class="plus" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,24C5.383,24,0,18.617,0,12S5.383,0,12,0s12,5.383,12,12-5.383,12-12,12ZM12,1C5.935,1,1,5.935,1,12s4.935,11,11,11,11-4.935,11-11S18.065,1,12,1Z"/><path d="M17.5,12.5H6.5c-.276,0-.5-.224-.5-.5s.224-.5.5-.5h11c.276,0,.5.224.5.5s-.224.5-.5.5Z"/><path d="M12,18c-.276,0-.5-.224-.5-.5V6.5c0-.276.224-.5.5-.5s.5.224.5.5v11c0,.276-.224.5-.5.5Z"/></svg>
                     <div class="text">1</div>`,
@@ -53,7 +53,7 @@ befriend.me = {
                 `,
             },
             {
-                id: 'plus-kids',
+                id: 'mode-kids',
                 name: `
                     <svg class="plus" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,24C5.383,24,0,18.617,0,12S5.383,0,12,0s12,5.383,12,12-5.383,12-12,12ZM12,1C5.935,1,1,5.935,1,12s4.935,11,11,11,11-4.935,11-11S18.065,1,12,1Z"/><path d="M17.5,12.5H6.5c-.276,0-.5-.224-.5-.5s.224-.5.5-.5h11c.276,0,.5.224.5.5s-.224.5-.5.5Z"/><path d="M12,18c-.276,0-.5-.224-.5-.5V6.5c0-.276.224-.5.5-.5s.5.224.5.5v11c0,.276-.224.5-.5.5Z"/></svg>
                     <div class="text">Kids</div>`,
@@ -186,7 +186,7 @@ befriend.me = {
 
         //mode
         if (me_obj.mode) {
-            this.selectMode(me_obj.mode, true);
+            this.selectMode(me_obj.mode.token, true);
         }
     },
     selectMode: async function (mode, skip_server) {
@@ -203,7 +203,7 @@ befriend.me = {
 
         befriend.me.modes.selected = mode;
 
-        if (mode === 'plus-one' || mode === 'plus-kids') {
+        if (mode === 'mode-partner' || mode === 'mode-kids') {
             function genderSelected(gender) {
                 if (befriend.me.data?.modes?.data?.partner?.gender_id === gender.id) {
                     return 'selected';
@@ -217,7 +217,7 @@ befriend.me = {
             // Set up container content based on mode
             let html = '';
 
-            if (mode === 'plus-one') {
+            if (mode === 'mode-partner') {
                 const genders = befriend.me.data.genders;
 
                 html = `
@@ -236,7 +236,7 @@ befriend.me = {
                             .join('')}
                     </div>
                 </div>`;
-            } else if (mode === 'plus-kids') {
+            } else if (mode === 'mode-kids') {
                 html = `
                 <div class="kids">
                     <div class="add-kid">
@@ -252,9 +252,9 @@ befriend.me = {
             selectedModeContainer.innerHTML = html;
 
             // Initialize event handlers
-            if (mode === 'plus-one') {
+            if (mode === 'mode-partner') {
                 befriend.me.events.onPartnerGenderSelect();
-            } else if (mode === 'plus-kids') {
+            } else if (mode === 'mode-kids') {
                 if (befriend.me.data?.modes?.data?.kids) {
                     for (let kid of Object.values(befriend.me.data.modes.data.kids)) {
                         befriend.me.addKidHtml(kid);

@@ -226,11 +226,11 @@ html.#{$class_confirm_me_action} {
                 padding: 8px;
                 cursor: pointer;
 
-                &[data-mode='solo'] {
+                &[data-mode='mode-solo'] {
                     flex-basis: 70px;
                 }
 
-                &[data-mode='plus-one'] {
+                &[data-mode='mode-partner'] {
                     flex-basis: 120px;
                 }
 
@@ -242,7 +242,7 @@ html.#{$class_confirm_me_action} {
                     $fill_color: darken($brand_color_a, 10%);
                     border-color: darken($brand_color_a, 10%);
 
-                    &:not(.plus-kids) {
+                    &:not(.mode-kids) {
                         .icon {
                             path {
                                 fill: $fill_color !important;
@@ -250,7 +250,7 @@ html.#{$class_confirm_me_action} {
                         }
                     }
 
-                    &.plus-kids {
+                    &.mode-kids {
                         .icon {
                             svg {
                                 path, circle {
@@ -261,7 +261,7 @@ html.#{$class_confirm_me_action} {
                     }
                 }
 
-                &.plus-kids {
+                &.mode-kids {
                     .icon {
                         svg {
                             height: 24px;

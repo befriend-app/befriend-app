@@ -2614,7 +2614,7 @@ befriend.filters = {
     modes: {
         items: [
             {
-                id: 'solo',
+                id: 'mode-solo',
                 label: 'Solo',
                 icon: `
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 432.1641 512">
@@ -2626,7 +2626,7 @@ befriend.filters = {
                 </svg>`
             },
             {
-                id: 'partner',
+                id: 'mode-partner',
                 label: 'Partner',
                 icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 356.198">
                           <path d="M133,184c-50.8102,0-92-41.1898-92-92S82.1898,0,133,0s92,41.1898,92,92c-.0584,50.786-41.214,91.9416-92,92ZM133,20c-39.7645,0-72,32.2355-72,72s32.2355,72,72,72,72-32.2355,72-72c-.0441-39.7462-32.2538-71.9559-72-72Z" fill="black"/>
@@ -2643,7 +2643,7 @@ befriend.filters = {
                         </svg>`
             },
             {
-                id: 'kids',
+                id: 'mode-kids',
                 label: 'Kids',
                 icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1730.5023 1807.73">
                           <circle cx="663.44" cy="391.73" r="177.07" fill="white" stroke="#000" stroke-width="45" stroke-miterlimit="10"/>
@@ -2667,7 +2667,7 @@ befriend.filters = {
             }
         ],
         data: {
-            selectedModes: ['solo']  // Default selection
+            selectedModes: ['mode-solo']  // Default selection
         },
         init: function() {
             let section = befriend.filters.sections.modes;
