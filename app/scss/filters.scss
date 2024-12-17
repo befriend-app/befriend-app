@@ -1180,7 +1180,7 @@
                         $content_h: 40px;
                         display: flex;
                         align-items: center;
-                        padding: 10px 12px;
+                        padding: 7px 12px;
                         cursor: pointer;
                         border-bottom: 1px solid $color_lightgray;
 
@@ -1189,7 +1189,7 @@
                         }
 
                         &.active {
-                            background-color: lighten($brand_color_b, 3%);
+                            background-color: lighten($brand_color_b, 4%);
 
                             .meta {
                                 color: lighten(black, 30%) !important;
