@@ -2,6 +2,11 @@ befriend.location = {
     current: null,
     device: null,
     search: null,
+    prev: {
+        key: 'location_server.json',
+        map: null,
+        server: null
+    },
     init: function () {
         console.log('[init] Location');
 
@@ -32,6 +37,9 @@ befriend.location = {
                 if (!befriend.location.current) {
                     befriend.location.current = befriend.location.device;
                 }
+
+                befriend.maps.updateLocationIf();
+                befriend.location.saveLocationIf();
 
                 resolve();
             }
@@ -129,6 +137,58 @@ befriend.location = {
         }
 
         return null;
+    },
+    saveLocationIf: function () {
+        return new Promise(async (resolve, reject) => {
+            try {
+                if (!befriend.location.device) {
+                    return resolve();
+                }
+
+                if(!befriend.location.prev.server) {
+                    //get data from local storage if previously saved
+                    let data = window.localStorage.getItem(befriend.location.prev.key);
+
+                    try {
+                        if(data && JSON.parse(data)) {
+                            befriend.location.prev.server = JSON.parse(data);
+                        }
+                    } catch(e) {
+                        console.error(e);
+                    }
+                }
+
+                const currentCoords = {
+                    lat: befriend.location.device.lat,
+                    lon: befriend.location.device.lon
+                };
+
+                const MINIMUM_DISTANCE_THRESHOLD = 1000; // 1km
+
+                // Check if coordinates have changed from previous by more than threshold
+                if (!befriend.location.prev.server ||
+                    getDistanceMeters(
+                        {lat: currentCoords.lat, lon: currentCoords.lon},
+                        {lat: befriend.location.prev.server.lat, lon: befriend.location.prev.server.lon},
+                    ) > MINIMUM_DISTANCE_THRESHOLD) {
+
+                    // Save location to server
+                    await befriend.auth.put('/location', {
+                        lat: currentCoords.lat,
+                        lon: currentCoords.lon
+                    });
+
+                    befriend.location.prev.server = {...currentCoords};
+
+                    window.localStorage.setItem(befriend.location.prev.key, JSON.stringify(currentCoords));
+                }
+
+                resolve();
+            } catch (e) {
+                console.error('Failed to save location:', e);
+                reject(e);
+            }
+        });
     },
     events: {
         init: function () {

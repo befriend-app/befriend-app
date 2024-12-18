@@ -836,7 +836,7 @@ befriend.me = {
 
                 befriend.toggleSpinner(true);
 
-                let r = await befriend.auth.post(`/me/sections/item`, {
+                let r = await befriend.auth.post(`/me/sections/items`, {
                     section_key: section_key,
                     table_key: table_key,
                     item_token: item_token,
@@ -2546,7 +2546,7 @@ befriend.me = {
 
                 if (Object.keys(positions).length) {
                     try {
-                        await befriend.auth.put(`/me/sections/item`, {
+                        await befriend.auth.put(`/me/sections/items`, {
                             section_key: section_key,
                             table_key: section_el.getAttribute('data-table-key'),
                             section_item_id: Object.values(positions)[0].id,
@@ -2600,8 +2600,8 @@ befriend.me = {
                     }
 
                     await befriend.auth.put(`/me/mode/partner`, {
-                        gender: token,
-                        isSelect: elHasClass(el, 'selected'),
+                        gender_token: token,
+                        is_select: elHasClass(el, 'selected'),
                     });
                 });
             }
@@ -3504,7 +3504,7 @@ befriend.me = {
 
                         // Update server with both delete and reorder
                         try {
-                            await befriend.auth.put(`/me/sections/item`, {
+                            await befriend.auth.put(`/me/sections/items`, {
                                 section_key: section_key,
                                 table_key: table_key,
                                 section_item_id: item.id,
@@ -3674,7 +3674,7 @@ befriend.me = {
 
                         //server
                         try {
-                            await befriend.auth.put(`/me/sections/item`, {
+                            await befriend.auth.put(`/me/sections/items`, {
                                 section_key: section_key,
                                 table_key: table_key,
                                 section_item_id: item.id,
@@ -3894,7 +3894,7 @@ befriend.me = {
                             befriend.me.transitionSecondary(original_secondary, false);
 
                             // Update server
-                            await befriend.auth.put(`/me/sections/item`, {
+                            await befriend.auth.put(`/me/sections/items`, {
                                 section_key: section_key,
                                 table_key: table_key,
                                 section_item_id: item.id,

@@ -64,6 +64,7 @@ befriend.maps = {
                     //get new token
                     if (e.error && (e.error.status === 401 || e.error.status === 403)) {
                         try {
+                            console.error('map error', e);
                             await befriend.maps.getToken(true);
                             mapboxgl.accessToken = befriend.maps.token.data.token;
 
@@ -105,7 +106,7 @@ befriend.maps = {
         return new Promise(async (resolve, reject) => {
             let token;
 
-            //use existing token first, expires in 1 hr
+            //use existing token first, check expiration
             let local = localStorage.getItem(befriend.maps.token.key);
 
             if (local && !force_new) {
@@ -128,7 +129,7 @@ befriend.maps = {
 
                 token = befriend.maps.token.data = {
                     token: r.data.token,
-                    expires: timeNow() + 3600 * 1000,
+                    expires: r.data.expires,
                 };
 
                 localStorage.setItem(befriend.maps.token.key, JSON.stringify(token));
@@ -143,15 +144,15 @@ befriend.maps = {
         });
     },
     updateTokenInterval: function () {
-        //update token every hour
-        let update_in = 3600 * 1000;
+        //update token every 58 minutes
+        let update_in = 58 * 60 * 1000;
 
         if (befriend.maps.token.data) {
             let td = befriend.maps.token.data.expires - timeNow();
 
             if (td > 0) {
-                //less than an hour left on token
-                update_in = td;
+                //time left on token
+                update_in = td - (2 * 60 * 1000);
             }
         }
 
@@ -245,6 +246,11 @@ befriend.maps = {
         }
     },
     setMapCenter: function (map, location, zoom_level, fly_to) {
+        if(!map) {
+            console.error("Map required");
+            return;
+        }
+
         if (fly_to) {
             let options = {
                 center: [location.lon, location.lat],
@@ -300,6 +306,41 @@ befriend.maps = {
         }
 
         map.fitBounds(bounds, options);
+    },
+    updateLocationIf: function () {
+        if (!befriend.maps.maps.activities || !befriend.location.isDevice()) {
+            return;
+        }
+
+        //do not update map when places or create new activity is shown
+        if(befriend.places.isPlacesShown() || befriend.activities.isCreateActivityShown()) {
+            return;
+        }
+
+        const currentMapCoords = {
+            lat: befriend.location.device.lat,
+            lon: befriend.location.device.lon
+        };
+
+        let lat_diff = befriend.location.prev.map ? Math.abs(currentMapCoords.lat - befriend.location.prev.map.lat) : null;
+        let lon_diff = befriend.location.prev.map ? Math.abs(currentMapCoords.lon - befriend.location.prev.map.lon): null;
+
+        // Check if map coordinates have changed from previous
+        if (!befriend.location.prev.map ||
+            lat_diff > .0003 || //approximately 100ft
+            lon_diff > .0003) {
+
+            //set new map position
+            befriend.maps.setMapCenter(befriend.maps.maps.activities, befriend.location.device)
+
+            // Update map marker position if it exists
+            if (befriend.maps.markers.me) {
+                befriend.maps.markers.me.setLngLat([currentMapCoords.lon, currentMapCoords.lat]);
+            }
+
+            // Store current coordinates as previous map location
+            befriend.location.prev.map = {...currentMapCoords};
+        }
     },
     events: {
         init: function () {
