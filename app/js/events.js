@@ -183,6 +183,9 @@ befriend.events = {
                 if (nav_name === 'filters') {
                     requestAnimationFrame(function () {
                         befriend.filters.updateSectionHeights(true);
+                        //update slider control positions
+                        befriend.filters.positionSliders();
+
                     });
                 } else if (nav_name === 'me') {
                     befriend.me.updateCollapsed(true);

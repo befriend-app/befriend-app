@@ -4492,6 +4492,85 @@ befriend.filters = {
             section.removeChild(containerClone);
         }
     },
+    positionSliders: function() {
+        const filters_el = befriend.els.filters;
+        if (!filters_el) return;
+
+        // Position distance slider
+        const distanceSection = filters_el.querySelector('.section.distance');
+        if (distanceSection) {
+            const container = distanceSection.querySelector('.sliders-control');
+            const range = distanceSection.querySelector('.slider-range');
+            const thumb = distanceSection.querySelector('.thumb');
+
+            if (container && range && thumb) {
+                const value = befriend.filters.distance.current;
+                const percent = (value - befriend.filters.distance.min) /
+                    (befriend.filters.distance.max - befriend.filters.distance.min);
+                const position = percent * container.offsetWidth;
+
+                thumb.style.left = `${position}px`;
+                range.style.width = `${position}px`;
+                thumb.querySelector('.thumb-value').textContent = Math.round(value);
+            }
+        }
+
+        // Position age sliders
+        const ageSection = filters_el.querySelector('.section.ages');
+        if (ageSection) {
+            const container = ageSection.querySelector('.sliders-control');
+            const range = ageSection.querySelector('.slider-range');
+            const minThumb = ageSection.querySelector('.min-thumb');
+            const maxThumb = ageSection.querySelector('.max-thumb');
+
+            if (container && range && minThumb && maxThumb) {
+                const minPercent = (befriend.filters.age.current.min - befriend.filters.age.min) /
+                    (befriend.filters.age.max - befriend.filters.age.min);
+                const maxPercent = (befriend.filters.age.current.max - befriend.filters.age.min) /
+                    (befriend.filters.age.max - befriend.filters.age.min);
+
+                const minPosition = minPercent * container.offsetWidth;
+                const maxPosition = maxPercent * container.offsetWidth;
+
+                minThumb.style.left = `${minPosition}px`;
+                maxThumb.style.left = `${maxPosition}px`;
+                range.style.left = `${Math.min(minPosition, maxPosition)}px`;
+                range.style.width = `${Math.abs(maxPosition - minPosition)}px`;
+
+                minThumb.querySelector('.thumb-value').textContent = Math.round(befriend.filters.age.current.min);
+                maxThumb.querySelector('.thumb-value').innerHTML =
+                    `${Math.round(befriend.filters.age.current.max)}${befriend.filters.age.current.max === befriend.filters.age.max ? '<span class="plus">+</span>' : ''}`;
+            }
+        }
+
+        // Position review rating sliders
+        const reviewsSection = filters_el.querySelector('.section.reviews');
+        if (reviewsSection) {
+            const reviewFilters = reviewsSection.querySelectorAll('.filter-option.review');
+
+            for (let section of reviewFilters) {
+                const type = Array.from(section.classList)
+                    .find((cls) => cls.startsWith('review-'))
+                    ?.replace('review-', '');
+
+                if (!type || !befriend.filters.reviews.ratings[type]) continue;
+
+                const container = section.querySelector('.sliders-control');
+                const range = section.querySelector('.slider-range');
+                const thumb = section.querySelector('.thumb');
+
+                if (container && range && thumb) {
+                    const rating = befriend.filters.reviews.ratings[type].current_rating;
+                    const percent = rating / befriend.filters.reviews.max;
+                    const position = percent * container.offsetWidth;
+
+                    // Update slider position
+                    thumb.style.left = `${position}px`;
+                    range.style.width = `${position}px`;
+                }
+            }
+        }
+    },
     getSectionKey: function (section_el) {
         return section_el.getAttribute('data-key');
     },
