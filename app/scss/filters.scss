@@ -12,8 +12,8 @@
     position: relative;
     min-height: 100vh;
     min-height: 100dvh;
-    //padding-left: 0 !important;
-    //padding-right: 0 !important;
+    padding-left: 15px !important;
+    padding-right: 15px !important;
 
     .filters-nav {
         position: fixed;
@@ -1636,6 +1636,12 @@
                 border-radius: 50%;
                 cursor: pointer;
                 transform: translate(-50%, -50%);
+
+                .plus {
+                    position: absolute;
+                    transform: translateX(0px);
+                    font-size: 14px;
+                }
 
                 &.min-thumb {
                     z-index: 2;

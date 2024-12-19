@@ -3844,10 +3844,10 @@ befriend.filters = {
     },
     age: {
         min: 18,
-        max: 130,
+        max: 80,
         current: {
             min: 18,
-            max: 100
+            max: 80
         },
         minGap: 2,
         _updateTimer: null,
@@ -3861,9 +3861,12 @@ befriend.filters = {
 
             // Get stored filter values if they exist
             const filter_data = befriend.filters.data.filters?.['ages'];
-            if (filter_data?.filter_value_min && filter_data?.filter_value_max) {
+            if (filter_data?.filter_value_min) {
                 this.current.min = parseInt(filter_data.filter_value_min);
-                this.current.max = parseInt(filter_data.filter_value_max);
+
+                if(filter_data?.filter_value_max) {
+                    this.current.max = parseInt(filter_data.filter_value_max);
+                }
 
                 // Ensure loaded values respect the minimum gap
                 if (this.current.max - this.current.min < this.minGap) {
@@ -3909,7 +3912,13 @@ befriend.filters = {
                 const percent = (value - self.min) / (self.max - self.min);
                 const position = percent * container.offsetWidth;
                 thumb.style.left = `${position}px`;
-                thumb.querySelector('.thumb-value').textContent = Math.round(value);
+                value = Math.round(value);
+
+                if(value === befriend.filters.age.max) {
+                    value += `<span class="plus">+</span>`;
+                }
+
+                thumb.querySelector('.thumb-value').innerHTML = value;
             }
 
             function updateRange() {
