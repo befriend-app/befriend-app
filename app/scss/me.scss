@@ -179,7 +179,7 @@ html.#{$class_confirm_me_action} {
     }
 
     .#{$class_modes_section} {
-        $tab_h: 40px;
+        $tab_h: 32px;
 
         .tab {
             top: calc((#{-$tab_h - 1}));

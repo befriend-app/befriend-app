@@ -2603,6 +2603,14 @@ befriend.me = {
                         gender_token: token,
                         is_select: elHasClass(el, 'selected'),
                     });
+
+                    let gender = befriend.me.data.genders.find(g=>g.token === token);
+
+                    if(!befriend.me.data?.modes?.partner) {
+                        befriend.me.data.modes.partner = {};
+                    }
+
+                    befriend.me.data.modes.data.partner.gender_id = gender.id;
                 });
             }
         },

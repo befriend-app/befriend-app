@@ -138,7 +138,7 @@ befriend.location = {
 
         return null;
     },
-    saveLocationIf: function () {
+    saveLocationIf: function (force_update = false) {
         return new Promise(async (resolve, reject) => {
             try {
                 if (!befriend.location.device) {
@@ -166,7 +166,7 @@ befriend.location = {
                 const MINIMUM_DISTANCE_THRESHOLD = 1000; // 1km
 
                 // Check if coordinates have changed from previous by more than threshold
-                if (!befriend.location.prev.server ||
+                if (force_update || !befriend.location.prev.server ||
                     getDistanceMeters(
                         {lat: currentCoords.lat, lon: currentCoords.lon},
                         {lat: befriend.location.prev.server.lat, lon: befriend.location.prev.server.lon},
