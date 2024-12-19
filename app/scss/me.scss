@@ -66,11 +66,16 @@ html.#{$class_confirm_me_action} {
         justify-content: center;
     }
 
+    #me-online {
+        position: absolute;
+        right: 0;
+    }
+
     .top {
         display: flex;
-        justify-content: center;
         align-items: start;
         margin-top: 10px;
+        position: relative;
 
         .first-name {
             display: flex;
@@ -82,6 +87,7 @@ html.#{$class_confirm_me_action} {
 
         .birthday {
             margin-left: auto;
+            display: none;
 
             .icon-age {
                 //$dim: 40px;

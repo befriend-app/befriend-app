@@ -77,6 +77,7 @@ befriend.me = {
                 await befriend.me.getMe();
 
                 await befriend.me.setMe();
+                befriend.me.setOnline();
                 befriend.me.setActive();
                 befriend.me.setOptions();
             } catch (e) {
@@ -929,6 +930,54 @@ befriend.me = {
                 console.error(e);
                 reject();
             }
+        });
+    },
+    setOnline: function () {
+        let isOnline = this.data.me.is_online || this.data.me.online === null;
+
+        let html = `<div id="me-online">
+                        ${toggleHtml(isOnline, isOnline ? 'Online': 'Offline')}
+                    </div>`;
+
+        let top_el = befriend.els.me.querySelector('.top');
+
+        top_el.insertAdjacentHTML('afterbegin', html);
+
+        let online_el = document.getElementById('me-online');
+
+        online_el.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if(this._ip) {
+                return false;
+            }
+
+            this._ip = true;
+
+            let toggle_el = online_el.querySelector('.toggle');
+
+            let wasActive = elHasClass(toggle_el, 'active');
+
+            toggleElClass(toggle_el, 'active');
+
+            let toggle_label = 'Online';
+
+            if(wasActive) {
+                toggle_label = 'Offline';
+            }
+
+            toggle_el.querySelector('.toggle-label').innerHTML = toggle_label;
+
+            try {
+                await befriend.auth.put(`/online`, {
+                    online: !wasActive
+                })
+            } catch(e) {
+                console.error(e);
+            }
+
+            this._ip = false;
         });
     },
     setActive: function () {
