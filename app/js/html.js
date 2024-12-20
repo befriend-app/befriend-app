@@ -159,7 +159,7 @@ befriend.html = {
                                 <div class="me-container">
                                     <div class="${befriend.variables.class_modes_section}">
                                         <div class="tab">
-                                            <div class="title">Mode</div>
+                                            <div class="title">Modes</div>
                                         </div>
                                         
                                         <div class="mode-wrapper">

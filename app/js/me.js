@@ -24,7 +24,7 @@ befriend.me = {
         },
     },
     modes: {
-        selected: 'mode-solo', // default
+        selected: [],
         options: [
             {
                 id: 'mode-solo',
@@ -185,67 +185,77 @@ befriend.me = {
             country_el.querySelector('.info').innerHTML = me_obj.country.name;
         }
 
-        //mode
-        if (me_obj.mode) {
-            this.selectMode(me_obj.mode.token, true);
+        //modes
+        if (me_obj.modes?.selected) {
+            for(let mode of me_obj.modes.selected) {
+                this.selectMode(mode, true);
+            }
         }
     },
     selectMode: async function (mode, skip_server) {
         const modeOptions = befriend.els.me.querySelectorAll('.mode-option');
         const selectedModeContainer = befriend.els.me.querySelector('.selected-mode-container');
+        const selectedMode = befriend.me.modes.selected.includes(mode);
 
-        removeElsClass(modeOptions, 'selected');
-
-        let selectedModeEl = Array.from(modeOptions).find(
-            (el) => el.getAttribute('data-mode') === mode,
-        );
-
-        addClassEl('selected', selectedModeEl);
-
-        befriend.me.modes.selected = mode;
-
-        if (mode === 'mode-partner' || mode === 'mode-kids') {
-            function genderSelected(gender) {
-                if (befriend.me.data?.modes?.data?.partner?.gender_id === gender.id) {
-                    return 'selected';
-                }
-
-                return '';
+        // Toggle mode selection
+        if (selectedMode) {
+            //prevent deselecting last mode
+            if(befriend.me.modes.selected.length === 1) {
+                return false;
             }
 
+            befriend.me.modes.selected = befriend.me.modes.selected.filter(m => m !== mode);
+
+            removeClassEl('selected', Array.from(modeOptions).find(el => el.getAttribute('data-mode') === mode));
+        } else {
+            befriend.me.modes.selected.push(mode);
+            addClassEl('selected', Array.from(modeOptions).find(el => el.getAttribute('data-mode') === mode));
+        }
+
+        const hasPartnerOrKids = befriend.me.modes.selected.some(m => ['mode-partner', 'mode-kids'].includes(m));
+
+        if (hasPartnerOrKids) {
             addClassEl('active', selectedModeContainer);
 
-            // Set up container content based on mode
+            // Generate combined HTML for both partner and kids sections
             let html = '';
 
-            if (mode === 'mode-partner') {
+            if (befriend.me.modes.selected.includes('mode-partner')) {
                 const genders = befriend.me.data.genders;
-
-                html = `
-                <div class="partner">
-                    <div class="label">
-                            Your Partner
-                    </div>
+                html += `
+                <div class="mode-section partner-section">
+                    <div class="label">Your Partner</div>
                     <div class="options">
                         ${genders
-                            .filter(gender => gender.is_visible)
-                            .map(
-                                (gender) => `
-                            <div class="option ${genderSelected(gender)}" data-gender="${gender.token}">${gender.name}</div>
-                        `,
-                            )
-                            .join('')}
+                    .filter(gender => gender.is_visible)
+                    .map(gender => `
+                                <div class="option ${befriend.me.data.me.modes?.partner?.gender_id === gender.id ? 'selected' : ''}" 
+                                     data-gender="${gender.token}">
+                                    ${gender.name}
+                                </div>
+                            `).join('')}
                     </div>
                 </div>`;
-            } else if (mode === 'mode-kids') {
-                html = `
-                <div class="kids">
-                    <div class="add-kid">
-                        <div class="add-btn">
-                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28"><path d="M14,0C6.28,0,0,6.28,0,14s6.28,14,14,14,14-6.28,14-14S21.72,0,14,0ZM14,26c-6.62,0-12-5.38-12-12S7.38,2,14,2s12,5.38,12,12-5.38,12-12,12Z"/><path d="M21,13h-6v-6c0-1.32-2-1.32-2,0v6h-6c-1.32,0-1.32,2,0,2h6v6c0,1.32,2,1.32,2,0v-6h6c1.32,0,1.32-2,0-2Z"/></svg>
-                            Add Kid
+            }
+
+            if (befriend.me.modes.selected.includes('mode-kids')) {
+                html += `
+                <div class="mode-section kids-section">
+                    <div class="kids-top">
+                        <div class="label">Your Kids</div>
+
+                        <div class="add-kid">
+                            <div class="add-btn">
+                                Add Kid
+
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28">
+                                    <path d="M14,0C6.28,0,0,6.28,0,14s6.28,14,14,14,14-6.28,14-14S21.72,0,14,0ZM14,26c-6.62,0-12-5.38-12-12S7.38,2,14,2s12,5.38,12,12-5.38,12-12,12Z"/>
+                                    <path d="M21,13h-6v-6c0-1.32-2-1.32-2,0v6h-6c-1.32,0-1.32,2,0,2h6v6c0,1.32,2,1.32,2,0v-6h6c1.32,0,1.32-2,0-2Z"/>
+                                </svg>
+                            </div>
                         </div>
                     </div>
+                    
                     <div class="kids-list"></div>
                 </div>`;
             }
@@ -253,19 +263,20 @@ befriend.me = {
             selectedModeContainer.innerHTML = html;
 
             // Initialize event handlers
-            if (mode === 'mode-partner') {
+            if (befriend.me.modes?.selected.includes('mode-partner')) {
                 befriend.me.events.onPartnerGenderSelect();
-            } else if (mode === 'mode-kids') {
-                if (befriend.me.data?.modes?.data?.kids) {
-                    for (let kid of Object.values(befriend.me.data.modes.data.kids)) {
+            }
+
+            if (befriend.me.modes?.selected.includes('mode-kids')) {
+                if (befriend.me.data.me.modes?.kids) {
+                    for (let kid of Object.values(befriend.me.data.me.modes.kids)) {
                         befriend.me.addKidHtml(kid);
                     }
                 }
-
                 befriend.me.events.onKids();
             }
 
-            requestAnimationFrame(function () {
+            requestAnimationFrame(() => {
                 befriend.me.updateModeHeight();
             });
         } else {
@@ -273,23 +284,35 @@ befriend.me = {
             selectedModeContainer.innerHTML = '';
         }
 
+        if(befriend.me.modes?.selected.includes('mode-partner')) {
+            addClassEl('with-partner', selectedModeContainer);
+        } else {
+            removeClassEl('with-partner', selectedModeContainer);
+        }
+
+        if(befriend.me.modes?.selected.includes('mode-kids')) {
+            addClassEl('with-kids', selectedModeContainer);
+        } else {
+            removeClassEl('with-kids', selectedModeContainer);
+        }
+
         if (!skip_server) {
-            await befriend.auth.put(`/me/mode`, {
-                mode: befriend.me.modes.selected,
+            await befriend.auth.put(`/me/modes`, {
+                modes: befriend.me.modes.selected
             });
         }
     },
     addKidHtml: function (kid = {}) {
-        let kid_els = befriend.els.me.querySelector('.kids').getElementsByClassName('kid');
+        let kid_els = befriend.els.me.querySelector('.kids-section').getElementsByClassName('kid');
         let count = kid_els.length + 1;
 
         let age_options = '';
         let gender_options = '';
         let current_age = null;
 
-        if (befriend.me.data?.modes?.options?.kids) {
-            for (let k in befriend.me.data.modes.options.kids) {
-                let age = befriend.me.data.modes.options.kids[k];
+        if (befriend.me.data?.modes?.kids?.options) {
+            for (let k in befriend.me.data.modes.kids.options) {
+                let age = befriend.me.data.modes.kids.options[k];
 
                 let selected = '';
 
@@ -344,7 +367,7 @@ befriend.me = {
                 </div>`;
 
         let kids_list_el = befriend.els.me.querySelector(
-            '.selected-mode-container .kids .kids-list',
+            '.selected-mode-container .kids-section .kids-list',
         );
         kids_list_el.insertAdjacentHTML('beforeend', html);
 
@@ -2623,7 +2646,7 @@ befriend.me = {
         },
         onPartnerGenderSelect: function () {
             let option_els = befriend.els.me.querySelectorAll(
-                '.selected-mode-container .partner .option',
+                '.selected-mode-container .partner-section .option',
             );
 
             for (let i = 0; i < option_els.length; i++) {
@@ -2648,23 +2671,23 @@ befriend.me = {
                         addClassEl('selected', el);
                     }
 
-                    await befriend.auth.put(`/me/mode/partner`, {
+                    await befriend.auth.put(`/me/modes/partner`, {
                         gender_token: token,
                         is_select: elHasClass(el, 'selected'),
                     });
 
                     let gender = befriend.me.data.genders.find(g=>g.token === token);
 
-                    if(!befriend.me.data?.modes?.partner) {
-                        befriend.me.data.modes.partner = {};
+                    if(!befriend.me.data.me.modes?.partner) {
+                        befriend.me.data.me.modes.partner = {};
                     }
 
-                    befriend.me.data.modes.data.partner.gender_id = gender.id;
+                    befriend.me.data.me.modes.partner.gender_id = gender.id;
                 });
             }
         },
         onKids: function () {
-            let add_btn = befriend.els.me.querySelector('.selected-mode-container .kids .add-btn');
+            let add_btn = befriend.els.me.querySelector('.selected-mode-container .kids-section .add-btn');
 
             if (!add_btn._listener) {
                 add_btn._listener = true;
@@ -2676,9 +2699,9 @@ befriend.me = {
                     try {
                         befriend.toggleSpinner(true);
                         // Add kid on server
-                        let r = await befriend.auth.post('/me/mode/kids');
+                        let r = await befriend.auth.post('/me/modes/kids');
 
-                        befriend.me.data.modes.data.kids[r.data.token] = r.data;
+                        befriend.me.data.me.modes.kids[r.data.token] = r.data;
 
                         // Add to UI with token from response
                         befriend.me.addKidHtml(r.data);
@@ -2696,7 +2719,7 @@ befriend.me = {
             befriend.me.events.onKidsRemove();
         },
         onKidsActive: function () {
-            let active_btns = befriend.els.me.querySelectorAll('.kids .kid .kid-active');
+            let active_btns = befriend.els.me.querySelectorAll('.kids-section .kid .kid-active');
 
             for (let btn of active_btns) {
                 if (btn._listener) continue;
@@ -2716,12 +2739,12 @@ befriend.me = {
                     toggleElClass(toggle_el, 'active');
 
                     try {
-                        await befriend.auth.put('/me/mode/kids', {
+                        await befriend.auth.put('/me/modes/kids', {
                             kid_token: token,
                             is_active,
                         });
 
-                        befriend.me.data.modes.data.kids[token].is_active = is_active;
+                        befriend.me.data.me.modes.kids[token].is_active = is_active;
                     } catch (e) {
                         console.error('Error removing kid:', e);
                     }
@@ -2729,7 +2752,7 @@ befriend.me = {
             }
         },
         onKidsRemove: function () {
-            let remove_btns = befriend.els.me.querySelectorAll('.kids .kid .remove');
+            let remove_btns = befriend.els.me.querySelectorAll('.kids-section .kid .remove');
 
             for (let btn of remove_btns) {
                 if (btn._listener) continue;
@@ -2745,12 +2768,12 @@ befriend.me = {
                     befriend.toggleSpinner(true);
 
                     try {
-                        await befriend.auth.delete('/me/mode/kids', {
+                        await befriend.auth.delete('/me/modes/kids', {
                             kid_token: token,
                         });
 
-                        if (befriend.me.data.modes.data.kids) {
-                            delete befriend.me.data.modes.data.kids[token];
+                        if (befriend.me.data.me.modes.kids) {
+                            delete befriend.me.data.me.modes.kids[token];
                         }
 
                         kid_el.parentNode.removeChild(kid_el);
@@ -2767,7 +2790,7 @@ befriend.me = {
             }
         },
         onKidsAgeSelect: function () {
-            let list_els = befriend.els.me.querySelectorAll('.kids .kid .select-list');
+            let list_els = befriend.els.me.querySelectorAll('.kids-section .kid .select-list');
 
             for (let i = 0; i < list_els.length; i++) {
                 let list_el = list_els[i];
@@ -2795,6 +2818,7 @@ befriend.me = {
 
                 // Handle option selection
                 let options = list_el.getElementsByClassName('option');
+
                 for (let j = 0; j < options.length; j++) {
                     let option = options[j];
 
@@ -2824,15 +2848,15 @@ befriend.me = {
 
                         try {
                             // Update server
-                            await befriend.auth.put('/me/mode/kids', {
+                            await befriend.auth.put('/me/modes/kids', {
                                 kid_token: kid_token,
                                 age_token: token,
                             });
 
                             // Update local data
-                            if (befriend.me.data.modes.data.kids?.[kid_token]) {
-                                let age = befriend.me.data.modes.options.kids[token];
-                                befriend.me.data.modes.data.kids[kid_token].age_id =
+                            if (befriend.me.data.me.modes.kids?.[kid_token]) {
+                                let age = befriend.me.data.modes.kids.options[token];
+                                befriend.me.data.me.modes.kids[kid_token].age_id =
                                     age?.id || null;
                             }
                         } catch (e) {
@@ -2843,7 +2867,7 @@ befriend.me = {
             }
         },
         onKidsGenderSelect: function () {
-            let gender_els = befriend.els.me.querySelectorAll('.kids .kid .gender .option');
+            let gender_els = befriend.els.me.querySelectorAll('.kids-section .kid .gender .option');
 
             for (let el of gender_els) {
                 if (el._listener) continue;
@@ -2861,7 +2885,7 @@ befriend.me = {
                         befriend.toggleSpinner(true);
 
                         // Update server
-                        await befriend.auth.put('/me/mode/kids', {
+                        await befriend.auth.put('/me/modes/kids', {
                             kid_token: kid_token,
                             gender_token: gender_token,
                             is_select: !elHasClass(el, 'selected'),
@@ -2878,11 +2902,11 @@ befriend.me = {
                         }
 
                         // Update local data
-                        if (befriend.me.data.modes.data.kids?.[kid_token]) {
+                        if (befriend.me.data.me.modes.kids?.[kid_token]) {
                             let gender = befriend.me.data.genders.find(
                                 (g) => g.token === gender_token,
                             );
-                            befriend.me.data.modes.data.kids[kid_token].gender_id =
+                            befriend.me.data.me.modes.kids[kid_token].gender_id =
                                 gender?.id || null;
                         }
 

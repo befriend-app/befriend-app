@@ -240,10 +240,6 @@ html.#{$class_confirm_me_action} {
                     flex-basis: 120px;
                 }
 
-                &:hover {
-                    border-color: $brand_color_a;
-                }
-
                 &.selected {
                     $fill_color: darken($brand_color_a, 10%);
                     border-color: darken($brand_color_a, 10%);
@@ -337,23 +333,37 @@ html.#{$class_confirm_me_action} {
             overflow-y: hidden;
             transition: height $me_mode_transition_ms;
             height: 0;
+            gap: 20px 0;
 
             &:not(.active) {
                 height: 0 !important;
             }
 
+            &:not(.with-partner) {
+                .kids-section {
+                    border-top-color: transparent !important;
+                }
+            }
+
+            &:not(.with-kids) {
+                .partner-section {
+                    padding-bottom: 5px;
+                }
+            }
+
             &.active {
             }
 
-            .partner {
+            .partner-section,
+            .kids-section {
                 padding: 10px 5px;
-                padding-bottom: 5px;
 
                 .label {
-                    font-size: 13px;
+                    font-size: 16px;
                     font-weight: 500;
                 }
 
+                // Shared grid options styling
                 .options {
                     margin-top: 10px;
                     display: grid;
@@ -378,13 +388,25 @@ html.#{$class_confirm_me_action} {
                 }
             }
 
-            .kids {
-                padding-top: 10px;
+            .partner-section {
+                padding-bottom: 15px;
+            }
+
+            .kids-section {
+                border-top: 1px solid $color_lightgray;
+                position: relative;
+                padding-bottom: 0;
+
+                .kids-top {
+                    display: flex;
+                    align-items: center;
+                }
 
                 .add-kid {
+                    margin-left: auto;
                     .add-btn {
-                        background-color: darken($brand_color_b, 50%);
-                        color: white;
+                        background-color: darken($brand_color_b, 0%);
+                        border: 1px solid $brand_color_a;
                         display: flex;
                         width: fit-content;
                         @include flex-center;
@@ -394,8 +416,8 @@ html.#{$class_confirm_me_action} {
                         font-size: 14px;
 
                         svg {
-                            height: 16px;
-                            fill: white;
+                            height: 15px;
+                            //fill: white;
                         }
                     }
                 }
@@ -403,7 +425,6 @@ html.#{$class_confirm_me_action} {
                 .kids-list {
                     display: flex;
                     flex-direction: column;
-
                     gap: 10px 0;
 
                     .kid {
@@ -422,7 +443,6 @@ html.#{$class_confirm_me_action} {
                             right: 8px;
                             height: 18px;
                             width: 18px;
-
                             fill: lighten(black, 40%);
                         }
 
@@ -437,14 +457,12 @@ html.#{$class_confirm_me_action} {
                             width: 160px;
                             cursor: pointer;
 
-                            // Unselected state
                             &.unselected {
                                 .current-selected {
                                     font-weight: 300;
                                 }
                             }
 
-                            // Selected display
                             .current-selected {
                                 padding: 8px 12px;
                                 padding-left: 20px;
@@ -464,7 +482,6 @@ html.#{$class_confirm_me_action} {
                                 top: calc(50% - calc($h / 2));
                             }
 
-                            // Options container
                             .options {
                                 height: 0;
                                 position: absolute;
@@ -481,22 +498,25 @@ html.#{$class_confirm_me_action} {
                                 overflow-y: hidden;
                                 box-sizing: border-box;
                                 display: flex;
+                                margin-top: 0;
+                                gap: initial;
 
-                                // Individual option
                                 .option {
                                     padding: 8px 12px;
                                     font-size: 13px;
                                     border-radius: 0 !important;
                                     box-sizing: border-box;
                                     transition: all $transition_ms;
+                                    background-color: white;
+                                    border: none;
+                                    border-bottom: 1px solid $brand_color_a;
 
-                                    &:hover {
-                                        background: #f5f5f5;
+                                    &:last-of-type {
+                                        border-color: transparent !important;
                                     }
 
                                     &.selected {
                                         background: darken($brand_color_b, 5%);
-                                        //color: white;
                                     }
                                 }
                             }
@@ -529,6 +549,7 @@ html.#{$class_confirm_me_action} {
                                 transition: all 200ms;
                                 border: 1px solid $color_lightgray;
                                 min-width: 60px;
+                                font-weight: 300;
 
                                 &.selected {
                                     background-color: $brand_color_b;
@@ -562,7 +583,6 @@ html.#{$class_confirm_me_action} {
                                 font-size: 9px;
                                 display: none;
                             }
-
                         }
                     }
                 }
