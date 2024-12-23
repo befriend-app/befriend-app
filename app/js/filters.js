@@ -3363,12 +3363,12 @@ befriend.filters = {
             let reviewsHtml = '';
 
             reviewsHtml += `
-            <div class="filter-option include-new" data-filter-token="reviews_unrated">
+            <div class="filter-option include-new" data-filter-token="reviews_new">
                 ${befriend.filters.sendReceiveHtml(true, true)}
 
                 <div class="filter-option-name">
                     ${toggleHtml(true, null, 'toggle-24')}
-                    <div class="name">Include unrated matches</div>
+                    <div class="name">Match with new members</div>
                 </div>
             </div>`;
 
