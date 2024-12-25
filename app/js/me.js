@@ -311,6 +311,8 @@ befriend.me = {
             await befriend.auth.put(`/me/modes`, {
                 modes: befriend.me.modes.selected,
             });
+
+            befriend.filters.matches.needsUpdate = true;
         }
     },
     addKidHtml: function (kid = {}) {
@@ -428,6 +430,8 @@ befriend.me = {
                 let r = await befriend.auth.post('/me/sections', { key });
 
                 befriend.me.data.sections.active[key] = r.data;
+
+                befriend.filters.matches.needsUpdate = true;
             } catch (e) {
                 console.error(e);
             }
@@ -879,6 +883,8 @@ befriend.me = {
                     hash_token: hash_token || null,
                 });
 
+                befriend.filters.matches.needsUpdate = true;
+
                 section_data.items[item_token] = r.data;
 
                 //add unique selection to options if not exists
@@ -930,6 +936,8 @@ befriend.me = {
         return new Promise(async (resolve, reject) => {
             try {
                 let r = await befriend.auth.delete(`/me/sections/${section_key}`);
+
+                befriend.filters.matches.needsUpdate = true;
 
                 befriend.me.toggleConfirm(false);
 
@@ -1008,6 +1016,8 @@ befriend.me = {
                 await befriend.auth.put(`/online`, {
                     online: !wasActive,
                 });
+
+                befriend.filters.matches.needsUpdate = true;
             } catch (e) {
                 console.error(e);
             }
@@ -2174,7 +2184,6 @@ befriend.me = {
                 }
             }
         },
-
         handleAction: async function (action) {
             switch (action) {
                 case 'change-email':
@@ -2699,6 +2708,8 @@ befriend.me = {
                         is_select: elHasClass(el, 'selected'),
                     });
 
+                    befriend.filters.matches.needsUpdate = true;
+
                     let gender = befriend.me.data.genders.find((g) => g.token === token);
 
                     if (!befriend.me.data.me.modes?.partner) {
@@ -2723,8 +2734,10 @@ befriend.me = {
 
                     try {
                         befriend.toggleSpinner(true);
-                        // Add kid on server
+
                         let r = await befriend.auth.post('/me/modes/kids');
+
+                        befriend.filters.matches.needsUpdate = true;
 
                         befriend.me.data.me.modes.kids[r.data.token] = r.data;
 
@@ -2769,6 +2782,8 @@ befriend.me = {
                             is_active,
                         });
 
+                        befriend.filters.matches.needsUpdate = true;
+
                         befriend.me.data.me.modes.kids[token].is_active = is_active;
                     } catch (e) {
                         console.error('Error removing kid:', e);
@@ -2796,6 +2811,8 @@ befriend.me = {
                         await befriend.auth.delete('/me/modes/kids', {
                             kid_token: token,
                         });
+
+                        befriend.filters.matches.needsUpdate = true;
 
                         if (befriend.me.data.me.modes.kids) {
                             delete befriend.me.data.me.modes.kids[token];
@@ -2878,6 +2895,8 @@ befriend.me = {
                                 age_token: token,
                             });
 
+                            befriend.filters.matches.needsUpdate = true;
+
                             // Update local data
                             if (befriend.me.data.me.modes.kids?.[kid_token]) {
                                 let age = befriend.me.data.modes.kids.options[token];
@@ -2914,6 +2933,8 @@ befriend.me = {
                             gender_token: gender_token,
                             is_select: !elHasClass(el, 'selected'),
                         });
+
+                        befriend.filters.matches.needsUpdate = true;
 
                         // Update UI
                         let gender_options = kid_el.querySelectorAll('.gender .option');
@@ -3534,6 +3555,8 @@ befriend.me = {
                                 is_select: isSelect,
                             });
 
+                            befriend.filters.matches.needsUpdate = true;
+
                             // Update section data
                             let section_data = befriend.me.getActiveSection(section_key);
                             if (!isSelect) {
@@ -3628,6 +3651,8 @@ befriend.me = {
                             console.error(e);
                             return; // Don't proceed with UI updates if server update failed
                         }
+
+                        befriend.filters.matches.needsUpdate = true;
 
                         // Remove from data
                         delete section_data.items[delete_token];
