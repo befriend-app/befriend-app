@@ -354,6 +354,7 @@ befriend.filters = {
                 this.smoking = this.createMultiSelectFilter('smoking');
 
                 //sections
+                await befriend.filters.initMatches();
                 await befriend.filters.initSections();
                 befriend.filters.initCollapsible();
 
@@ -4340,6 +4341,35 @@ befriend.filters = {
             if (indexB === -1) return -1;
 
             return indexA - indexB;
+        });
+    },
+    initMatches: function () {
+        return new Promise(async (resolve, reject) => {
+            let matches_el = befriend.els.filters.querySelector('.matches-overview');
+
+            let send_el = matches_el.querySelector('.send');
+            let receive_el = matches_el.querySelector('.receive');
+            let excluded_el = matches_el.querySelector('.excluded');
+
+            async function updateCounts() {
+                let response = await befriend.auth.get('/matches');
+
+                try {
+                     if(response.data?.counts) {
+                         send_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.send);
+                         receive_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.receive);
+                         excluded_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.excluded);
+                     }
+                } catch(e) {
+                    console.error(e);
+                }
+            }
+
+            updateCounts();
+
+            setInterval(updateCounts, 60 * 10 * 1000); //update every 10 minutes automatically
+
+            resolve();
         });
     },
     initSections: async function () {

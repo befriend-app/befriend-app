@@ -140,6 +140,18 @@ function fireTouch(node) {
     }
 }
 
+function formattedNumberDisplay(value) {
+    if (value >= 1000000) {
+        const millions = value / 1000000;
+        return (millions % 1 === 0 ? millions.toFixed(0) : millions.toFixed(1)) + 'm';
+    } else if (value >= 10000) {
+        const thousands = value / 1000;
+        return (thousands % 1 === 0 ? thousands.toFixed(0) : thousands.toFixed(1)) + 'k';
+    } else {
+        return value.toLocaleString();
+    }
+}
+
 function generateToken(length) {
     if (!length) {
         length = 32;
