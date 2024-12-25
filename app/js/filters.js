@@ -670,6 +670,9 @@ befriend.filters = {
             } catch (e) {
                 console.error('Error updating filter send/receive state:', e);
             }
+
+            //update match counts after updating state
+            await befriend.filters.updateCounts();
         },
     },
     importance: {
@@ -4372,12 +4375,13 @@ befriend.filters = {
             console.error(e);
         }
 
-        //show animation for at least 2s
+        //show animation for a given duration
+        let transition_duration = 1500;
         let td = timeNow() - ts;
 
         setTimeout(function () {
             removeClassEl('show', updating_el);
-        }, Math.max(2000 - td, 0));
+        }, Math.max(transition_duration - td, 0));
     },
     initMatches: function () {
         return new Promise(async (resolve, reject) => {
