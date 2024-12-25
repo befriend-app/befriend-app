@@ -255,7 +255,8 @@ html.#{$class_confirm_me_action} {
                     &.mode-kids {
                         .icon {
                             svg {
-                                path, circle {
+                                path,
+                                circle {
                                     stroke: $fill_color;
                                 }
                             }

@@ -115,7 +115,7 @@ function fireTouch(node) {
         const touchEvent = new TouchEvent('touchstart', {
             bubbles: true,
             cancelable: true,
-            view: window
+            view: window,
         });
         node.dispatchEvent(touchEvent);
     } catch (e) {
@@ -478,7 +478,7 @@ function sortObj(obj, key, desc) {
 
 function removeArrItem(arr, item) {
     let index = arr.indexOf(item);
-    if(index > -1) {
+    if (index > -1) {
         arr.splice(index, 1);
     }
 }

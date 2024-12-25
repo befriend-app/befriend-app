@@ -187,7 +187,7 @@ befriend.me = {
 
         //modes
         if (me_obj.modes?.selected) {
-            for(let mode of me_obj.modes.selected) {
+            for (let mode of me_obj.modes.selected) {
                 this.selectMode(mode, true);
             }
         }
@@ -200,19 +200,27 @@ befriend.me = {
         // Toggle mode selection
         if (selectedMode) {
             //prevent deselecting last mode
-            if(befriend.me.modes.selected.length === 1) {
+            if (befriend.me.modes.selected.length === 1) {
                 return false;
             }
 
-            befriend.me.modes.selected = befriend.me.modes.selected.filter(m => m !== mode);
+            befriend.me.modes.selected = befriend.me.modes.selected.filter((m) => m !== mode);
 
-            removeClassEl('selected', Array.from(modeOptions).find(el => el.getAttribute('data-mode') === mode));
+            removeClassEl(
+                'selected',
+                Array.from(modeOptions).find((el) => el.getAttribute('data-mode') === mode),
+            );
         } else {
             befriend.me.modes.selected.push(mode);
-            addClassEl('selected', Array.from(modeOptions).find(el => el.getAttribute('data-mode') === mode));
+            addClassEl(
+                'selected',
+                Array.from(modeOptions).find((el) => el.getAttribute('data-mode') === mode),
+            );
         }
 
-        const hasPartnerOrKids = befriend.me.modes.selected.some(m => ['mode-partner', 'mode-kids'].includes(m));
+        const hasPartnerOrKids = befriend.me.modes.selected.some((m) =>
+            ['mode-partner', 'mode-kids'].includes(m),
+        );
 
         if (hasPartnerOrKids) {
             addClassEl('active', selectedModeContainer);
@@ -227,13 +235,16 @@ befriend.me = {
                     <div class="label">Your Partner</div>
                     <div class="options">
                         ${genders
-                    .filter(gender => gender.is_visible)
-                    .map(gender => `
+                            .filter((gender) => gender.is_visible)
+                            .map(
+                                (gender) => `
                                 <div class="option ${befriend.me.data.me.modes?.partner?.gender_id === gender.id ? 'selected' : ''}" 
                                      data-gender="${gender.token}">
                                     ${gender.name}
                                 </div>
-                            `).join('')}
+                            `,
+                            )
+                            .join('')}
                     </div>
                 </div>`;
             }
@@ -284,13 +295,13 @@ befriend.me = {
             selectedModeContainer.innerHTML = '';
         }
 
-        if(befriend.me.modes?.selected.includes('mode-partner')) {
+        if (befriend.me.modes?.selected.includes('mode-partner')) {
             addClassEl('with-partner', selectedModeContainer);
         } else {
             removeClassEl('with-partner', selectedModeContainer);
         }
 
-        if(befriend.me.modes?.selected.includes('mode-kids')) {
+        if (befriend.me.modes?.selected.includes('mode-kids')) {
             addClassEl('with-kids', selectedModeContainer);
         } else {
             removeClassEl('with-kids', selectedModeContainer);
@@ -298,7 +309,7 @@ befriend.me = {
 
         if (!skip_server) {
             await befriend.auth.put(`/me/modes`, {
-                modes: befriend.me.modes.selected
+                modes: befriend.me.modes.selected,
             });
         }
     },
@@ -327,7 +338,7 @@ befriend.me = {
         }
 
         for (let gender of befriend.me.data.genders) {
-            if(!gender.is_visible) {
+            if (!gender.is_visible) {
                 continue;
             }
 
@@ -481,10 +492,11 @@ befriend.me = {
         let filterListObj = befriend.me.autoComplete.selected.filterList;
 
         if (key === 'schools') {
-            if (befriend.user.local.data.me &&
+            if (
+                befriend.user.local.data.me &&
                 befriend.user.local.data.me.filterList &&
-                befriend.user.local.data.me.filterList[key] ) {
-
+                befriend.user.local.data.me.filterList[key]
+            ) {
                 filterListObj[key] = {
                     item: befriend.user.local.data.me.filterList[key],
                 };
@@ -694,11 +706,11 @@ befriend.me = {
                 }
 
                 //secondary container
-                if(section_data.data.secondary) {
+                if (section_data.data.secondary) {
                     let secondary_keys = Object.keys(section_data.data.secondary);
 
-                    if(secondary_keys.length) {
-                        if(section_data.data.secondary[secondary_keys[0]].options?.length) {
+                    if (secondary_keys.length) {
+                        if (section_data.data.secondary[secondary_keys[0]].options?.length) {
                             secondary_container_html = `<div class="secondary-container"></div>`;
                         }
                     }
@@ -959,7 +971,7 @@ befriend.me = {
         let isOnline = this.data.me.is_online || this.data.me.online === null;
 
         let html = `<div id="me-online">
-                        ${toggleHtml(isOnline, isOnline ? 'Online': 'Offline')}
+                        ${toggleHtml(isOnline, isOnline ? 'Online' : 'Offline')}
                     </div>`;
 
         let top_el = befriend.els.me.querySelector('.top');
@@ -972,7 +984,7 @@ befriend.me = {
             e.preventDefault();
             e.stopPropagation();
 
-            if(this._ip) {
+            if (this._ip) {
                 return false;
             }
 
@@ -986,7 +998,7 @@ befriend.me = {
 
             let toggle_label = 'Online';
 
-            if(wasActive) {
+            if (wasActive) {
                 toggle_label = 'Offline';
             }
 
@@ -994,9 +1006,9 @@ befriend.me = {
 
             try {
                 await befriend.auth.put(`/online`, {
-                    online: !wasActive
-                })
-            } catch(e) {
+                    online: !wasActive,
+                });
+            } catch (e) {
                 console.error(e);
             }
 
@@ -1269,7 +1281,7 @@ befriend.me = {
             removeClassEl('show-menu', el);
         }
     },
-    generateSecondaryOptionsHtml: function(section_data, table_key, item) {
+    generateSecondaryOptionsHtml: function (section_data, table_key, item) {
         const secondary_options = section_data.data?.secondary?.[table_key]?.options;
         if (!secondary_options) return '';
 
@@ -1284,8 +1296,11 @@ befriend.me = {
 
         return `<div data-token="${item.token}" class="item ${item.token} ${!item.secondary ? 'unselected' : ''}">
                     <div class="current-selected">
-                            ${item.secondary ? item.secondary : 
-                            section_data.data?.secondary?.[table_key]?.unselectedStr}
+                            ${
+                                item.secondary
+                                    ? item.secondary
+                                    : section_data.data?.secondary?.[table_key]?.unselectedStr
+                            }
                     </div>
                     <svg class="arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 82.1 43.2">
                             <path d="M41.1,43.2L0,2.2,2.1,0l39,39L80,0l2.1,2.2-41,41Z"/>
@@ -1299,7 +1314,7 @@ befriend.me = {
         let secondary_container = section_el.querySelector('.secondary-container');
         let secondaryContainerBox = secondary_container.getBoundingClientRect();
         let item_token = options_el.getAttribute('data-item-token');
-        let secondary_item = secondary_container.querySelector(`.item[data-token="${item_token}"]`)
+        let secondary_item = secondary_container.querySelector(`.item[data-token="${item_token}"]`);
         let item_el = section_el.querySelector(`.item.mine[data-token="${item_token}"]`);
 
         let secondary_el = item_el.querySelector('.secondary');
@@ -1334,10 +1349,12 @@ befriend.me = {
 
         if (show) {
             // First set the current height of any open options before transitioning
-            for(let openItem of openSecondaryItems) {
+            for (let openItem of openSecondaryItems) {
                 if (openItem !== item_el && openItem !== options_item_el) {
                     const openToken = openItem.getAttribute('data-token');
-                    const openOptions = secondary_container.querySelector(`.options[data-item-token="${openToken}"]`);
+                    const openOptions = secondary_container.querySelector(
+                        `.options[data-item-token="${openToken}"]`,
+                    );
                     if (openOptions) {
                         // Set current height before transitioning to 0
                         openOptions.style.height = `${openOptions.scrollHeight}px`;
@@ -1362,7 +1379,9 @@ befriend.me = {
 
                 if (active_section !== section_el) {
                     let active_item = activeEl.closest('.item');
-                    let active_options = active_section.querySelector(`.options[data-item-token="${active_item.getAttribute('data-token')}"]`);
+                    let active_options = active_section.querySelector(
+                        `.options[data-item-token="${active_item.getAttribute('data-token')}"]`,
+                    );
 
                     removeClassEl('item-secondary-open', active_item);
                     if (active_options) {
@@ -1654,9 +1673,9 @@ befriend.me = {
 
         // Secondary UI in the item itself
         if (secondary_options) {
-                let unselected = !item.secondary ? 'unselected' : '';
+            let unselected = !item.secondary ? 'unselected' : '';
 
-                secondary_html = `<div class="secondary ${unselected}" 
+            secondary_html = `<div class="secondary ${unselected}" 
                                       data-section="${section_key}"
                                       data-item-token="${item.token}">
                                     <div class="current-selected">
@@ -1668,7 +1687,7 @@ befriend.me = {
                                 </div>`;
         }
 
-            return `<div class="item mine ${isFavorable ? 'favorable' : ''} ${item.is_favorite ? 'is-favorite' : ''} ${secondary_html ? 'has-secondary' : ''}" 
+        return `<div class="item mine ${isFavorable ? 'favorable' : ''} ${item.is_favorite ? 'is-favorite' : ''} ${secondary_html ? 'has-secondary' : ''}" 
                                  data-token="${item.token}" 
                                  data-table-key="${item.table_key || ''}">
                         <div class="content">
@@ -1687,7 +1706,7 @@ befriend.me = {
                     </div>`;
     },
     sectionItemOptionHtml: function (section_key, table_key, item) {
-        if(typeof item.is_visible !== 'undefined' && !item.is_visible) {
+        if (typeof item.is_visible !== 'undefined' && !item.is_visible) {
             return '';
         }
 
@@ -1797,7 +1816,11 @@ befriend.me = {
                             if (tab_key && item.table_key && item.table_key !== tab_key) {
                                 continue;
                             }
-                            secondaryItems += befriend.me.generateSecondaryOptionsHtml(section_data, table_key, item);
+                            secondaryItems += befriend.me.generateSecondaryOptionsHtml(
+                                section_data,
+                                table_key,
+                                item,
+                            );
                         }
                     }
                 } else {
@@ -2676,9 +2699,9 @@ befriend.me = {
                         is_select: elHasClass(el, 'selected'),
                     });
 
-                    let gender = befriend.me.data.genders.find(g=>g.token === token);
+                    let gender = befriend.me.data.genders.find((g) => g.token === token);
 
-                    if(!befriend.me.data.me.modes?.partner) {
+                    if (!befriend.me.data.me.modes?.partner) {
                         befriend.me.data.me.modes.partner = {};
                     }
 
@@ -2687,7 +2710,9 @@ befriend.me = {
             }
         },
         onKids: function () {
-            let add_btn = befriend.els.me.querySelector('.selected-mode-container .kids-section .add-btn');
+            let add_btn = befriend.els.me.querySelector(
+                '.selected-mode-container .kids-section .add-btn',
+            );
 
             if (!add_btn._listener) {
                 add_btn._listener = true;
@@ -2856,8 +2881,7 @@ befriend.me = {
                             // Update local data
                             if (befriend.me.data.me.modes.kids?.[kid_token]) {
                                 let age = befriend.me.data.modes.kids.options[token];
-                                befriend.me.data.me.modes.kids[kid_token].age_id =
-                                    age?.id || null;
+                                befriend.me.data.me.modes.kids[kid_token].age_id = age?.id || null;
                             }
                         } catch (e) {
                             console.error('Error updating kid age:', e);
@@ -3223,7 +3247,7 @@ befriend.me = {
                 el._listener = true;
 
                 el.addEventListener('input', function (e) {
-                    console.log("me input")
+                    console.log('me input');
                     let section_key = el.closest('.section').getAttribute('data-key');
 
                     befriend.me.updateAutoCompleteSelectList(section_key);
@@ -3408,7 +3432,7 @@ befriend.me = {
                     item._listener = true;
 
                     item.addEventListener('click', function (e) {
-                        if(this.closest('.secondary-container')) {
+                        if (this.closest('.secondary-container')) {
                             return false;
                         }
 
@@ -3466,9 +3490,9 @@ befriend.me = {
                                 section_el.getElementsByClassName('button-option');
                             let section_key = section_el.getAttribute('data-key');
 
-                            if(section_key === 'genders') {
+                            if (section_key === 'genders') {
                                 //prevent deselecting gender
-                                if(elHasClass(item, 'selected')) {
+                                if (elHasClass(item, 'selected')) {
                                     return false;
                                 }
                             }
@@ -3892,16 +3916,18 @@ befriend.me = {
                         befriend.me.transitionSecondary(
                             el,
                             !befriend.me.secondaries.activeEl ||
-                            befriend.me.secondaries.activeEl !== el
+                                befriend.me.secondaries.activeEl !== el,
                         );
                     });
                 }
             }
 
             // Handle clicks in the secondary container
-            const secondary_current_els = befriend.els.me.querySelectorAll('.secondary-container .current-selected');
+            const secondary_current_els = befriend.els.me.querySelectorAll(
+                '.secondary-container .current-selected',
+            );
 
-            for(let el of secondary_current_els) {
+            for (let el of secondary_current_els) {
                 el._listener = true;
 
                 el.addEventListener('click', async (e) => {
@@ -3912,7 +3938,9 @@ befriend.me = {
                     if (!secondary_item) return;
 
                     const itemToken = secondary_item.getAttribute('data-token');
-                    const original_item = el.closest('.section').querySelector(`.item.mine[data-token="${itemToken}"]`);
+                    const original_item = el
+                        .closest('.section')
+                        .querySelector(`.item.mine[data-token="${itemToken}"]`);
                     if (!original_item) return;
 
                     const secondary_el = original_item.querySelector('.secondary');
@@ -3921,15 +3949,16 @@ befriend.me = {
                     befriend.me.transitionSecondary(
                         secondary_el,
                         !befriend.me.secondaries.activeEl ||
-                        befriend.me.secondaries.activeEl !== secondary_el
+                            befriend.me.secondaries.activeEl !== secondary_el,
                     );
                 });
             }
         },
         onSelectSecondary: function () {
-            const secondary_containers = befriend.els.me.getElementsByClassName('secondary-container');
+            const secondary_containers =
+                befriend.els.me.getElementsByClassName('secondary-container');
 
-            for(let secondary_container of secondary_containers) {
+            for (let secondary_container of secondary_containers) {
                 if (!secondary_container._listener) {
                     secondary_container._listener = true;
 
@@ -3965,17 +3994,23 @@ befriend.me = {
                             const displayText = option_value;
 
                             // Update original item's secondary element
-                            const original_item = section_el.querySelector(`.item.mine[data-token="${itemToken}"]`);
+                            const original_item = section_el.querySelector(
+                                `.item.mine[data-token="${itemToken}"]`,
+                            );
                             const original_secondary = original_item?.querySelector('.secondary');
                             if (original_secondary) {
-                                original_secondary.querySelector('.current-selected').textContent = displayText;
+                                original_secondary.querySelector('.current-selected').textContent =
+                                    displayText;
                                 removeClassEl('unselected', original_secondary);
                             }
 
                             // Update secondary container's display
-                            const secondary_item = secondary_container.querySelector(`.item[data-token="${itemToken}"]`);
+                            const secondary_item = secondary_container.querySelector(
+                                `.item[data-token="${itemToken}"]`,
+                            );
                             if (secondary_item) {
-                                secondary_item.querySelector('.current-selected').textContent = displayText;
+                                secondary_item.querySelector('.current-selected').textContent =
+                                    displayText;
                                 removeClassEl('unselected', secondary_item);
                             }
 
@@ -3987,14 +4022,13 @@ befriend.me = {
                                 section_key: section_key,
                                 table_key: table_key,
                                 section_item_id: item.id,
-                                secondary: option_value
+                                secondary: option_value,
                             });
 
                             requestAnimationFrame(() => {
                                 befriend.me.updateSecondaryPosition(section_el, options_el);
                                 befriend.me.updateSectionHeight(section_el, false);
                             });
-
                         } catch (e) {
                             console.error('Error updating secondary:', e);
                         }

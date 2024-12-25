@@ -101,11 +101,11 @@ befriend.events = {
                 if (menu_shown_el && !e.target.closest('.menu')) {
                     befriend.me.toggleSectionActions(menu_shown_el, false);
                 }
-            } else if(befriend.isViewShown('filters')) {
+            } else if (befriend.isViewShown('filters')) {
                 befriend.filters.hideActiveSecondaryIf(e.target);
 
-                if(befriend.filters.networks.isDropdownShown()) {
-                    if(!e.target.closest('.select-dropdown')) {
+                if (befriend.filters.networks.isDropdownShown()) {
+                    if (!e.target.closest('.select-dropdown')) {
                         e.preventDefault();
                         e.stopPropagation();
 
@@ -113,17 +113,17 @@ befriend.events = {
                     }
                 }
 
-                if(befriend.filters.getActiveAutoCompleteEl()) {
-                    if(!e.target.closest('.autocomplete-container')) {
+                if (befriend.filters.getActiveAutoCompleteEl()) {
+                    if (!e.target.closest('.autocomplete-container')) {
                         e.preventDefault();
                         e.stopPropagation();
-                        
+
                         befriend.filters.hideActiveAutoCompleteIf(e.target);
                     }
                 }
 
-                if(befriend.filters.getActiveAutoCompleteSelectEl()) {
-                    if(!e.target.closest('.select-container')) {
+                if (befriend.filters.getActiveAutoCompleteSelectEl()) {
+                    if (!e.target.closest('.select-container')) {
                         e.preventDefault();
                         e.stopPropagation();
 
@@ -185,7 +185,6 @@ befriend.events = {
                         befriend.filters.updateSectionHeights(true);
                         //update slider control positions
                         befriend.filters.positionSliders();
-
                     });
                 } else if (nav_name === 'me') {
                     befriend.me.updateCollapsed(true);

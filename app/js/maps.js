@@ -152,7 +152,7 @@ befriend.maps = {
 
             if (td > 0) {
                 //time left on token
-                update_in = td - (2 * 60 * 1000);
+                update_in = td - 2 * 60 * 1000;
             }
         }
 
@@ -246,8 +246,8 @@ befriend.maps = {
         }
     },
     setMapCenter: function (map, location, zoom_level, fly_to) {
-        if(!map) {
-            console.error("Map required");
+        if (!map) {
+            console.error('Map required');
             return;
         }
 
@@ -313,25 +313,30 @@ befriend.maps = {
         }
 
         //do not update map when places or create new activity is shown
-        if(befriend.places.isPlacesShown() || befriend.activities.isCreateActivityShown()) {
+        if (befriend.places.isPlacesShown() || befriend.activities.isCreateActivityShown()) {
             return;
         }
 
         const currentMapCoords = {
             lat: befriend.location.device.lat,
-            lon: befriend.location.device.lon
+            lon: befriend.location.device.lon,
         };
 
-        let lat_diff = befriend.location.prev.map ? Math.abs(currentMapCoords.lat - befriend.location.prev.map.lat) : null;
-        let lon_diff = befriend.location.prev.map ? Math.abs(currentMapCoords.lon - befriend.location.prev.map.lon): null;
+        let lat_diff = befriend.location.prev.map
+            ? Math.abs(currentMapCoords.lat - befriend.location.prev.map.lat)
+            : null;
+        let lon_diff = befriend.location.prev.map
+            ? Math.abs(currentMapCoords.lon - befriend.location.prev.map.lon)
+            : null;
 
         // Check if map coordinates have changed from previous
-        if (!befriend.location.prev.map ||
-            lat_diff > .0003 || //approximately 100ft
-            lon_diff > .0003) {
-
+        if (
+            !befriend.location.prev.map ||
+            lat_diff > 0.0003 || //approximately 100ft
+            lon_diff > 0.0003
+        ) {
             //set new map position
-            befriend.maps.setMapCenter(befriend.maps.maps.activities, befriend.location.device)
+            befriend.maps.setMapCenter(befriend.maps.maps.activities, befriend.location.device);
 
             // Update map marker position if it exists
             if (befriend.maps.markers.me) {
@@ -339,7 +344,7 @@ befriend.maps = {
             }
 
             // Store current coordinates as previous map location
-            befriend.location.prev.map = {...currentMapCoords};
+            befriend.location.prev.map = { ...currentMapCoords };
         }
     },
     events: {

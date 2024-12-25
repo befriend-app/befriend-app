@@ -316,7 +316,8 @@
             .item {
                 position: relative;
 
-                &.active, &.selected {
+                &.active,
+                &.selected {
                     .importance {
                         opacity: 1;
                         visibility: visible;
@@ -359,7 +360,7 @@
                             border-radius: 50%;
                             top: 50%;
                             transform: translate(-50%, -50%);
-                            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
                             transition: top 200ms ease;
                         }
                     }
@@ -389,7 +390,6 @@
                     svg {
                         height: 16px;
                         @include flex-center-col;
-
                     }
 
                     .importance-name {
@@ -698,8 +698,8 @@
                     }
 
                     svg {
-                        width: $dim * .6;
-                        height: $dim * .6;
+                        width: $dim * 0.6;
+                        height: $dim * 0.6;
                     }
                 }
 
@@ -852,8 +852,8 @@
                 .level_2_container {
                     padding: $activity_level_2_ptb $activity_level_2_plr;
                     width: calc(
-                            100vw - #{$app_margin_lr * 2} - #{$activity_level_2_plr * 2} - #{$activity_level_2_border_w *
-                        2}
+                        100vw - #{$app_margin_lr * 2} - #{$activity_level_2_plr * 2} - #{$activity_level_2_border_w *
+                            2}
                     );
                 }
 
@@ -1176,7 +1176,7 @@
                     max-height: 300px;
                     overflow-y: scroll;
                     z-index: 10;
-                    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
                     box-sizing: border-box;
                     transition: all $secondary_transition_ms;
 
@@ -1422,8 +1422,8 @@
                 @include flex-center-col;
 
                 .thumb-inner {
-                    width: $filter_review_range_dim * .85;
-                    height: $filter_review_range_dim * .85;
+                    width: $filter_review_range_dim * 0.85;
+                    height: $filter_review_range_dim * 0.85;
                     background-color: $brand_color_b;
                     //background-color: transparent;
                     border-radius: 50%;
@@ -1691,7 +1691,8 @@
             }
         }
 
-        &.ages, &.genders {
+        &.ages,
+        &.genders {
             .filter-option-name {
                 font-size: 15px;
             }
@@ -1715,7 +1716,8 @@
                     border-top: 1px solid $color_lightgray;
                 }
 
-                &.autocomplete-select-open, &.autocomplete-shown {
+                &.autocomplete-select-open,
+                &.autocomplete-shown {
                     .section-container {
                         overflow-y: visible;
                     }
@@ -2628,8 +2630,8 @@
             @include flex-center;
             align-items: center;
             gap: 0 7px;
-            border-right: .5px solid $bc;
-            border-bottom: .5px solid $bc;
+            border-right: 0.5px solid $bc;
+            border-bottom: 0.5px solid $bc;
             box-sizing: border-box;
 
             .icon {
@@ -2645,7 +2647,7 @@
             &.enabled {
                 background-color: $brand_color_b;
                 border-color: darken($brand_color_a, 10%);
-                border-width: .5px;
+                border-width: 0.5px;
                 border-top-color: transparent;
                 border-left-color: transparent;
 
@@ -2720,7 +2722,7 @@
             font-weight: 300;
         }
 
-        input[type="time"] {
+        input[type='time'] {
             width: 100%;
             border: 1px solid $color_lightgray;
             border-radius: 8px;
@@ -2785,7 +2787,9 @@
     z-index: 1000;
     padding: 20px;
     opacity: 0;
-    transition: background-color 300ms, opacity 300ms;
+    transition:
+        background-color 300ms,
+        opacity 300ms;
     pointer-events: none;
 
     &.active {
@@ -2809,8 +2813,9 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     transform: scale(0.95);
     opacity: 0;
-    transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1),
-    opacity 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition:
+        transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1),
+        opacity 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
 
     .popup-header {
         margin-bottom: 20px;
@@ -2835,8 +2840,9 @@
         justify-content: center;
         margin-bottom: 24px;
         padding: 0 40px;
-        transition: opacity 300ms ease 150ms,
-        transform 300ms ease 150ms;
+        transition:
+            opacity 300ms ease 150ms,
+            transform 300ms ease 150ms;
         opacity: 1;
         transform: translateY(0);
     }
@@ -2887,8 +2893,9 @@
         display: flex;
         justify-content: flex-end;
         gap: 8px;
-        transition: opacity 300ms ease 200ms,
-        transform 300ms ease 200ms;
+        transition:
+            opacity 300ms ease 200ms,
+            transform 300ms ease 200ms;
         opacity: 1;
         transform: translateY(0);
 
