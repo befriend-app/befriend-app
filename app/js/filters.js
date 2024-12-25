@@ -4,6 +4,52 @@ befriend.filters = {
         options: null,
         collapsed: {},
     },
+    matches: {
+        data: {},
+        needsUpdate: false,
+        init: function () {
+            return new Promise(async (resolve, reject) => {
+                befriend.filters.matches.updateCounts();
+
+                setInterval(befriend.filters.matches.updateCounts, 60 * 10 * 1000); //update every 10 minutes automatically
+
+                resolve();
+            });
+        },
+        updateCounts: async function () {
+            let matches_el = befriend.els.filters.querySelector('.matches-overview');
+            let updating_el = matches_el.querySelector('.updating');
+            let send_el = matches_el.querySelector('.send');
+            let receive_el = matches_el.querySelector('.receive');
+            let excluded_el = matches_el.querySelector('.excluded');
+
+            let ts = timeNow();
+
+            addClassEl('show', updating_el);
+
+            try {
+                let response = await befriend.auth.get('/matches');
+
+                if(response.data?.counts) {
+                    befriend.filters.matches.data = response.data;
+                    send_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.send);
+                    receive_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.receive);
+                    excluded_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.excluded);
+                }
+            } catch(e) {
+                console.error(e);
+            }
+
+            //show animation for a given duration
+            let transition_duration = 1500;
+
+            let td = timeNow() - ts;
+
+            setTimeout(function () {
+                removeClassEl('show', updating_el);
+            }, Math.max(transition_duration - td, 0));
+        },
+    },
     groups: [
         {
             name: 'Notifications',
@@ -324,94 +370,6 @@ befriend.filters = {
     secondaries: {
         activeEl: null,
     },
-    init: function () {
-        return new Promise(async (resolve, reject) => {
-            console.log('[init] Filters');
-
-            try {
-                if (befriend.user.local.data?.filters?.collapsed) {
-                    this.data.collapsed = befriend.user.local.data.filters.collapsed;
-                }
-
-                await befriend.filters.getData();
-
-                //init interest sections
-                this.movies = this.createInterestsFilter(this.sections.movies.config);
-                this.tv_shows = this.createInterestsFilter(this.sections.tv_shows.config);
-                this.sports = this.createInterestsFilter(this.sections.sports.config);
-                this.music = this.createInterestsFilter(this.sections.music.config);
-                this.instruments = this.createInterestsFilter(this.sections.instruments.config);
-                this.schools = this.createInterestsFilter(this.sections.schools.config);
-                this.work = this.createInterestsFilter(this.sections.work.config);
-
-                //init personal sections
-                this.life_stages = this.createMultiSelectFilter('life_stages');
-                this.relationship = this.createMultiSelectFilter('relationship');
-                this.languages = this.createMultiSelectFilter('languages');
-                this.politics = this.createMultiSelectFilter('politics');
-                this.religion = this.createMultiSelectFilter('religion');
-                this.drinking = this.createMultiSelectFilter('drinking');
-                this.smoking = this.createMultiSelectFilter('smoking');
-
-                //sections
-                await befriend.filters.initMatches();
-                await befriend.filters.initSections();
-                befriend.filters.initCollapsible();
-
-                //notifications
-                befriend.filters.availability.init();
-                befriend.filters.activity_types.init();
-                befriend.filters.modes.init();
-                befriend.filters.networks.init();
-                befriend.filters.reviews.init();
-                befriend.filters.verifications.init();
-
-                //general
-                befriend.filters.distance.init();
-                befriend.filters.age.init();
-                befriend.filters.genders.init();
-
-                //interests
-                befriend.filters.schools.init();
-                befriend.filters.movies.init();
-                befriend.filters.tv_shows.init();
-                befriend.filters.sports.init();
-                befriend.filters.music.init();
-                befriend.filters.work.init();
-                befriend.filters.instruments.init();
-
-                //personal
-                befriend.filters.life_stages.init();
-                befriend.filters.relationship.init();
-                befriend.filters.languages.init();
-                befriend.filters.politics.init();
-                befriend.filters.religion.init();
-                befriend.filters.drinking.init();
-                befriend.filters.smoking.init();
-
-                //settings
-                befriend.filters.active.init();
-                befriend.filters.sendReceive.init();
-                befriend.filters.importance.init();
-            } catch (e) {
-                console.error(e);
-            }
-            resolve();
-        });
-    },
-    getData: function () {
-        return new Promise(async (resolve, reject) => {
-            try {
-                let response = await befriend.auth.get('/filters');
-
-                befriend.filters.data.options = response.data;
-            } catch (e) {
-                console.error(e);
-            }
-
-            return resolve();
-        });
-    },
     active: {
         init: function () {
             this.events();
@@ -548,7 +506,7 @@ befriend.filters = {
                         });
 
                         //update match counts after filter update
-                        befriend.filters.updateCounts();
+                        befriend.filters.matches.updateCounts();
                     } catch (e) {
                         console.error('Error updating filter active state:', e);
 
@@ -672,7 +630,7 @@ befriend.filters = {
             }
 
             //update match counts after updating state
-            befriend.filters.updateCounts();
+            befriend.filters.matches.updateCounts();
         },
     },
     importance: {
@@ -999,7 +957,7 @@ befriend.filters = {
                     (prevValue >= importance_threshold && value < importance_threshold);
 
                 if (needsUpdate) {
-                    befriend.filters.updateCounts();
+                    befriend.filters.matches.updateCounts();
                 }
             } catch (e) {
                 console.error('Error saving importance:', e);
@@ -1806,7 +1764,7 @@ befriend.filters = {
                 });
 
                 //update match counts
-                befriend.filters.updateCounts();
+                befriend.filters.matches.updateCounts();
 
                 if (response?.data?.idMapping) {
                     this.updateIds(response.data.idMapping);
@@ -2932,7 +2890,7 @@ befriend.filters = {
                         });
 
                         //update match counts
-                        befriend.filters.updateCounts();
+                        befriend.filters.matches.updateCounts();
                     } catch (e) {
                         console.error('Error updating modes filter:', e);
 
@@ -3541,7 +3499,7 @@ befriend.filters = {
             });
 
             //update match counts
-            befriend.filters.updateCounts();
+            befriend.filters.matches.updateCounts();
         },
     },
     reviews: {
@@ -3841,7 +3799,7 @@ befriend.filters = {
                     });
 
                     //update match counts
-                    befriend.filters.updateCounts();
+                    befriend.filters.matches.updateCounts();
                 } catch (e) {
                     console.error(`Error saving ${type} rating:`, e);
                 }
@@ -4073,7 +4031,7 @@ befriend.filters = {
                 });
 
                 //update match counts
-                befriend.filters.updateCounts();
+                befriend.filters.matches.updateCounts();
             } catch (e) {
                 console.error('Error saving distance:', e);
             }
@@ -4248,7 +4206,7 @@ befriend.filters = {
                 });
 
                 //update match counts
-                befriend.filters.updateCounts();
+                befriend.filters.matches.updateCounts();
             } catch (e) {
                 console.error('Error saving age range:', e);
             }
@@ -4366,7 +4324,7 @@ befriend.filters = {
                             });
 
                             //update match counts
-                            befriend.filters.updateCounts();
+                            befriend.filters.matches.updateCounts();
                         } catch (e) {
                             console.error('Error updating gender filter:', e);
 
@@ -4385,6 +4343,94 @@ befriend.filters = {
                 }
             }
         },
+    },
+    init: function () {
+        return new Promise(async (resolve, reject) => {
+            console.log('[init] Filters');
+
+            try {
+                if (befriend.user.local.data?.filters?.collapsed) {
+                    this.data.collapsed = befriend.user.local.data.filters.collapsed;
+                }
+
+                await befriend.filters.getData();
+
+                //init interest sections
+                this.movies = this.createInterestsFilter(this.sections.movies.config);
+                this.tv_shows = this.createInterestsFilter(this.sections.tv_shows.config);
+                this.sports = this.createInterestsFilter(this.sections.sports.config);
+                this.music = this.createInterestsFilter(this.sections.music.config);
+                this.instruments = this.createInterestsFilter(this.sections.instruments.config);
+                this.schools = this.createInterestsFilter(this.sections.schools.config);
+                this.work = this.createInterestsFilter(this.sections.work.config);
+
+                //init personal sections
+                this.life_stages = this.createMultiSelectFilter('life_stages');
+                this.relationship = this.createMultiSelectFilter('relationship');
+                this.languages = this.createMultiSelectFilter('languages');
+                this.politics = this.createMultiSelectFilter('politics');
+                this.religion = this.createMultiSelectFilter('religion');
+                this.drinking = this.createMultiSelectFilter('drinking');
+                this.smoking = this.createMultiSelectFilter('smoking');
+
+                //sections
+                await befriend.filters.matches.init();
+                await befriend.filters.initSections();
+                befriend.filters.initCollapsible();
+
+                //notifications
+                befriend.filters.availability.init();
+                befriend.filters.activity_types.init();
+                befriend.filters.modes.init();
+                befriend.filters.networks.init();
+                befriend.filters.reviews.init();
+                befriend.filters.verifications.init();
+
+                //general
+                befriend.filters.distance.init();
+                befriend.filters.age.init();
+                befriend.filters.genders.init();
+
+                //interests
+                befriend.filters.schools.init();
+                befriend.filters.movies.init();
+                befriend.filters.tv_shows.init();
+                befriend.filters.sports.init();
+                befriend.filters.music.init();
+                befriend.filters.work.init();
+                befriend.filters.instruments.init();
+
+                //personal
+                befriend.filters.life_stages.init();
+                befriend.filters.relationship.init();
+                befriend.filters.languages.init();
+                befriend.filters.politics.init();
+                befriend.filters.religion.init();
+                befriend.filters.drinking.init();
+                befriend.filters.smoking.init();
+
+                //settings
+                befriend.filters.active.init();
+                befriend.filters.sendReceive.init();
+                befriend.filters.importance.init();
+            } catch (e) {
+                console.error(e);
+            }
+            resolve();
+        });
+    },
+    getData: function () {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let response = await befriend.auth.get('/filters');
+
+                befriend.filters.data.options = response.data;
+            } catch (e) {
+                console.error(e);
+            }
+
+            return resolve();
+        });
     },
     sortSecondary: function (originalArr, currentArr) {
         if (!Array.isArray(originalArr) || !Array.isArray(currentArr)) {
@@ -4405,47 +4451,6 @@ befriend.filters = {
             if (indexB === -1) return -1;
 
             return indexA - indexB;
-        });
-    },
-    updateCounts: async function () {
-        let matches_el = befriend.els.filters.querySelector('.matches-overview');
-        let updating_el = matches_el.querySelector('.updating');
-        let send_el = matches_el.querySelector('.send');
-        let receive_el = matches_el.querySelector('.receive');
-        let excluded_el = matches_el.querySelector('.excluded');
-
-        let ts = timeNow();
-
-        addClassEl('show', updating_el);
-
-        try {
-            let response = await befriend.auth.get('/matches');
-
-            if(response.data?.counts) {
-                send_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.send);
-                receive_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.receive);
-                excluded_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.excluded);
-            }
-        } catch(e) {
-            console.error(e);
-        }
-
-        //show animation for a given duration
-        let transition_duration = 1500;
-
-        let td = timeNow() - ts;
-
-        setTimeout(function () {
-            removeClassEl('show', updating_el);
-        }, Math.max(transition_duration - td, 0));
-    },
-    initMatches: function () {
-        return new Promise(async (resolve, reject) => {
-            befriend.filters.updateCounts();
-
-            setInterval(befriend.filters.updateCounts, 60 * 10 * 1000); //update every 10 minutes automatically
-
-            resolve();
         });
     },
     initSections: async function () {
@@ -5234,7 +5239,7 @@ befriend.filters = {
                             }
 
                             //update match counts
-                            befriend.filters.updateCounts();
+                            befriend.filters.matches.updateCounts();
 
                             //add id to item
                             if (response?.data?.id) {
@@ -5757,7 +5762,7 @@ befriend.filters = {
                     });
 
                     //update match counts
-                    befriend.filters.updateCounts();
+                    befriend.filters.matches.updateCounts();
 
                     let id = response?.data?.id;
 
@@ -6546,7 +6551,7 @@ befriend.filters = {
                                     });
 
                                     //update match counts
-                                    befriend.filters.updateCounts();
+                                    befriend.filters.matches.updateCounts();
 
                                     const anyButton = item;
                                     const otherItems =
@@ -6609,7 +6614,7 @@ befriend.filters = {
                                     });
 
                                     //update match counts
-                                    befriend.filters.updateCounts();
+                                    befriend.filters.matches.updateCounts();
 
                                     // Update any button state based on active items
                                     const activeItems = Array.from(
@@ -6720,7 +6725,7 @@ befriend.filters = {
                                 });
 
                                 //update match counts
-                                befriend.filters.updateCounts();
+                                befriend.filters.matches.updateCounts();
 
                                 // Remove item and update UI
                                 item.remove();

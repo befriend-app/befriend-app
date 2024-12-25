@@ -183,6 +183,7 @@ befriend.events = {
                 if (nav_name === 'filters') {
                     requestAnimationFrame(function () {
                         befriend.filters.updateSectionHeights(true);
+
                         //update slider control positions
                         befriend.filters.positionSliders();
                     });
@@ -191,6 +192,10 @@ befriend.events = {
                     befriend.me.updateModeHeight(true);
 
                     befriend.me.account.setView('profile');
+                }
+
+                if(befriend.filters.matches.needsUpdate) {
+                    befriend.filters.matches.updateCounts();
                 }
             });
         }
