@@ -88,10 +88,11 @@
             font-size: 15px;
             background-color: $brand_color_a;
             color: white;
-            padding: 3px 8px;
+            padding: 3px 0px;
             border-top-left-radius: $br;
             border-top-right-radius: $br;
             text-align: center;
+            position: relative;
         }
 
         .matches {
@@ -167,6 +168,60 @@
                     fill: white;
                     stroke: black;
                 }
+            }
+        }
+
+        $wrapper_dim: 24px;
+        $ball_dim: 20px;
+        $scale_min: 0;
+        $scale_max: 1;
+        $scale_mid: 0.5;
+
+        .updating {
+            top: 0;
+            right: 10px;
+            width: $wrapper_dim;
+            height: $wrapper_dim;
+            position: absolute;
+            overflow: hidden;
+            opacity: 0;
+            transition: opacity 100ms;
+
+            &.show {
+                opacity: 1;
+            }
+
+            &:before,
+            &:after {
+                content: "";
+                position: absolute;
+                left: 50%;
+                bottom: 0;
+                width: $ball_dim;
+                height: $ball_dim;
+                border-radius: 50%;
+                background: #FFF;
+                transform: translate(-50%, 100%) scale($scale_min);
+                animation: push 2s infinite ease-in;
+            }
+
+            &:after {
+                animation-delay: 1s;
+            }
+        }
+
+        @keyframes push {
+            0% {
+                transform: translate(-50%, 100%) scale($scale_max);
+            }
+            15%, 25% {
+                transform: translate(-50%, 50%) scale($scale_max);
+            }
+            50%, 75% {
+                transform: translate(-50%, -30%) scale($scale_mid);
+            }
+            80%, 100% {
+                transform: translate(-50%, -50%) scale($scale_min);
             }
         }
     }

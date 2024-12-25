@@ -4347,11 +4347,15 @@ befriend.filters = {
         return new Promise(async (resolve, reject) => {
             let matches_el = befriend.els.filters.querySelector('.matches-overview');
 
+            let updating_el = matches_el.querySelector('.updating');
+
             let send_el = matches_el.querySelector('.send');
             let receive_el = matches_el.querySelector('.receive');
             let excluded_el = matches_el.querySelector('.excluded');
 
             async function updateCounts() {
+                addClassEl('show', updating_el);
+
                 let response = await befriend.auth.get('/matches');
 
                 try {
@@ -4363,6 +4367,8 @@ befriend.filters = {
                 } catch(e) {
                     console.error(e);
                 }
+
+                removeClassEl('show', updating_el);
             }
 
             updateCounts();
