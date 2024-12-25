@@ -1,4 +1,5 @@
 #filters {
+    $view_padding_lr: 15px;
     $section_padding_lr: 20px;
     $section_padding_tb: 10px;
     $interest_padding_lr: 15px;
@@ -12,20 +13,23 @@
     position: relative;
     min-height: 100vh;
     min-height: 100dvh;
-    padding-left: 15px !important;
-    padding-right: 15px !important;
+    padding-left: $view_padding_lr !important;
+    padding-right: $view_padding_lr !important;
 
     .filters-nav {
         position: fixed;
         z-index: 50;
         display: flex;
-        width: calc(100% - $app_margin_lr * 2);
-        //top: var(--sbh);
+        width: calc(100%);
+        top: var(--sbh);
+        left: 0;
+        //left: -$view_padding_lr;
 
         .nav-scroll {
             overflow-x: scroll;
             overflow-y: hidden;
             -webkit-overflow-scrolling: touch;
+            overscroll-behavior: none;
         }
 
         .nav-buttons {
@@ -51,13 +55,13 @@
                 }
 
                 &:first-of-type {
-                    border-top-left-radius: $br;
-                    border-bottom-left-radius: $br;
+                    //border-top-left-radius: $br;
+                    //border-bottom-left-radius: $br;
                 }
 
                 &:last-of-type {
-                    border-top-right-radius: $br;
-                    border-bottom-right-radius: $br;
+                    //border-top-right-radius: $br;
+                    //border-bottom-right-radius: $br;
                     border-right-color: $bc;
                 }
             }
@@ -68,7 +72,7 @@
         display: flex;
         flex-direction: column;
         gap: 20px 0;
-        padding-top: 60px;
+        padding-top: 50px;
 
         .group {
             .group-name {
@@ -323,7 +327,7 @@
                     $dim_w: 40px;
                     $dim_h: 20px;
                     position: absolute;
-                    top: calc($dim_h / -2 - 2px);
+                    top: calc($dim_h / -2 - 1px);
                     left: -$interest_padding_lr;
                     width: $dim_w;
                     height: $dim_h;

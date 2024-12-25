@@ -3465,6 +3465,14 @@ befriend.me = {
                             let section_buttons =
                                 section_el.getElementsByClassName('button-option');
                             let section_key = section_el.getAttribute('data-key');
+
+                            if(section_key === 'genders') {
+                                //prevent deselecting gender
+                                if(elHasClass(item, 'selected')) {
+                                    return false;
+                                }
+                            }
+
                             let table_key = befriend.me.getSectionTableKey(section_key);
                             let token = this.getAttribute('data-token');
                             let sectionData = befriend.me.getActiveSection(section_key).data;

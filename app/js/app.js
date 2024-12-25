@@ -128,7 +128,7 @@ window['befriend'] = {
             }
 
             //todo remove
-            fireTouch(befriend.els.footer.querySelector('.nav-item.me'));
+            fireTouch(befriend.els.footer.querySelector('.nav-item.filters'));
 
             resolve();
         });
