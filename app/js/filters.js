@@ -500,7 +500,10 @@ befriend.filters = {
             );
 
             for (let toggle of toggles) {
-                if (toggle._listener) continue;
+                if (toggle._listener) {
+                    continue;
+                }
+
                 toggle._listener = true;
 
                 toggle.addEventListener('click', async function (e) {
@@ -543,6 +546,9 @@ befriend.filters = {
                             filter_token,
                             active,
                         });
+
+                        //update match counts after filter update
+                        await befriend.filters.updateCounts();
                     } catch (e) {
                         console.error('Error updating filter active state:', e);
 

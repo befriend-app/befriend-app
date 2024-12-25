@@ -185,7 +185,7 @@
             position: absolute;
             overflow: hidden;
             opacity: 0;
-            transition: opacity 100ms;
+            transition: all 300ms;
 
             &.show {
                 opacity: 1;
