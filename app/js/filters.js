@@ -4483,7 +4483,7 @@ befriend.filters = {
             addClassEl('active', navButtons[0]);
         }
 
-        let groupOffsetTop = befriend.styles.getVariableValue('view-top') + 60;
+        let groupOffsetTop = befriend.styles.getVariableValue('view-top') + befriend.variables.filters_matches_h + 60;
 
         // Add click handlers to nav buttons
         for (let button of navButtons) {
@@ -4526,8 +4526,6 @@ befriend.filters = {
             }
 
             scrollTimeout = setTimeout(() => {
-                const scrollPosition = window.scrollY;
-
                 // Find the currently visible group
                 let activeGroup = null;
 
