@@ -1607,23 +1607,49 @@ befriend.filters = {
         mergeOverlappingTimes: function (times) {
             if (!times || times.length === 0) return [];
 
-            // Sort times by start time
-            const sortedTimes = times.sort((a, b) => a.start.localeCompare(b.start));
-            const merged = [sortedTimes[0]];
+            // Convert time strings to comparable format and sort
+            const timeRanges = times.map(time => {
+                const [startHours, startMinutes] = time.start.split(':').map(Number);
+                const [endHours, endMinutes] = time.end.split(':').map(Number);
 
-            for (let i = 1; i < sortedTimes.length; i++) {
-                const current = sortedTimes[i];
+                let startTotalMinutes = startHours * 60 + startMinutes;
+                let endTotalMinutes = endHours * 60 + endMinutes;
+
+                // If end time is less than start time, add 24 hours to end time
+                if (endTotalMinutes < startTotalMinutes) {
+                    endTotalMinutes += 24 * 60;
+                }
+
+                return {
+                    ...time,
+                    startMinutes: startTotalMinutes,
+                    endMinutes: endTotalMinutes
+                };
+            }).sort((a, b) => a.startMinutes - b.startMinutes);
+
+            const merged = [timeRanges[0]];
+
+            for (let i = 1; i < timeRanges.length; i++) {
+                const current = timeRanges[i];
                 const last = merged[merged.length - 1];
 
-                if (this.doTimesOverlap(last.start, last.end, current.start, current.end)) {
-                    // Merge the times
-                    last.end = current.end > last.end ? current.end : last.end;
+                if (current.startMinutes <= last.endMinutes) {
+                    // Merge the ranges
+                    last.endMinutes = Math.max(last.endMinutes, current.endMinutes);
+
+                    // Convert back to HH:mm format
+                    const hours = Math.floor(last.endMinutes / 60);
+                    const minutes = last.endMinutes % 60;
+                    last.end = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
                 } else {
                     merged.push(current);
                 }
             }
 
-            return merged;
+            return merged.map(range => ({
+                start: range.start,
+                end: range.end
+            }));
         },
         openTimeSlots: async function (daySection, minusPixels = 0, autoScrollIfNotVisible) {
             const container = daySection.querySelector('.time-slots-container');
