@@ -923,9 +923,11 @@ befriend.filters = {
                     this.values[sectionToken] = {};
                 }
 
+                let prevValue = this.values[sectionToken][item.token];
+
                 this.values[sectionToken][item.token] = value;
                 befriend.filters.importance.updateIndicator(sectionToken, item.token, value);
-                befriend.filters.importance.saveValue(sectionToken, item.id, value);
+                befriend.filters.importance.saveValue(sectionToken, item, value, prevValue);
                 closePopup();
             });
 
@@ -938,17 +940,31 @@ befriend.filters = {
             });
         },
         updateIndicator: function (sectionToken, itemToken, value) {
-            const item = befriend.els.filters
+            //get item with mine selector
+            let item = befriend.els.filters
                 .querySelector(`.section.${sectionToken}`)
                 .querySelector(`.item.mine[data-token="${itemToken}"]`);
 
-            if (!item) return;
+            //if no item, try querying without mine selector
+            if (!item) {
+                item = befriend.els.filters
+                    .querySelector(`.section.${sectionToken}`)
+                    .querySelector(`.item[data-token="${itemToken}"]`);
+            }
+
+            if(!item) {
+                return;
+            }
 
             const importance_el = item.querySelector('.importance');
-            if (!importance_el) return;
+            if (!importance_el) {
+                return;
+            }
 
             const indicator_el = importance_el.querySelector('.indicator');
-            if (!indicator_el) return;
+            if (!indicator_el) {
+                return;
+            }
 
             const position = ((value - this.min) / (this.max - this.min)) * 100;
 
@@ -960,13 +976,39 @@ befriend.filters = {
                 }
             </style>`;
         },
-        saveValue: async function (sectionToken, itemId, value) {
+        saveValue: async function (sectionToken, item, value, prevValue) {
             try {
+                console.log("Save value");
+
+                value = parseInt(value);
+                prevValue = isNumeric(prevValue) ? prevValue : null;
+
+                //do not update if no change
+                if(value === prevValue) {
+                    return;
+                }
+
                 await befriend.auth.put('/filters/importance', {
                     section: sectionToken,
-                    filter_item_id: parseInt(itemId),
-                    importance: parseInt(value),
+                    filter_item_id: parseInt(item.id),
+                    importance: value
                 });
+
+                //update match counts if threshold changed
+                let importance_threshold = 8;
+
+                const needsUpdate = (value >= importance_threshold && (!prevValue || prevValue < importance_threshold)) ||
+                    (prevValue >= importance_threshold && value < importance_threshold);
+
+                console.log({
+                    needsUpdate,
+                    prevValue,
+                    value
+                });
+
+                if (needsUpdate) {
+                    await befriend.filters.updateCounts();
+                }
             } catch (e) {
                 console.error('Error saving importance:', e);
             }
@@ -4377,6 +4419,7 @@ befriend.filters = {
 
         //show animation for a given duration
         let transition_duration = 1500;
+
         let td = timeNow() - ts;
 
         setTimeout(function () {
