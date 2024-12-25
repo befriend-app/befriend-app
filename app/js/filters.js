@@ -4343,37 +4343,41 @@ befriend.filters = {
             return indexA - indexB;
         });
     },
+    updateCounts: async function () {
+        let matches_el = befriend.els.filters.querySelector('.matches-overview');
+        let updating_el = matches_el.querySelector('.updating');
+        let send_el = matches_el.querySelector('.send');
+        let receive_el = matches_el.querySelector('.receive');
+        let excluded_el = matches_el.querySelector('.excluded');
+
+        let ts = timeNow();
+
+        addClassEl('show', updating_el);
+
+        try {
+            let response = await befriend.auth.get('/matches');
+
+            if(response.data?.counts) {
+                send_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.send);
+                receive_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.receive);
+                excluded_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.excluded);
+            }
+        } catch(e) {
+            console.error(e);
+        }
+
+        //show animation for at least 2s
+        let td = timeNow() - ts;
+
+        setTimeout(function () {
+            removeClassEl('show', updating_el);
+        }, Math.max(2000 - td, 0));
+    },
     initMatches: function () {
         return new Promise(async (resolve, reject) => {
-            let matches_el = befriend.els.filters.querySelector('.matches-overview');
+            befriend.filters.updateCounts();
 
-            let updating_el = matches_el.querySelector('.updating');
-
-            let send_el = matches_el.querySelector('.send');
-            let receive_el = matches_el.querySelector('.receive');
-            let excluded_el = matches_el.querySelector('.excluded');
-
-            async function updateCounts() {
-                addClassEl('show', updating_el);
-
-                let response = await befriend.auth.get('/matches');
-
-                try {
-                     if(response.data?.counts) {
-                         send_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.send);
-                         receive_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.receive);
-                         excluded_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.excluded);
-                     }
-                } catch(e) {
-                    console.error(e);
-                }
-
-                removeClassEl('show', updating_el);
-            }
-
-            updateCounts();
-
-            setInterval(updateCounts, 60 * 10 * 1000); //update every 10 minutes automatically
+            setInterval(befriend.filters.updateCounts, 60 * 10 * 1000); //update every 10 minutes automatically
 
             resolve();
         });
