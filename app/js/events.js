@@ -196,6 +196,7 @@ befriend.events = {
 
                 if(befriend.filters.matches.needsUpdate) {
                     befriend.filters.matches.updateCounts();
+                    befriend.filters.matches.needsUpdate = false;
                 }
             });
         }

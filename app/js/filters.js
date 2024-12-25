@@ -1417,10 +1417,10 @@ befriend.filters = {
                 this.data[dayIndex].times = {};
                 this.data[dayIndex].isAny = false;
 
-                mergedTimes.forEach((time) => {
+                for(let time of mergedTimes) {
                     const timeId = existingTimeId || this.generateTimeId();
                     this.data[dayIndex].times[timeId] = time;
-                });
+                }
 
                 this.updateDayUI(dayIndex);
                 this.updateDayTimesDisplay(dayIndex);
@@ -1438,16 +1438,17 @@ befriend.filters = {
             });
         },
         normalizeTimeRange: function (startTime, endTime) {
-            // Convert times to minutes since midnight for comparison
+            // Convert time to minutes for comparison
             const startMinutes = this.timeToMinutes(startTime);
-            const endMinutes = this.timeToMinutes(endTime);
+            let endMinutes = this.timeToMinutes(endTime);
 
-            // If end time is earlier than start time, swap them
+            // If end time is earlier than start time, add 24 hours
             if (endMinutes < startMinutes) {
-                return {
-                    normalizedStart: endTime,
-                    normalizedEnd: startTime,
-                };
+                endMinutes += 24 * 60;
+
+                const hours = Math.floor(endMinutes / 60);
+                const minutes = endMinutes % 60;
+                endTime = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
             }
 
             return {
@@ -1566,7 +1567,12 @@ befriend.filters = {
         },
         formatTimeDisplay: function (time) {
             const [hours, minutes] = time.split(':');
-            const hr = parseInt(hours);
+            let hr = parseInt(hours);
+
+            if (hr >= 24) {
+                hr = hr - 24;
+            }
+
             const ampm = hr >= 12 ? 'pm' : 'am';
             const hr12 = hr % 12 || 12;
             return `${hr12}:${minutes} ${ampm}`;
