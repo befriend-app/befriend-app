@@ -5468,6 +5468,32 @@ befriend.filters = {
 
                 return items;
             },
+            getItemByToken: function(token) {
+                if (!befriend.filters.data.filters?.[this.key]?.items) {
+                    return null;
+                }
+
+                for (let k in befriend.filters.data.filters[this.key].items) {
+                    if (befriend.filters.data.filters[this.key].items[k].token === token) {
+                        return befriend.filters.data.filters[this.key].items[k];
+                    }
+                }
+
+                return null;
+            },
+            getItemById: function(id) {
+                if (!befriend.filters.data.filters?.[this.key]?.items) {
+                    return null;
+                }
+
+                for (let k in befriend.filters.data.filters[this.key].items) {
+                    if (befriend.filters.data.filters[this.key].items[k].id === parseInt(id)) {
+                        return befriend.filters.data.filters[this.key].items[k];
+                    }
+                }
+
+                return null;
+            },
             getKeyCol: function (key) {
                 if (!config.hasTabs) return null;
                 return this.data.tabs.find((tab) => tab.key === key)?.col;
@@ -6563,6 +6589,8 @@ befriend.filters = {
                                 return befriend.filters.hideActiveAutoCompleteSelectIf(e.target);
                             }
 
+                            let itemData = befriend.filters[config.key].getItemByToken(token);
+
                             // Handle "Any" selection
                             if (elHasClass(item, 'any')) {
                                 if (wasSelected) return;
@@ -6593,14 +6621,7 @@ befriend.filters = {
 
                                     // Deactivate other items for current table
                                     for (let otherItem of otherItems) {
-                                        const storedItem = Object.values(
-                                            befriend.filters.data.filters?.[config.key]?.items ||
-                                                {},
-                                        ).find(
-                                            (item) =>
-                                                item.id ===
-                                                parseInt(otherItem.getAttribute('data-id')),
-                                        );
+                                        const storedItem = befriend.filters[config.key].getItemById(otherItem.getAttribute('data-id'));
 
                                         if (
                                             storedItem &&
@@ -6623,7 +6644,7 @@ befriend.filters = {
                                 return;
                             }
 
-                            let hash_token = befriend.filters[config.key].getFilterHashToken();
+                            let hash_token = itemData?.hash_token || befriend.filters[config.key].getFilterHashToken();
 
                             // Handle mine item toggle
                             if (elHasClass(item, 'mine')) {
@@ -6652,14 +6673,8 @@ befriend.filters = {
                                     const activeItems = Array.from(
                                         section_el.querySelectorAll('.item.mine.active'),
                                     ).filter((item) => {
-                                        const storedItem = Object.values(
-                                            befriend.filters.data.filters?.[config.key]?.items ||
-                                                {},
-                                        ).find(
-                                            (stored) =>
-                                                stored.id ===
-                                                parseInt(item.getAttribute('data-id')),
-                                        );
+                                        const storedItem = befriend.filters[config.key].getItemById(item.getAttribute('data-id'));
+
                                         return (
                                             storedItem &&
                                             (!config.hasTableKey ||
@@ -6668,6 +6683,7 @@ befriend.filters = {
                                     });
 
                                     const anyButton = section_el.querySelector('.item.any');
+
                                     if (anyButton) {
                                         if (activeItems.length === 0) {
                                             addClassEl('active', anyButton);
@@ -6677,18 +6693,10 @@ befriend.filters = {
                                     }
 
                                     // Update stored data
-                                    if (befriend.filters.data.filters?.[config.key].items) {
-                                        for (let k in befriend.filters.data.filters[config.key]
-                                            .items) {
-                                            if (
-                                                befriend.filters.data.filters[config.key].items[k]
-                                                    .token === token
-                                            ) {
-                                                befriend.filters.data.filters[config.key].items[
-                                                    k
-                                                ].is_active = !wasSelected;
-                                            }
-                                        }
+                                    let itemData = befriend.filters[config.key].getItemByToken(token);
+
+                                    if(itemData) {
+                                        itemData.is_active = !wasSelected;
                                     }
                                 } catch (e) {
                                     console.error(`Error toggling ${config.key}:`, e);
@@ -6699,12 +6707,14 @@ befriend.filters = {
                                 if (config.hasTabs) {
                                     befriend.filters[config.key].updateTabCount(section_el);
                                 }
+
                                 return;
                             }
 
                             // Handle category item selection
                             try {
                                 item.remove();
+
                                 await befriend.filters[config.key].addItem(
                                     { token, tableKey },
                                     section_el,
@@ -6738,7 +6748,11 @@ befriend.filters = {
                             const token = item.getAttribute('data-token');
 
                             try {
+                                let itemData = befriend.filters[config.key].getItemByToken(token);
+
                                 befriend.toggleSpinner(true);
+
+                                let hash_token = itemData.hash_token || befriend.filters[config.key].getFilterHashToken();
 
                                 const tableKey = config.hasTableKey
                                     ? befriend.filters[config.key].getTableKey(token)
@@ -6748,7 +6762,7 @@ befriend.filters = {
                                     ...(config.hasSelect
                                         ? {
                                               hash_token:
-                                                  befriend.filters[config.key].getFilterHashToken(),
+                                                  hash_token,
                                           }
                                         : {}),
                                     ...(config.hasTableKey ? { table_key: tableKey } : {}),
@@ -6770,17 +6784,9 @@ befriend.filters = {
                                 }
 
                                 // Update stored data
-                                if (befriend.filters.data.filters?.[config.key]?.items) {
-                                    for (let k in befriend.filters.data.filters[config.key].items) {
-                                        if (
-                                            befriend.filters.data.filters[config.key].items[k]
-                                                .token === token
-                                        ) {
-                                            befriend.filters.data.filters[config.key].items[
-                                                k
-                                            ].deleted = true;
-                                        }
-                                    }
+
+                                if(itemData) {
+                                    itemData.deleted = true;
                                 }
                             } catch (e) {
                                 console.error(`Error removing ${config.key}:`, e);
@@ -6880,61 +6886,47 @@ befriend.filters = {
                             const wasSelected = elHasClass(secondary_option, 'selected');
                             const tableKey = item_el.getAttribute('data-table-key');
 
-                            let itemData;
+                            let itemData = befriend.filters[config.key].getItemByToken(itemToken);
 
                             try {
                                 befriend.toggleSpinner(true);
 
-                                if (befriend.filters.data.filters?.[config.key]?.items) {
-                                    for (let k in befriend.filters.data.filters[config.key].items) {
-                                        if (
-                                            befriend.filters.data.filters[config.key].items[k]
-                                                .token === itemToken
-                                        ) {
-                                            itemData =
-                                                befriend.filters.data.filters[config.key].items[k];
+                                // Initialize array if needed
+                                if (
+                                    !itemData.secondary ||
+                                    !Array.isArray(itemData.secondary)
+                                ) {
+                                    itemData.secondary = [];
+                                }
 
-                                            // Initialize array if needed
-                                            if (
-                                                !itemData.secondary ||
-                                                !Array.isArray(itemData.secondary)
-                                            ) {
-                                                itemData.secondary = [];
-                                            }
+                                if (isAnyLevel) {
+                                    // If selecting "Any Level"
+                                    if (!wasSelected) {
+                                        itemData.secondary = ['any'];
+                                        addClassEl('selected', anyOption);
+                                        removeElsClass(otherOptions, 'selected');
+                                    } else {
+                                        return;
+                                    }
+                                } else {
+                                    // If selecting a specific level
+                                    if (!wasSelected) {
+                                        // Remove 'any' if it was selected
+                                        removeArrItem(itemData.secondary, 'any');
+                                        removeClassEl('selected', anyOption);
 
-                                            if (isAnyLevel) {
-                                                // If selecting "Any Level"
-                                                if (!wasSelected) {
-                                                    itemData.secondary = ['any'];
-                                                    addClassEl('selected', anyOption);
-                                                    removeElsClass(otherOptions, 'selected');
-                                                } else {
-                                                    return;
-                                                }
-                                            } else {
-                                                // If selecting a specific level
-                                                if (!wasSelected) {
-                                                    // Remove 'any' if it was selected
-                                                    removeArrItem(itemData.secondary, 'any');
-                                                    removeClassEl('selected', anyOption);
+                                        // Add the new selection
+                                        itemData.secondary.push(option_value);
+                                        addClassEl('selected', secondary_option);
+                                    } else {
+                                        // Remove the selection
+                                        removeArrItem(itemData.secondary, option_value);
+                                        removeClassEl('selected', secondary_option);
 
-                                                    // Add the new selection
-                                                    itemData.secondary.push(option_value);
-                                                    addClassEl('selected', secondary_option);
-                                                } else {
-                                                    // Remove the selection
-                                                    removeArrItem(itemData.secondary, option_value);
-                                                    removeClassEl('selected', secondary_option);
-
-                                                    //set any if no options selected
-                                                    if (!itemData.secondary.length) {
-                                                        itemData.secondary.push('any');
-                                                        addClassEl('selected', anyOption);
-                                                    }
-                                                }
-                                            }
-
-                                            break;
+                                        //set any if no options selected
+                                        if (!itemData.secondary.length) {
+                                            itemData.secondary.push('any');
+                                            addClassEl('selected', anyOption);
                                         }
                                     }
                                 }
