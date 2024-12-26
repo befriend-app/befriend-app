@@ -5811,9 +5811,11 @@ befriend.filters = {
                         this.data.tableKey = tableKey;
                     }
 
+                    let hash_token = hashToken || befriend.filters[config.key].getFilterHashToken();
+
                     let response = await befriend.auth.put(config.endpoint, {
                         ...(config.hasSelect
-                            ? { hash_token: hashToken || befriend.filters[config.key].getFilterHashToken() }
+                            ? { hash_token: hash_token }
                             : {}),
                         ...(config.hasTableKey ? { table_key: tableKey } : {}),
                         token,
@@ -5840,6 +5842,7 @@ befriend.filters = {
                     befriend.filters.data.filters[this.key].items[id] = {
                         id,
                         token,
+                        hash_token: hash_token,
                         ...(config.hasTableKey
                             ? {
                                   table_key: tableKey,
