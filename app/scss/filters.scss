@@ -2039,6 +2039,7 @@
                             text-align: center;
                             background: lighten($brand_color_a, 48%);
                             border-bottom: 1px solid $bc;
+                            margin-bottom: 0;
                             @include flex-center-col;
                         }
 

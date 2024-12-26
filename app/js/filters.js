@@ -5794,7 +5794,8 @@ befriend.filters = {
             },
             addItem: async function (itemData = {}, section_el) {
                 try {
-                    let { token, tableKey } = itemData;
+                    let { token, hashToken, tableKey } = itemData;
+
                     befriend.toggleSpinner(true);
 
                     const sectionData = befriend.filters.data.options?.[this.key];
@@ -5812,7 +5813,7 @@ befriend.filters = {
 
                     let response = await befriend.auth.put(config.endpoint, {
                         ...(config.hasSelect
-                            ? { hash_token: befriend.filters[config.key].getFilterHashToken() }
+                            ? { hash_token: hashToken || befriend.filters[config.key].getFilterHashToken() }
                             : {}),
                         ...(config.hasTableKey ? { table_key: tableKey } : {}),
                         token,
@@ -6222,6 +6223,8 @@ befriend.filters = {
                                     befriend.filters[config.key].data.selected.filterList?.item
                                         ?.id || null;
 
+                                let hash_token = befriend.filters[config.key].getFilterHashToken();
+
                                 const response = await befriend.auth.get(
                                     sectionData.autoComplete.endpoint,
                                     {
@@ -6272,6 +6275,11 @@ befriend.filters = {
                                                 )
                                             ) {
                                                 item._is_internal = true;
+
+                                                if(hash_token) {
+                                                    item.hash_token = hash_token;
+                                                }
+
                                                 sectionData.options.push(item);
                                             }
                                         }
@@ -6405,9 +6413,13 @@ befriend.filters = {
                         const token = item.getAttribute('data-token');
                         const tableKey = item.getAttribute('data-table-key');
 
+                        let itemData = befriend.filters[config.key].getItemByToken(token);
+
+                        let hashToken = itemData?.hash_token || null;
+
                         if (
                             await befriend.filters[config.key].addItem(
-                                { id, token, tableKey },
+                                { id, token, hashToken, tableKey },
                                 section_el,
                             )
                         ) {
