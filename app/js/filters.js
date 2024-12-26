@@ -502,8 +502,16 @@ befriend.filters = {
 
                         await befriend.auth.put('/filters/active', {
                             filter_token,
-                            active,
+                            active
                         });
+
+                        if(filter_token in befriend.filters.data.filters) {
+                            befriend.filters.data.filters[filter_token].is_active = active;
+                        } else {
+                            befriend.filters.data.filters[filter_token] = {
+                                is_active: active
+                            }
+                        }
 
                         //update match counts after filter update
                         befriend.filters.matches.updateCounts();
@@ -629,8 +637,9 @@ befriend.filters = {
                 console.error('Error updating filter send/receive state:', e);
             }
 
-            //update match counts after updating state
-            befriend.filters.matches.updateCounts();
+            if(befriend.filters.isSectionActive(filterToken)) {
+                befriend.filters.matches.updateCounts();
+            }
         },
     },
     importance: {
@@ -957,7 +966,9 @@ befriend.filters = {
                     (prevValue >= importance_threshold && value < importance_threshold);
 
                 if (needsUpdate) {
-                    befriend.filters.matches.updateCounts();
+                    if(befriend.filters.isSectionActive(sectionToken)) {
+                        befriend.filters.matches.updateCounts();
+                    }
                 }
             } catch (e) {
                 console.error('Error saving importance:', e);
@@ -1795,8 +1806,9 @@ befriend.filters = {
                     availability: availabilityData,
                 });
 
-                //update match counts
-                befriend.filters.matches.updateCounts();
+                if(befriend.filters.isSectionActive('availability')) {
+                    befriend.filters.matches.updateCounts();
+                }
 
                 if (response?.data?.idMapping) {
                     this.updateIds(response.data.idMapping);
@@ -2921,8 +2933,9 @@ befriend.filters = {
                             active: !wasSelected,
                         });
 
-                        //update match counts
-                        befriend.filters.matches.updateCounts();
+                        if(befriend.filters.isSectionActive('modes')) {
+                            befriend.filters.matches.updateCounts();
+                        }
                     } catch (e) {
                         console.error('Error updating modes filter:', e);
 
@@ -3530,8 +3543,9 @@ befriend.filters = {
                 is_all_verified: filter_data.is_all_verified,
             });
 
-            //update match counts
-            befriend.filters.matches.updateCounts();
+            if(befriend.filters.isSectionActive('networks')) {
+                befriend.filters.matches.updateCounts();
+            }
         },
     },
     reviews: {
@@ -3830,8 +3844,12 @@ befriend.filters = {
                         rating: parseFloat(rating),
                     });
 
-                    //update match counts
-                    befriend.filters.matches.updateCounts();
+                    if(befriend.filters.isSectionActive('reviews')) {
+                        if(befriend.filters.data.filters?.[filter_token]?.is_active) {
+                            befriend.filters.matches.updateCounts();
+                        }
+                    }
+
                 } catch (e) {
                     console.error(`Error saving ${type} rating:`, e);
                 }
@@ -4062,8 +4080,9 @@ befriend.filters = {
                     distance: this.current,
                 });
 
-                //update match counts
-                befriend.filters.matches.updateCounts();
+                if(befriend.filters.isSectionActive('distance')) {
+                    befriend.filters.matches.updateCounts();
+                }
             } catch (e) {
                 console.error('Error saving distance:', e);
             }
@@ -4237,8 +4256,9 @@ befriend.filters = {
                     max_age: this.current.max,
                 });
 
-                //update match counts
-                befriend.filters.matches.updateCounts();
+                if(befriend.filters.isSectionActive('ages')) {
+                    befriend.filters.matches.updateCounts();
+                }
             } catch (e) {
                 console.error('Error saving age range:', e);
             }
@@ -4355,8 +4375,9 @@ befriend.filters = {
                                 active: !wasSelected,
                             });
 
-                            //update match counts
-                            befriend.filters.matches.updateCounts();
+                            if(befriend.filters.isSectionActive('genders')) {
+                                befriend.filters.matches.updateCounts();
+                            }
                         } catch (e) {
                             console.error('Error updating gender filter:', e);
 
@@ -4907,6 +4928,19 @@ befriend.filters = {
             }
         }
     },
+    isSectionActive: function (section_key) {
+        let filterData;
+
+        if(section_key.startsWith('review')) {
+            filterData = befriend.filters.data.filters['reviews'];
+        } else if(section_key.startsWith('verification')) {
+            filterData = befriend.filters.data.filters['verifications'];
+        } else {
+            filterData = befriend.filters.data.filters[section_key];
+        }
+
+        return filterData?.is_active;
+    },
     getSectionKey: function (section_el) {
         return section_el.getAttribute('data-key');
     },
@@ -5270,8 +5304,14 @@ befriend.filters = {
                                 }
                             }
 
-                            //update match counts
-                            befriend.filters.matches.updateCounts();
+                            console.log({
+                                filterName,
+                                filterNameStr
+                            })
+
+                            if(befriend.filters.isSectionActive(filterName)) {
+                                befriend.filters.matches.updateCounts();
+                            }
 
                             //add id to item
                             if (response?.data?.id) {
@@ -5822,8 +5862,9 @@ befriend.filters = {
                         active: true,
                     });
 
-                    //update match counts
-                    befriend.filters.matches.updateCounts();
+                    if(befriend.filters.isSectionActive(config.key)) {
+                        befriend.filters.matches.updateCounts();
+                    }
 
                     let id = response?.data?.id;
 
@@ -6625,8 +6666,9 @@ befriend.filters = {
                                         active: true,
                                     });
 
-                                    //update match counts
-                                    befriend.filters.matches.updateCounts();
+                                    if(befriend.filters.isSectionActive(config.key)) {
+                                        befriend.filters.matches.updateCounts();
+                                    }
 
                                     const anyButton = item;
                                     const otherItems =
@@ -6681,8 +6723,9 @@ befriend.filters = {
                                         active: !wasSelected,
                                     });
 
-                                    //update match counts
-                                    befriend.filters.matches.updateCounts();
+                                    if(befriend.filters.isSectionActive(config.key)) {
+                                        befriend.filters.matches.updateCounts();
+                                    }
 
                                     // Update any button state based on active items
                                     const activeItems = Array.from(
@@ -6785,8 +6828,9 @@ befriend.filters = {
                                     is_delete: true,
                                 });
 
-                                //update match counts
-                                befriend.filters.matches.updateCounts();
+                                if(befriend.filters.isSectionActive(config.key)) {
+                                    befriend.filters.matches.updateCounts();
+                                }
 
                                 // Remove item and update UI
                                 item.remove();
@@ -6956,6 +7000,10 @@ befriend.filters = {
                                     secondary: itemData.secondary,
                                     table_key: tableKey || config.key,
                                 });
+
+                                if(befriend.filters.isSectionActive(config.key)) {
+                                    befriend.filters.matches.updateCounts();
+                                }
 
                                 // Update text content for both current-selected elements
                                 let textContent;
