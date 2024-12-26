@@ -469,8 +469,8 @@ befriend.filters = {
                     e.stopPropagation();
 
                     let filter_token;
-                    let section = this.closest('.section');
-                    let filter_option = this.closest('.filter-option');
+                    let section = toggle.closest('.section');
+                    let filter_option = toggle.closest('.filter-option');
 
                     if (filter_option) {
                         filter_token = befriend.filters.getFilterToken(filter_option);
@@ -484,7 +484,7 @@ befriend.filters = {
                         return;
                     }
 
-                    let active = !elHasClass(this, 'active');
+                    let active = !elHasClass(toggle, 'active');
 
                     //toggle on/off label
                     let toggle_label = filter_option?.querySelector('.toggle-label');
@@ -493,38 +493,44 @@ befriend.filters = {
                         toggle_label.innerHTML = active ? 'On' : 'Off';
                     }
 
-                    try {
-                        if (active) {
-                            addClassEl('active', this);
-                        } else {
-                            removeClassEl('active', this);
-                        }
+                    if (active) {
+                        addClassEl('active', toggle);
+                    } else {
+                        removeClassEl('active', toggle);
+                    }
 
-                        await befriend.auth.put('/filters/active', {
-                            filter_token,
-                            active
-                        });
+                    async function updateState() {
+                        try {
+                            await befriend.auth.put('/filters/active', {
+                                filter_token,
+                                active
+                            });
 
-                        if(filter_token in befriend.filters.data.filters) {
-                            befriend.filters.data.filters[filter_token].is_active = active;
-                        } else {
-                            befriend.filters.data.filters[filter_token] = {
-                                is_active: active
+                            if(filter_token in befriend.filters.data.filters) {
+                                befriend.filters.data.filters[filter_token].is_active = active;
+                            } else {
+                                befriend.filters.data.filters[filter_token] = {
+                                    is_active: active
+                                }
+                            }
+
+                            //update match counts after filter update
+                            befriend.filters.matches.updateCounts();
+                        } catch (e) {
+                            console.error('Error updating filter active state:', e);
+
+                            // Revert UI state on error
+                            if (active) {
+                                removeClassEl('active', toggle);
+                            } else {
+                                addClassEl('active', toggle);
                             }
                         }
-
-                        //update match counts after filter update
-                        befriend.filters.matches.updateCounts();
-                    } catch (e) {
-                        console.error('Error updating filter active state:', e);
-
-                        // Revert UI state on error
-                        if (active) {
-                            removeClassEl('active', this);
-                        } else {
-                            addClassEl('active', this);
-                        }
                     }
+
+                    clearTimeout(toggle._timeout);
+
+                    toggle._timeout = setTimeout(updateState, 500);
                 });
             }
         },

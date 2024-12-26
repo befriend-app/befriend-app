@@ -84,11 +84,11 @@
         border: 1px solid $color_lightgray;
 
         .title {
-            font-weight: 600;
-            font-size: 15px;
+            font-weight: 400;
+            font-size: 16px;
             background-color: $brand_color_a;
             color: white;
-            padding: 3px 0px;
+            padding: 6px 0px;
             border-top-left-radius: $br;
             border-top-right-radius: $br;
             text-align: center;
@@ -178,8 +178,8 @@
         $scale_mid: 0.5;
 
         .updating {
-            top: 0;
-            right: 10px;
+            top: 3px;
+            left: 10px;
             width: $wrapper_dim;
             height: $wrapper_dim;
             position: absolute;
