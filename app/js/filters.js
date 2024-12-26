@@ -6134,7 +6134,7 @@ befriend.filters = {
                 const selected_name_el = select_container.querySelector('.selected-name');
                 selected_name_el.innerHTML = selected_item.name;
 
-                removeClassEl('open', select_container);
+                this.toggleAutoCompleteSelect(select_container, false);
             },
             events: {
                 init: function () {
