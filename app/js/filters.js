@@ -18,14 +18,14 @@ befriend.filters = {
         },
         updateCounts: async function () {
             let matches_el = befriend.els.filters.querySelector('.matches-overview');
-            let updating_el = matches_el.querySelector('.updating');
+            let update_circle_el = matches_el.querySelector('.update-circle');
             let send_el = matches_el.querySelector('.send');
             let receive_el = matches_el.querySelector('.receive');
             let excluded_el = matches_el.querySelector('.excluded');
 
             let ts = timeNow();
 
-            addClassEl('show', updating_el);
+            addClassEl('show', update_circle_el);
 
             try {
                 let response = await befriend.auth.get('/matches');
@@ -46,7 +46,7 @@ befriend.filters = {
             let td = timeNow() - ts;
 
             setTimeout(function () {
-                removeClassEl('show', updating_el);
+                removeClassEl('show', update_circle_el);
             }, Math.max(transition_duration - td, 0));
         },
     },

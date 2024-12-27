@@ -119,10 +119,10 @@ befriend.html = {
                         
                         <div id="filters" class="view view-filters">
                             <div class="matches-overview">
-                                <div class="title">
-                                    <span>Matches</span>
+                                <div class="update-circle">
                                     <div class="updating"></div>
                                 </div>
+                                
                                 <div class="matches">
                                     <div class="match send">
                                         <div class="label">
