@@ -846,6 +846,15 @@ befriend.me = {
             if (!section_collapsed) {
                 befriend.me.updateSectionHeight(section_el, false, true, true);
             }
+
+            //select first category if exists
+            if(!skip_save) {
+                let category_btns = section_el.getElementsByClassName('category-btn');
+
+                if (category_btns && category_btns.length) {
+                    fireClick(category_btns[0]);
+                }
+            }
         }
     },
     addSectionItem: function (section_key, item_token, table_key) {
