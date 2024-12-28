@@ -4049,11 +4049,6 @@ befriend.me = {
                                 section_item_id: item.id,
                                 secondary: option_value,
                             });
-
-                            requestAnimationFrame(() => {
-                                befriend.me.updateSecondaryPosition(section_el, options_el);
-                                befriend.me.updateSectionHeight(section_el, false);
-                            });
                         } catch (e) {
                             console.error('Error updating secondary:', e);
                         }

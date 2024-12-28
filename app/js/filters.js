@@ -41,7 +41,7 @@ befriend.filters = {
             }
 
             //show animation for a given duration
-            let transition_duration = 1500;
+            let transition_duration = 2000;
 
             let td = timeNow() - ts;
 
