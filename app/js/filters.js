@@ -288,8 +288,8 @@ befriend.filters = {
                 endpoint: '/filters/life-stages',
             },
         },
-        relationship: {
-            token: 'relationship',
+        relationships: {
+            token: 'relationships',
             name: 'Relationship Status',
             group: 'personal',
             icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 66 52.022"><g><path d="M58.545,29.362c-1.875-1.082-4.052-1.579-6.199-1.436-.948-1.935-2.469-3.567-4.344-4.65-1.659-.957-3.543-1.463-5.449-1.463-3.891,0-7.516,2.092-9.458,5.458-5.147,8.913,4.238,22.789,4.64,23.375.516.752,1.333,1.225,2.252,1.296.184.013,1.175.08,2.625.08,5.771,0,16.035-1.007,19.929-7.751,3.007-5.211,1.215-11.9-3.996-14.909ZM60.808,43.271c-3.392,5.874-12.856,6.751-18.196,6.751h-.002c-1.379,0-2.306-.063-2.479-.075-.303-.023-.576-.181-.748-.432-.373-.544-9.081-13.409-4.557-21.244,1.587-2.75,4.547-4.458,7.726-4.458,1.556,0,3.094.413,4.449,1.195,1.711.987,3.061,2.537,3.8,4.362.171.425.611.681,1.065.615,1.914-.269,3.964.12,5.677,1.108,4.258,2.459,5.722,7.922,3.265,12.178Z"/><path d="M31.959,44.327c-1.347.739-2.313,1.211-2.665,1.379-.805.385-1.785.385-2.588,0-2.529-1.209-24.706-12.259-24.706-27.706C2,9.178,9.178,2,18,2c3.411,0,6.666,1.058,9.411,3.059.351.256.827.256,1.178,0,2.746-2.001,6-3.059,9.411-3.059,8.822,0,16,7.178,16,16,0,2.359-.545,4.78-1.622,7.193-.225.505.002,1.096.506,1.32.504.228,1.096-.001,1.321-.506,1.191-2.671,1.795-5.364,1.795-8.007C56,8.075,47.925,0,38,0c-3.596,0-7.038,1.046-10,3.031-2.962-1.985-6.404-3.031-10-3.031C8.075,0,0,8.075,0,18c0,16.671,23.198,28.246,25.843,29.511.669.32,1.416.489,2.157.489s1.487-.169,2.157-.489c.368-.176,1.373-.667,2.764-1.43.484-.266.662-.873.396-1.357-.266-.485-.874-.665-1.358-.397Z"/></g></svg>`,
@@ -298,7 +298,7 @@ befriend.filters = {
                 default: 8,
             },
             config: {
-                endpoint: '/filters/relationship',
+                endpoint: '/filters/relationships',
             },
         },
         languages: {
@@ -4425,7 +4425,7 @@ befriend.filters = {
 
                 //init personal sections
                 this.life_stages = this.createMultiSelectFilter('life_stages');
-                this.relationship = this.createMultiSelectFilter('relationship');
+                this.relationships = this.createMultiSelectFilter('relationships');
                 this.languages = this.createMultiSelectFilter('languages');
                 this.politics = this.createMultiSelectFilter('politics');
                 this.religion = this.createMultiSelectFilter('religion');
@@ -4461,7 +4461,7 @@ befriend.filters = {
 
                 //personal
                 befriend.filters.life_stages.init();
-                befriend.filters.relationship.init();
+                befriend.filters.relationships.init();
                 befriend.filters.languages.init();
                 befriend.filters.politics.init();
                 befriend.filters.religion.init();
