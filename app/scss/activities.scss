@@ -368,8 +368,8 @@ html.#{$class_create_activity_shown} {
 
         span {
             position: absolute;
-            color: white;
-            background-color: $brand_color_a;
+            background-color: $brand_color_b;
+            border: .5px solid darken($brand_color_a, 20%);
             padding: 6px 12px;
             top: -5px;
             border-radius: 6px;

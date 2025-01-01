@@ -61,7 +61,7 @@ befriend.html = {
                                 </div>
                                 
                                 <div id="num-persons">
-                                    <div class="sub-section-title"># Persons</div>
+<!--                                    <div class="sub-section-title"># Persons</div>-->
                                         
                                     <div class="slider">
                                         <span>1</span>

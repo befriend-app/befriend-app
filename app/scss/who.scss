@@ -7,10 +7,12 @@
         gap: 0 10px;
 
         .friend-option {
+            flex: 1;
             border-radius: 8px;
             border: 1px solid $color_lightgray;
-            padding: 4px 16px;
+            padding: 4px 0;
             transition: all 300ms;
+            text-align: center;
 
             &.active {
                 background: lighten($brand_color_a, 0%);

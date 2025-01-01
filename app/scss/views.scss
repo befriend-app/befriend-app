@@ -54,9 +54,9 @@
             font-size: 12px;
             font-weight: 500;
             text-transform: uppercase;
-            margin-bottom: 8px;
+            margin-bottom: $view_padding_tb;
             width: fit-content;
-            border-radius: 13px;
+            border-radius: 20px;
             border: 1px solid $color_lightgray;
             padding: 4px 28px;
             background-color: lighten($brand_color_a, 50%);
