@@ -7,16 +7,17 @@
         gap: 0 10px;
 
         .friend-option {
+            $bw: .7px;
             flex: 1;
             border-radius: 8px;
-            border: 1px solid $color_lightgray;
-            padding: 4px 0;
+            border: $bw solid $color_lightgray;
+            padding: 6px 0;
             transition: all 300ms;
             text-align: center;
 
             &.active {
-                background: lighten($brand_color_a, 0%);
-                color: white;
+                border: $bw solid darken($brand_color_a, 20%);
+                background-color: $brand_color_b;
             }
 
             .name {

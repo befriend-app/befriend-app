@@ -27,7 +27,7 @@
     .when-options {
         $row_items: 5;
         $gap_tb: 6px;
-        $gap_lr: 6px;
+        $gap_lr: 8px;
         display: flex;
         flex-wrap: wrap;
         gap: $gap_tb $gap_lr;
