@@ -31,6 +31,11 @@ befriend.when = {
         { id: 480, value: '8', unit: 'hrs', in_mins: 480 },
     ],
     colors: [
+        '#FFF7A1', // Light Yellow
+        '#FFE0B2', // Light Orange
+        '#FFCC80', // Light Apricot
+        '#FFB74D', // Medium Orange
+        '#FFA000', // Dark Yellow
         '#EBF5FF', // Lightest Sky Blue
         '#E1F0FF', // Pale Sky Blue
         '#D6EBFF', // Soft Sky Blue
@@ -177,33 +182,11 @@ befriend.when = {
 
         befriend.activities.draft.update('when', befriend.when.selected.main);
     },
-    updateArrowsVisibility: function () {
-        let containerEl = befriend.els.when.querySelector('.when-options-container');
-        let arrowLeft = befriend.els.when.querySelector('.arrow-left');
-        let arrowRight = befriend.els.when.querySelector('.arrow-right');
-
-        const scrollLeft = containerEl.scrollLeft;
-        const scrollWidth = containerEl.scrollWidth;
-        const clientWidth = containerEl.clientWidth;
-
-        // Check if content is wider than container
-        const hasOverflow = scrollWidth > clientWidth;
-
-        // Show/hide left arrow based on scroll position
-        hasOverflow && scrollLeft > 0
-            ? addClassEl('show', arrowLeft)
-            : removeClassEl('show', arrowLeft);
-
-        // Show/hide right arrow based on remaining scroll and overflow
-        const lastItemVisible = scrollLeft + clientWidth >= scrollWidth;
-
-        !lastItemVisible ? addClassEl('show', arrowRight) : removeClassEl('show', arrowRight);
-    },
     events: {
         init: function () {
             return new Promise(async (resolve, reject) => {
                 try {
-                    befriend.when.events.onScroll();
+                    // befriend.when.events.onScroll();
                     await befriend.when.events.whenOptions();
                 } catch (e) {
                     console.error(e);
@@ -282,4 +265,26 @@ befriend.when = {
             befriend.when.updateArrowsVisibility();
         },
     },
+    // updateArrowsVisibility: function () {
+    //     let containerEl = befriend.els.when.querySelector('.when-options-container');
+    //     let arrowLeft = befriend.els.when.querySelector('.arrow-left');
+    //     let arrowRight = befriend.els.when.querySelector('.arrow-right');
+    //
+    //     const scrollLeft = containerEl.scrollLeft;
+    //     const scrollWidth = containerEl.scrollWidth;
+    //     const clientWidth = containerEl.clientWidth;
+    //
+    //     // Check if content is wider than container
+    //     const hasOverflow = scrollWidth > clientWidth;
+    //
+    //     // Show/hide left arrow based on scroll position
+    //     hasOverflow && scrollLeft > 0
+    //         ? addClassEl('show', arrowLeft)
+    //         : removeClassEl('show', arrowLeft);
+    //
+    //     // Show/hide right arrow based on remaining scroll and overflow
+    //     const lastItemVisible = scrollLeft + clientWidth >= scrollWidth;
+    //
+    //     !lastItemVisible ? addClassEl('show', arrowRight) : removeClassEl('show', arrowRight);
+    // },
 };

@@ -1,10 +1,13 @@
 #when {
     overflow-x: hidden;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
+    padding: 0 !important;
+    position: relative;
 
     .section-title {
-        padding-left: $view_padding_lr;
+        position: absolute;
+        top: $view_padding_tb;
+        margin-left: $view_padding_lr;
+        z-index: 2;
     }
 
     .when-wrapper {
@@ -12,68 +15,40 @@
     }
 
     .when-options-container {
-        overflow-x: scroll;
         position: relative;
-        padding-left: $view_padding_lr;
-    }
-
-    .arrow {
-        $box_dim: 30px;
-        $arrow_h: 16px;
-        z-index: 3;
-        visibility: hidden;
-        opacity: 0;
-        position: absolute;
-        transform: translateY(calc(50% - calc($arrow_h / 2)));
-        transition:
-            opacity 200ms,
-            visibility 0ms 200ms;
-        width: $box_dim;
-        height: $box_dim;
-        @include flex-center-col;
-
-        &.show {
-            opacity: 1;
-            visibility: visible;
-            transition:
-                opacity 200ms,
-                visibility 0ms;
-        }
-
-        svg {
-            height: $arrow_h;
-        }
-    }
-
-    .arrow-left {
-        left: -8px;
-    }
-
-    .arrow-right {
-        right: -8px;
+        padding: 0 $view_padding_lr;
+        padding-top: 45px;
+        overflow-x: hidden;
+        overflow-y: scroll;
+        height: 109px;
+        padding-bottom: $view_padding_tb;
     }
 
     .when-options {
+        $row_items: 5;
+        $gap_tb: 6px;
+        $gap_lr: 6px;
         display: flex;
-        gap: 6px $when_option_gap_lr;
-        width: fit-content;
+        flex-wrap: wrap;
+        gap: $gap_tb $gap_lr;
 
         .when-option {
             $br: 6px;
             $bw: 0.5px;
+            flex-basis: calc(calc((100% - ($row_items - 1) * $gap_lr) / $row_items));
             justify-content: end;
-            width: $when_option_width;
             display: flex;
             flex-direction: column;
             border: $bw solid darken($color_lightgray, 15%);
             box-sizing: border-box;
+            padding: 0 0;
             border-radius: $br;
             overflow: hidden;
             transition: all 300ms;
             @include flex-center-col;
 
             &:last-of-type {
-                margin-right: $view_padding_lr;
+                //margin-right: $view_padding_lr;
             }
 
             .tab {
@@ -115,7 +90,7 @@
             }
 
             .time {
-                font-size: 13px;
+                font-size: 12px;
                 font-weight: 400;
                 padding: 6px 0;
                 @include flex-center-col;
@@ -163,4 +138,41 @@
             }
         }
     }
+
+    .arrow {
+        $box_dim: 30px;
+        $arrow_h: 16px;
+        z-index: 3;
+        visibility: hidden;
+        opacity: 0;
+        position: absolute;
+        transform: translateY(calc(50% - calc($arrow_h / 2)));
+        transition:
+            opacity 200ms,
+            visibility 0ms 200ms;
+        width: $box_dim;
+        height: $box_dim;
+        @include flex-center-col;
+
+        &.show {
+            opacity: 1;
+            visibility: visible;
+            transition:
+                opacity 200ms,
+                visibility 0ms;
+        }
+
+        svg {
+            height: $arrow_h;
+        }
+    }
+
+    .arrow-left {
+        left: -8px;
+    }
+
+    .arrow-right {
+        right: -8px;
+    }
+
 }

@@ -46,7 +46,7 @@
 
         .view-section {
             background: white;
-            padding: 10px $view_padding_lr;
+            padding: $view_padding_tb $view_padding_lr;
             border-radius: 16px;
         }
 
@@ -55,6 +55,11 @@
             font-weight: 500;
             text-transform: uppercase;
             margin-bottom: 8px;
+            width: fit-content;
+            border-radius: 13px;
+            border: 1px solid $color_lightgray;
+            padding: 4px 28px;
+            background-color: lighten($brand_color_a, 50%);
         }
 
         .sub-section-title {
