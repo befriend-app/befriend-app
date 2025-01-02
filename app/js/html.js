@@ -385,6 +385,19 @@ befriend.html = {
                                         <div class="inner"></div>
                                     </div>
                                 </div>
+
+                                <div class="modes">
+                                    ${befriend.modes.options
+                                        .map(
+                                            (option) => `
+                                                <div class="mode-option ${option.id} data-mode="${option.id}">
+                                                    <div class="icon">${option.icon}</div>
+                                                    <div class="name">${option.label}</div>
+                                                </div>
+                                            `,
+                                        )
+                                        .join('')}
+                                </div>
                                 
                                 <div class="sections">
                                     <div class="activity section">

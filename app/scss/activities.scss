@@ -607,6 +607,7 @@ html.#{$class_create_activity_shown} {
 
         .container {
             padding: $gap_tb $create_activity_gap_lr;
+            padding-top: 20px;
             overflow-x: hidden;
             position: relative;
 
@@ -672,6 +673,34 @@ html.#{$class_create_activity_shown} {
                         height: 17px;
                         background: white;
                         border-radius: 50%;
+                    }
+                }
+            }
+
+            .modes {
+                display: flex;
+                gap: 0 20px;
+                margin-bottom: 10px;
+
+                .mode-option {
+                    flex-grow: 1;
+                    display: flex;
+                    font-size: 13px;
+                    font-weight: 300;
+                    gap: 0 8px;
+                    border: 1px solid $color_lightgray;
+                    border-radius: 12px;
+                    background-color: white;
+                    justify-content: center;
+                    align-items: center;
+                    padding: 5px 0;
+
+                    .icon {
+                        @include flex-center-col;
+                    }
+
+                    svg {
+                        height: 16px;
                     }
                 }
             }
