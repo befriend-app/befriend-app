@@ -20,6 +20,7 @@ window['befriend'] = {
     user: null,
     location: null,
     activities: null,
+    modes: null,
     filters: null,
     me: null,
     places: null,

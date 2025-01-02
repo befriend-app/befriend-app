@@ -42,6 +42,7 @@ let js_files = {
         'friends.js',
         'maps.js',
         'activities.js',
+        'modes.js',
         'filters.js',
         'me.js',
         'places.js',

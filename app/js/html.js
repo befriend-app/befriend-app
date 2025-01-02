@@ -222,7 +222,7 @@ befriend.html = {
                                         
                                         <div class="mode-wrapper">
                                             <div class="mode-options">
-                                                ${befriend.me.modes.options
+                                                ${befriend.modes.options
                                                     .map(
                                                         (option) => `
                                                     <div class="mode-option ${option.id} ${option.id === befriend.me.modes.selected ? 'selected' : ''}" data-mode="${option.id}">

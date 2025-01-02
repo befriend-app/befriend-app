@@ -231,6 +231,7 @@ html.#{$class_confirm_me_action} {
                 border-radius: 8px;
                 padding: 8px;
                 cursor: pointer;
+                box-sizing: border-box;
 
                 &[data-mode='mode-solo'] {
                     flex-basis: 70px;
@@ -243,11 +244,12 @@ html.#{$class_confirm_me_action} {
                 &.selected {
                     $fill_color: darken($brand_color_a, 10%);
                     border-color: darken($brand_color_a, 10%);
+                    border-width: 1.5px;
 
                     &:not(.mode-kids) {
                         .icon {
                             path {
-                                fill: $fill_color !important;
+                                //fill: $fill_color !important;
                             }
                         }
                     }
@@ -257,7 +259,7 @@ html.#{$class_confirm_me_action} {
                             svg {
                                 path,
                                 circle {
-                                    stroke: $fill_color;
+                                    //stroke: $fill_color;
                                 }
                             }
                         }
