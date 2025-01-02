@@ -45,22 +45,38 @@
         }
 
         .view-section {
+            position: relative;
             background: white;
             padding: $view_padding_tb $view_padding_lr;
-            border-radius: 16px;
+            border-radius: $view_section_br;
+            border-top-left-radius: 0;
+
+            &:first-of-type {
+                margin-top: $view_gap_tb;
+            }
         }
 
         .section-title {
+            $width: 80px;
+            position: absolute;
+            width: $width;
+            height: $home_tab_height;
+
+            top: #{(-$home_tab_height - $view_padding_tb)};
+            left: 0;
             font-size: 12px;
             font-weight: 500;
             text-transform: uppercase;
             margin-bottom: $view_padding_tb;
-            border-radius: 20px;
+            border-radius: 6px;
             border: 1px solid $color_lightgray;
             padding: 4px 0;
-            width: 100px;
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+
             text-align: center;
-            background-color: lighten($brand_color_a, 50%);
+            background-color: $brand_color_a;
+            color: white;
         }
 
         .sub-section-title {

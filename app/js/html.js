@@ -75,13 +75,14 @@ befriend.html = {
                                     <div id="place-search-location">
                                         <div class="left-col">
                                             <div class="section-title">Place</div>
-                                        </div>
-                                        <div class="right-col">
                                             <div class="near">
                                                 <div class="near-wrapper">
                                                     <div class="near-location"><span class="near-text">Near Me</span></div>
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div class="right-col">
+                                            
                                         </div>
                                     </div>
                                     

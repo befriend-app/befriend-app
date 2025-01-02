@@ -29,13 +29,17 @@ $app_background: #f4f4f4;
 
 $app_margin_lr: 10px;
 
-$view_gap_tb: 15px;
+$home_tab_height: 17px;
+
+$view_gap_tb: $home_tab_height + 30px;
 $view_padding_tb: 10px;
 $view_padding_lr: 15px;
+$view_section_br: 16px;
 
 $logo_h: 40px;
 
 $header_pb: 10px;
+
 
 $when_option_width: 70px;
 $when_option_gap_lr: 6px;
