@@ -390,7 +390,7 @@ befriend.html = {
                                     ${befriend.modes.options
                                         .map(
                                             (option) => `
-                                                <div class="mode-option ${option.id} data-mode="${option.id}">
+                                                <div class="mode-option ${option.id}" data-mode="${option.id}">
                                                     <div class="icon">${option.icon}</div>
                                                     <div class="name">${option.label}</div>
                                                 </div>
@@ -1046,6 +1046,21 @@ befriend.html = {
             },
             filters: {},
         });
+
+        //select active mode
+        let modes_els = befriend.els.createActivity.querySelector('.modes').getElementsByClassName('mode-option');
+
+        for(let i = 0; i < modes_els.length; i++) {
+            let mode_el = modes_els[i];
+
+            let mode_type = mode_el.getAttribute('data-mode');
+
+            if(mode_type === 'mode-solo') {
+                fireClick(mode_el);
+            }
+        }
+
+
     },
     getPlaceLocation(place) {
         let structured = befriend.places.getStructuredAddress(place);

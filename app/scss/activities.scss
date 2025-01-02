@@ -694,6 +694,11 @@ html.#{$class_create_activity_shown} {
                     justify-content: center;
                     align-items: center;
                     padding: 5px 0;
+                    transition: all 300ms;
+
+                    &.active {
+                        border-color: $brand_color_a;
+                    }
 
                     .icon {
                         @include flex-center-col;

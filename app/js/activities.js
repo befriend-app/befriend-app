@@ -304,8 +304,11 @@ befriend.activities = {
             },
         },
     },
+    person: {
+        mode: 'solo' // [solo, partner, kids]
+    },
     travel: {
-        mode: 'driving', //[driving, walking, bicycle]
+        mode: 'driving', // [driving, walking, bicycle]
         token: null,
         times: null,
     },
@@ -491,6 +494,7 @@ befriend.activities = {
 
         //set up html and transition logic
         befriend.html.createActivity();
+
         let map_el = befriend.els.activityMap;
         let status_bar_height = await befriend.styles.getStatusBarHeight();
 
@@ -506,6 +510,7 @@ befriend.activities = {
         message_el.querySelector('.message').style.transition = 'none';
 
         removeClassEl('show', message_el);
+
         message_el.querySelector('.message').style.removeProperty('height');
 
         message_el.querySelector('.inner').style.removeProperty('backgroundColor');
@@ -514,7 +519,6 @@ befriend.activities = {
 
         //handle location and mapping
         let place = befriend.places.selected.place;
-
         let from = befriend.location.device;
 
         //remove pin marker and set custom from
@@ -770,6 +774,7 @@ befriend.activities = {
                 try {
                     befriend.activities.events.level1();
                     befriend.activities.events.activityDuration();
+                    befriend.activities.events.appMode();
                     befriend.activities.events.travelTimeMode();
                     befriend.activities.events.hideCreateActivityMessage();
                     befriend.activities.events.onCreateActivityBack();
@@ -791,7 +796,7 @@ befriend.activities = {
                 //todo spinner
 
                 try {
-                    let r = await befriend.auth.post('activities', {
+                    let r = await befriend.auth.post('/activities', {
                         activity: befriend.activities.data.draft,
                     });
 
@@ -995,6 +1000,34 @@ befriend.activities = {
                     );
 
                     befriend.activities.updateWhenAuto();
+                });
+            }
+        },
+        appMode: function () {
+            let els = befriend.els.createActivity.querySelector('.modes').getElementsByClassName('mode-option');
+
+            for (let i = 0; i < els.length; i++) {
+                let mode_el = els[i];
+
+                mode_el.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    //already selected
+                    if (elHasClass(mode_el, 'active')) {
+                        return false;
+                    }
+
+                    removeElsClass(els, 'active');
+
+                    addClassEl('active', mode_el);
+
+                    befriend.activities.person.mode = mode_el.getAttribute('data-mode');
+
+                    befriend.activities.draft.update(
+                        'person.mode',
+                        befriend.activities.person.mode,
+                    );
                 });
             }
         },

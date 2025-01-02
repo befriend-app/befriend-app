@@ -31,7 +31,7 @@ befriend.when = {
         { id: 480, value: '8', unit: 'hrs', in_mins: 480 },
     ],
     colors: [
-        '#FFF7A1', // Light Yellow
+        // '#FFF7A1', // Light Yellow
         '#FFE0B2', // Light Orange
         '#FFCC80', // Light Apricot
         '#FFB74D', // Medium Orange
