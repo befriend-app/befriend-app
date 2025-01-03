@@ -69,14 +69,15 @@
             text-transform: uppercase;
             margin-bottom: $view_padding_tb;
             border-radius: 6px;
-            border: 1px solid $color_lightgray;
+            border: .5px solid darken($color_lightgray, 30%);
+            //border-bottom-color: $color_lightgray;
             padding: 4px 0;
             border-bottom-right-radius: 0;
             border-bottom-left-radius: 0;
 
             text-align: center;
-            background-color: $brand_color_a;
-            color: white;
+            background-color: $brand_color_b;
+            //color: white;
         }
 
         .sub-section-title {
