@@ -1045,6 +1045,8 @@ befriend.html = {
 
         let valid_modes = [];
         let modes_enabled = structuredClone(befriend.me.modes.selected);
+        let has_valid_partner = false;
+        let has_valid_kid = false;
 
         for(let option of befriend.modes.options) {
             if(modes_enabled.includes(option.id)) {
@@ -1052,10 +1054,12 @@ befriend.html = {
                     valid_modes.push(option);
                 } else if(option.id === 'mode-partner') {
                     if(befriend.me.modes.hasValidPartner()) {
+                        has_valid_partner = true;
                         valid_modes.push(option);
                     }
                 } else if(option.id === 'mode-kids') {
                     if(befriend.me.modes.hasValidKids()) {
+                        has_valid_kid = true;
                         valid_modes.push(option);
                     }
                 }
@@ -1076,7 +1080,17 @@ befriend.html = {
                             </div>`;
             }
         } else {
-            addClassEl('hide', modes_el);
+            let hadInvalidPartnerKidSelected = false;
+
+            if(modes_enabled.includes('mode-partner') && !has_valid_partner) {
+                hadInvalidPartnerKidSelected = true;
+            } else if(modes_enabled.includes('mode-kids') && has_valid_kid) {
+                hadInvalidPartnerKidSelected = true;
+            }
+
+            if(!hadInvalidPartnerKidSelected) {
+                addClassEl('hide', modes_el);
+            }
         }
 
         modes_el.innerHTML = modes_html;
