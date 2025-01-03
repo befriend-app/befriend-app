@@ -69,6 +69,7 @@ const CONFIG = {
 // Parse command line arguments
 function parseArguments() {
     const args = yargs.argv;
+
     return {
         platforms: {
             ios: args.ios || (!args.ios && !args.android),
@@ -377,6 +378,38 @@ async function buildIOS(skipIcon) {
     }
 }
 
+async function updateAssetIcons(assets_dir) {
+    let input_path = joinPaths(repoRoot(), CONFIG.icons.path);
+
+    let icons_dir = joinPaths(assets_dir, 'AppIcon.appiconset');
+
+    let files_dir = await listFilesDir(icons_dir);
+
+    for(let file of files_dir) {
+        if(file.includes('icon-')) {
+            let res;
+
+            if(file.includes('@')) {
+                let split = file.replace('icon-', '').replace('.png', '').split('@');
+                let dim = parseInt(split[0]);
+                let x = parseInt(split[1].replace('x', ''));
+                res = dim * x;
+            } else {
+                res = file.replace('icon-', '').replace('.png', '');
+                res = parseInt(res);
+            }
+
+            let output_path = joinPaths(icons_dir, file);
+
+            try {
+                await createIcon(input_path, output_path, res);
+            } catch(e) {
+                console.error(e);
+            }
+        }
+    }
+}
+
 async function copyIOSIcons() {
     if (!(await checkPathExists(CONFIG.ios.dir))) return;
 
@@ -384,6 +417,7 @@ async function copyIOSIcons() {
     if (!assetDir || !imageDir) return;
 
     await copyIconsBetweenDirectories(imageDir, assetDir);
+    await updateAssetIcons(assetDir);
 }
 
 async function findIOSAssetDirectories() {
