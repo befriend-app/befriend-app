@@ -682,6 +682,10 @@ html.#{$class_create_activity_shown} {
                 gap: 0 20px;
                 margin-bottom: 10px;
 
+                &.hide {
+                    display: none;
+                }
+
                 .mode-option {
                     flex-grow: 1;
                     display: flex;

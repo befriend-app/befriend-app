@@ -388,16 +388,7 @@ befriend.html = {
                                 </div>
 
                                 <div class="modes">
-                                    ${befriend.modes.options
-                                        .map(
-                                            (option) => `
-                                                <div class="mode-option ${option.id}" data-mode="${option.id}">
-                                                    <div class="icon">${option.icon}</div>
-                                                    <div class="name">${option.label}</div>
-                                                </div>
-                                            `,
-                                        )
-                                        .join('')}
+                                    
                                 </div>
                                 
                                 <div class="sections">
@@ -1048,20 +1039,60 @@ befriend.html = {
             filters: {},
         });
 
+        //set dynamic mode options
+        let modes_el = befriend.els.createActivity.querySelector('.modes');
+        let modes_html = '';
+
+        let valid_modes = [];
+        let modes_enabled = structuredClone(befriend.me.modes.selected);
+
+        for(let option of befriend.modes.options) {
+            if(modes_enabled.includes(option.id)) {
+                if(option.id === 'mode-solo') {
+                    valid_modes.push(option);
+                } else if(option.id === 'mode-partner') {
+                    if(befriend.me.modes.hasValidPartner()) {
+                        valid_modes.push(option);
+                    }
+                } else if(option.id === 'mode-kids') {
+                    if(befriend.me.modes.hasValidKids()) {
+                        valid_modes.push(option);
+                    }
+                }
+            }
+        }
+
+        if(!valid_modes.length) {
+            valid_modes.push(befriend.modes.options.find(mode => mode.id === 'mode-solo'));
+        }
+
+        if(valid_modes.length > 1) {
+            removeClassEl('hide', modes_el);
+
+            for(let mode of valid_modes) {
+                modes_html += `<div class="mode-option ${mode.id}" data-mode="${mode.id}">
+                                <div class="icon">${mode.icon}</div>
+                                <div class="name">${mode.label}</div>
+                            </div>`;
+            }
+        } else {
+            addClassEl('hide', modes_el);
+        }
+
+        modes_el.innerHTML = modes_html;
+
+        befriend.activities.events.appMode();
+
         //select active mode
         let modes_els = befriend.els.createActivity.querySelector('.modes').getElementsByClassName('mode-option');
 
         for(let i = 0; i < modes_els.length; i++) {
             let mode_el = modes_els[i];
 
-            let mode_type = mode_el.getAttribute('data-mode');
-
-            if(mode_type === 'mode-solo') {
+            if(i === 0) {
                 fireClick(mode_el);
             }
         }
-
-
     },
     getPlaceLocation(place) {
         let structured = befriend.places.getStructuredAddress(place);

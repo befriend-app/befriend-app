@@ -23,46 +23,6 @@ befriend.me = {
             },
         },
     },
-    modes: {
-        selected: [],
-        options: [
-            {
-                id: 'mode-solo',
-                name: `<div class="text">Solo</div>`,
-                description: 'Just me',
-                icon: `
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 434.1641 512"><path d="M210.3516,246.6328c33.8828,0,63.2188-12.1523,87.1953-36.1289,23.9688-23.9727,36.125-53.3047,36.125-87.1914s-12.1523-63.2109-36.1289-87.1914C273.5664,12.1523,244.2305,0,210.3516,0s-63.2188,12.1523-87.1914,36.125-36.1289,53.3086-36.1289,87.1875,12.1562,63.2227,36.1289,87.1953c23.9805,23.9688,53.3164,36.125,87.1914,36.125ZM144.3789,57.3398c18.3945-18.3945,39.9727-27.3359,65.9727-27.3359s47.5781,8.9414,65.9766,27.3359c18.3945,18.3984,27.3398,39.9805,27.3398,65.9727s-8.9453,47.5781-27.3398,65.9766c-18.3984,18.3984-39.9805,27.3398-65.9766,27.3398s-47.5703-8.9453-65.9727-27.3398c-18.3984-18.3945-27.3438-39.9766-27.3438-65.9766s8.9453-47.5742,27.3438-65.9727Z"/><path d="M426.1289,393.7031c-.6914-9.9766-2.0898-20.8594-4.1484-32.3516-2.0781-11.5781-4.7539-22.5234-7.957-32.5273-3.3125-10.3398-7.8086-20.5508-13.375-30.3359-5.7695-10.1562-12.5508-19-20.1602-26.2773-7.957-7.6133-17.6992-13.7344-28.9648-18.1992-11.2266-4.4414-23.668-6.6914-36.9766-6.6914-5.2266,0-10.2812,2.1445-20.043,8.5-6.0078,3.918-13.0352,8.4492-20.8789,13.4609-6.707,4.2734-15.793,8.2773-27.0156,11.9023-10.9492,3.543-22.0664,5.3398-33.043,5.3398-10.9688,0-22.0859-1.7969-33.043-5.3398-11.2109-3.6211-20.3008-7.625-26.9961-11.8984-7.7695-4.9648-14.8008-9.4961-20.8984-13.4688-9.7539-6.3555-14.8086-8.5-20.0352-8.5-13.3125,0-25.75,2.2539-36.9727,6.6992-11.2578,4.457-21.0039,10.5781-28.9688,18.1992-7.6094,7.2812-14.3906,16.1211-20.1562,26.2734-5.5586,9.7852-10.0586,19.9922-13.3711,30.3398-3.1992,10.0039-5.875,20.9453-7.9531,32.5234-2.0625,11.4766-3.457,22.3633-4.1484,32.3633-.6797,9.7773-1.0234,19.9531-1.0234,30.2344,0,26.7266,8.4961,48.3633,25.25,64.3203,16.5469,15.7461,38.4375,23.7305,65.0664,23.7305h246.5312c26.6211,0,48.5117-7.9844,65.0625-23.7305,16.7578-15.9453,25.2539-37.5898,25.2539-64.3242-.0039-10.3164-.3516-20.4922-1.0352-30.2422ZM381.2227,466.5312c-10.9336,10.4062-25.4492,15.4648-44.3789,15.4648H90.3164c-18.9336,0-33.4492-5.0586-44.3789-15.4609-10.7227-10.207-15.9336-24.1406-15.9336-42.5859,0-9.5938.3164-19.0664.9492-28.1602.6172-8.9219,1.8789-18.7227,3.75-29.1367,1.8477-10.2852,4.1992-19.9375,6.9961-28.6758,2.6836-8.3789,6.3438-16.6758,10.8828-24.668,4.332-7.6172,9.3164-14.1523,14.8164-19.418,5.1445-4.9258,11.6289-8.957,19.2695-11.9805,7.0664-2.7969,15.0078-4.3281,23.6289-4.5586,1.0508.5586,2.9219,1.625,5.9531,3.6016,6.168,4.0195,13.2773,8.6055,21.1367,13.625,8.8594,5.6484,20.2734,10.75,33.9102,15.1523,13.9414,4.5078,28.1602,6.7969,42.2734,6.7969s28.3359-2.2891,42.2695-6.793c13.6484-4.4102,25.0586-9.5078,33.9297-15.1641,8.043-5.1406,14.9531-9.5938,21.1211-13.6172,3.0312-1.9727,4.9023-3.043,5.9531-3.6016,8.625.2305,16.5664,1.7617,23.6367,4.5586,7.6367,3.0234,14.1211,7.0586,19.2656,11.9805,5.5,5.2617,10.4844,11.7969,14.8164,19.4219,4.543,7.9883,8.207,16.2891,10.8867,24.6602,2.8008,8.75,5.1562,18.3984,7,28.6758,1.8672,10.4336,3.1328,20.2383,3.75,29.1445v.0078c.6367,9.0586.957,18.5273.9609,28.1484-.0039,18.4492-5.2148,32.3789-15.9375,42.582Z"/></svg>
-                `,
-            },
-            {
-                id: 'mode-partner',
-                name: `
-                    <svg class="plus" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,24C5.383,24,0,18.617,0,12S5.383,0,12,0s12,5.383,12,12-5.383,12-12,12ZM12,1C5.935,1,1,5.935,1,12s4.935,11,11,11,11-4.935,11-11S18.065,1,12,1Z"/><path d="M17.5,12.5H6.5c-.276,0-.5-.224-.5-.5s.224-.5.5-.5h11c.276,0,.5.224.5.5s-.224.5-.5.5Z"/><path d="M12,18c-.276,0-.5-.224-.5-.5V6.5c0-.276.224-.5.5-.5s.5.224.5.5v11c0,.276-.224.5-.5.5Z"/></svg>
-                    <div class="text">1</div>`,
-                description: 'Me and a partner',
-                icon: `
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 530 356.198">
-                  <path d="M133,184c-50.8102,0-92-41.1898-92-92S82.1898,0,133,0s92,41.1898,92,92c-.0584,50.786-41.214,91.9416-92,92ZM133,20c-39.7645,0-72,32.2355-72,72s32.2355,72,72,72,72-32.2355,72-72c-.0441-39.7462-32.2538-71.9559-72-72Z" fill="black"/>
-                  
-                  <path d="M256,356.198H10C4.4772,356.198,0,351.7209,0,346.198v-49.2c0-73.4539,59.5461-133,133-133s133,59.5461,133,133v49.2c0,5.5229-4.4771,10-10,10ZM20,336.198h226v-39.2c0-62.4082-50.5918-113-113-113s-113,50.5918-113,113v39.2Z" fill="black"/>
-                  
-                  <path d="M379,184c-50.8102,0-92-41.1898-92-92S328.1898,0,379,0s92,41.1898,92,92c-.0584,50.786-41.214,91.9416-92,92ZM379,20c-39.7645,0-72,32.2355-72,72s32.2355,72,72,72,72-32.2355,72-72c-.0441-39.7462-32.2538-71.9559-72-72Z" fill="black"/>
-                  
-                  <path d="M502,356.198h-246c-5.5228,0-10-4.4771-10-10v-49.2c0-73.4539,59.5461-133,133-133s133,59.5461,133,133v49.2c0,5.5229-4.4771,10-10,10ZM266,336.198h226v-39.2c0-62.4082-50.5918-113-113-113s-113,50.5918-113,113v39.2Z" fill="black"/>
-                </svg>
-                `,
-            },
-            {
-                id: 'mode-kids',
-                name: `
-                    <svg class="plus" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,24C5.383,24,0,18.617,0,12S5.383,0,12,0s12,5.383,12,12-5.383,12-12,12ZM12,1C5.935,1,1,5.935,1,12s4.935,11,11,11,11-4.935,11-11S18.065,1,12,1Z"/><path d="M17.5,12.5H6.5c-.276,0-.5-.224-.5-.5s.224-.5.5-.5h11c.276,0,.5.224.5.5s-.224.5-.5.5Z"/><path d="M12,18c-.276,0-.5-.224-.5-.5V6.5c0-.276.224-.5.5-.5s.5.224.5.5v11c0,.276-.224.5-.5.5Z"/></svg>
-                    <div class="text">Kids</div>`,
-                description: 'Family mode',
-                icon: `
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1430.1223 1615.57"><defs><style>.mode-kids-cls-1{fill:none;stroke:#000;stroke-miterlimit:10;stroke-width:45px;}</style></defs><circle class="mode-kids-cls-1" cx="375.06" cy="199.57" r="177.07"/><path class="mode-kids-cls-1" d="M498.25,499.83H168.21c-80.47,0-145.71,65.24-145.71,145.71v314.7499c0,60.34,48.92,109.26,109.26,109.26h50.16v445.97c0,42.83,34.72,77.55,77.55,77.55h888.31c42.83,0,77.55-34.72,77.55-77.55v-245.8"/><path class="mode-kids-cls-1" d="M375.06,1593.06v-392.64"/><path class="mode-kids-cls-1" d="M181.91,1069.5399v-369.54"/><circle class="mode-kids-cls-1" cx="1052.5599" cy="261.16" r="153.98"/><path class="mode-kids-cls-1" d="M960.1801,546.02h247.64c71.17,0,132.72,49.57,147.89,119.1l42.24,193.61c13.41,61.4399-24.9399,122.28-86.16,136.6801l-20.5699,4.84"/><path class="mode-kids-cls-1" d="M1221.9399,730.79l107.09,535.43c.36,1.8101-1.02,3.49-2.86,3.49h-436.41"/><circle class="mode-kids-cls-1" cx="721.51" cy="492.13" r="115.48"/><path class="mode-kids-cls-1" d="M575.23,915.56l4.76,677.5"/><path class="mode-kids-cls-1" d="M889.75,1593.06v-677.5"/><path class="mode-kids-cls-1" d="M575.23,1144.49h-32.61c-52.15,0-94.42-42.28-94.42-94.42v-165.53c0-84.91,68.84-153.75,153.75-153.75h258.3699c84.91,0,153.75,68.84,153.75,153.75v165.53c0,52.15-42.28,94.42-94.42,94.42h-32.61"/><path class="mode-kids-cls-1" d="M1061.39,1593.06v-323.35"/><path class="mode-kids-cls-1" d="M731.14,1593.06v-308.63"/></svg>`,
-            },
-        ],
-    },
     actions: {
         delete: {
             section: null,
@@ -71,12 +31,278 @@ befriend.me = {
     secondaries: {
         activeEl: null,
     },
+    modes: {
+        selected: [],
+        selectMode: async function (mode, skip_server) {
+            const modeOptions = befriend.els.me.querySelectorAll('.mode-option');
+            const selectedModeContainer = befriend.els.me.querySelector('.selected-mode-container');
+            const selectedMode = befriend.me.modes.selected.includes(mode);
+
+            // Toggle mode selection
+            if (selectedMode) {
+                //prevent deselecting last mode
+                if (befriend.me.modes.selected.length === 1) {
+                    return false;
+                }
+
+                befriend.me.modes.selected = befriend.me.modes.selected.filter((m) => m !== mode);
+
+                removeClassEl(
+                    'selected',
+                    Array.from(modeOptions).find((el) => el.getAttribute('data-mode') === mode),
+                );
+            } else {
+                befriend.me.modes.selected.push(mode);
+                addClassEl(
+                    'selected',
+                    Array.from(modeOptions).find((el) => el.getAttribute('data-mode') === mode),
+                );
+            }
+
+            const hasPartnerOrKids = befriend.me.modes.selected.some((m) =>
+                ['mode-partner', 'mode-kids'].includes(m),
+            );
+
+            if (hasPartnerOrKids) {
+                addClassEl('active', selectedModeContainer);
+
+                // Generate combined HTML for both partner and kids sections
+                let html = '';
+
+                if (befriend.me.modes.selected.includes('mode-partner')) {
+                    const genders = befriend.me.data.genders;
+                    html += `
+                <div class="mode-section partner-section">
+                    <div class="label">Your Partner</div>
+                    <div class="options">
+                        ${genders
+                        .filter((gender) => gender.is_visible)
+                        .map(
+                            (gender) => `
+                                <div class="option ${befriend.me.data.me.modes?.partner?.gender_id === gender.id ? 'selected' : ''}" 
+                                     data-gender="${gender.token}">
+                                    ${gender.name}
+                                </div>
+                            `,
+                        )
+                        .join('')}
+                    </div>
+                </div>`;
+                }
+
+                if (befriend.me.modes.selected.includes('mode-kids')) {
+                    html += `
+                <div class="mode-section kids-section">
+                    <div class="kids-top">
+                        <div class="label">Your Kids</div>
+
+                        <div class="add-kid">
+                            <div class="add-btn">
+                                Add Kid
+
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28">
+                                    <path d="M14,0C6.28,0,0,6.28,0,14s6.28,14,14,14,14-6.28,14-14S21.72,0,14,0ZM14,26c-6.62,0-12-5.38-12-12S7.38,2,14,2s12,5.38,12,12-5.38,12-12,12Z"/>
+                                    <path d="M21,13h-6v-6c0-1.32-2-1.32-2,0v6h-6c-1.32,0-1.32,2,0,2h6v6c0,1.32,2,1.32,2,0v-6h6c1.32,0,1.32-2,0-2Z"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="kids-list"></div>
+                </div>`;
+                }
+
+                selectedModeContainer.innerHTML = html;
+
+                // Initialize event handlers
+                if (befriend.me.modes?.selected.includes('mode-partner')) {
+                    befriend.me.events.onPartnerGenderSelect();
+                }
+
+                if (befriend.me.modes?.selected.includes('mode-kids')) {
+                    if (befriend.me.data.me.modes?.kids) {
+                        for (let kid of Object.values(befriend.me.data.me.modes.kids)) {
+                            befriend.me.modes.addKidHtml(kid);
+                        }
+                    }
+
+                    befriend.me.events.onKids();
+                }
+
+                requestAnimationFrame(() => {
+                    befriend.me.modes.updateModeHeight();
+                });
+            } else {
+                removeClassEl('active', selectedModeContainer);
+                selectedModeContainer.innerHTML = '';
+            }
+
+            if (befriend.me.modes?.selected.includes('mode-partner')) {
+                addClassEl('with-partner', selectedModeContainer);
+            } else {
+                removeClassEl('with-partner', selectedModeContainer);
+            }
+
+            if (befriend.me.modes?.selected.includes('mode-kids')) {
+                addClassEl('with-kids', selectedModeContainer);
+            } else {
+                removeClassEl('with-kids', selectedModeContainer);
+            }
+
+            if (!skip_server) {
+                await befriend.auth.put(`/me/modes`, {
+                    modes: befriend.me.modes.selected,
+                });
+
+                befriend.filters.matches.needsUpdate = true;
+            }
+        },
+        addKidHtml: function (kid = {}) {
+            let kid_els = befriend.els.me.querySelector('.kids-section').getElementsByClassName('kid');
+            let count = kid_els.length + 1;
+
+            let age_options = '';
+            let gender_options = '';
+            let current_age = null;
+
+            if (befriend.me.data?.modes?.kids?.options) {
+                for (let k in befriend.me.data.modes.kids.options) {
+                    let age = befriend.me.data.modes.kids.options[k];
+
+                    let selected = '';
+
+                    if (kid?.age_id === age.id) {
+                        selected = 'selected';
+                        current_age = age;
+                    }
+
+                    age_options += `<div class="option ${selected}" 
+                    data-token="${age.token}">${age.name}</div>`;
+                }
+            }
+
+            for (let gender of befriend.me.data.genders) {
+                if (!gender.is_visible) {
+                    continue;
+                }
+
+                let gender_name =
+                    gender.token === 'male' ? 'Boy' : gender.token === 'female' ? 'Girl' : gender.name;
+
+                gender_options += `
+                <div class="option ${kid.gender_id === gender.id ? 'selected' : ''}" 
+                    data-token="${gender.token}">${gender_name}</div>`;
+            }
+
+            let html = `
+                <div class="kid" data-token="${kid.token || ''}">
+                  <svg class="remove" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                    <path d="M256,512C114.8359,512,0,397.1641,0,256S114.8359,0,256,0s256,114.8359,256,256-114.8359,256-256,256ZM256,32c-123.5195,0-224,100.4805-224,224s100.4805,224,224,224,224-100.4805,224-224S379.5195,32,256,32Z"/>
+                    <path d="M368,272h-224c-8.832,0-16-7.168-16-16s7.168-16,16-16h224c8.832,0,16,7.168,16,16s-7.168,16-16,16Z"/>
+                  </svg>
+                  
+                  <div class="number-active">
+                        <div class="child-number">Child #${count}</div>
+                        <div class="kid-active">
+                            ${toggleHtml(kid?.is_active, 'Active')}
+                        </div>
+                  </div>
+                  
+                  <div class="age">
+                    <div class="select-list ${!current_age ? 'unselected' : ''}" 
+                         data-value="${current_age?.age_token || ''}">
+                      <div class="current-selected">${current_age?.name || 'Select Age'}</div>
+                      <svg class="arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 82.1 43.2">
+                        <path d="M41.1,43.2L0,2.2,2.1,0l39,39L80,0l2.1,2.2-41,41Z"/>
+                      </svg>
+                      <div class="options">${age_options}</div>
+                    </div>
+                  </div>
+                  <div class="gender">${gender_options}</div>
+                </div>`;
+
+            let kids_list_el = befriend.els.me.querySelector(
+                '.selected-mode-container .kids-section .kids-list',
+            );
+            kids_list_el.insertAdjacentHTML('beforeend', html);
+
+            befriend.me.events.onKids();
+
+            requestAnimationFrame(function () {
+                befriend.me.modes.updateModeHeight();
+            });
+        },
+        updateModeHeight: function (without_transition) {
+            const selectedModeContainer = befriend.els.me.querySelector('.selected-mode-container');
+
+            if (without_transition) {
+                selectedModeContainer.style.transition = 'none';
+
+                setTimeout(function () {
+                    selectedModeContainer.style.removeProperty('transition');
+                }, befriend.variables.me_mode_transition_ms);
+            }
+
+            setElHeightDynamic(selectedModeContainer);
+        },
+        transitionKidsAgeT: null,
+        transitionKidsAge: function (list_el, show) {
+            clearTimeout(this.transitionKidsAgeT);
+
+            let options_el = list_el.querySelector('.options');
+            let container_el = list_el.closest('.selected-mode-container ');
+
+            container_el?.style?.setProperty('overflow-y', 'initial');
+
+            if (show) {
+                addClassEl('open', list_el);
+                setElHeightDynamic(options_el);
+            } else {
+                removeClassEl('open', list_el);
+                options_el.style.removeProperty('height');
+                this.transitionKidsAgeT = setTimeout(function () {
+                    container_el?.style?.removeProperty('overflow-y');
+                }, 300);
+            }
+        },
+        hasValidPartner: function () {
+            let hasPartnerSelected = befriend.me.modes.selected.includes('mode-partner');
+
+            if(!hasPartnerSelected) {
+                return false;
+            }
+
+            //selected gender required
+            return !!befriend.me.data.me.modes?.partner?.gender_id;
+        },
+        hasValidKids: function () {
+            let hasKidsSelected = befriend.me.modes.selected.includes('mode-kids');
+
+            if(!hasKidsSelected) {
+                return false;
+            }
+
+            let hasValidKid = false;
+
+            if (befriend.me.data.me.modes?.kids) {
+                for (let kid of Object.values(befriend.me.data.me.modes.kids)) {
+                    if(kid.gender_id && kid.age_id && kid.is_active) {
+                        hasValidKid = true;
+                        break;
+                    }
+                }
+            }
+
+            return hasValidKid;
+
+        }
+    },
     init: function () {
         return new Promise(async (resolve, reject) => {
             try {
                 await befriend.me.getMe();
-
                 await befriend.me.setMe();
+
                 befriend.me.setOnline();
                 befriend.me.setActive();
                 befriend.me.setOptions();
@@ -188,239 +414,8 @@ befriend.me = {
         //modes
         if (me_obj.modes?.selected) {
             for (let mode of me_obj.modes.selected) {
-                this.selectMode(mode, true);
+                this.modes.selectMode(mode, true);
             }
-        }
-    },
-    selectMode: async function (mode, skip_server) {
-        const modeOptions = befriend.els.me.querySelectorAll('.mode-option');
-        const selectedModeContainer = befriend.els.me.querySelector('.selected-mode-container');
-        const selectedMode = befriend.me.modes.selected.includes(mode);
-
-        // Toggle mode selection
-        if (selectedMode) {
-            //prevent deselecting last mode
-            if (befriend.me.modes.selected.length === 1) {
-                return false;
-            }
-
-            befriend.me.modes.selected = befriend.me.modes.selected.filter((m) => m !== mode);
-
-            removeClassEl(
-                'selected',
-                Array.from(modeOptions).find((el) => el.getAttribute('data-mode') === mode),
-            );
-        } else {
-            befriend.me.modes.selected.push(mode);
-            addClassEl(
-                'selected',
-                Array.from(modeOptions).find((el) => el.getAttribute('data-mode') === mode),
-            );
-        }
-
-        const hasPartnerOrKids = befriend.me.modes.selected.some((m) =>
-            ['mode-partner', 'mode-kids'].includes(m),
-        );
-
-        if (hasPartnerOrKids) {
-            addClassEl('active', selectedModeContainer);
-
-            // Generate combined HTML for both partner and kids sections
-            let html = '';
-
-            if (befriend.me.modes.selected.includes('mode-partner')) {
-                const genders = befriend.me.data.genders;
-                html += `
-                <div class="mode-section partner-section">
-                    <div class="label">Your Partner</div>
-                    <div class="options">
-                        ${genders
-                            .filter((gender) => gender.is_visible)
-                            .map(
-                                (gender) => `
-                                <div class="option ${befriend.me.data.me.modes?.partner?.gender_id === gender.id ? 'selected' : ''}" 
-                                     data-gender="${gender.token}">
-                                    ${gender.name}
-                                </div>
-                            `,
-                            )
-                            .join('')}
-                    </div>
-                </div>`;
-            }
-
-            if (befriend.me.modes.selected.includes('mode-kids')) {
-                html += `
-                <div class="mode-section kids-section">
-                    <div class="kids-top">
-                        <div class="label">Your Kids</div>
-
-                        <div class="add-kid">
-                            <div class="add-btn">
-                                Add Kid
-
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28">
-                                    <path d="M14,0C6.28,0,0,6.28,0,14s6.28,14,14,14,14-6.28,14-14S21.72,0,14,0ZM14,26c-6.62,0-12-5.38-12-12S7.38,2,14,2s12,5.38,12,12-5.38,12-12,12Z"/>
-                                    <path d="M21,13h-6v-6c0-1.32-2-1.32-2,0v6h-6c-1.32,0-1.32,2,0,2h6v6c0,1.32,2,1.32,2,0v-6h6c1.32,0,1.32-2,0-2Z"/>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="kids-list"></div>
-                </div>`;
-            }
-
-            selectedModeContainer.innerHTML = html;
-
-            // Initialize event handlers
-            if (befriend.me.modes?.selected.includes('mode-partner')) {
-                befriend.me.events.onPartnerGenderSelect();
-            }
-
-            if (befriend.me.modes?.selected.includes('mode-kids')) {
-                if (befriend.me.data.me.modes?.kids) {
-                    for (let kid of Object.values(befriend.me.data.me.modes.kids)) {
-                        befriend.me.addKidHtml(kid);
-                    }
-                }
-                befriend.me.events.onKids();
-            }
-
-            requestAnimationFrame(() => {
-                befriend.me.updateModeHeight();
-            });
-        } else {
-            removeClassEl('active', selectedModeContainer);
-            selectedModeContainer.innerHTML = '';
-        }
-
-        if (befriend.me.modes?.selected.includes('mode-partner')) {
-            addClassEl('with-partner', selectedModeContainer);
-        } else {
-            removeClassEl('with-partner', selectedModeContainer);
-        }
-
-        if (befriend.me.modes?.selected.includes('mode-kids')) {
-            addClassEl('with-kids', selectedModeContainer);
-        } else {
-            removeClassEl('with-kids', selectedModeContainer);
-        }
-
-        if (!skip_server) {
-            await befriend.auth.put(`/me/modes`, {
-                modes: befriend.me.modes.selected,
-            });
-
-            befriend.filters.matches.needsUpdate = true;
-        }
-    },
-    addKidHtml: function (kid = {}) {
-        let kid_els = befriend.els.me.querySelector('.kids-section').getElementsByClassName('kid');
-        let count = kid_els.length + 1;
-
-        let age_options = '';
-        let gender_options = '';
-        let current_age = null;
-
-        if (befriend.me.data?.modes?.kids?.options) {
-            for (let k in befriend.me.data.modes.kids.options) {
-                let age = befriend.me.data.modes.kids.options[k];
-
-                let selected = '';
-
-                if (kid?.age_id === age.id) {
-                    selected = 'selected';
-                    current_age = age;
-                }
-
-                age_options += `<div class="option ${selected}" 
-                    data-token="${age.token}">${age.name}</div>`;
-            }
-        }
-
-        for (let gender of befriend.me.data.genders) {
-            if (!gender.is_visible) {
-                continue;
-            }
-
-            let gender_name =
-                gender.token === 'male' ? 'Boy' : gender.token === 'female' ? 'Girl' : gender.name;
-
-            gender_options += `
-                <div class="option ${kid.gender_id === gender.id ? 'selected' : ''}" 
-                    data-token="${gender.token}">${gender_name}</div>`;
-        }
-
-        let html = `
-                <div class="kid" data-token="${kid.token || ''}">
-                  <svg class="remove" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                    <path d="M256,512C114.8359,512,0,397.1641,0,256S114.8359,0,256,0s256,114.8359,256,256-114.8359,256-256,256ZM256,32c-123.5195,0-224,100.4805-224,224s100.4805,224,224,224,224-100.4805,224-224S379.5195,32,256,32Z"/>
-                    <path d="M368,272h-224c-8.832,0-16-7.168-16-16s7.168-16,16-16h224c8.832,0,16,7.168,16,16s-7.168,16-16,16Z"/>
-                  </svg>
-                  
-                  <div class="number-active">
-                        <div class="child-number">Child #${count}</div>
-                        <div class="kid-active">
-                            ${toggleHtml(kid?.is_active, 'Active')}
-                        </div>
-                  </div>
-                  
-                  <div class="age">
-                    <div class="select-list ${!current_age ? 'unselected' : ''}" 
-                         data-value="${current_age?.age_token || ''}">
-                      <div class="current-selected">${current_age?.name || 'Select Age'}</div>
-                      <svg class="arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 82.1 43.2">
-                        <path d="M41.1,43.2L0,2.2,2.1,0l39,39L80,0l2.1,2.2-41,41Z"/>
-                      </svg>
-                      <div class="options">${age_options}</div>
-                    </div>
-                  </div>
-                  <div class="gender">${gender_options}</div>
-                </div>`;
-
-        let kids_list_el = befriend.els.me.querySelector(
-            '.selected-mode-container .kids-section .kids-list',
-        );
-        kids_list_el.insertAdjacentHTML('beforeend', html);
-
-        befriend.me.events.onKids();
-
-        requestAnimationFrame(function () {
-            befriend.me.updateModeHeight();
-        });
-    },
-    updateModeHeight: function (without_transition) {
-        const selectedModeContainer = befriend.els.me.querySelector('.selected-mode-container');
-
-        if (without_transition) {
-            selectedModeContainer.style.transition = 'none';
-
-            setTimeout(function () {
-                selectedModeContainer.style.removeProperty('transition');
-            }, befriend.variables.me_mode_transition_ms);
-        }
-
-        setElHeightDynamic(selectedModeContainer);
-    },
-    transitionKidsAgeT: null,
-    transitionKidsAge: function (list_el, show) {
-        clearTimeout(this.transitionKidsAgeT);
-
-        let options_el = list_el.querySelector('.options');
-        let container_el = list_el.closest('.selected-mode-container ');
-
-        container_el?.style?.setProperty('overflow-y', 'initial');
-
-        if (show) {
-            addClassEl('open', list_el);
-            setElHeightDynamic(options_el);
-        } else {
-            removeClassEl('open', list_el);
-            options_el.style.removeProperty('height');
-            this.transitionKidsAgeT = setTimeout(function () {
-                container_el?.style?.removeProperty('overflow-y');
-            }, 300);
         }
     },
     saveSection: function (key) {
@@ -2705,16 +2700,18 @@ befriend.me = {
 
                     let token = this.getAttribute('data-gender');
 
-                    if (elHasClass(el, 'selected')) {
-                        removeClassEl('selected', el);
-                    } else {
+                    let isSelect = !elHasClass(el, 'selected');
+
+                    if (isSelect) {
                         removeElsClass(option_els, 'selected');
                         addClassEl('selected', el);
+                    } else {
+                        removeClassEl('selected', el);
                     }
 
                     await befriend.auth.put(`/me/modes/partner`, {
                         gender_token: token,
-                        is_select: elHasClass(el, 'selected'),
+                        is_select: isSelect,
                     });
 
                     befriend.filters.matches.needsUpdate = true;
@@ -2725,7 +2722,7 @@ befriend.me = {
                         befriend.me.data.me.modes.partner = {};
                     }
 
-                    befriend.me.data.me.modes.partner.gender_id = gender.id;
+                    befriend.me.data.me.modes.partner.gender_id = isSelect ? gender.id : null;
                 });
             }
         },
@@ -2751,7 +2748,7 @@ befriend.me = {
                         befriend.me.data.me.modes.kids[r.data.token] = r.data;
 
                         // Add to UI with token from response
-                        befriend.me.addKidHtml(r.data);
+                        befriend.me.modes.addKidHtml(r.data);
 
                         befriend.toggleSpinner(false);
                     } catch (e) {
@@ -2830,7 +2827,7 @@ befriend.me = {
                         kid_el.parentNode.removeChild(kid_el);
 
                         requestAnimationFrame(() => {
-                            befriend.me.updateModeHeight();
+                            befriend.me.modes.updateModeHeight();
                         });
                     } catch (e) {
                         console.error('Error removing kid:', e);
@@ -2994,7 +2991,7 @@ befriend.me = {
                 option._listener = true;
 
                 option.addEventListener('click', async function () {
-                    befriend.me.selectMode(this.getAttribute('data-mode'));
+                    befriend.me.modes.selectMode(this.getAttribute('data-mode'));
                 });
             }
         },

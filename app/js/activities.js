@@ -774,7 +774,6 @@ befriend.activities = {
                 try {
                     befriend.activities.events.level1();
                     befriend.activities.events.activityDuration();
-                    befriend.activities.events.appMode();
                     befriend.activities.events.travelTimeMode();
                     befriend.activities.events.hideCreateActivityMessage();
                     befriend.activities.events.onCreateActivityBack();

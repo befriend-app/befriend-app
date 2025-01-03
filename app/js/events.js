@@ -90,7 +90,7 @@ befriend.events = {
                 let open_kids_list_el = befriend.els.me.querySelector('.open.select-list');
 
                 if (open_kids_list_el && !e.target.closest('.select-list')) {
-                    befriend.me.transitionKidsAge(open_kids_list_el, false);
+                    befriend.me.modes.transitionKidsAge(open_kids_list_el, false);
                 }
 
                 //secondary select
@@ -189,8 +189,7 @@ befriend.events = {
                     });
                 } else if (nav_name === 'me') {
                     befriend.me.updateCollapsed(true);
-                    befriend.me.updateModeHeight(true);
-
+                    befriend.me.modes.updateModeHeight(true);
                     befriend.me.account.setView('profile');
                 }
 
