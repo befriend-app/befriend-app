@@ -21,6 +21,7 @@ befriend.filters = {
             let update_circle_el = matches_el.querySelector('.update-circle');
             let send_el = matches_el.querySelector('.send');
             let receive_el = matches_el.querySelector('.receive');
+            let interests_el = matches_el.querySelector('.interests');
             let excluded_el = matches_el.querySelector('.excluded');
 
             let ts = timeNow();
@@ -34,6 +35,7 @@ befriend.filters = {
                     befriend.filters.matches.data = response.data;
                     send_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.send);
                     receive_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.receive);
+                    interests_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.interests);
                     excluded_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.excluded);
                 }
             } catch(e) {
