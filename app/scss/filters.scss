@@ -96,7 +96,9 @@
         .matches {
             $gap_lr: 10px;
             $label_h: 24px;
+            $count_h: 45px;
             $icon_dim: $label_h * 1.1;
+
             $br: 6px;
             display: flex;
             padding: 0;
@@ -138,7 +140,7 @@
                     width: 100%;
                     font-weight: 500;
                     font-size: 14px;
-                    height: 26px;
+                    height: $count_h;
                     border-bottom-left-radius: $br;
                     border-bottom-right-radius: $br;
                     background-color: white;
@@ -214,6 +216,47 @@
 
                 .text {
                     color: white;
+                }
+
+                .count {
+                    $padding_tb: 3px;
+                    $lh: 16px;
+                    $name_w: 46px;
+                    font-size: 13px;
+                    line-height: $lh;
+                    justify-content: initial;
+                    align-items: initial;
+
+                    .category {
+                        display: flex;
+
+                        &:first-of-type {
+                            border-bottom: 1px solid $color_lightgray;
+                        }
+
+                        &:last-of-type {
+                            .name {
+                                border-bottom-left-radius: $br;
+                            }
+                        }
+
+                    }
+
+                    .name {
+                        padding: $padding_tb 0;
+                        background-color: $brand_color_b;
+                        width: $name_w;
+                        text-align: center;
+                        font-size: 12px;
+                        line-height: $lh;
+
+                    }
+
+                    .number {
+                        padding: $padding_tb 0;
+                        width: calc(100% - $name_w);
+                        text-align: center;
+                    }
                 }
             }
 
@@ -516,18 +559,15 @@
                 border: 1px transparent;
                 border-top: none;
                 border-radius: 0 0 $secondary_br $secondary_br;
-                //box-shadow: 0 2px 4px rgba(0,0,0,0.1);
                 z-index: 3;
                 flex-direction: column;
-                padding: 0px 0;
+                padding: 0 0;
                 gap: 0 0;
                 transition: height $secondary_transition_ms;
                 overflow-y: hidden;
                 box-sizing: border-box;
                 border-top: 1px transparent !important;
                 display: flex;
-
-                //opacity: 0;
 
                 // Individual option
                 .option {

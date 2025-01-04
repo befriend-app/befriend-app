@@ -35,7 +35,20 @@ befriend.filters = {
                     befriend.filters.matches.data = response.data;
                     send_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.send);
                     receive_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.receive);
-                    interests_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.interests);
+                    interests_el.querySelector('.count').innerHTML = `
+                                                                                <div class="super category">
+                                                                                     <div class="name">Super</div>
+                                                                                     <div class="number">${formattedNumberDisplay(response.data.counts.interests.super)}</div>
+                                                                                </div>
+<!--                                                                                <div class="regular category">-->
+<!--                                                                                    <div class="name">Total</div>-->
+<!--                                                                                    <div class="number">${formattedNumberDisplay(response.data.counts.interests.total)}</div>-->
+<!--                                                                                </div>-->
+                                                                                <div class="ultra category">
+                                                                                    <div class="name">Ultra</div>
+                                                                                    <div class="number">${formattedNumberDisplay(response.data.counts.interests.ultra)}</div>
+                                                                                </div>
+                                                                            `;
                     excluded_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.excluded);
                 }
             } catch(e) {
