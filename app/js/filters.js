@@ -36,10 +36,6 @@ befriend.filters = {
                     send_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.send);
                     receive_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.receive);
                     interests_el.querySelector('.count').innerHTML = `
-                                                                                <div class="super category">
-                                                                                     <div class="name">Super</div>
-                                                                                     <div class="number">${formattedNumberDisplay(response.data.counts.interests.super)}</div>
-                                                                                </div>
 <!--                                                                                <div class="regular category">-->
 <!--                                                                                    <div class="name">Total</div>-->
 <!--                                                                                    <div class="number">${formattedNumberDisplay(response.data.counts.interests.total)}</div>-->
@@ -47,6 +43,11 @@ befriend.filters = {
                                                                                 <div class="ultra category">
                                                                                     <div class="name">Ultra</div>
                                                                                     <div class="number">${formattedNumberDisplay(response.data.counts.interests.ultra)}</div>
+                                                                                </div>
+                                                                                
+                                                                                <div class="super category">
+                                                                                     <div class="name">Super</div>
+                                                                                     <div class="number">${formattedNumberDisplay(response.data.counts.interests.super)}</div>
                                                                                 </div>
                                                                             `;
                     excluded_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.excluded);
