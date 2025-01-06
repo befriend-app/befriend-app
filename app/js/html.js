@@ -461,6 +461,8 @@ befriend.html = {
                                     <div class="filters section">
                                         <div class="label">Filters</div>
                                         
+                                        <div class="edit">Edit</div>
+                                        
                                         <div class="info"></div>
                                     </div>
                                 </div>

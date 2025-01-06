@@ -723,6 +723,7 @@ html.#{$class_create_activity_shown} {
             .section {
                 padding: 10px 0;
                 padding-top: 0;
+                position: relative;
 
                 &:first-of-type {
                     padding-top: 0;
@@ -806,6 +807,33 @@ html.#{$class_create_activity_shown} {
                 }
 
                 &.filters {
+                    .edit {
+                        color: #0080ea;
+                        font-weight: 500;
+                        font-size: 14px;
+                        position: absolute;
+                        right: 0;
+                        top: 38px;
+                        cursor: pointer;
+                    }
+
+                    .active-filters {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 20px 0;
+
+                        .filter {
+                            .filter-name {
+                                font-weight: 500;
+                                font-size: 14px;
+                                margin-bottom: 3px;
+                            }
+
+                            .filter-value {
+                                font-size: 12px;
+                            }
+                        }
+                    }
                 }
             }
         }

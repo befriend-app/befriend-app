@@ -12,6 +12,7 @@ befriend.maps = {
         place: null,
     },
     defaultZoom: 13,
+    needsResize: false,
     init: function () {
         console.log('[init] Maps');
 

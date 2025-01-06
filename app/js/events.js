@@ -180,7 +180,14 @@ befriend.events = {
                 befriend.me.hideActiveSecondaryIf();
 
                 //view specific logic
-                if (nav_name === 'filters') {
+                if(nav_name === 'home') {
+                    if(befriend.maps.needsResize) {
+                        requestAnimationFrame(function () {
+                            befriend.maps.maps.activities.resize();
+                            befriend.maps.needsResize = false;
+                        });
+                    }
+                } else if (nav_name === 'filters') {
                     requestAnimationFrame(function () {
                         befriend.filters.updateSectionHeights(true);
 

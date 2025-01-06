@@ -755,11 +755,116 @@ befriend.activities = {
 
         let html = '';
 
-        //networks
+        let networks_html = '';
         let networkFilter = filters.networks;
 
-        if(networkFilter?.is_active && networkFilter.is_send) {
-            debugger;
+        if(!networkFilter || networkFilter?.is_active) {
+            if(typeof networkFilter?.is_send === 'undefined' || networkFilter.is_send) {
+                let selectedName = '';
+
+                if (networkFilter.is_any_network) {
+                    selectedName = 'Any Network';
+                } else if(networkFilter.is_all_verified) {
+                    selectedName = 'Any Verified Network';
+                } else if (networkFilter.items) {
+                    const activeNetworks = Object.values(networkFilter.items).filter(
+                        (item) => item.is_active && !item.deleted,
+                    );
+
+                    selectedName = `${activeNetworks.length} Network${activeNetworks.length > 1 ? 's' : ''}`;
+                }
+
+                networks_html = `<div class="filter networks">
+                                <div class="filter-name">Networks</div>
+                                <div class="filter-value">${selectedName}</div>
+                            </div>`;
+
+                html += networks_html;
+            }
+        }
+
+        let reviews_html = '';
+        let reviewsFilter = filters.reviews;
+
+        if(!reviewsFilter || reviewsFilter.is_active) {
+            if(typeof reviewsFilter?.is_send === 'undefined' || reviewsFilter.is_send) {
+                let review_items = [];
+
+                if(!filters.reviews_new || filters.reviews_new.is_active && filters.reviews_new.is_send) {
+                    review_items.push(`Match with new members`);
+                }
+
+                for(let k in befriend.filters.reviews.ratings) {
+                    let d = befriend.filters.reviews.ratings[k];
+
+                    let filter = filters[d.token];
+
+                    if(filter?.is_active) {
+                        if(typeof filter.is_send === 'undefined' || filter.is_send) {
+                            review_items.push(`${d.name}: ${d.current_rating}`);
+                        }
+                    }
+                }
+
+                if(review_items.length) {
+                    let items = review_items.map(item => `<div class="item">${item}</div>`).join('\n');
+
+                    reviews_html = `<div class="filter reviews">
+                                    <div class="filter-name">Reviews</div>
+                                    <div class="filter-value">${items}</div>
+                                </div>`;
+
+                    html += reviews_html;
+                }
+            }
+        }
+
+        let verifications_html = '';
+        let verificationsFilter = filters.verifications;
+
+        if (!verificationsFilter || verificationsFilter.is_active) {
+            let filter_items = [];
+
+            const inPersonFilter = filters.verification_in_person;
+
+            if (inPersonFilter?.is_active) {
+                if(typeof inPersonFilter.is_send === 'undefined' || inPersonFilter.is_send) {
+                    filter_items.push('In-Person');
+                }
+            }
+
+            const linkedinFilter = filters.verification_linkedin;
+
+            if (linkedinFilter?.is_active) {
+                if(typeof linkedinFilter.is_send === 'undefined' || linkedinFilter.is_send) {
+                    filter_items.push('LinkedIn');
+                }
+            }
+
+            if (filter_items.length) {
+                let items = filter_items.map(item => `<div class="item">${item}</div>`).join('\n');
+
+                verifications_html = `<div class="filter verifications">
+                                <div class="filter-name">Verifications</div>
+                                <div class="filter-value">${items}</div>
+                            </div>`;
+
+                html += verifications_html;
+            }
+        }
+
+        let distance_html = '';
+        let distanceFilter = filters.distance;
+
+        if(!distanceFilter || distanceFilter.is_active) {
+            if(typeof distanceFilter?.is_send === 'undefined' || distanceFilter.is_send) {
+                distance_html = `<div class="filter distance">
+                                <div class="filter-name">Distance</div>
+                                <div class="filter-value">${befriend.filters.distance.current} ${befriend.filters.distance.unit}</div>
+                            </div>`;
+
+                html += distance_html;
+            }
         }
 
         return html;
@@ -792,6 +897,7 @@ befriend.activities = {
                     befriend.activities.events.hideCreateActivityMessage();
                     befriend.activities.events.onCreateActivityBack();
                     befriend.activities.events.createActivity();
+                    befriend.activities.events.onEditFilters();
                 } catch (e) {
                     console.error(e);
                 }
@@ -877,6 +983,19 @@ befriend.activities = {
 
                 back_el.style.removeProperty('display');
                 befriend.els.travelTimes.style.removeProperty('display');
+            });
+        },
+        onEditFilters: function () {
+            let el = befriend.els.createActivity.querySelector('.filters').querySelector('.edit');
+
+            el.addEventListener('click', async function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                fireClick(document.getElementById('create-activity-back'));
+                fireTouch(befriend.els.footer.querySelector('.nav-item.filters'));
+
+                befriend.maps.needsResize = true;
             });
         },
         activityDuration: function () {
