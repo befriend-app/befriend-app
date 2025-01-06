@@ -34,7 +34,7 @@ befriend.events = {
 
             if (befriend.activities.isCreateActivityShown()) {
                 //do nothing
-            } else if (befriend.places.isPlacesShown()) {
+            } else if (befriend.places.activity.isPlacesShown()) {
                 //hide places to bottom
                 if (!e.target.closest('#places')) {
                     //do not hide on double click if activity type just clicked
@@ -45,7 +45,7 @@ befriend.events = {
                         return false;
                     }
 
-                    befriend.places.toggleDisplayPlaces(false);
+                    befriend.places.activity.toggleDisplayPlaces(false);
                 }
             } else if (befriend.location.isChangeLocationShown()) {
                 if (!e.target.closest('#change-location')) {
@@ -59,9 +59,9 @@ befriend.events = {
 
                     befriend.location.toggleChangeLocation(false);
                 }
-            } else if (befriend.places.isAutoCompleteShown()) {
+            } else if (befriend.places.search.isAutoCompleteShown()) {
                 if (!e.target.closest('#place-search')) {
-                    befriend.places.toggleAutoComplete(false);
+                    befriend.places.search.toggleAutoComplete(false);
                 }
             } else if (befriend.isViewShown('me')) {
                 if (befriend.me.isConfirmActionShown()) {
@@ -168,7 +168,7 @@ befriend.events = {
 
                 //hide any overlays on footer nav
                 befriend.places.toggleAutoComplete(false);
-                befriend.places.toggleDisplayPlaces(false);
+                befriend.places.activity.toggleDisplayPlaces(false);
                 befriend.me.toggleSectionOptions(false);
 
                 befriend.me.toggleAutoComplete(null, false);

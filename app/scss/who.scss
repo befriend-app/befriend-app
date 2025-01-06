@@ -1,10 +1,12 @@
 #who {
+    padding-top: 20px !important;
     padding-bottom: 20px !important;
 
     .friend-options {
         display: flex;
         flex-wrap: wrap;
         gap: 0 10px;
+        margin-bottom: 20px;
 
         .friend-option {
             $bw: .6px;

@@ -95,7 +95,7 @@ befriend.when = {
                 el.querySelector('.time').innerHTML = time_formatted;
             }
 
-            if (befriend.places.isPlacesShown()) {
+            if (befriend.places.activity.isPlacesShown()) {
                 befriend.places.updatePlacesOpen();
             } else if (befriend.activities.isCreateActivityShown()) {
                 //updates time on selected obj for createActivity

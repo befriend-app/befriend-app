@@ -560,7 +560,7 @@ befriend.activities = {
         //hide display places after transition
         setTimeout(async function () {
             //hide display places/overlay
-            befriend.places.toggleDisplayPlaces(false);
+            befriend.places.activity.toggleDisplayPlaces(false);
         }, befriend.variables.create_activity_transition_ms);
     },
     getCurrentActivityType: function () {
@@ -1216,7 +1216,7 @@ befriend.activities = {
 
                         // only show places when there are no level 3 categories
                         if (!level_2_activity.sub || !Object.keys(level_2_activity.sub).length) {
-                            befriend.places.displayPlaces(befriend.activities.selected.level_2);
+                            befriend.places.activity.displayPlaces(befriend.activities.selected.level_2);
 
                             setTimeout(function () {
                                 removeClassEl('active', el);
@@ -1370,7 +1370,7 @@ befriend.activities = {
                         addClassEl('active', this);
                         befriend.activities.selected.level_3 = level_3_activity;
 
-                        befriend.places.displayPlaces(befriend.activities.selected.level_3);
+                        befriend.places.activity.displayPlaces(befriend.activities.selected.level_3);
 
                         setTimeout(function () {
                             removeClassEl('active', el);

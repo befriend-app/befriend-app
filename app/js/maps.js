@@ -313,7 +313,7 @@ befriend.maps = {
         }
 
         //do not update map when places or create new activity is shown
-        if (befriend.places.isPlacesShown() || befriend.activities.isCreateActivityShown()) {
+        if (befriend.places.activity.isPlacesShown() || befriend.activities.isCreateActivityShown()) {
             return;
         }
 
