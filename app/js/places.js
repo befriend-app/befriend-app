@@ -12,6 +12,7 @@ befriend.places = {
         },
         setAutoComplete: function (places, skip_dropdown) {
             befriend.places.search.setAutoCompleteData(places);
+            befriend.places.setIsOpen(places);
             befriend.places.search.autoCompleteSuggestions(places, skip_dropdown);
         },
         autoCompleteSuggestions: function (places, skip_dropdown) {
@@ -26,6 +27,7 @@ befriend.places = {
                     name: ``,
                     distance: ``,
                     location: ``,
+                    hours: ``,
                     full: ``,
                 };
 
@@ -73,6 +75,14 @@ befriend.places = {
                     }
 
                     place_html.distance = `<div class="distance">${distance_html}</div>`;
+                }
+
+                if (place.is_open !== null) {
+                    place_html.hours = `<div class="hours show ${place.is_open ? 'open' : 'closed'}">
+                    <div class="status">${place.is_open ? 'Open' : 'Closed'}</div>
+                </div>`;
+                } else {
+                    place_html.hours = '<div class="hours"></div>';
                 }
 
                 place_html.full = `
@@ -214,7 +224,7 @@ befriend.places = {
                 befriend.places.activity.data.obj[place.fsq_place_id] = place;
             }
 
-            befriend.places.activity.setIsOpen();
+            befriend.places.setIsOpen(befriend.places.activity.data.items);
 
             befriend.places.activity.data.items.sort(function (a, b) {
                 const valA = a.is_open;
@@ -478,8 +488,6 @@ befriend.places = {
                     continue;
                 }
 
-                addClassEl('show', hours_el);
-
                 if (place_data.is_open) {
                     hours_el.innerHTML = `<div class="status">Open</div>`;
 
@@ -489,57 +497,18 @@ befriend.places = {
 
                     addClassEl('closed', hours_el);
                 }
-            }
-        },
-        setIsOpen: function () {
-            let activity_time = befriend.when.getCurrentlySelectedDateTime();
 
-            let day_of_week_int = activity_time.day();
+                let place_hours = befriend.places.getPlaceHours(place_data);
 
-            for (let place_data of befriend.places.activity.data.items) {
-                if (!place_data.hours || !place_data.hours.length) {
-                    place_data.is_open = null;
-                    continue;
+                if(place_hours) {
+                    hours_el.innerHTML += `<div class="open-hours">${place_hours}</div>`;
                 }
 
-                let place_hours;
-
-                for (let hours of place_data.hours) {
-                    //match dayjs
-                    if (hours.day === 7) {
-                        hours.day = 0;
-                    }
-
-                    if (hours.day === day_of_week_int) {
-                        place_hours = hours;
-                        break;
-                    }
-                }
-
-                if (!place_hours) {
-                    place_data.is_open = null;
-                    continue;
-                }
-
-                let openHour = parseInt(place_hours.open.substring(0, 2));
-                let closeHour = parseInt(place_hours.close.substring(0, 2));
-
-                let open_time_date = activity_time
-                    .startOf('date')
-                    .hour(openHour)
-                    .minute(parseFloat(place_hours.open.substring(2, 4)));
-                let close_time_date = activity_time
-                    .startOf('date')
-                    .hour(closeHour)
-                    .minute(parseFloat(place_hours.close.substring(2, 4)));
-
-                place_data.is_open =
-                    activity_time.valueOf() > open_time_date.valueOf() &&
-                    activity_time.valueOf() < close_time_date.valueOf();
+                addClassEl('show', hours_el);
             }
         },
         updatePlacesOpen: function () {
-            befriend.places.activity.setIsOpen();
+            befriend.places.setIsOpen(befriend.places.activity.data.items);
             befriend.places.activity.setPlacesHours();
         },
         hidePlaces: function () {
@@ -552,6 +521,54 @@ befriend.places = {
         isPlacesShown: function () {
             return elHasClass(document.documentElement, befriend.classes.placesShown);
         },
+    },
+    setIsOpen: function (places) {
+        if (!places) return;
+
+        let activity_time = befriend.when.getCurrentlySelectedDateTime();
+        let day_of_week_int = activity_time.day();
+
+        for (let place_data of places) {
+            if (!place_data.hours || !place_data.hours.length) {
+                place_data.is_open = null;
+                continue;
+            }
+
+            let place_hours;
+
+            for (let hours of place_data.hours) {
+                //match dayjs
+                if (hours.day === 7) {
+                    hours.day = 0;
+                }
+
+                if (hours.day === day_of_week_int) {
+                    place_hours = hours;
+                    break;
+                }
+            }
+
+            if (!place_hours) {
+                place_data.is_open = null;
+                continue;
+            }
+
+            let openHour = parseInt(place_hours.open.substring(0, 2));
+            let closeHour = parseInt(place_hours.close.substring(0, 2));
+
+            let open_time_date = activity_time
+                .startOf('date')
+                .hour(openHour)
+                .minute(parseFloat(place_hours.open.substring(2, 4)));
+            let close_time_date = activity_time
+                .startOf('date')
+                .hour(closeHour)
+                .minute(parseFloat(place_hours.close.substring(2, 4)));
+
+            place_data.is_open =
+                activity_time.valueOf() > open_time_date.valueOf() &&
+                activity_time.valueOf() < close_time_date.valueOf();
+        }
     },
     getPlace: function (place_id) {
         return befriend.places.activity.data.obj[place_id] || befriend.places.search.autoComplete.obj[place_id];
@@ -664,6 +681,40 @@ befriend.places = {
         html += `<div class="locality">${structured.locatity}, ${structured.region}</div>`;
 
         return html;
+    },
+    getPlaceHours: function (place) {
+        if(!place.hours) {
+            return null;
+        }
+
+        function formatTimeString(timeStr) {
+            const hours = parseInt(timeStr.substring(0, 2));
+            const minutes = parseInt(timeStr.substring(2));
+
+            let period = hours >= 12 ? 'pm' : 'am';
+            let hour12 = hours % 12;
+            if (hour12 === 0) hour12 = 12;
+
+            if (minutes === 0) {
+                return `${hour12}${period}`;
+            }
+
+            return `${hour12}:${minutes.toString().padStart(2, '0')}${period}`;
+        }
+
+        //get hours for day, Monday = 1, Tuesday = 2, Sunday = 7
+        let day = new Date().getDay();
+
+        let dayHours = place.hours.find(item => item.day === day);
+
+        if(!dayHours) {
+            return null;
+        }
+
+        const openTime = formatTimeString(dayHours.open);
+        const closeTime = formatTimeString(dayHours.close);
+
+        return `${openTime} - ${closeTime}`;
     },
     events: {
         init: function () {
