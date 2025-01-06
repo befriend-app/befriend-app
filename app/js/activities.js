@@ -750,6 +750,20 @@ befriend.activities = {
             updateMessage(new_when_str);
         }
     },
+    getFilterList: function () {
+        let filters = befriend.filters.data.filters;
+
+        let html = '';
+
+        //networks
+        let networkFilter = filters.networks;
+
+        if(networkFilter?.is_active && networkFilter.is_send) {
+            debugger;
+        }
+
+        return html;
+    },
     draft: {
         create: function (data) {
             befriend.activities.data.draft = data;
@@ -1067,7 +1081,7 @@ befriend.activities = {
                         befriend.activities.selected.level_2 = null;
                         befriend.activities.selected.level_3 = null;
 
-                        befriend.places.hidePlaces();
+                        befriend.places.activity.hidePlaces();
 
                         return;
                     } else {

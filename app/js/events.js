@@ -167,7 +167,7 @@ befriend.events = {
                 addClassEl('active', viewEl);
 
                 //hide any overlays on footer nav
-                befriend.places.toggleAutoComplete(false);
+                befriend.places.search.toggleAutoComplete(false);
                 befriend.places.activity.toggleDisplayPlaces(false);
                 befriend.me.toggleSectionOptions(false);
 

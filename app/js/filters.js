@@ -395,6 +395,7 @@ befriend.filters = {
                 if (!sectionEl) continue;
 
                 const sectionToggle = sectionEl.querySelector('.section-top .toggle');
+
                 if (!sectionToggle) continue;
 
                 // Check if we have filter data for this section
@@ -2943,7 +2944,11 @@ befriend.filters = {
             // If no filter data exists yet, create initial state with verified networks selected
             if (typeof filter_data?.is_all_verified === 'undefined') {
                 if (!filter_data) {
-                    filter_data = befriend.filters.data.filters.networks = {};
+                    filter_data = befriend.filters.data.filters.networks = {
+                        is_active: true,
+                        is_send: true,
+                        is_receive: true
+                    };
                 }
 
                 if (!filter_data?.items || !Object.keys(filter_data?.items).length) {

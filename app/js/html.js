@@ -748,7 +748,12 @@ befriend.html = {
         friends_el.querySelector('.quantity').querySelector('.value').innerHTML =
             befriend.friends.activity_qty;
 
-        //set filters
+        //show filters
+        let filters_html = befriend.activities.getFilterList();
+
+        filters_el.querySelector('.info').innerHTML = filters_html ?
+            `<div class="active-filters">${filters_html}</div>` :
+            `<div class="no-filters">No active filters</div>`;
 
         //data for activity
         befriend.activities.draft.create({
