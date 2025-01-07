@@ -456,7 +456,9 @@ befriend.filters = {
                 }
 
                 // Skip send/receive toggles
-                if (toggle.closest('.send-receive')) continue;
+                if (toggle.closest('.send-receive')) {
+                    continue;
+                }
 
                 if (filterData && !filterData.is_active) {
                     removeClassEl('active', toggle);
@@ -549,7 +551,6 @@ befriend.filters = {
         },
     },
     sendReceive: {
-        data: {},
         init: function () {
             this.events();
             this.set();
@@ -636,15 +637,19 @@ befriend.filters = {
             }
         },
         save: async function (filterToken, optionType, isEnabled) {
-            if (!this.data.sendReceive) {
-                this.data.sendReceive = {};
-            }
-            if (!this.data.sendReceive[filterToken]) {
-                this.data.sendReceive[filterToken] = {};
+            let filters = befriend.filters.data.filters;
+
+            let filter = filters[filterToken];
+
+            if (!filter) {
+                filter = filters[filterToken] = {};
             }
 
-            // Save state
-            this.data.sendReceive[filterToken][optionType] = isEnabled;
+            if(optionType === 'send') {
+                filter.is_send = isEnabled;
+            } else if(optionType === 'receive') {
+                filter.is_receive = isEnabled;
+            }
 
             try {
                 await befriend.auth.put('/filters/send-receive', {
@@ -4339,10 +4344,14 @@ befriend.filters = {
                         }
 
                         try {
-                            await befriend.auth.put('/filters/gender', {
+                            let r = await befriend.auth.put('/filters/gender', {
                                 gender_token: genderToken,
                                 active: !wasSelected,
                             });
+
+                            if(r.data?.data) {
+                                befriend.filters.data.filters['genders'] = r.data.data;
+                            }
 
                             if(befriend.filters.isSectionActive('genders')) {
                                 befriend.filters.matches.updateCounts();

@@ -867,6 +867,61 @@ befriend.activities = {
             }
         }
 
+        let ages_html = '';
+        let agesFilter = filters.ages;
+
+        if (!agesFilter || agesFilter?.is_active) {
+            if (typeof agesFilter?.is_send === 'undefined' || agesFilter.is_send) {
+                let ageRange = `${befriend.filters.age.current.min} - ${befriend.filters.age.current.max}`;
+
+                if(befriend.filters.age.current.max === befriend.filters.age.max) {
+                    ageRange += '+';
+                }
+
+                ages_html = `<div class="filter ages">
+                            <div class="filter-name">Age</div>
+                            <div class="filter-value">${ageRange}</div>
+                        </div>`;
+
+                html += ages_html;
+            }
+        }
+
+        // Gender filter section
+        let genders_html = '';
+        let gendersFilter = filters.genders;
+
+        if (!gendersFilter || gendersFilter?.is_active) {
+            if (typeof gendersFilter?.is_send === 'undefined' || gendersFilter.is_send) {
+                let selectedGenders = [];
+
+                if (gendersFilter?.items) {
+                    const activeGenders = Object.values(gendersFilter.items).filter(
+                        item => !item.is_negative && item.is_active
+                    );
+
+                    for (let gender of activeGenders) {
+                        const genderData = befriend.me.data.genders.find(g => g.id === gender.gender_id);
+                        if (genderData) {
+                            selectedGenders.push(genderData.name);
+                        }
+                    }
+                } else {
+                    selectedGenders.push('Any');
+                }
+
+                // Create display string
+                let genderDisplay = selectedGenders.length > 0 ? selectedGenders.join(', ') : 'Any';
+
+                genders_html = `<div class="filter genders">
+                            <div class="filter-name">Gender</div>
+                            <div class="filter-value">${genderDisplay}</div>
+                        </div>`;
+
+                html += genders_html;
+            }
+        }
+
         return html;
     },
     draft: {
