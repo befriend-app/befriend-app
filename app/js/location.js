@@ -11,6 +11,17 @@ befriend.location = {
         console.log('[init] Location');
 
         return new Promise(async (resolve, reject) => {
+            try {
+                await befriend.location.getLocation();
+                resolve();
+            } catch(e) {
+                console.error(e);
+                return reject();
+            }
+        });
+    },
+    getLocation: function () {
+        return new Promise(async (resolve, reject) => {
             function getLocation() {
                 const geoLocationOptions = {};
 
@@ -46,7 +57,7 @@ befriend.location = {
 
             function geoLocationError(err) {
                 console.error(err);
-                return reject(err);
+                reject(err);
             }
 
             getLocation();
