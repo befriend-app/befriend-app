@@ -827,10 +827,80 @@ html.#{$class_create_activity_shown} {
                                 font-weight: 500;
                                 font-size: 14px;
                                 margin-bottom: 3px;
+
+                                .small {
+                                    font-size: 11px;
+                                }
                             }
 
                             .filter-value {
                                 font-size: 12px;
+                                display: flex;
+                                gap: 4px 0;
+                                flex-direction: column;
+                            }
+
+                            .item {
+                                display: flex;
+                                position: relative;
+                                height: 20px;
+                                gap: 0 5px;
+                            }
+
+                            .review-rating {
+                                $dim: 20px;
+                                width: $dim;
+                                height: $dim;
+                                border-radius: 50%;
+                                background-color: $brand_color_a;
+                                color: white;
+                                @include flex-center-col;
+                                font-size: 9px;
+                                transform: translate(0, -1px);
+                                //left: 60px;
+                                //position: absolute;
+                            }
+
+                            .importance {
+                                $dim: 16px;
+                                width: $dim;
+                                height: $dim;
+                                border-radius: 50%;
+                                background-color: $brand_color_a;
+                                color: white;
+                                @include flex-center-col;
+                                font-size: 11px;
+                                transform: translate(-1px, -1px);
+                            }
+
+                            .category {
+                                display: flex;
+                                flex-direction: column;
+
+                                margin-bottom: 10px;
+
+                                &:last-of-type {
+                                    margin-bottom: 0;
+                                }
+
+                                .category-name {
+                                    font-size: 14px;
+                                }
+                            }
+
+
+                            &.with-importance {
+                                .filter-value {
+                                    display: flex;
+                                    flex-direction: column;
+                                    gap: 6px 0;
+                                }
+
+                                .item {
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 0 6px;
+                                }
                             }
                         }
                     }

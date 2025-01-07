@@ -758,71 +758,67 @@ befriend.activities = {
         let networks_html = '';
         let networkFilter = filters.networks;
 
-        if(!networkFilter || networkFilter?.is_active) {
-            if(typeof networkFilter?.is_send === 'undefined' || networkFilter.is_send) {
-                let selectedName = '';
+        if(networkFilter?.is_active && networkFilter.is_send) {
+            let selectedName = '';
 
-                if (networkFilter.is_any_network) {
-                    selectedName = 'Any Network';
-                } else if(networkFilter.is_all_verified) {
-                    selectedName = 'Any Verified Network';
-                } else if (networkFilter.items) {
-                    const activeNetworks = Object.values(networkFilter.items).filter(
-                        (item) => item.is_active && !item.deleted,
-                    );
+            if (networkFilter.is_any_network) {
+                selectedName = 'Any Network';
+            } else if(networkFilter.is_all_verified) {
+                selectedName = 'Any Verified Network';
+            } else if (networkFilter.items) {
+                const activeNetworks = Object.values(networkFilter.items).filter(
+                    (item) => item.is_active && !item.deleted,
+                );
 
-                    selectedName = `${activeNetworks.length} Network${activeNetworks.length > 1 ? 's' : ''}`;
-                }
+                selectedName = `${activeNetworks.length} Network${activeNetworks.length > 1 ? 's' : ''}`;
+            }
 
-                networks_html = `<div class="filter networks">
+            networks_html = `<div class="filter networks">
                                 <div class="filter-name">Networks</div>
                                 <div class="filter-value">${selectedName}</div>
                             </div>`;
 
-                html += networks_html;
-            }
+            html += networks_html;
         }
 
         let reviews_html = '';
         let reviewsFilter = filters.reviews;
 
-        if(!reviewsFilter || reviewsFilter.is_active) {
-            if(typeof reviewsFilter?.is_send === 'undefined' || reviewsFilter.is_send) {
-                let review_items = [];
+        if(reviewsFilter.is_active && reviewsFilter.is_send) {
+            let review_items = [];
 
-                if(!filters.reviews_new || filters.reviews_new.is_active && filters.reviews_new.is_send) {
-                    review_items.push(`Match with new members`);
-                }
+            if(!filters.reviews_new || filters.reviews_new.is_active && filters.reviews_new.is_send) {
+                review_items.push(`Match with new members`);
+            }
 
-                for(let k in befriend.filters.reviews.ratings) {
-                    let d = befriend.filters.reviews.ratings[k];
+            for(let k in befriend.filters.reviews.ratings) {
+                let d = befriend.filters.reviews.ratings[k];
 
-                    let filter = filters[d.token];
+                let filter = filters[d.token];
 
-                    if(filter?.is_active) {
-                        if(typeof filter.is_send === 'undefined' || filter.is_send) {
-                            review_items.push(`${d.name}: ${d.current_rating}`);
-                        }
+                if(filter?.is_active) {
+                    if(typeof filter.is_send === 'undefined' || filter.is_send) {
+                        review_items.push(`${d.name} <span class="review-rating">${d.current_rating}</span>`);
                     }
                 }
+            }
 
-                if(review_items.length) {
-                    let items = review_items.map(item => `<div class="item">${item}</div>`).join('\n');
+            if(review_items.length) {
+                let items = review_items.map(item => `<div class="item review-item">${item}</div>`).join('\n');
 
-                    reviews_html = `<div class="filter reviews">
+                reviews_html = `<div class="filter reviews">
                                     <div class="filter-name">Reviews</div>
                                     <div class="filter-value">${items}</div>
                                 </div>`;
 
-                    html += reviews_html;
-                }
+                html += reviews_html;
             }
         }
 
         let verifications_html = '';
         let verificationsFilter = filters.verifications;
 
-        if (!verificationsFilter || verificationsFilter.is_active) {
+        if (verificationsFilter.is_active) {
             let filter_items = [];
 
             const inPersonFilter = filters.verification_in_person;
@@ -856,71 +852,659 @@ befriend.activities = {
         let distance_html = '';
         let distanceFilter = filters.distance;
 
-        if(!distanceFilter || distanceFilter.is_active) {
-            if(typeof distanceFilter?.is_send === 'undefined' || distanceFilter.is_send) {
-                distance_html = `<div class="filter distance">
-                                <div class="filter-name">Distance</div>
+        if(distanceFilter.is_active && distanceFilter.is_send) {
+            distance_html = `<div class="filter distance">
+                                <div class="filter-name">Distance <span class="small">(max)</span></div>
                                 <div class="filter-value">${befriend.filters.distance.current} ${befriend.filters.distance.unit}</div>
                             </div>`;
 
-                html += distance_html;
-            }
+            html += distance_html;
         }
 
         let ages_html = '';
         let agesFilter = filters.ages;
 
-        if (!agesFilter || agesFilter?.is_active) {
-            if (typeof agesFilter?.is_send === 'undefined' || agesFilter.is_send) {
-                let ageRange = `${befriend.filters.age.current.min} - ${befriend.filters.age.current.max}`;
+        if (agesFilter?.is_active && agesFilter.is_send) {
+            let ageRange = `${befriend.filters.age.current.min} - ${befriend.filters.age.current.max}`;
 
-                if(befriend.filters.age.current.max === befriend.filters.age.max) {
-                    ageRange += '+';
-                }
+            if(befriend.filters.age.current.max === befriend.filters.age.max) {
+                ageRange += '+';
+            }
 
-                ages_html = `<div class="filter ages">
+            ages_html = `<div class="filter ages">
                             <div class="filter-name">Age</div>
                             <div class="filter-value">${ageRange}</div>
                         </div>`;
 
-                html += ages_html;
-            }
+            html += ages_html;
         }
 
         // Gender filter section
         let genders_html = '';
         let gendersFilter = filters.genders;
 
-        if (!gendersFilter || gendersFilter?.is_active) {
-            if (typeof gendersFilter?.is_send === 'undefined' || gendersFilter.is_send) {
-                let selectedGenders = [];
+        if (gendersFilter?.is_active && gendersFilter.is_send) {
+            let selectedGenders = [];
 
-                if (gendersFilter?.items) {
-                    const activeGenders = Object.values(gendersFilter.items).filter(
-                        item => !item.is_negative && item.is_active
-                    );
+            if (gendersFilter?.items) {
+                const activeGenders = Object.values(gendersFilter.items).filter(
+                    item => !item.is_negative && item.is_active
+                );
 
-                    for (let gender of activeGenders) {
-                        const genderData = befriend.me.data.genders.find(g => g.id === gender.gender_id);
-                        if (genderData) {
-                            selectedGenders.push(genderData.name);
-                        }
+                for (let gender of activeGenders) {
+                    const genderData = befriend.me.data.genders.find(g => g.id === gender.gender_id);
+                    if (genderData) {
+                        selectedGenders.push(genderData.name);
                     }
-                } else {
-                    selectedGenders.push('Any');
                 }
+            } else {
+                selectedGenders.push('Any');
+            }
 
-                // Create display string
-                let genderDisplay = selectedGenders.length > 0 ? selectedGenders.join(', ') : 'Any';
+            // Create display string
+            let genderDisplay = selectedGenders.length > 0 ? selectedGenders.join(', ') : 'Any';
 
-                genders_html = `<div class="filter genders">
+            genders_html = `<div class="filter genders">
                             <div class="filter-name">Gender</div>
                             <div class="filter-value">${genderDisplay}</div>
                         </div>`;
 
-                html += genders_html;
-            }
+            html += genders_html;
         }
+
+        let movies_html = '';
+        let moviesFilter = filters.movies;
+
+        if (moviesFilter?.is_active && moviesFilter.is_send) {
+            let selectedMovies = [];
+
+            if (moviesFilter?.items) {
+                const activeMovies = Object.values(moviesFilter.items).filter(
+                    item => item.is_active && !item.deleted
+                );
+
+                if (activeMovies.length > 0) {
+                    selectedMovies = activeMovies.map(movie => ({
+                        name: movie.name,
+                        importance: movie.importance || befriend.filters.sections.movies.importance.default
+                    }));
+                }
+            }
+
+            let moviesDisplay = selectedMovies.length > 0
+                ? `${selectedMovies.length} Movie${selectedMovies.length > 1 ? 's' : ''}`
+                : 'Any';
+
+            movies_html = `<div class="filter movies with-importance">
+                            <div class="filter-name">Movies</div>
+                            <div class="filter-value">
+                                ${selectedMovies.length > 0
+                ? selectedMovies.map(movie => `<div class="item">
+                                                    <div class="name">${movie.name}</div>
+                                                    <div class="importance">${movie.importance}</div>
+
+                                                  </div>`).join('\n')
+                : moviesDisplay}
+                            </div>
+                        </div>`;
+
+            html += movies_html;
+        }
+
+        let tv_shows_html = '';
+        let tvShowsFilter = filters.tv_shows;
+
+        if (tvShowsFilter?.is_active && tvShowsFilter.is_send) {
+            let selectedShows = [];
+
+            if (tvShowsFilter?.items) {
+                const activeShows = Object.values(tvShowsFilter.items).filter(
+                    item => item.is_active && !item.deleted
+                );
+
+                if (activeShows.length > 0) {
+                    selectedShows = activeShows.map(show => ({
+                        name: show.name,
+                        importance: show.importance || befriend.filters.sections.tv_shows.importance.default
+                    }));
+                }
+            }
+
+            let showsDisplay = selectedShows.length > 0
+                ? `${selectedShows.length} TV Show${selectedShows.length > 1 ? 's' : ''}`
+                : 'Any';
+
+            tv_shows_html = `<div class="filter tv-shows with-importance">
+                            <div class="filter-name">TV Shows</div>
+                            <div class="filter-value">
+                                ${selectedShows.length > 0
+                ? selectedShows.map(show => `<div class="item">
+                                                    <div class="name">${show.name}</div>
+                                                    <div class="importance">${show.importance}</div>
+                                                  </div>`).join('\n')
+                : showsDisplay}
+                            </div>
+                        </div>`;
+
+            html += tv_shows_html;
+        }
+
+        let sports_html = '';
+        let sportsFilter = filters.sports;
+
+        if (sportsFilter?.is_active && sportsFilter.is_send) {
+            let sportsByType = {
+                teams: [],
+                leagues: [],
+                play: []
+            };
+
+            if (sportsFilter?.items) {
+                const activeSports = Object.values(sportsFilter.items).filter(
+                    item => item.is_active && !item.deleted
+                );
+
+                // Sort sports into their respective categories
+                for(let sport of activeSports) {
+                    if (sport.table_key && sportsByType[sport.table_key]) {
+                        sportsByType[sport.table_key].push({
+                            name: sport.name,
+                            importance: sport.importance || befriend.filters.sections.sports.importance.default
+                        });
+                    }
+                }
+            }
+
+            const totalSports = Object.values(sportsByType).reduce(
+                (total, sports) => total + sports.length, 0
+            );
+
+            let sportsDisplay = totalSports > 0
+                ? `${totalSports} Sport${totalSports > 1 ? 's' : ''}`
+                : 'Any';
+
+            let categoriesHtml = '';
+            
+            const categories = [
+                { key: 'teams', name: 'Teams' },
+                { key: 'leagues', name: 'Leagues' },
+                { key: 'play', name: 'Play' }
+            ];
+
+            for(let category of categories) {
+                const sports = sportsByType[category.key];
+
+                if (sports.length > 0) {
+                    categoriesHtml += `
+                            <div class="category">
+                                <div class="category-name">${category.name}</div>
+                                ${sports.map(sport => `
+                                    <div class="item">
+                                        <div class="name">${sport.name}</div>
+                                        <div class="importance">${sport.importance}</div>
+                                    </div>
+                                `).join('\n')}
+                            </div>
+                        `;
+                }
+            }
+
+            sports_html = `<div class="filter sports with-importance">
+                            <div class="filter-name">Sports</div>
+                            <div class="filter-value">
+                                ${totalSports > 0 ? categoriesHtml : sportsDisplay}
+                            </div>
+                        </div>`;
+
+            html += sports_html;
+        }
+
+        let music_html = '';
+        let musicFilter = filters.music;
+
+        if (musicFilter?.is_active && musicFilter.is_send) {
+            let musicByType = {
+                genres: [],
+                artists: []
+            };
+
+            if (musicFilter?.items) {
+                const activeMusic = Object.values(musicFilter.items).filter(
+                    item => item.is_active && !item.deleted
+                );
+
+                // Sort music into their respective categories
+                for(let item of activeMusic) {
+                    if (item.table_key && musicByType[item.table_key]) {
+                        musicByType[item.table_key].push({
+                            name: item.name,
+                            importance: item.importance || befriend.filters.sections.music.importance.default
+                        });
+                    }
+                }
+            }
+
+            const totalMusic = Object.values(musicByType).reduce(
+                (total, music) => total + music.length, 0
+            );
+
+            let musicDisplay = totalMusic === 0 ? 'Any' : '';
+
+            let categoriesHtml = '';
+
+            const categories = [
+                { key: 'genres', name: 'Genres' },
+                { key: 'artists', name: 'Artists' },
+            ];
+
+            for(let category of categories) {
+                const music = musicByType[category.key];
+
+                if (music.length > 0) {
+                    categoriesHtml += `
+                            <div class="category">
+                                <div class="category-name">${category.name}</div>
+                                ${music.map(item => `
+                                    <div class="item">
+                                        <div class="name">${item.name}</div>
+                                        <div class="importance">${item.importance}</div>
+                                    </div>
+                                `).join('\n')}
+                            </div>
+                        `;
+                }
+            }
+
+            music_html = `<div class="filter music with-importance">
+                            <div class="filter-name">Music</div>
+                            <div class="filter-value">
+                                ${totalMusic > 0 ? categoriesHtml : musicDisplay}
+                            </div>
+                        </div>`;
+
+            html += music_html;
+        }
+
+        let instruments_html = '';
+        let instrumentsFilter = filters.instruments;
+
+        if (instrumentsFilter?.is_active && instrumentsFilter.is_send) {
+            let selectedInstruments = [];
+
+            if (instrumentsFilter?.items) {
+                const activeInstruments = Object.values(instrumentsFilter.items).filter(
+                    item => item.is_active && !item.deleted
+                );
+
+                if (activeInstruments.length > 0) {
+                    selectedInstruments = activeInstruments.map(instrument => ({
+                        name: instrument.name,
+                        importance: instrument.importance || befriend.filters.sections.instruments.importance.default
+                    }));
+                }
+            }
+
+            let instrumentsDisplay = selectedInstruments.length === 0 ? 'Any' : '';
+
+            instruments_html = `<div class="filter instruments with-importance">
+                        <div class="filter-name">Instruments</div>
+                        <div class="filter-value">
+                            ${selectedInstruments.length > 0
+                ? selectedInstruments.map(instrument => `<div class="item">
+                                                    <div class="name">${instrument.name}</div>
+                                                    <div class="importance">${instrument.importance}</div>
+                                                  </div>`).join('\n')
+                : instrumentsDisplay}
+                        </div>
+                    </div>`;
+
+            html += instruments_html;
+        }
+
+        let schools_html = '';
+        let schoolsFilter = filters.schools;
+
+        if (schoolsFilter?.is_active && schoolsFilter.is_send) {
+            let selectedSchools = [];
+
+            if (schoolsFilter?.items) {
+                const activeSchools = Object.values(schoolsFilter.items).filter(
+                    item => item.is_active && !item.deleted
+                );
+
+                if (activeSchools.length > 0) {
+                    selectedSchools = activeSchools.map(school => ({
+                        name: school.name,
+                        importance: school.importance || befriend.filters.sections.schools.importance.default
+                    }));
+                }
+            }
+
+            let schoolsDisplay = selectedSchools.length === 0 ? 'Any' : '';
+
+            schools_html = `<div class="filter schools with-importance">
+                        <div class="filter-name">Schools</div>
+                        <div class="filter-value">
+                            ${selectedSchools.length > 0
+                ? selectedSchools.map(school => `<div class="item">
+                                                    <div class="name">${school.name}</div>
+                                                    <div class="importance">${school.importance}</div>
+                                                  </div>`).join('\n')
+                : schoolsDisplay}
+                        </div>
+                    </div>`;
+
+            html += schools_html;
+        }
+
+        let work_html = '';
+        let workFilter = filters.work;
+
+        if (workFilter?.is_active && workFilter.is_send) {
+            let workByType = {
+                industries: [],
+                roles: []
+            };
+
+            if (workFilter?.items) {
+                const activeWork = Object.values(workFilter.items).filter(
+                    item => item.is_active && !item.deleted
+                );
+
+                // Sort work into their respective categories
+                for(let item of activeWork) {
+                    if (item.table_key && workByType[item.table_key]) {
+                        workByType[item.table_key].push({
+                            name: item.name,
+                            importance: item.importance || befriend.filters.sections.work.importance.default
+                        });
+                    }
+                }
+            }
+
+            const totalWork = Object.values(workByType).reduce(
+                (total, work) => total + work.length, 0
+            );
+
+            let workDisplay = totalWork === 0 ? 'Any' : '';
+
+            work_html = `<div class="filter work with-importance">
+                    <div class="filter-name">Work</div>
+                    <div class="filter-value">
+                        ${totalWork > 0 ? `
+                            ${Object.entries(workByType).map(([key, items]) =>
+                    items.length > 0 ? `
+                                    <div class="category">
+                                        <div class="category-name">${key.charAt(0).toUpperCase() + key.slice(1)}</div>
+                                        ${items.map(item => `
+                                            <div class="item">
+                                                <div class="name">${item.name}</div>
+                                                <div class="importance">${item.importance}</div>
+                                            </div>
+                                        `).join('\n')}
+                                    </div>
+                                ` : ''
+                ).join('\n')}`
+                : workDisplay}
+                    </div>
+                </div>`;
+
+            html += work_html;
+        }
+
+        let life_stages_html = '';
+        let lifeStagesFilter = filters.life_stages;
+
+        if (lifeStagesFilter?.is_active && lifeStagesFilter.is_send) {
+            let selectedStages = [];
+
+            if (lifeStagesFilter?.items) {
+                const activeStages = Object.values(lifeStagesFilter.items).filter(
+                    item => item.is_active && !item.is_negative && !item.deleted
+                );
+
+                if (activeStages.length > 0) {
+                    selectedStages = activeStages.map(stage => ({
+                        name: stage.name,
+                        importance: stage.importance || befriend.filters.sections.life_stages.importance.default
+                    }));
+                }
+            }
+
+            let stagesDisplay = selectedStages.length === 0 ? 'Any' : '';
+
+            life_stages_html = `<div class="filter life-stages with-importance">
+                            <div class="filter-name">Life Stage</div>
+                            <div class="filter-value">
+                                ${selectedStages.length > 0
+                ? selectedStages.map(stage => `<div class="item">
+                                                        <div class="name">${stage.name}</div>
+                                                        <div class="importance">${stage.importance}</div>
+                                                      </div>`).join('\n')
+                : stagesDisplay}
+                            </div>
+                        </div>`;
+
+            html += life_stages_html;
+        }
+
+        let relationship_status_html = '';
+        let relationshipStatusFilter = filters.relationship_status;
+
+        if (relationshipStatusFilter?.is_active && relationshipStatusFilter.is_send) {
+            let selectedStatuses = [];
+
+            if (relationshipStatusFilter?.items) {
+                const activeStatuses = Object.values(relationshipStatusFilter.items).filter(
+                    item => item.is_active && !item.is_negative && !item.deleted
+                );
+
+                if (activeStatuses.length > 0) {
+                    selectedStatuses = activeStatuses.map(status => ({
+                        name: status.name,
+                        importance: status.importance || befriend.filters.sections.relationship_status.importance.default
+                    }));
+                }
+            }
+
+            let statusDisplay = selectedStatuses.length === 0 ? 'Any' : '';
+
+            relationship_status_html = `<div class="filter relationship-status with-importance">
+                            <div class="filter-name">Relationship Status</div>
+                            <div class="filter-value">
+                                ${selectedStatuses.length > 0
+                ? selectedStatuses.map(status => `<div class="item">
+                                                        <div class="name">${status.name}</div>
+                                                        <div class="importance">${status.importance}</div>
+                                                      </div>`).join('\n')
+                : statusDisplay}
+                            </div>
+                        </div>`;
+
+            html += relationship_status_html;
+        }
+
+        let languages_html = '';
+        let languagesFilter = filters.languages;
+
+        if (languagesFilter?.is_active && languagesFilter.is_send) {
+            let selectedLanguages = [];
+
+            if (languagesFilter?.items) {
+                const activeLanguages = Object.values(languagesFilter.items).filter(
+                    item => item.is_active && !item.deleted
+                );
+
+                if (activeLanguages.length > 0) {
+                    selectedLanguages = activeLanguages.map(language => ({
+                        name: language.name,
+                        importance: language.importance || befriend.filters.sections.languages.importance.default
+                    }));
+                }
+            }
+
+            let languagesDisplay = selectedLanguages.length === 0 ? 'Any' : '';
+
+            languages_html = `<div class="filter languages with-importance">
+                            <div class="filter-name">Languages</div>
+                            <div class="filter-value">
+                                ${selectedLanguages.length > 0
+                ? selectedLanguages.map(language => `<div class="item">
+                                                        <div class="name">${language.name}</div>
+                                                        <div class="importance">${language.importance}</div>
+                                                      </div>`).join('\n')
+                : languagesDisplay}
+                            </div>
+                        </div>`;
+
+            html += languages_html;
+        }
+
+        let politics_html = '';
+        let politicsFilter = filters.politics;
+
+        if (politicsFilter?.is_active && politicsFilter.is_send) {
+            let selectedPolitics = [];
+
+            if (politicsFilter?.items) {
+                const activePolitics = Object.values(politicsFilter.items).filter(
+                    item => item.is_active && !item.is_negative && !item.deleted
+                );
+
+                if (activePolitics.length > 0) {
+                    selectedPolitics = activePolitics.map(politics => ({
+                        name: politics.name,
+                        importance: politics.importance || befriend.filters.sections.politics.importance.default
+                    }));
+                }
+            }
+
+            let politicsDisplay = selectedPolitics.length === 0 ? 'Any' : '';
+
+            politics_html = `<div class="filter politics with-importance">
+                            <div class="filter-name">Politics</div>
+                            <div class="filter-value">
+                                ${selectedPolitics.length > 0
+                ? selectedPolitics.map(politics => `<div class="item">
+                                                        <div class="name">${politics.name}</div>
+                                                        <div class="importance">${politics.importance}</div>
+                                                      </div>`).join('\n')
+                : politicsDisplay}
+                            </div>
+                        </div>`;
+
+            html += politics_html;
+        }
+
+        let religion_html = '';
+        let religionFilter = filters.religion;
+
+        if (religionFilter?.is_active && religionFilter.is_send) {
+            let selectedReligions = [];
+
+            if (religionFilter?.items) {
+                const activeReligions = Object.values(religionFilter.items).filter(
+                    item => item.is_active && !item.is_negative && !item.deleted
+                );
+
+                if (activeReligions.length > 0) {
+                    selectedReligions = activeReligions.map(religion => ({
+                        name: religion.name,
+                        importance: religion.importance || befriend.filters.sections.religion.importance.default
+                    }));
+                }
+            }
+
+            let religionDisplay = selectedReligions.length === 0 ? 'Any' : '';
+
+            religion_html = `<div class="filter religion with-importance">
+                            <div class="filter-name">Religion</div>
+                            <div class="filter-value">
+                                ${selectedReligions.length > 0
+                ? selectedReligions.map(religion => `<div class="item">
+                                                        <div class="name">${religion.name}</div>
+                                                        <div class="importance">${religion.importance}</div>
+                                                      </div>`).join('\n')
+                : religionDisplay}
+                            </div>
+                        </div>`;
+
+            html += religion_html;
+        }
+
+        let drinking_html = '';
+        let drinkingFilter = filters.drinking;
+
+        if (drinkingFilter?.is_active && drinkingFilter.is_send) {
+            let selectedDrinking = [];
+
+            if (drinkingFilter?.items) {
+                const activeDrinking = Object.values(drinkingFilter.items).filter(
+                    item => item.is_active && !item.is_negative && !item.deleted
+                );
+
+                if (activeDrinking.length > 0) {
+                    selectedDrinking = activeDrinking.map(drinking => ({
+                        name: drinking.name,
+                        importance: drinking.importance || befriend.filters.sections.drinking.importance.default
+                    }));
+                }
+            }
+
+            let drinkingDisplay = selectedDrinking.length === 0 ? 'Any' : '';
+
+            drinking_html = `<div class="filter drinking with-importance">
+                            <div class="filter-name">Drinking</div>
+                            <div class="filter-value">
+                                ${selectedDrinking.length > 0
+                ? selectedDrinking.map(drinking => `<div class="item">
+                                                        <div class="name">${drinking.name}</div>
+                                                        <div class="importance">${drinking.importance}</div>
+                                                      </div>`).join('\n')
+                : drinkingDisplay}
+                            </div>
+                        </div>`;
+
+            html += drinking_html;
+        }
+
+        let smoking_html = '';
+        let smokingFilter = filters.smoking;
+
+        if (smokingFilter?.is_active && smokingFilter.is_send) {
+            let selectedSmoking = [];
+
+            if (smokingFilter?.items) {
+                const activeSmoking = Object.values(smokingFilter.items).filter(
+                    item => item.is_active && !item.is_negative && !item.deleted
+                );
+
+                if (activeSmoking.length > 0) {
+                    selectedSmoking = activeSmoking.map(smoking => ({
+                        name: smoking.name,
+                        importance: smoking.importance || befriend.filters.sections.smoking.importance.default
+                    }));
+                }
+            }
+
+            let smokingDisplay = selectedSmoking.length === 0 ? 'Any' : '';
+
+            smoking_html = `<div class="filter smoking with-importance">
+                            <div class="filter-name">Smoking</div>
+                            <div class="filter-value">
+                                ${selectedSmoking.length > 0
+                ? selectedSmoking.map(smoking => `<div class="item">
+                                                        <div class="name">${smoking.name}</div>
+                                                        <div class="importance">${smoking.importance}</div>
+                                                      </div>`).join('\n')
+                : smokingDisplay}
+                            </div>
+                        </div>`;
+
+            html += smoking_html;
+        }
+
+        return html;
 
         return html;
     },
