@@ -1,5 +1,7 @@
 befriend.friends = {
     activity_qty: 1,
+    min: 1,
+    max: 10,
     type: {
         is_new: true,
         is_existing: false,
@@ -14,7 +16,6 @@ befriend.friends = {
     },
     setActivityFriendNum: function (num) {
         befriend.friends.activity_qty = num;
-
         befriend.activities.draft.update('friends.qty', num);
     },
     events: {
@@ -26,7 +27,6 @@ befriend.friends = {
                 } catch (e) {
                     console.error(e);
                 }
-
                 resolve();
             });
         },
@@ -53,60 +53,84 @@ befriend.friends = {
         },
         selectFriendCount: function () {
             return new Promise(async (resolve, reject) => {
-                //slider
-                let personsCount = 1;
-                let sliderRange = document.getElementById('range-num-persons');
+                const container = befriend.els.numPersons.querySelector('.sliders-control');
+                const range = befriend.els.numPersons.querySelector('.slider-range');
+                const thumb = befriend.els.numPersons.querySelector('.thumb');
+                let isDragging = false;
+                let startX, startLeft;
 
-                function updatePosition() {
-                    let widthSubtract = 0;
-
-                    if (window.innerWidth < 450) {
-                        // widthSubtract = 25;
-                    }
-
-                    let width = sliderRange.offsetWidth - widthSubtract;
-
-                    let min = sliderRange.getAttribute('min');
-                    let max = sliderRange.getAttribute('max');
-
-                    let percent = (sliderRange.valueAsNumber - min) / max;
-
-                    let offset = 0;
-
-                    let newPosition = width * percent + offset;
-
-                    rangeSpan.innerHTML = personsCount;
-                    rangeSpan.style.left = `${newPosition}px`;
+                function setPosition(value) {
+                    const percent = (value - befriend.friends.min) / (befriend.friends.max - befriend.friends.min);
+                    const position = percent * container.offsetWidth;
+                    thumb.style.left = `${position}px`;
+                    range.style.width = `${position}px`;
+                    thumb.querySelector('.thumb-value').textContent = Math.round(value);
                 }
 
-                window.addEventListener('resize', function (e) {
-                    updatePosition();
+                function getValueFromPosition(position) {
+                    const percent = position / container.offsetWidth;
+                    return Math.min(
+                        Math.max(
+                            Math.round(percent * (befriend.friends.max - befriend.friends.min) + befriend.friends.min),
+                            befriend.friends.min
+                        ),
+                        befriend.friends.max
+                    );
+                }
+
+                function handleStart(e) {
+                    isDragging = true;
+                    startX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+                    startLeft = parseFloat(thumb.style.left) || 0;
+                    e.preventDefault();
+                }
+
+                function handleMove(e) {
+                    if (!isDragging) return;
+
+                    const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+                    const dx = clientX - startX;
+                    const newLeft = Math.min(Math.max(0, startLeft + dx), container.offsetWidth);
+                    const value = getValueFromPosition(newLeft);
+
+                    befriend.friends.activity_qty = value;
+                    setPosition(value);
+                    befriend.friends.setActivityFriendNum(value);
+                }
+
+                function handleEnd() {
+                    isDragging = false;
+                }
+
+                function handleTrackClick(e) {
+                    const rect = container.getBoundingClientRect();
+                    const clickPosition = e.clientX - rect.left;
+                    const value = getValueFromPosition(clickPosition);
+
+                    befriend.friends.activity_qty = value;
+                    setPosition(value);
+                    befriend.friends.setActivityFriendNum(value);
+                }
+
+                if(isTouchDevice()) {
+                    // Touch events
+                    thumb.addEventListener('touchstart', handleStart);
+                    document.addEventListener('touchmove', handleMove);
+                    document.addEventListener('touchend', handleEnd);
+                } else {
+                    // Mouse events
+                    thumb.addEventListener('mousedown', handleStart);
+                    document.addEventListener('mousemove', handleMove);
+                    document.addEventListener('mouseup', handleEnd);
+                }
+
+                // Track click
+                container.addEventListener('click', handleTrackClick);
+
+                // Initialize position
+                requestAnimationFrame(() => {
+                    setPosition(befriend.friends.activity_qty);
                 });
-
-                window.addEventListener('orientationchange', function (e) {
-                    updatePosition();
-                });
-
-                //set position of number for range
-                let rangeSpan = befriend.els.numPersons.querySelector('.slider span');
-
-                sliderRange.setAttribute('value', personsCount);
-
-                sliderRange.addEventListener('input', function (e) {
-                    let val = this.value;
-
-                    if (!isNumeric(val)) {
-                        return;
-                    }
-
-                    personsCount = parseInt(val);
-
-                    befriend.friends.setActivityFriendNum(personsCount);
-
-                    updatePosition();
-                });
-
-                updatePosition();
 
                 resolve();
             });

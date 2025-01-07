@@ -620,7 +620,6 @@ html.#{$class_confirm_me_action} {
             transition: transform 300ms ease-out;
             transform: translate(0, 0);
             will-change: transform;
-            touch-action: none;
 
             &.is-draggable {
                 z-index: 5;

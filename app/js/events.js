@@ -435,6 +435,9 @@ befriend.events = {
             console.log('on resume');
 
             befriend.is_paused = false;
+
+            //update location and map on re-opening app
+            befriend.location.getLocation();
         }
 
         document.addEventListener('pause', onPause, false);

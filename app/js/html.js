@@ -61,11 +61,14 @@ befriend.html = {
                                 </div>
                                 
                                 <div id="num-persons">
-<!--                                    <div class="sub-section-title"># Persons</div>-->
-                                        
-                                    <div class="slider">
-                                        <span>1</span>
-                                        <input id="range-num-persons" class="range" type="range" value="1" min="1" max="10" step="1">
+                                    <div class="range-container">
+                                        <div class="sliders-control">
+                                            <div class="slider-track"></div>
+                                            <div class="slider-range"></div>
+                                            <div class="thumb">
+                                                <span class="thumb-value">1</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

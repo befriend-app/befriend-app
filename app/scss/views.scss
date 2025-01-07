@@ -74,7 +74,7 @@
             border-bottom-right-radius: 0;
             border-bottom-left-radius: 0;
             text-align: center;
-            background-color: $brand_color_b;
+            background-color: lighten($brand_color_b, 4%);
             box-sizing: border-box;
             @include flex-center-col;
         }

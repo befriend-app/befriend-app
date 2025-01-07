@@ -827,7 +827,7 @@ befriend.me = {
             befriend.me.events.autoComplete();
             befriend.me.events.autoCompleteFilterList();
             befriend.me.events.onActionSelect();
-            befriend.me.events.onUpdateSectionHeight();
+            befriend.me.events.onSectionTop();
             befriend.me.events.onSelectItem();
             befriend.me.events.onSelectOptionItem();
             befriend.me.events.onRemoveItem();
@@ -2395,7 +2395,8 @@ befriend.me = {
                 this.updateSectionPositions(sortedSections);
 
                 requestAnimationFrame(() => {
-                    removeClassEl('is-draggable', reorderEl);
+                    //remove is-draggable from all els
+                    removeElsClass(befriend.els.me.querySelectorAll('.section.is-draggable'), 'is-draggable');
                     reorderEl.style.transform = '';
                 });
             },
@@ -3075,8 +3076,12 @@ befriend.me = {
             }
         },
         onSectionReorder: function () {
-            const TOUCH_DELAY = 80;
-            const MOVE_THRESHOLD = 10;
+            function isSectionOpen(section) {
+                  return !elHasClass(section, 'collapsed');
+            }
+
+            let TOUCH_DELAY = 40; //40 when section closed, 80 when open
+            let MOVE_THRESHOLD = 6 //6 when closed, 3 when open
             let touchTimeout;
             let initialTouchY;
             let hasMoved;
@@ -3104,6 +3109,12 @@ befriend.me = {
 
                         if (!initialTouchY) return;
 
+                        if(isSectionOpen(section)) {
+                            MOVE_THRESHOLD = 3;
+                        } else {
+                            MOVE_THRESHOLD = 6;
+                        }
+
                         const touch = e.touches[0];
                         const moveDistance = Math.abs(touch.clientY - initialTouchY);
 
@@ -3128,7 +3139,6 @@ befriend.me = {
                     }
 
                     // Only handle drag start from section top area
-
                     const sectionTop = section.querySelector('.section-top');
                     if (!sectionTop.contains(target)) return;
 
@@ -3139,6 +3149,13 @@ befriend.me = {
                     initialTouchY = e.touches[0].clientY;
 
                     clearTimeout(touchTimeout);
+
+                    if(isSectionOpen(section)) {
+                        TOUCH_DELAY = 80;
+                    } else {
+                        TOUCH_DELAY = 40;
+                    }
+
                     touchTimeout = setTimeout(function () {
                         if (!hasMoved) {
                             e.preventDefault();
@@ -3336,7 +3353,7 @@ befriend.me = {
                 });
             }
         },
-        onUpdateSectionHeight: function () {
+        onSectionTop: function () {
             let top_els = befriend.els.me.getElementsByClassName('section-top');
 
             for (let i = 0; i < top_els.length; i++) {

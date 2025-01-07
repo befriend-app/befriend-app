@@ -872,15 +872,17 @@ befriend.filters = {
                 }
             }
 
-            // Mouse events
-            thumb.addEventListener('mousedown', handleStart);
-            document.addEventListener('mousemove', handleMove);
-            document.addEventListener('mouseup', handleEnd);
-
-            // Touch events
-            thumb.addEventListener('touchstart', handleStart);
-            document.addEventListener('touchmove', handleMove);
-            document.addEventListener('touchend', handleEnd);
+            if(isTouchDevice()) {
+                // Touch events
+                thumb.addEventListener('touchstart', handleStart);
+                document.addEventListener('touchmove', handleMove);
+                document.addEventListener('touchend', handleEnd);
+            } else {
+                // Mouse events
+                thumb.addEventListener('mousedown', handleStart);
+                document.addEventListener('mousemove', handleMove);
+                document.addEventListener('mouseup', handleEnd);
+            }
 
             // Click track to set value
             container.addEventListener('click', (e) => {
