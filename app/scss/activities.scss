@@ -755,6 +755,7 @@ html.#{$class_create_activity_shown} {
 
                     .location {
                         margin-top: 4px;
+                        font-size: 13px;
                     }
                 }
 
@@ -923,6 +924,16 @@ html.#{$class_create_activity_shown} {
             color: white;
             min-width: 200px;
             @include flex-center;
+
+            svg {
+                fill: white;
+                height: 16px;
+                margin-right: 12px;
+            }
+
+            .text {
+                transform: translateY(-1.5px);
+            }
         }
     }
 }
