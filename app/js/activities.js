@@ -492,8 +492,14 @@ befriend.activities = {
         //set which when was selected coming into the create-activity view
         befriend.when.selected.createActivity = structuredClone(befriend.when.selected.main);
 
-        //set up html and transition logic
+        //set up activity draft, html, and transition logic
         befriend.html.createActivity();
+
+        try {
+            befriend.activities.getMatchCounts();
+        } catch(e) {
+
+        }
 
         let map_el = befriend.els.activityMap;
         let status_bar_height = await befriend.styles.getStatusBarHeight();
@@ -1512,6 +1518,48 @@ befriend.activities = {
         } else {
             removeClassEl('show', befriend.els.createActivitySpinner);
         }
+    },
+    getMatchCounts: function () {
+        return new Promise(async (resolve, reject) => {
+            let matches_el = befriend.els.createActivity.querySelector('.matches-overview');
+            let update_circle_el = matches_el.querySelector('.update-circle');
+            let send_el = matches_el.querySelector('.send');
+            let interests_el = matches_el.querySelector('.interests');
+
+            let ts = timeNow();
+
+            addClassEl('show', update_circle_el);
+
+            try {
+                let response = await befriend.auth.get('/activities/matches');
+
+                if(response.data?.counts) {
+                    send_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.send);
+                    interests_el.querySelector('.count').innerHTML = `
+                                                                                <div class="ultra category">
+                                                                                    <div class="name">Ultra</div>
+                                                                                    <div class="number">${formattedNumberDisplay(response.data.counts.interests.ultra)}</div>
+                                                                                </div>
+                                                                                
+                                                                                <div class="super category">
+                                                                                     <div class="name">Super</div>
+                                                                                     <div class="number">${formattedNumberDisplay(response.data.counts.interests.super)}</div>
+                                                                                </div>
+                                                                            `;
+                }
+            } catch(e) {
+                console.error(e);
+            }
+
+            //show animation for a given duration
+            let transition_duration = 2000;
+
+            let td = timeNow() - ts;
+
+            setTimeout(function () {
+                removeClassEl('show', update_circle_el);
+            }, Math.max(transition_duration - td, 0));
+        });
     },
     draft: {
         create: function (data) {

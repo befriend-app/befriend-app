@@ -465,6 +465,35 @@ befriend.html = {
                                         </div>
                                     </div>
                                     
+                                    <div class="matches section">
+                                        <div class="label">Matches</div>
+                                        
+                                        <div class="info">
+                                            <div class="matches-overview">
+                                                <div class="update-circle">
+                                                    <div class="updating"></div>
+                                                </div>
+                                                
+                                                <div class="matches-container">
+                                                    <div class="match send">
+                                                        <div class="label">
+                                                            <div class="text">Send</div>
+                                                        </div>
+                                                        <div class="count"></div>
+                                                    </div>
+                                                    
+                                                    <div class="match interests">
+                                                        <div class="label">
+                                                            <div class="text">Interests</div>
+                                                        </div>
+                                                        
+                                                        <div class="count"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
                                     <div class="filters section">
                                         <div class="label">Filters</div>
                                         
@@ -478,13 +507,14 @@ befriend.html = {
                         </div>
                         
                         <div class="bottom">
-                            <div id="create-activity-error"></div>
-                            <div id="create-activity-btn">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 511.998 512.0029"><defs><style>.cls-1{fill-rule:evenodd;}</style></defs><path class="cls-1" d="M510.539,36.2574c7.1675-21.5056-13.29-41.9661-34.7956-34.7985L18.8108,153.7717c-25.6598,8.5523-24.8644,45.1188,1.1409,52.5476l222.2321,63.4978,63.4949,222.2321c7.4317,26.0082,43.9953,26.8036,52.5476,1.1409L510.539,36.2574ZM474.7157,56.7382l-142.5848,427.7544-63.373-221.7995L474.7157,56.7382ZM455.2626,37.285l-205.9548,205.9548L27.5111,179.8698,455.2626,37.285Z"/></svg>
-                                <div class="text">Send
+                            <div class="create-activity-container">
+                                <div id="create-activity-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 511.998 512.0029"><defs><style>.create-activity-cls-1{fill-rule:evenodd;}</style></defs><path class="create-activity-cls-1" d="M510.539,36.2574c7.1675-21.5056-13.29-41.9661-34.7956-34.7985L18.8108,153.7717c-25.6598,8.5523-24.8644,45.1188,1.1409,52.5476l222.2321,63.4978,63.4949,222.2321c7.4317,26.0082,43.9953,26.8036,52.5476,1.1409L510.539,36.2574ZM474.7157,56.7382l-142.5848,427.7544-63.373-221.7995L474.7157,56.7382ZM455.2626,37.285l-205.9548,205.9548L27.5111,179.8698,455.2626,37.285Z"/></svg>
+                                    <div class="text">Send</div>
+                                    <div id="create-activity-spinner"></div>
                                 </div>
-                                <div id="create-activity-spinner"></div>
-
+                                
+                                <div id="create-activity-error"></div>
                             </div>
                         </div>
                     </div>
