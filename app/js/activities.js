@@ -373,7 +373,7 @@ befriend.activities = {
     updateDuration: function (duration, update_buttons) {
         befriend.activities.duration.selected = duration;
 
-        befriend.activities.draft.update('duration', duration);
+        befriend.activities.draft.update('duration', duration, true);
 
         //set duration in when string
         befriend.els.createActivity
@@ -511,6 +511,10 @@ befriend.activities = {
         );
 
         //remove prev message
+        //bottom error
+        befriend.activities.toggleActivityError(false);
+
+        //top error
         let message_el = document.getElementById('create-activity-top-message');
 
         message_el.querySelector('.message').style.transition = 'none';
@@ -1531,7 +1535,16 @@ befriend.activities = {
             addClassEl('show', update_circle_el);
 
             try {
-                let response = await befriend.auth.get('/activities/matches');
+                let draft = befriend.activities.data.draft;
+
+                let response = await befriend.auth.get('/activities/matches', {
+                    activity: {
+                        person: draft.person,
+                        duration: draft.duration,
+                        place: draft.place,
+                        when: draft.when,
+                    }
+                });
 
                 if(response.data?.counts) {
                     send_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.send);
@@ -1561,11 +1574,22 @@ befriend.activities = {
             }, Math.max(transition_duration - td, 0));
         });
     },
+    toggleActivityError: function (show, message) {
+        let error_message = document.getElementById('create-activity-error');
+
+        if(show) {
+            error_message.innerHTML = message;
+
+            addClassEl('error', error_message);
+        } else {
+            removeClassEl('error', error_message);
+        }
+    },
     draft: {
         create: function (data) {
             befriend.activities.data.draft = data;
         },
-        update: function (key, value) {
+        update: function (key, value, update_counts) {
             if (!key) {
                 return false;
             }
@@ -1577,6 +1601,10 @@ befriend.activities = {
             }
 
             setNestedValue(draft, key, value);
+
+            if(befriend.activities.isCreateActivityShown() && update_counts) {
+                befriend.activities.getMatchCounts();
+            }
         },
     },
     events: {
@@ -1598,8 +1626,6 @@ befriend.activities = {
             });
         },
         createActivity: function () {
-            let error_message = document.getElementById('create-activity-error');
-
             befriend.els.createActivityBtn.addEventListener('click', async function (e) {
                 if(this._ip) {
                     return false;
@@ -1611,7 +1637,7 @@ befriend.activities = {
                 e.stopPropagation();
 
                 try {
-                    removeClassEl('error', error_message);
+                    befriend.activities.toggleActivityError(false);
 
                     befriend.activities.toggleSpinner(true);
 
@@ -1624,8 +1650,7 @@ befriend.activities = {
                     let error = e.response?.data?.error;
 
                     if(error?.length) {
-                        error_message.innerHTML = error.join(', ') + '.';
-                        addClassEl('error', error_message);
+                        befriend.activities.toggleActivityError(true, error.join(', ') + '.');
                     }
                 }
 
@@ -1837,7 +1862,7 @@ befriend.activities = {
 
                     befriend.activities.draft.update(
                         'travel.mode',
-                        befriend.activities.travel.mode,
+                        befriend.activities.travel.mode
                     );
 
                     befriend.activities.updateWhenAuto();
@@ -1868,6 +1893,7 @@ befriend.activities = {
                     befriend.activities.draft.update(
                         'person.mode',
                         befriend.activities.person.mode,
+                        true
                     );
                 });
             }

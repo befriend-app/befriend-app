@@ -180,7 +180,7 @@ befriend.when = {
 
         befriend.when.selected.main = befriend.when.options[index];
 
-        befriend.activities.draft.update('when', befriend.when.selected.main);
+        befriend.activities.draft.update('when', befriend.when.selected.main, true);
     },
     events: {
         init: function () {

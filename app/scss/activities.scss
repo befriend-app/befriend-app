@@ -819,6 +819,7 @@ html.#{$class_create_activity_shown} {
 
         z-index: 10;
         width: 100%;
+        transform: translateY(8px);
 
         .title {
             font-weight: 400;
@@ -843,7 +844,6 @@ html.#{$class_create_activity_shown} {
             padding: 0;
             gap: 0 $gap_lr;
             justify-content: space-evenly;
-            transform: translateY(8px);
 
             .match {
                 flex-basis: 140px;
@@ -998,7 +998,7 @@ html.#{$class_create_activity_shown} {
             background-color: white;
             border: 1px solid $color_lightgray;
             border-radius: 50%;
-            top: -25px;
+            top: 0;
             left: -10px;
             transition: all 300ms;
             opacity: 0;
