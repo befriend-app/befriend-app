@@ -1505,8 +1505,19 @@ befriend.activities = {
         }
 
         return html;
-
-        return html;
+    },
+    toggleSpinner: function (show) {
+        if (show) {
+            addClassEl('show', befriend.els.createActivitySpinner);
+        } else {
+            if (timeout_ms) {
+                setTimeout(function () {
+                    removeClassEl('show', befriend.els.createActivitySpinner);
+                }, timeout_ms);
+            } else {
+                removeClassEl('show', befriend.els.createActivitySpinner);
+            }
+        }
     },
     draft: {
         create: function (data) {
@@ -1551,9 +1562,9 @@ befriend.activities = {
                 e.preventDefault();
                 e.stopPropagation();
 
-                //todo spinner
-
                 try {
+                    await befriend.activities.toggleSpinner(true);
+
                     let r = await befriend.auth.post('/activities', {
                         activity: befriend.activities.data.draft,
                     });
@@ -1562,6 +1573,8 @@ befriend.activities = {
                 } catch (e) {
                     console.error(e);
                 }
+
+                await befriend.activities.toggleSpinner(false);
             });
         },
         onCreateActivityBack: function () {

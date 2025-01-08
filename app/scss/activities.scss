@@ -786,6 +786,7 @@ html.#{$class_create_activity_shown} {
             color: white;
             min-width: 200px;
             @include flex-center;
+            position: relative;
 
             svg {
                 fill: white;
@@ -795,6 +796,8 @@ html.#{$class_create_activity_shown} {
 
             .text {
                 transform: translateY(-1.5px);
+                position: relative;
+                display: flex;
             }
         }
     }
@@ -951,3 +954,34 @@ html.#{$class_create_activity_shown} {
         }
     }
 }
+
+#create-activity-spinner {
+    $dim: 16px;
+    width: $dim;
+    height: $dim;
+    border: 2px solid white;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+    position: absolute;
+    opacity: 0;
+    transition: all 200ms;
+    z-index: 1000;
+    right: 15px;
+    margin-top: -1px;
+
+    &.show {
+        opacity: 1;
+    }
+
+    @keyframes rotation {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+}
+

@@ -130,9 +130,8 @@ window['befriend'] = {
 
             //todo remove
             setTimeout(function () {
-                fireTouch(befriend.els.footer.querySelector('.nav-item.me'));
+                // fireTouch(befriend.els.footer.querySelector('.nav-item.me'));
             }, 50);
-
 
             resolve();
         });
