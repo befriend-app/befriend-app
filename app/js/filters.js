@@ -29,7 +29,7 @@ befriend.filters = {
             addClassEl('show', update_circle_el);
 
             try {
-                let response = await befriend.auth.get('/matches');
+                let response = await befriend.auth.get('/filters/matches');
 
                 if(response.data?.counts) {
                     befriend.filters.matches.data = response.data;

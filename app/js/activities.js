@@ -1576,7 +1576,7 @@ befriend.activities = {
                     let error = e.response?.data?.error;
 
                     if(error?.length) {
-                        error_message.innerHTML = error.join(', ');
+                        error_message.innerHTML = error.join(', ') + '.';
                         addClassEl('error', error_message);
                     }
                 }
