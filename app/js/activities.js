@@ -1510,13 +1510,7 @@ befriend.activities = {
         if (show) {
             addClassEl('show', befriend.els.createActivitySpinner);
         } else {
-            if (timeout_ms) {
-                setTimeout(function () {
-                    removeClassEl('show', befriend.els.createActivitySpinner);
-                }, timeout_ms);
-            } else {
-                removeClassEl('show', befriend.els.createActivitySpinner);
-            }
+            removeClassEl('show', befriend.els.createActivitySpinner);
         }
     },
     draft: {
@@ -1556,14 +1550,22 @@ befriend.activities = {
             });
         },
         createActivity: function () {
-            let button = befriend.els.createActivityBtn;
+            let error_message = document.getElementById('create-activity-error');
 
-            button.addEventListener('click', async function (e) {
+            befriend.els.createActivityBtn.addEventListener('click', async function (e) {
+                if(this._ip) {
+                    return false;
+                }
+
+                this._ip = true;
+
                 e.preventDefault();
                 e.stopPropagation();
 
                 try {
-                    await befriend.activities.toggleSpinner(true);
+                    removeClassEl('error', error_message);
+
+                    befriend.activities.toggleSpinner(true);
 
                     let r = await befriend.auth.post('/activities', {
                         activity: befriend.activities.data.draft,
@@ -1571,10 +1573,17 @@ befriend.activities = {
 
                     console.log(r);
                 } catch (e) {
-                    console.error(e);
+                    let error = e.response?.data?.error;
+
+                    if(error?.length) {
+                        error_message.innerHTML = error.join(', ');
+                        addClassEl('error', error_message);
+                    }
                 }
 
-                await befriend.activities.toggleSpinner(false);
+                this._ip = false;
+
+                befriend.activities.toggleSpinner(false);
             });
         },
         onCreateActivityBack: function () {

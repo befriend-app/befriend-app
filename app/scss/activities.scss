@@ -773,6 +773,7 @@ html.#{$class_create_activity_shown} {
     }
 
     .bottom {
+        position: relative;
         height: $create_activity_bottom_h;
         box-sizing: border-box;
         border-top: 0.5px solid lighten(black, 40%);
@@ -955,6 +956,27 @@ html.#{$class_create_activity_shown} {
     }
 }
 
+#create-activity-error {
+    $h: 26px;
+    position: absolute;
+    width: 90vw;
+    height: $h;
+    line-height: $h;
+    opacity: 0;
+    background-color: $color_red;
+    color: white;
+    transition: all 200ms;
+    top: 2.5px;
+    border-radius: 4px;
+    font-size: 12px;
+    text-align: center;
+
+    &.error {
+        opacity: 1;
+    }
+
+}
+
 #create-activity-spinner {
     $dim: 16px;
     width: $dim;
@@ -984,4 +1006,3 @@ html.#{$class_create_activity_shown} {
         }
     }
 }
-
