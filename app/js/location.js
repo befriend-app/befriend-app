@@ -112,7 +112,7 @@ befriend.location = {
         befriend.location.toggleResetLocationButton(true);
 
         //re-use previous autocomplete search for new city
-        befriend.places.setPreviousAutoComplete();
+        befriend.places.search.setPreviousAutoComplete();
     },
     toggleResetLocationButton: function (show) {
         if (show) {
@@ -344,7 +344,7 @@ befriend.location = {
                     befriend.location.toggleResetLocationButton(false);
 
                     //re-use previous autocomplete search for device location
-                    befriend.places.setPreviousAutoComplete();
+                    befriend.places.search.setPreviousAutoComplete();
                 });
         },
     },

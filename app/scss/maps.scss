@@ -21,33 +21,6 @@ html.#{$class_create_activity_shown} {
             height: 16px;
         }
 
-        #change-location-btn {
-            z-index: 3;
-            top: $icon_pos_x_y;
-            left: $icon_pos_x_y;
-            position: absolute;
-            font-size: 11px;
-            color: black;
-            border-radius: 6px;
-            background-color: lighten($brand_color_b, 5%);
-            width: fit-content;
-            padding: 6px 12px;
-            border: 0.4px solid darken($brand_color_a, 20%);
-            display: flex;
-            align-items: center;
-            gap: 0 7px;
-            font-weight: 300;
-
-            .icon {
-                .outer {
-                    fill: white;
-                }
-                .inner {
-                    fill: darken($brand_color_b, 5%);
-                }
-            }
-        }
-
         .reset-location {
             position: absolute;
             border: 1px transparent;
@@ -59,7 +32,7 @@ html.#{$class_create_activity_shown} {
             overflow-y: hidden;
             width: fit-content;
             z-index: 3;
-            top: calc(36px + $icon_pos_x_y);
+            top: calc($icon_pos_x_y);
             left: $icon_pos_x_y;
             font-size: 10px;
             @include flex-center-col;

@@ -24,6 +24,8 @@ html.#{$class_create_activity_shown} {
 }
 
 #activities {
+    padding-top: 0 !important;
+
     &.custom-location {
         .reset-location {
             height: 25px !important;

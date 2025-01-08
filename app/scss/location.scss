@@ -10,20 +10,51 @@ html.#{$class_change_location} {
     }
 }
 
+#change-location-btn {
+    z-index: 3;
+    //top: $icon_pos_x_y;
+    //left: $icon_pos_x_y;
+    //position: absolute;
+    font-size: 11px;
+    color: black;
+    border-radius: 6px;
+    background-color: lighten($brand_color_b, 5%);
+    width: fit-content;
+    padding: 6px 12px;
+    border: 0.4px solid darken($brand_color_a, 20%);
+    display: flex;
+    align-items: center;
+    gap: 0 7px;
+    font-weight: 300;
+
+    .icon {
+        .outer {
+            fill: white;
+        }
+        .inner {
+            fill: darken($brand_color_b, 5%);
+        }
+    }
+}
+
 #place-search-location {
     display: flex;
     margin-top: 2px;
-    margin-bottom: 10px;
+    padding: 8px 0;
+
+    .cols {
+        display: flex;
+        flex-grow: 1;
+    }
 
     .left-col {
         display: flex;
         flex-direction: column;
+        justify-content: center;
     }
 
     .right-col {
         margin-left: auto;
-        margin-top: auto;
-        margin-bottom: auto;
     }
 
     .section-title {
