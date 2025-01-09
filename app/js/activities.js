@@ -77,9 +77,10 @@ befriend.activities = {
     types: {
         data: null,
         colors: [
-            '#C70039', // Bold Crimson
             '#FFC300', // Bright Yellow
+            '#C70039', // Bold Crimson
             '#31a663', // Bold Leaf Green
+            '#e0f3fd', // Light Blue
             '#79A881', // Bold Green
             '#D35400', // Bold Carrot Orange
             '#3498DB', // Bold Sky Blue
@@ -316,9 +317,6 @@ befriend.activities = {
         console.log('[init] Activities');
 
         return new Promise(async (resolve, reject) => {
-            //add brand color to top of activity colors
-            befriend.activities.types.colors.unshift(befriend.variables.brand_color_a);
-
             //set activity durations
             befriend.activities.setDurations();
 
@@ -1649,8 +1647,10 @@ befriend.activities = {
                 } catch (e) {
                     let error = e.response?.data?.error;
 
-                    if(error?.length) {
+                    if(Array.isArray(error)) {
                         befriend.activities.toggleActivityError(true, error.join(', ') + '.');
+                    } else {
+                        befriend.activities.toggleActivityError(true, error);
                     }
                 }
 
