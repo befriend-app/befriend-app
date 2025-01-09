@@ -5234,6 +5234,8 @@ befriend.filters = {
 
                 filter_options.innerHTML = html;
                 this.initEvents(section_el);
+
+                befriend.filters.importance.set(filterName);
             },
             initEvents: function (section_el) {
                 const optionButtons = section_el.querySelectorAll(`.button`);
