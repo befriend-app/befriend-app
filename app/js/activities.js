@@ -329,6 +329,15 @@ befriend.activities = {
             resolve();
         });
     },
+    setAppMode: function (mode) {
+        befriend.activities.person.mode = mode;
+
+        befriend.activities.draft.update(
+            'person.mode',
+            mode,
+            true
+        );
+    },
     getActivityTypes: function () {
         return new Promise(async (resolve, reject) => {
             try {
@@ -1888,13 +1897,7 @@ befriend.activities = {
 
                     addClassEl('active', mode_el);
 
-                    befriend.activities.person.mode = mode_el.getAttribute('data-mode');
-
-                    befriend.activities.draft.update(
-                        'person.mode',
-                        befriend.activities.person.mode,
-                        true
-                    );
+                    befriend.activities.setAppMode(mode_el.getAttribute('data-mode'));
                 });
             }
         },

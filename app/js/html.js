@@ -881,15 +881,7 @@ befriend.html = {
         befriend.activities.events.appMode();
 
         //select active mode
-        let modes_els = befriend.els.createActivity.querySelector('.modes').getElementsByClassName('mode-option');
-
-        for(let i = 0; i < modes_els.length; i++) {
-            let mode_el = modes_els[i];
-
-            if(i === 0) {
-                fireClick(mode_el);
-            }
-        }
+        befriend.activities.setAppMode(valid_modes[0].id);
     },
     setDurations: function () {
         let level_1_el = befriend.els.activityDuration.querySelector('.level_1');

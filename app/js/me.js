@@ -2862,7 +2862,7 @@ befriend.me = {
                         }
                     }
 
-                    befriend.me.transitionKidsAge(list_el, !elHasClass(list_el, 'open'));
+                    befriend.me.modes.transitionKidsAge(list_el, !elHasClass(list_el, 'open'));
                 });
 
                 // Handle option selection
@@ -2889,7 +2889,7 @@ befriend.me = {
                         list_el.setAttribute('data-value', token);
 
                         // Close options
-                        befriend.me.transitionKidsAge(list_el, false);
+                        befriend.me.modes.transitionKidsAge(list_el, false);
 
                         // Remove previous selection if any
                         removeElsClass(options, 'selected');
