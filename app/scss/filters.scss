@@ -2652,19 +2652,23 @@
                             }
 
                             .remove {
+                                $dim: 16px;
                                 cursor: pointer;
                                 transition: opacity 200ms;
                                 position: absolute;
-                                top: -9px;
+                                top: -8px;
                                 right: -9px;
 
+                                width: $dim;
+                                height: $dim;
+                                background-color: white;
+                                border-radius: 50%;
+                                border: 1px solid lighten(black, 70%);
+                                @include flex-center-col;
+
                                 svg {
-                                    height: 18px;
-                                    border-radius: 50%;
-                                    background-color: white;
-                                    path {
-                                        fill: lighten(black, 40%);
-                                    }
+                                    height: 1px;
+                                    transform: scale(0.7, 0.7);
                                 }
                             }
 
