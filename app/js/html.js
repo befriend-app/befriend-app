@@ -134,8 +134,16 @@ befriend.html = {
                             </div>
                         </div>
                         
-                        <div id="activities" class="view view-activities"></div>
-
+                        <div id="activities" class="view view-activities">
+                            <div class="main-view">
+                                <div class="current-activity"></div>
+                                <div class="past-activities"></div>
+                            </div>
+                            
+                            <div class="current-activity-view">
+                                <div class="back"></div>
+                            </div>                        
+                        </div>
                         
                         <div id="friends" class="view view-friends"><h2>Friends</h2></div>
                         
