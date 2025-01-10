@@ -1931,7 +1931,7 @@ befriend.filters = {
             const section_el = befriend.els.filters.querySelector(`.section.${section.token}`);
             const filter_options = section_el.querySelector('.filter-options');
 
-            let activities = befriend.activities.types.data;
+            let activities = befriend.activities.activityTypes.data;
 
             let html = ``;
             let level_1_html = ``;
@@ -2170,8 +2170,8 @@ befriend.filters = {
                             );
                         }
 
-                        if (activityId in befriend.activities.types.data) {
-                            let activity = befriend.activities.types.data[activityId];
+                        if (activityId in befriend.activities.activityTypes.data) {
+                            let activity = befriend.activities.activityTypes.data[activityId];
 
                             if (activity.sub) {
                                 for (let sub_id in activity.sub) {
@@ -2410,7 +2410,7 @@ befriend.filters = {
                     }
 
                     let parent_id = this.getAttribute('data-id');
-                    let activity = befriend.activities.types.data[parent_id];
+                    let activity = befriend.activities.activityTypes.data[parent_id];
 
                     // If no sub-categories, trigger checkbox click
                     if (!activity?.sub || !Object.keys(activity.sub).length) {
@@ -2473,7 +2473,7 @@ befriend.filters = {
                     let activities_level_2 = [];
 
                     for (let level_2_id in activity.sub) {
-                        let activity = befriend.activities.types.data[parent_id].sub[level_2_id];
+                        let activity = befriend.activities.activityTypes.data[parent_id].sub[level_2_id];
 
                         if (activity.name.toLowerCase() === 'any') {
                             continue;
@@ -2578,7 +2578,7 @@ befriend.filters = {
                     let parent_id = this.closest('.level_2').getAttribute('data-parent-id');
                     let level_2_id = this.getAttribute('data-id');
                     let level_2_activity =
-                        befriend.activities.types.data[parent_id].sub[level_2_id];
+                        befriend.activities.activityTypes.data[parent_id].sub[level_2_id];
 
                     // If no sub-activities, trigger checkbox click
                     const hasSubActivities =
@@ -2626,7 +2626,7 @@ befriend.filters = {
 
                     for (let level_3_id in level_2_activity.sub) {
                         let activity =
-                            befriend.activities.types.data[parent_id].sub[level_2_id].sub[
+                            befriend.activities.activityTypes.data[parent_id].sub[level_2_id].sub[
                                 level_3_id
                             ];
 
@@ -2765,10 +2765,10 @@ befriend.filters = {
             let sub_activities;
 
             if (level === 1) {
-                sub_activities = befriend.activities.types.data[activity_id]?.sub;
+                sub_activities = befriend.activities.activityTypes.data[activity_id]?.sub;
             } else {
                 const parent_id = activity_el.closest('.level_2').getAttribute('data-parent-id');
-                sub_activities = befriend.activities.types.data[parent_id]?.sub[activity_id]?.sub;
+                sub_activities = befriend.activities.activityTypes.data[parent_id]?.sub[activity_id]?.sub;
             }
 
             if (!sub_activities) return;

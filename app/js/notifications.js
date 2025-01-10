@@ -42,11 +42,16 @@ befriend.notifications = {
             }
         });
     },
-    showActivity: function (notification) {
+    showActivity: function (notification, on_launch) {
+        if(!on_launch) {
+            fireClick(document.getElementById('create-activity-back'));
+        }
+
         //navigate to activities view
         befriend.navigateToView('activities', true);
 
-        //
+        //get activity data
+
     },
     showNotificationBar: function () {
 
@@ -71,7 +76,7 @@ befriend.notifications = {
 
                     console.log("after init finished")
 
-                    befriend.notifications.showActivity(notification);
+                    befriend.notifications.showActivity(notification, true);
 
                     removeClassEl('loading', document.body);
 

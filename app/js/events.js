@@ -31,7 +31,7 @@ befriend.events = {
         document.querySelector('body').addEventListener('click', function (e) {
             e = e || window.event;
 
-            if (befriend.activities.isCreateActivityShown()) {
+            if (befriend.activities.createActivity.isShown()) {
                 //do nothing
             } else if (befriend.places.activity.isPlacesShown()) {
                 //hide places to bottom

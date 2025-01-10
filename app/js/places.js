@@ -788,16 +788,16 @@ befriend.places = {
                         befriend.places.selected.is_activity_type = true;
 
                         //use duration for activity
-                        let activity_type = befriend.activities.getCurrentActivityType();
+                        let activity_type = befriend.activities.activityTypes.getCurrent();
 
                         if (activity_type) {
-                            befriend.activities.updateDuration(activity_type.duration, true);
+                            befriend.activities.createActivity.updateDuration(activity_type.duration, true);
                         }
                     } else {
                         befriend.places.selected.is_activity_type = false;
                     }
 
-                    befriend.activities.displayCreateActivity();
+                    befriend.activities.createActivity.display();
                 });
             }
         },

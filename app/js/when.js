@@ -97,12 +97,12 @@ befriend.when = {
 
             if (befriend.places.activity.isPlacesShown()) {
                 befriend.places.activity.updatePlacesOpen();
-            } else if (befriend.activities.isCreateActivityShown()) {
+            } else if (befriend.activities.createActivity.isShown()) {
                 //updates time on selected obj for createActivity
                 befriend.when.selected.createActivity = structuredClone(
                     befriend.when.selected.main,
                 );
-                befriend.activities.updateWhenAuto();
+                befriend.activities.createActivity.updateWhenAuto();
             }
         }
 
