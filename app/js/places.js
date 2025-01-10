@@ -16,7 +16,7 @@ befriend.places = {
             befriend.places.search.autoCompleteSuggestions(places, skip_dropdown);
         },
         autoCompleteSuggestions: function (places, skip_dropdown) {
-            let suggestions_el = befriend.els.activities
+            let suggestions_el = befriend.els.activityTypes
                 .querySelector('.place-search-suggestions')
                 .querySelector('.container');
 
@@ -155,7 +155,7 @@ befriend.places = {
             }
         },
         setPreviousAutoComplete: function () {
-            let search_input_el = befriend.els.activities.querySelector('.input-search-place');
+            let search_input_el = befriend.els.activityTypes.querySelector('.input-search-place');
 
             let search_value = search_input_el.value;
 
@@ -726,7 +726,7 @@ befriend.places = {
             });
         },
         searchPlace: function () {
-            let input_el = befriend.els.activities.querySelector('.input-search-place');
+            let input_el = befriend.els.activityTypes.querySelector('.input-search-place');
 
             let debounceTimer = null;
 

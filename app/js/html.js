@@ -3,10 +3,11 @@ befriend.html = {
         befriend.els.app = document.getElementById('app');
         befriend.els.footer = document.querySelector('footer');
         befriend.els.views = document.getElementById('views');
+        befriend.els.activities = document.getElementById('activities');
         befriend.els.filters = document.getElementById('filters');
         befriend.els.me = document.getElementById('me');
         befriend.els.viewSpinner = document.getElementById('view-spinner');
-        befriend.els.activities = document.getElementById('activities');
+        befriend.els.activityTypes = document.getElementById('activity-types');
         befriend.els.activityDuration = document.getElementById('activity-duration');
         befriend.els.activityMap = document.getElementById('activities-map');
         befriend.els.activityMapWrapper = document.getElementById('activities-map-wrapper');
@@ -74,7 +75,7 @@ befriend.html = {
                                 </div>
                             </div>
                             
-                            <div id="activities" class="view-section">
+                            <div id="activity-types" class="view-section">
                                 <div class="activities_container">
                                     <div id="place-search-location">
                                         <div class="section-title">Place</div>
@@ -132,6 +133,9 @@ befriend.html = {
                                 </div>
                             </div>
                         </div>
+                        
+                        <div id="activities" class="view view-activities"></div>
+
                         
                         <div id="friends" class="view view-friends"><h2>Friends</h2></div>
                         
@@ -709,10 +713,10 @@ befriend.html = {
                     <div class="level_1">${level_1_html}</div>
                 `;
 
-                befriend.els.activities.querySelector('.activities').innerHTML = html;
+                befriend.els.activityTypes.querySelector('.activities').innerHTML = html;
 
                 let last_row = lastArrItem(
-                    befriend.els.activities.getElementsByClassName('level_1_row'),
+                    befriend.els.activityTypes.getElementsByClassName('level_1_row'),
                 );
 
                 last_row.style.marginBottom = '0px';

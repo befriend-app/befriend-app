@@ -92,7 +92,7 @@ befriend.location = {
         befriend.location.current = city;
         befriend.location.search = city;
         befriend.location.toggleChangeLocation(false);
-        befriend.els.activities.querySelector('.near-text').innerHTML =
+        befriend.els.activityTypes.querySelector('.near-text').innerHTML =
             befriend.location.current.name;
 
         befriend.maps.removeMarkers([
@@ -116,9 +116,9 @@ befriend.location = {
     },
     toggleResetLocationButton: function (show) {
         if (show) {
-            addClassEl('custom-location', befriend.els.activities);
+            addClassEl('custom-location', befriend.els.activityTypes);
         } else {
-            removeClassEl('custom-location', befriend.els.activities);
+            removeClassEl('custom-location', befriend.els.activityTypes);
         }
     },
     getMarkerCoords: function () {
@@ -311,7 +311,7 @@ befriend.location = {
             });
         },
         resetToDeviceLocation: function () {
-            befriend.els.activities
+            befriend.els.activityTypes
                 .querySelector('.reset-location')
                 .addEventListener('click', function (e) {
                     e.preventDefault();
@@ -319,7 +319,7 @@ befriend.location = {
 
                     befriend.location.current = befriend.location.device;
 
-                    befriend.els.activities.querySelector('.near-text').innerHTML = 'Near Me';
+                    befriend.els.activityTypes.querySelector('.near-text').innerHTML = 'Near Me';
 
                     befriend.maps.removeMarkers([
                         befriend.maps.markers.me,

@@ -598,7 +598,7 @@ befriend.activities = {
         return elHasClass(document.documentElement, befriend.classes.createActivityShown);
     },
     updateLevelHeight: async function (level_num, skip_set_prev) {
-        let level_el = befriend.els.activities.querySelector(`.level_${level_num}.show`);
+        let level_el = befriend.els.activityTypes.querySelector(`.level_${level_num}.show`);
 
         if (!level_el) {
             return;
@@ -1915,7 +1915,7 @@ befriend.activities = {
             });
         },
         level1: function () {
-            let els = befriend.els.activities.getElementsByClassName('level_1_activity');
+            let els = befriend.els.activityTypes.getElementsByClassName('level_1_activity');
 
             for (let i = 0; i < els.length; i++) {
                 let el = els[i];
@@ -1951,7 +1951,7 @@ befriend.activities = {
                         befriend.activities.selected.level_3 = null;
                     }
 
-                    let prev_level_2 = befriend.els.activities.querySelector('.level_2.show');
+                    let prev_level_2 = befriend.els.activityTypes.querySelector('.level_2.show');
 
                     //do not proceed if no sub categories
                     if (!activity.sub || !Object.keys(activity.sub).length) {
@@ -2045,7 +2045,7 @@ befriend.activities = {
         },
         level2: function () {
             let level_2_activity_els =
-                befriend.els.activities.getElementsByClassName('level_2_activity');
+                befriend.els.activityTypes.getElementsByClassName('level_2_activity');
 
             for (let i = 0; i < level_2_activity_els.length; i++) {
                 let el = level_2_activity_els[i];
@@ -2096,7 +2096,7 @@ befriend.activities = {
                         }
                     }
 
-                    let prev_level_3 = befriend.els.activities.querySelector('.level_3.show');
+                    let prev_level_3 = befriend.els.activityTypes.querySelector('.level_3.show');
 
                     //do not proceed if no sub categories
                     if (!level_2_activity.sub || !Object.keys(level_2_activity.sub).length) {
@@ -2209,7 +2209,7 @@ befriend.activities = {
         },
         level3: function () {
             let level_3_activity_els =
-                befriend.els.activities.getElementsByClassName('level_3_activity');
+                befriend.els.activityTypes.getElementsByClassName('level_3_activity');
 
             for (let i = 0; i < level_3_activity_els.length; i++) {
                 let el = level_3_activity_els[i];

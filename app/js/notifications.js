@@ -43,10 +43,10 @@ befriend.notifications = {
         });
     },
     showActivity: function (notification) {
-        //remove transition
-
         //navigate to activities view
         befriend.navigateToView('activities', true);
+
+        //
     },
     showNotificationBar: function () {
 

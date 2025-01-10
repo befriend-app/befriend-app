@@ -18,12 +18,12 @@ html.#{$class_create_activity_shown} {
             visibility 0ms;
     }
 
-    #activities {
+    #activity-types {
         z-index: 3;
     }
 }
 
-#activities {
+#activity-types {
     padding-top: 0 !important;
 
     &.custom-location {

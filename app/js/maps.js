@@ -361,7 +361,7 @@ befriend.maps = {
             });
         },
         onResetToMarker: function () {
-            let reset_marker_btn = befriend.els.activities.querySelector('.reset-to-marker');
+            let reset_marker_btn = befriend.els.activityTypes.querySelector('.reset-to-marker');
 
             reset_marker_btn.addEventListener('click', function (e) {
                 e.preventDefault();
