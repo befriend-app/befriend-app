@@ -1,10 +1,6 @@
 befriend.notifications = {
-    device: {
-        token: null,
-    },
+    current: null,
     setDeviceToken: async function (token) {
-        befriend.notifications.device.token = token;
-
         //save on server if new device token
         if (!befriend.user.sameDeviceToken(token)) {
             let platform = null;
@@ -46,6 +42,15 @@ befriend.notifications = {
             }
         });
     },
+    showActivity: function (notification) {
+        //remove transition
+
+        //navigate to activities view
+        befriend.navigateToView('activities', true);
+    },
+    showNotificationBar: function () {
+
+    },
     events: {
         init: function () {
             return new Promise(async (resolve, reject) => {
@@ -56,9 +61,21 @@ befriend.notifications = {
         },
         onLaunched: function () {
             try {
-                befriend.plugins.notifications.onLaunchNotification(function (notification) {
+                befriend.plugins.notifications.onLaunchNotification(async function (notification) {
+                    window.launched_from_notification = true;
+
+                    befriend.notifications.current = notification;
+
+                    //wait for init to be finished
+                    await befriend.initFinished();
+
+                    console.log("after init finished")
+
+                    befriend.notifications.showActivity(notification);
+
+                    removeClassEl('loading', document.body);
+
                     if (notification) {
-                        window.launched_from_notify = true;
                         console.log('App was launched from notification:', notification);
                     }
                 });
@@ -71,7 +88,13 @@ befriend.notifications = {
                 befriend.plugins.notifications.onNotificationReceived(function (notification) {
                     console.log('Received notification:', notification);
 
-                    if (document.visibilityState === 'visible') {
+                    befriend.notifications.current = notification.notification;
+
+                    if (notification?.type === 'click') {
+                        befriend.notifications.showActivity(notification.notification);
+                    } else {
+                        //show in-app notification
+                        befriend.notifications.showNotificationBar();
                     }
                 });
             } catch (e) {

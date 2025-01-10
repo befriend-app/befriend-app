@@ -1,4 +1,5 @@
 window['befriend'] = {
+    init_finished: false,
     is_paused: false,
     classes: {
         placesShown: 'display-places',
@@ -8,6 +9,13 @@ window['befriend'] = {
         availableMeSections: 'display-available-me-sections',
         confirmMeAction: 'confirm-me-action',
         autoCompleteMe: 'show-auto-complete',
+    },
+    navigationClassMap: {
+        home: 'view-home',
+        friends: 'view-friends',
+        activities: 'view-activities',
+        filters: 'view-filters',
+        me: 'view-me',
     },
     timing: {
         showPlaces: null,
@@ -43,6 +51,9 @@ window['befriend'] = {
             if (typeof BefriendPlugin !== 'undefined') {
                 befriend.plugins = BefriendPlugin;
             }
+
+            //handle app start on notification
+            await befriend.notifications.events.init();
 
             //user
             try {
@@ -128,13 +139,77 @@ window['befriend'] = {
                 console.error(e);
             }
 
+            befriend.init_finished = true;
+
             //todo remove
             setTimeout(function () {
-                // fireTouch(befriend.els.footer.querySelector('.nav-item.me'));
+                // befriend.navigateToView('me');
             }, 50);
 
             resolve();
         });
+    },
+    navigateToView: function (view, skip_transition) {
+        let nav_items = befriend.els.footer.getElementsByClassName('nav-item');
+        let views = befriend.els.views.getElementsByClassName('view');
+
+        let view_name = befriend.navigationClassMap[view];
+
+        let viewEl = befriend.els.views.querySelector(`.${view_name}`);
+        let navEl = Array.from(nav_items).find(item => item.getAttribute('data-nav') === view);
+
+        removeElsClass(nav_items, 'active');
+        removeElsClass(views, 'active');
+
+        if(skip_transition) {
+            addElsClass(nav_items, 'no-transition');
+        }
+
+        addClassEl('active', navEl);
+        addClassEl('active', viewEl);
+
+        requestAnimationFrame(function () {
+            removeElsClass(nav_items, 'no-transition');
+        });
+
+        //hide any overlays on footer nav
+        befriend.places.search.toggleAutoComplete(false);
+        befriend.places.activity.toggleDisplayPlaces(false);
+        befriend.me.toggleSectionOptions(false);
+
+        befriend.me.toggleAutoComplete(null, false);
+
+        befriend.filters.hideActiveSecondaryIf();
+        befriend.filters.hideActiveAutoCompleteIf();
+        befriend.filters.hideActiveAutoCompleteSelectIf();
+        befriend.filters.networks.toggleDropdown(false);
+        befriend.me.hideActiveSecondaryIf();
+
+        //view specific logic
+        if(view === 'home') {
+            if(befriend.maps.needsResize) {
+                requestAnimationFrame(function () {
+                    befriend.maps.maps.activities.resize();
+                    befriend.maps.needsResize = false;
+                });
+            }
+        } else if (view === 'filters') {
+            requestAnimationFrame(function () {
+                befriend.filters.updateSectionHeights(true);
+
+                //update slider control positions
+                befriend.filters.positionSliders();
+            });
+        } else if (view === 'me') {
+            befriend.me.updateCollapsed(true);
+            befriend.me.modes.updateModeHeight(true);
+            befriend.me.account.setView('profile');
+        }
+
+        if(befriend.filters.matches.needsUpdate) {
+            befriend.filters.matches.updateCounts();
+            befriend.filters.matches.needsUpdate = false;
+        }
     },
     api: {
         get: function (route) {
@@ -307,5 +382,18 @@ window['befriend'] = {
 
         if (data.action === '') {
         }
+    },
+    initFinished: function () {
+        return new Promise(async (resolve, reject) => {
+            console.log("init finished check")
+
+            if(befriend.init_finished) {
+                return resolve(true);
+            }
+
+            await rafAwait();
+
+            resolve(await befriend.initFinished());
+        });
     },
 };

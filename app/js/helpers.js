@@ -270,6 +270,18 @@ function removeClassEl(name, el) {
     }
 }
 
+function addElsClass(els, cls) {
+    if (els && els.length) {
+        for (let i = 0; i < els.length; i++) {
+            let el = els[i];
+
+            if (!el.classList.contains(cls)) {
+                el.classList.add(cls);
+            }
+        }
+    }
+}
+
 function removeElsClass(els, cls) {
     if (els && els.length) {
         for (let i = 0; i < els.length; i++) {

@@ -881,7 +881,12 @@ befriend.html = {
         befriend.activities.events.appMode();
 
         //select active mode
-        befriend.activities.setAppMode(valid_modes[0].id);
+        if(valid_modes.length > 1) {
+            fireClick(befriend.els.createActivity.querySelector('.modes').querySelector('.mode-option'));
+        } else {
+            befriend.activities.setAppMode(valid_modes[0].id);
+        }
+
     },
     setDurations: function () {
         let level_1_el = befriend.els.activityDuration.querySelector('.level_1');

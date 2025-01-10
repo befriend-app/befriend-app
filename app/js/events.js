@@ -12,7 +12,6 @@ befriend.events = {
                 befriend.events.onAppState();
                 befriend.events.resizeHandler();
 
-                await befriend.notifications.events.init();
                 await befriend.when.events.init();
                 await befriend.friends.events.init();
                 await befriend.maps.events.init();
@@ -134,15 +133,7 @@ befriend.events = {
         });
     },
     footerNavigation: function () {
-        let nameClassMap = {
-            home: 'view-home',
-            friends: 'view-friends',
-            filters: 'view-filters',
-            me: 'view-me',
-        };
-
         let nav_items = befriend.els.footer.getElementsByClassName('nav-item');
-        let views = befriend.els.views.getElementsByClassName('view');
 
         for (let i = 0; i < nav_items.length; i++) {
             let nav_item = nav_items[i];
@@ -156,54 +147,8 @@ befriend.events = {
                 }
 
                 let nav_name = nav_item.getAttribute('data-nav');
-                let view_name = nameClassMap[nav_name];
 
-                let viewEl = befriend.els.views.querySelector(`.${view_name}`);
-
-                removeElsClass(nav_items, 'active');
-                removeElsClass(views, 'active');
-
-                addClassEl('active', this);
-                addClassEl('active', viewEl);
-
-                //hide any overlays on footer nav
-                befriend.places.search.toggleAutoComplete(false);
-                befriend.places.activity.toggleDisplayPlaces(false);
-                befriend.me.toggleSectionOptions(false);
-
-                befriend.me.toggleAutoComplete(null, false);
-
-                befriend.filters.hideActiveSecondaryIf();
-                befriend.filters.hideActiveAutoCompleteIf();
-                befriend.filters.hideActiveAutoCompleteSelectIf();
-                befriend.filters.networks.toggleDropdown(false);
-                befriend.me.hideActiveSecondaryIf();
-
-                //view specific logic
-                if(nav_name === 'home') {
-                    if(befriend.maps.needsResize) {
-                        requestAnimationFrame(function () {
-                            befriend.maps.maps.activities.resize();
-                            befriend.maps.needsResize = false;
-                        });
-                    }
-                } else if (nav_name === 'filters') {
-                    requestAnimationFrame(function () {
-                        befriend.filters.updateSectionHeights(true);
-
-                        //update slider control positions
-                        befriend.filters.positionSliders();
-                    });
-                } else if (nav_name === 'me') {
-                    befriend.me.updateCollapsed(true);
-                    befriend.me.modes.updateModeHeight(true);
-                    befriend.me.account.setView('profile');
-                }
-
-                if(befriend.filters.matches.needsUpdate) {
-                    befriend.filters.matches.updateCounts();
-                    befriend.filters.matches.needsUpdate = false;
-                }
+                befriend.navigateToView(nav_name);
             });
         }
     },

@@ -32,24 +32,6 @@ footer {
                 background-color: $background_color;
             }
 
-            &.active {
-                .container {
-                    background-color: $nav_color;
-                }
-
-                svg {
-                    fill: white;
-
-                    path {
-                        stroke: white;
-                    }
-                }
-                .name {
-                    color: white;
-                    font-weight: 500;
-                }
-            }
-
             //align-items: center;
             //justify-content: center;
 
@@ -68,6 +50,30 @@ footer {
                 font-weight: 300;
                 font-size: 12px;
                 transition: all $transition_ms;
+            }
+
+            &.active {
+                .container {
+                    background-color: $nav_color;
+                }
+
+                svg {
+                    fill: white;
+
+                    path {
+                        stroke: white;
+                    }
+                }
+                .name {
+                    color: white;
+                    font-weight: 500;
+                }
+            }
+
+            &.no-transition {
+                .container, .name, svg {
+                    transition: none !important;
+                }
             }
         }
     }

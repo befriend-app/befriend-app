@@ -77,7 +77,7 @@ befriend.activities = {
     types: {
         data: null,
         colors: [
-            '#FFC300', // Bright Yellow
+            '#FAF000', // Bright Yellow
             '#C70039', // Bold Crimson
             '#31a663', // Bold Leaf Green
             '#e0f3fd', // Light Blue
@@ -1736,7 +1736,8 @@ befriend.activities = {
                 e.stopPropagation();
 
                 fireClick(document.getElementById('create-activity-back'));
-                fireTouch(befriend.els.footer.querySelector('.nav-item.filters'));
+
+                befriend.navigateToView('filters');
 
                 befriend.maps.needsResize = true;
             });
