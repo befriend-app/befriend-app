@@ -24,6 +24,11 @@ befriend.html = {
         befriend.els.travelTimes = document.getElementById('travel-times');
         befriend.els.meSectionOptions = document.getElementById('me-section-options');
         befriend.els.confirmMeAction = document.getElementById('confirm-me-action');
+
+        befriend.els.mainActivitiesView = befriend.els.activities.querySelector('.main-view');
+        befriend.els.currentActivityView = befriend.els.activities.querySelector('.current-activity-view');
+        befriend.els.activityNotificationView = befriend.els.activities.querySelector('.notification-view');
+
     },
     appInit: function () {
         return new Promise(async (resolve, reject) => {
@@ -136,13 +141,28 @@ befriend.html = {
                         
                         <div id="activities" class="view view-activities">
                             <div class="main-view">
+                                <div class="notifications"></div>
+                                
                                 <div class="current-activity"></div>
+                                
                                 <div class="past-activities"></div>
                             </div>
                             
                             <div class="current-activity-view">
                                 <div class="back"></div>
-                            </div>                        
+                                
+                                <div class="container">
+                                
+                                </div>
+                            </div>  
+                            
+                            <div class="notification-view">
+                                <div class="back"></div>
+                                
+                                <div class="container">
+                                
+                                </div>
+                            </div>                      
                         </div>
                         
                         <div id="friends" class="view view-friends"><h2>Friends</h2></div>

@@ -1,1259 +1,201 @@
-html.#{$class_create_activity_shown} {
-    overflow: hidden;
+#activities {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
 
-    body {
-        overflow: hidden;
-    }
+    .main-view {
+        display: none;
 
-    #create-activity {
-        transform: translateX(0);
-    }
-
-    #create-activity-back,
-    #travel-times {
-        opacity: 1;
-        visibility: visible;
-        transition:
-            opacity $create_activity_transition_ms,
-            visibility 0ms;
-    }
-
-    #activity-types {
-        z-index: 3;
-    }
-}
-
-#activity-types {
-    padding-top: 0 !important;
-
-    &.custom-location {
-        .reset-location {
-            height: 25px !important;
-            border: 1px solid $color_gray;
+        &.show {
+            display: flex;
         }
     }
 
-    .activities_container {
-        overflow-x: hidden;
-        overflow-y: scroll;
+    .current-activity-view {
+        display: none;
+
+        &.show {
+            display: flex;
+        }
     }
 
-    .activities {
-        //max-height: 50vh;
-        overflow-y: scroll;
+    .notification-view {
+        $padding_lr: 30px;
+        display: none;
+        padding: 0 $padding_lr;
+        padding-top: calc(#{$activity_accept_decline_h});
+        width: calc(100vw - #{$padding_lr * 2});
 
-        display: flex;
-        justify-content: center;
+        h2 {
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
 
-        .activity {
-            cursor: pointer;
+        .date {
+            margin-left: auto;
+            font-size: 18px;
+            font-weight: 400;
+            transform: translateY(0px);
+        }
 
-            .name {
-                $fs: 15px;
-                margin-top: 2px;
-                font-weight: 300;
-                font-size: $fs;
-                line-height: $fs;
+        .accept-decline {
+            $br: 0px;
+            width: 100vw;
+            display: flex;
+            border: .5px solid lighten(black, 60%);
+            border-radius: $br;
+            position: fixed;
+            left: 0;
+            top: calc(var(--view-top));
+
+            .button {
+                width: 50%;
+                padding: 10px 0;
+                box-sizing: border-box;
                 text-align: center;
+
+                &.accept {
+                    background-color: $brand_color_b;
+                    border-top-left-radius: $br;
+                    border-bottom-left-radius: $br;
+
+                    border-right: .5px solid lighten(black, 60%);
+                }
+
+
+                &.decline {
+                    background-color: lighten(black, 90%);
+                    border-top-right-radius: $br;
+                    border-bottom-right-radius: $br;
+                }
             }
         }
 
-        .level_1 {
-            $dim: 65px;
+        &.show {
             display: flex;
-            flex-wrap: wrap;
-            overflow-x: hidden;
-
-            .level_1_row {
-                display: flex;
-                gap: $activity_gap_tb $activity_gap_lr;
-                flex-wrap: wrap;
-                width: calc(100vw - #{($app_margin_lr + $view_padding_lr) * 2});
-                margin-bottom: 8px;
-            }
-            //justify-content: center;
-
-            .activity {
-                border: 1px solid lightgray;
-                box-sizing: border-box;
-                padding: 8px 0;
-                border-radius: 6px;
-                flex-basis: calc(
-                    #{$activity_item_w} - #{$activity_gap_lr} *
-                        calc(($activity_row_items - 1) / $activity_row_items)
-                );
-                display: flex;
-                justify-content: center;
-                transition: background $activity_transition_ms;
-                background: white;
-
-                &.active {
-                    &.font_white {
-                        svg {
-                            fill: white !important;
-                        }
-
-                        .name {
-                            color: white;
-                        }
-                    }
-                }
-
-                &:not(.active) {
-                    background-color: white !important;
-                }
-
-                .activity_wrapper {
-                    width: $dim;
-                }
-                //height: $dim;
-
-                .icon {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    margin: auto;
-
-                    svg {
-                        //width: $dim * .6;
-                        height: $dim * 0.45;
-                        fill: black;
-                        transition: fill $activity_transition_ms;
-                    }
-                }
-            }
         }
-
-        .level_2 {
-            $dim: 55px;
-            height: 0;
-            //background-color: #2d86c7;
-            width: 100%;
-            transition: all $activity_transition_ms;
-            box-sizing: border-box;
-            border-width: 1px;
-            border-style: solid;
-            border-color: transparent;
-            display: flex;
-            flex-wrap: wrap;
-            overflow: hidden;
-            border-radius: 12px;
-
-            &.show {
-                border-color: $brand_color_a;
-                //border: $activity_level_2_border_w solid $brand_color_a;
-                margin-bottom: $activity_gap_tb;
-
-                &:last-of-type {
-                    margin-top: $activity_gap_tb;
-                }
-            }
-
-            .level_2_container {
-                padding: $activity_level_2_ptb $activity_level_2_plr;
-                width: calc(
-                    100vw - #{$app_margin_lr * 2} - #{$activity_level_2_plr * 2} - #{$activity_level_2_border_w *
-                        2}
-                );
-            }
-
-            .level_2_row {
-                display: flex;
-                gap: $activity_gap_tb $activity_gap_lr;
-                flex-wrap: wrap;
-                width: 100%;
-                margin-bottom: 8px;
-            }
-
-            .activity {
-                border: 1px solid lightgray;
-                box-sizing: border-box;
-                padding: 8px 0;
-                border-radius: 6px;
-                flex-basis: calc(
-                    #{$activity_level_2_item_w} - #{$activity_gap_lr} *
-                        calc(($activity_level_2_row_items - 1) / $activity_level_2_row_items)
-                );
-                display: flex;
-                justify-content: center;
-                height: $activity_level_2_height;
-
-                .name {
-                    $fs: 13px;
-                    font-size: $fs;
-                    line-height: $fs;
-                    margin-top: 8px;
-                }
-
-                &.active {
-                    background: $brand_color_b;
-
-                    svg {
-                        fill: black !important;
-                    }
-
-                    .name {
-                        color: black;
-                    }
-                }
-
-                .activity_wrapper {
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-
-                    &.no_icon {
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: center;
-
-                        .name {
-                            margin-top: 0 !important;
-                        }
-                    }
-                }
-                //height: $dim;
-
-                .icon {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    margin: 0;
-
-                    .image,
-                    .emoji {
-                        display: flex;
-                        flex-direction: column;
-                        height: $dim * 0.5;
-                    }
-
-                    svg {
-                        //width: $dim * .6;
-                        height: $dim * 0.5;
-                    }
-                }
-            }
-        }
-
-        .level_3 {
-            $dim: 50px;
-            height: 0;
-            width: 100%;
-            transition: all $activity_transition_ms;
-            box-sizing: border-box;
-            border-width: 1px;
-            border-style: solid;
-            border-color: transparent;
-            display: flex;
-            flex-wrap: wrap;
-            overflow: hidden;
-            border-radius: 12px;
-
-            &.show {
-                border-color: $color_gray;
-                //border: $activity_level_2_border_w solid $brand_color_a;
-                margin-bottom: $activity_gap_tb;
-
-                &:last-of-type {
-                    margin-top: $activity_gap_tb;
-                    margin-bottom: 0;
-                }
-            }
-
-            .level_3_container {
-                padding: $activity_level_2_ptb $activity_level_2_plr;
-                width: calc(100%);
-            }
-
-            .level_3_row {
-                display: flex;
-                gap: $activity_gap_tb $activity_gap_lr;
-                flex-wrap: wrap;
-                width: 100%;
-                margin-bottom: 8px;
-            }
-
-            .activity {
-                border: 1px solid lightgray;
-                box-sizing: border-box;
-                padding: 8px 0;
-                border-radius: 6px;
-                flex-basis: calc(
-                    #{$activity_level_3_item_w} - #{$activity_gap_lr} *
-                        calc(($activity_level_2_row_items - 1) / $activity_level_2_row_items)
-                );
-                display: flex;
-                justify-content: center;
-                height: $activity_level_3_height;
-
-                .name {
-                    $fs: 13px;
-                    font-size: $fs;
-                    line-height: $fs;
-                    margin-top: 8px;
-                }
-
-                &.active {
-                    background: $brand_color_c;
-
-                    svg {
-                        fill: white !important;
-                    }
-
-                    .name {
-                        color: white;
-                    }
-                }
-
-                .activity_wrapper {
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    width: unset;
-
-                    &.no_icon {
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: center;
-
-                        .name {
-                            margin-top: 0 !important;
-                        }
-                    }
-                }
-
-                .icon {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    margin: 0;
-
-                    .image,
-                    .emoji {
-                        display: flex;
-                        flex-direction: column;
-                        height: $dim * 0.5;
-                    }
-
-                    svg {
-                        //width: $dim * .6;
-                        height: $dim * 0.5;
-                    }
-                }
-            }
-        }
-    }
-}
-
-#activity-button {
-    margin-top: 25px;
-    background: $brand_color_b;
-    width: fit-content;
-    padding: 6px 8px;
-    border-radius: 8px;
-    font-size: 15px;
-    font-weight: 500;
-    text-transform: uppercase;
-    border: 1px solid gray;
-}
-
-#travel-times {
-    $h: 26px;
-    $w: 70px;
-    $icon_h: $h * 0.6;
-    $max_width: $w * 0.3;
-
-    position: fixed;
-    display: flex;
-    justify-content: space-between;
-    width: calc(calc(100vw - $create_activity_gap_lr * 2));
-    top: calc(calc($map_create_activity_h - $h * 1.5));
-    left: calc($create_activity_gap_lr);
-    opacity: 0;
-    visibility: hidden;
-    z-index: 100;
-    //transition:
-    //        opacity $overlay_transition_ms,
-    //        visibility 0ms $overlay_transition_ms;
-
-    .mode {
-        border-radius: 10px;
-        transition: all 300ms;
-        height: $h;
-        padding: 0 10px;
-        display: flex;
-        align-items: center;
-        border: 1px solid $color_lightgray;
-        background: white;
-
-        &.active {
-            background-color: $brand_color_a;
-            border-color: transparent;
-
-            svg {
-                fill: white;
-            }
-
-            .value {
-                color: white !important;
-            }
-        }
-
-        &.driving {
-            svg {
-                $r: calc(56.0002 / 43.9885);
-
-                width: calc(calc($icon_h * $r) + 4px);
-            }
-        }
-
-        &.bicycle {
-            svg {
-                $r: calc(176.669 / 97.693);
-
-                width: calc(calc($icon_h * $r) + 4px);
-            }
-        }
-
-        &.walking {
-            $walk_h: $icon_h * 1.2;
-
-            .icon {
-                height: $walk_h;
-            }
-
-            svg {
-                height: $walk_h !important;
-            }
-        }
-
-        .icon {
-            display: flex;
-            height: $icon_h;
-            padding-right: 6px;
-
-            svg {
-                height: $icon_h;
-                max-width: $max_width;
-                transition: all 300ms;
-            }
-        }
-
-        .value {
-            font-size: 13px;
-            display: flex;
-            min-width: 45px;
-            transition: all 300ms;
-            text-align: center;
-            justify-content: center;
-            opacity: 0;
-        }
-    }
-}
-
-#create-activity {
-    $bc: lighten(black, 40%);
-
-    $gap_tb: 30px;
-
-    overflow-y: scroll;
-    background-color: #fff;
-    width: 100vw;
-    height: calc(calc(100vh - $map_create_activity_h));
-    height: calc(calc(100dvh - $map_create_activity_h));
-    position: fixed;
-    bottom: 0;
-    z-index: 99;
-    transform: translateX(115vw);
-    overscroll-behavior: none;
-
-    .main {
-        height: calc(calc(100% - $create_activity_bottom_h));
-        overflow-y: scroll;
 
         .container {
-            padding: $gap_tb $create_activity_gap_lr;
-            padding-top: 20px;
-            overflow-x: hidden;
-            position: relative;
-
-            #create-activity-top-message {
-                width: 100%;
-                transform: translateY(-10px);
-                position: relative;
-                opacity: 0;
-                transition: all 300ms;
-
-                &.show {
-                    opacity: 1;
-
-                    .close {
-                        opacity: 1;
-                    }
-                }
-
-                .message {
-                    font-size: 13px;
-                    color: white;
-                    margin: auto;
-                    position: relative;
-                    width: fit-content;
-                    max-width: 90%;
-                    height: 0;
-                    overflow-y: hidden;
-                    transition:
-                        opacity 300ms ease,
-                        height 300ms ease;
-                }
-
-                .inner {
-                    width: fit-content;
-                    max-width: 100%;
-                    padding: 3px 15px;
-                    border-radius: 6px;
-                }
-
-                .close {
-                    position: absolute;
-                    width: 20px;
-                    height: 20px;
-                    transition:
-                        opacity 300ms ease,
-                        transform 300ms ease;
-                    z-index: 2;
-                    top: -8px;
-                    opacity: 0;
-                    @include flex-center-col;
-
-                    /* Position relative to the inner element */
-                    &::before {
-                        content: '';
-                        position: absolute;
-                        top: 0;
-                        right: 0;
-                        bottom: 0;
-                        left: 0;
-                    }
-
-                    svg {
-                        height: 17px;
-                        background: white;
-                        border-radius: 50%;
-                    }
-                }
-            }
-
-            .modes {
-                display: flex;
-                gap: 0 20px;
-                margin-bottom: 10px;
-
-                &.hide {
-                    display: none;
-                }
-
-                .mode-option {
-                    flex-grow: 1;
-                    display: flex;
-                    font-size: 13px;
-                    font-weight: 300;
-                    gap: 0 8px;
-                    border: 1px solid $color_lightgray;
-                    border-radius: 12px;
-                    background-color: white;
-                    justify-content: center;
-                    align-items: center;
-                    padding: 5px 0;
-                    transition: all 300ms;
-
-                    &.active {
-                        border-color: $brand_color_a;
-                    }
-
-                    .icon {
-                        @include flex-center-col;
-                    }
-
-                    svg {
-                        height: 16px;
-                    }
-                }
-            }
-
-            .sections {
-                display: flex;
-                flex-direction: column;
-                gap: 10px 0;
-            }
-
-            .section {
-                padding: 10px 0;
-                padding-top: 0;
-                position: relative;
-
-                &:first-of-type {
-                    padding-top: 0;
-                }
-
-                .label {
-                    width: 100%;
-                    font-size: 17px;
-                    color: lighten(black, 24%);
-                    font-weight: 500;
-                    border-bottom: 1px solid lighten($brand_color_a, 10%);
-                    padding-bottom: 6px;
-                }
-
-                .info {
-                    padding-top: 6px;
-                    font-size: 14px;
-                }
-
-                &.place {
-                    .place-name {
-                        font-size: 15px;
-                        //font-weight: 500;
-                    }
-
-                    .info {
-                        font-size: 12px;
-                    }
-
-                    .location {
-                        margin-top: 4px;
-                        font-size: 13px;
-                    }
-                }
-
-                &.when {
-                    $gap: 4px;
-
-                    .time {
-                        font-weight: 500;
-                        margin-right: $gap;
-                    }
-
-                    .info {
-                        display: flex;
-                    }
-
-                    .duration {
-                        display: flex;
-
-                        .value {
-                            margin-left: $gap;
-                        }
-                    }
-                }
-
-                &.friends {
-                    .info {
-                        display: flex;
-                        gap: 10px 0;
-
-                        .col {
-                            flex-basis: 50%;
-                        }
-
-                        .sub-heading {
-                            font-weight: 600;
-                            text-transform: uppercase;
-                            font-size: 12px;
-                        }
-
-                        .value {
-                            font-size: 14px;
-                        }
-
-                        .quantity {
-                            .value {
-                                margin-left: 9px;
-                            }
-                        }
-                    }
-                }
-
-                &.filters {
-                    .edit {
-                        color: #0080ea;
-                        font-weight: 500;
-                        font-size: 14px;
-                        position: absolute;
-                        right: 0;
-                        top: 38px;
-                        cursor: pointer;
-                    }
-
-                    .active-filters {
-                        display: flex;
-                        flex-direction: column;
-                        gap: 20px 0;
-
-                        .filter {
-                            .filter-name {
-                                font-weight: 500;
-                                font-size: 14px;
-                                margin-bottom: 3px;
-
-                                .small {
-                                    font-size: 11px;
-                                }
-                            }
-
-                            .filter-value {
-                                font-size: 12px;
-                                display: flex;
-                                gap: 4px 0;
-                                flex-direction: column;
-                            }
-
-                            .item {
-                                display: flex;
-                                position: relative;
-                                height: 20px;
-                                gap: 0 5px;
-                            }
-
-                            .review-rating {
-                                $dim: 20px;
-                                width: $dim;
-                                height: $dim;
-                                border-radius: 50%;
-                                background-color: $brand_color_a;
-                                color: white;
-                                @include flex-center-col;
-                                font-size: 9px;
-                                transform: translate(0, -1px);
-                                //left: 60px;
-                                //position: absolute;
-                            }
-
-                            .importance {
-                                $dim: 16px;
-                                width: $dim;
-                                height: $dim;
-                                border-radius: 50%;
-                                background-color: $brand_color_a;
-                                color: white;
-                                @include flex-center-col;
-                                font-size: 11px;
-                                transform: translate(-1px, -1px);
-                            }
-
-                            .category {
-                                display: flex;
-                                flex-direction: column;
-
-                                margin-bottom: 10px;
-
-                                &:last-of-type {
-                                    margin-bottom: 0;
-                                }
-
-                                .category-name {
-                                    font-size: 14px;
-                                }
-                            }
-
-
-                            &.with-importance {
-                                .filter-value {
-                                    display: flex;
-                                    flex-direction: column;
-                                    gap: 6px 0;
-                                }
-
-                                .item {
-                                    display: flex;
-                                    align-items: center;
-                                    gap: 0 6px;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    .bottom {
-        position: relative;
-        height: $create_activity_bottom_h;
-        box-sizing: border-box;
-        border-top: 0.5px solid $bc;
-
-        @include flex-center-col;
-
-        #create-activity-btn {
-            padding: 8px 16px;
-            border-radius: 8px;
-            background-color: $brand_color_a;
-            color: white;
-            min-width: 200px;
-            @include flex-center;
-            position: relative;
-
-            svg {
-                fill: white;
-                height: 16px;
-                margin-right: 12px;
-            }
-
-            .text {
-                transform: translateY(-1.5px);
-                position: relative;
-                display: flex;
-            }
-        }
-    }
-
-    .matches-overview {
-        $padding_lr: 10px;
-        $padding_tb: 6px;
-        $br: 10px;
-        $wrapper_dim: 30px;
-        $ball_dim: 16px;
-        $scale_min: 0;
-        $scale_max: 1;
-        $scale_mid: 0.5;
-
-        z-index: 10;
-        width: 100%;
-        transform: translateY(8px);
-
-        .title {
-            font-weight: 400;
-            font-size: 16px;
-            background-color: $brand_color_a;
-            color: white;
-            padding: 6px 0;
-            border-top-left-radius: $br;
-            border-top-right-radius: $br;
-            text-align: center;
-            position: relative;
+            width: inherit;
         }
 
-        .matches-container {
-            $gap_lr: 30px;
-            $label_h: 30px;
-            $count_h: 45px;
-            $icon_dim: 30px;
+        .notification {
+            width: inherit;
+        }
 
-            $br: 6px;
+        .invite {
             display: flex;
-            padding: 0;
-            gap: 0 $gap_lr;
-            justify-content: space-evenly;
+            gap: 0 10px;
+            width: 100%;
+            border-bottom: 1px solid lighten($brand_color_a, 10%);
+            padding-bottom: 6px;
+            margin-bottom: 20px;
 
-            .match {
-                flex-basis: 140px;
-                display: flex;
-                flex-direction: column;
-                transition: all 300ms;
-                justify-content: center;
-                align-items: center;
-                position: relative;
-                border: 0.5px solid lighten(black, 80%);
-                border-radius: $br;
-                text-align: center;
-
-                .label {
-                    padding: 0 0;
-                    margin-left: auto;
-                    width: 100%;
-                    font-weight: 300;
-                    box-sizing: border-box;
-                    transition: all 300ms;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    color: black;
-                    font-size: 14px;
-                    position: relative;
-                    height: $label_h;
-                    border-bottom: 0.5px solid lighten(black, 80%);
-                    border-top-left-radius: $br;
-                    border-top-right-radius: $br;
-                }
-
-                .count {
-                    width: 100%;
-                    font-weight: 500;
-                    font-size: 14px;
-                    height: $count_h;
-                    border-bottom-left-radius: $br;
-                    border-bottom-right-radius: $br;
-                    background-color: white;
-                    @include flex-center-col;
-                }
-
-                .outside {
-                    position: absolute;
-                    z-index: 2;
-                    right: 5px;
-                    width: $icon_dim;
-                    height: $icon_dim;
-                    border-radius: 50%;
-                    padding: 0;
-                    border: 1px solid lighten(black, 40%);
-                    @include flex-center-col;
-                    display: none;
-                }
-
-                .icon-container {
-                    box-sizing: border-box;
-                    width: $icon_dim;
-                    height: $icon_dim;
-                    @include flex-center-col;
-                    border: 1px solid white;
-                    border-radius: 50%;
-                    background-color: white;
-                }
-
-                .icon {
-                    height: $icon_dim * .6;
-                    @include flex-center-col;
-                }
-
-                .text {
-
-                }
+            .name {
+                font-size: 20px;
             }
 
-            .send {
-                .label {
-                    background-color: #D0F6DB;
-
-                    .icon-container {
-                        background-color: #D0F6DB;
-                    }
-                }
-            }
-
-            .interests {
-                .label {
-                    background-color: $brand_color_a;
-
-                    .icon-container {
-                        background-color: $brand_color_a;
-                    }
-                }
+            .image {
+                @include flex-center-col;
 
                 svg {
-                    height: $icon_dim * .5;
-                    fill: white;
-                }
-
-                .text {
-                    color: white;
-                }
-
-                .count {
-                    $padding_tb: 3px;
-                    $lh: 16px;
-                    $name_w: 46px;
-                    font-size: 13px;
-                    line-height: $lh;
-                    justify-content: initial;
-                    align-items: initial;
-
-                    .category {
-                        display: flex;
-
-                        &:first-of-type {
-                            border-bottom: 1px solid $color_lightgray;
-                        }
-
-                        &:last-of-type {
-                            .name {
-                                border-bottom-left-radius: $br;
-                            }
-                        }
-
-                    }
-
-                    .name {
-                        padding: $padding_tb 0;
-                        background-color: $brand_color_b;
-                        width: $name_w;
-                        text-align: center;
-                        font-size: 12px;
-                        line-height: $lh;
-
-                    }
-
-                    .number {
-                        padding: $padding_tb 0;
-                        width: calc(100% - $name_w);
-                        text-align: center;
-                    }
+                    height: 20px;
                 }
             }
         }
 
-        .update-circle {
-            width: $wrapper_dim;
-            height: $wrapper_dim;
-            position: absolute;
-            background-color: white;
-            border: 1px solid $color_lightgray;
-            border-radius: 50%;
-            top: 0;
-            left: -10px;
-            transition: all 300ms;
-            opacity: 0;
-            z-index: 3;
-
-            &.show {
-                opacity: 1;
-            }
-        }
-
-        .updating {
-            top: -8px;
-            left: 0;
-            width: $wrapper_dim;
-            height: $wrapper_dim;
-            position: absolute;
-            overflow: hidden;
-
-            z-index: 2;
-
-            &:before,
-            &:after {
-                content: "";
-                position: absolute;
-                left: 50%;
-                bottom: 0;
-                width: $ball_dim;
-                height: $ball_dim;
-                border-radius: 50%;
-                background: $brand_color_a;
-                transform: translate(-50%, 100%) scale($scale_min);
-                animation: push 2s infinite ease-in;
-            }
-
-            &:after {
-                animation-delay: 1s;
-            }
-        }
-
-        @keyframes push {
-            0% {
-                transform: translate(-50%, 100%) scale($scale_max);
-            }
-            15%, 25% {
-                transform: translate(-50%, 50%) scale($scale_max);
-            }
-            50%, 75% {
-                transform: translate(-50%, -30%) scale($scale_mid);
-            }
-            80%, 100% {
-                transform: translate(-50%, -50%) scale($scale_min);
-            }
-        }
-    }
-}
-
-#create-activity-back {
-    $dim: 40px;
-    position: fixed;
-    top: calc(calc($map_create_activity_h * 0.5 - $dim * 0.5));
-    left: calc($dim / 2);
-    height: $dim;
-    width: $dim;
-    opacity: 0;
-    visibility: hidden;
-    z-index: 100;
-    border-radius: 50%;
-    background: white;
-    border: 1px solid $color_lightgray;
-    transition:
-        opacity $overlay_transition_ms,
-        visibility 0ms $overlay_transition_ms;
-
-    @include flex-center-col;
-
-    svg {
-        height: 17px;
-    }
-}
-
-#activity-duration {
-    $outside_bc: lighten(black, 30%);
-    $br: 10px;
-
-    .level_1 {
-        margin-top: 10px;
-        display: flex;
-        flex-wrap: nowrap;
-
-        &.group-2 {
-            .button:nth-of-type(1) {
-                border-right: 0 !important;
-            }
-        }
-
-        &.group-3 {
-            .button:nth-of-type(2) {
-                border-right: 0 !important;
-            }
-        }
-
-        &.group-4 {
-            .button:nth-of-type(3) {
-                border-right: 0 !important;
-            }
-        }
-
-        .button {
-            flex-basis: 25%;
-            background-color: lighten($brand_color_a, 48%);
-            @include flex-center-col;
-            border: 0.5px solid $outside_bc;
-            //border-right: 0.5px solid lighten(black, 10%);
-            padding: 6px 0;
-            box-sizing: border-box;
-
-            &:first-of-type {
-                border-top-left-radius: $br;
-            }
-
-            &:last-of-type {
-                border-top-right-radius: $br;
-            }
-
-            &.active {
-                border-right: 0;
-                background-color: $brand_color_a;
-                color: white;
-            }
-
-            &.no-end {
-                font-size: 11px;
-                text-align: center;
-                @include flex-center-col;
-            }
-
-            .num {
-                $h: 14px;
-                font-size: $h;
-                line-height: $h;
-                font-weight: 500;
-            }
-
-            .unit {
-                $h: 12px;
-                margin-top: 4px;
-                font-size: $h;
-                line-height: $h;
-                font-weight: 300;
-            }
-        }
-    }
-
-    .level_2 {
-        $gap_lr: 6px;
-        $padding_lr: 10px;
-        $row_items: 3;
-
-        border-radius: $br;
-        border: 0.5px solid $outside_bc;
-        border-top: 0;
-        padding: 10px $padding_lr;
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
-
-        .options {
-            height: 0;
-            overflow: hidden;
+        .details {
             display: flex;
-            flex-wrap: wrap;
-            //transition: all 300ms;
-            gap: 6px $gap_lr;
 
-            &.active {
-                height: fit-content;
+            flex-direction: column;
+
+            gap: 20px 0;
+
+            .section {
+                .label {
+                    font-size: 17px;
+                    font-weight: 500;
+                    margin-bottom: 8px;
+                    display: flex;
+                    align-items: center;
+                    //border-bottom: 1px solid lighten($brand_color_a, 10%);
+                    //padding-bottom: 6px;
+                    //width: 50vw;
+                }
+            }
+        }
+
+        .place {
+            $mb: 4px;
+
+            .distance {
+                font-size: 13px;
+                margin-left: 6px;
+                transform: translateY(1px);
             }
 
-            .option {
-                flex-basis: calc(calc(calc(100% - $gap_lr * ($row_items - 1)) / $row_items));
-                background: #ffe0b2;
-                //transition: background-color 300ms;
-                padding: 4px 0px;
-                border-radius: 8px;
+            .name {
+                margin-bottom: $mb;
+            }
+
+            .address-container {
+                font-size: 14px;
+            }
+
+            .rating-price {
+                display: flex;
+                gap: 0 10px;
+                align-items: center;
+                margin-bottom: $mb;
+            }
+
+            .rating {
+                display: flex;
                 gap: 0 5px;
+                align-items: center;
 
-                @include flex-center;
+                .stars {
+                    display: flex;
+                    gap: 0 2px;
 
-                &.selected {
-                    background: #ffb74d;
+                    .circle-container {
+                        $dim: 12px;
+                        width: $dim;
+                        height: $dim;
+                        position: relative;
+                        overflow: hidden;
+                        border-radius: 50%;
+                        background-color: white;
+                        border: 1px solid darken($color_lightgray, 20%);
+
+                        .fill {
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                        }
+                    }
                 }
 
-                .num-unit {
-                    @include flex-center;
-                    gap: 0 4px;
+                .no-rating {
+                    margin-top: -3px;
+                    font-size: 11px;
+                    //font-style: italic;
+                    font-weight: 300;
+                }
 
-                    .num {
-                        font-size: 15px;
-                    }
-
-                    .unit {
-                        font-size: 12px;
-                    }
+                .num {
+                    font-size: 12px;
                 }
             }
-        }
-    }
-}
 
-#create-activity-error {
-    $h: 26px;
-    position: absolute;
-    width: 90vw;
-    height: $h;
-    line-height: $h;
-    opacity: 0;
-    background-color: $color_red;
-    color: white;
-    transition: all 200ms;
-    top: 2.5px;
-    border-radius: 4px;
-    font-size: 12px;
-    text-align: center;
-
-    &.error {
-        opacity: 1;
-    }
-
-}
-
-#create-activity-spinner {
-    $dim: 16px;
-    width: $dim;
-    height: $dim;
-    border: 2px solid white;
-    border-bottom-color: transparent;
-    border-radius: 50%;
-    box-sizing: border-box;
-    animation: rotation 1s linear infinite;
-    position: absolute;
-    opacity: 0;
-    transition: all 200ms;
-    z-index: 1000;
-    right: 15px;
-    margin-top: -1px;
-
-    &.show {
-        opacity: 1;
-    }
-
-    @keyframes rotation {
-        0% {
-            transform: rotate(0deg);
-        }
-        100% {
-            transform: rotate(360deg);
+            .price {
+                font-weight: 300;
+                font-size: 13px;
+                transform: translateY(0px);
+                width: 20px;
+            }
         }
     }
 }

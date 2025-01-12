@@ -9,9 +9,15 @@ befriend.activities = {
             befriend.activities.data.draft = data;
         },
         update: function(key, value, update_counts) {
-            if (!key) return false;
+            if (!key) {
+                return false;
+            }
+
             let draft = befriend.activities.data.draft;
-            if (!draft) return false;
+
+            if (!draft) {
+                return false;
+            }
 
             setNestedValue(draft, key, value);
 
@@ -2309,6 +2315,15 @@ befriend.activities = {
                 });
             },
         }
+    },
+    views: {
+         showView: function (view) {
+             if(view === 'notification-view') {
+                 removeClassEl('show', befriend.els.mainActivitiesView);
+                 removeClassEl('show', befriend.els.currentActivityView);
+                 addClassEl('show', befriend.els.activityNotificationView);
+             }
+         }
     },
     events: {
         init: function() {

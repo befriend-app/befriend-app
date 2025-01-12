@@ -1,4 +1,5 @@
 const earth_radius_km = 6371;
+const kms_per_mile = 1.60934;
 const meters_to_miles = 0.000621371192;
 
 function addClassEl(name, el) {
@@ -140,6 +141,28 @@ function fireTouch(node) {
     }
 }
 
+function formatRound(number) {
+    const numStr = number.toString();
+
+    if (numStr.endsWith('.0')) {
+        return Math.floor(number);
+    }
+
+    const parts = numStr.split('.');
+    if (parts.length === 1 || parts[1].length === 1) {
+        return number;
+    }
+
+    const firstDecimal = parseInt(parts[1][0]);
+    const secondDecimal = parseInt(parts[1][1]);
+
+    if (secondDecimal >= 6) {
+        return Math.round((firstDecimal + 1) * 10) / 100 + Math.floor(number);
+    } else {
+        return firstDecimal / 10 + Math.floor(number);
+    }
+}
+
 function formattedNumberDisplay(value) {
     if (value >= 1000000) {
         const millions = value / 1000000;
@@ -150,6 +173,20 @@ function formattedNumberDisplay(value) {
     } else {
         return value.toLocaleString();
     }
+}
+
+function getFriendlyDateFromString(date_str) {
+    let date = date_str.substring(0, 10);
+    let split = date.split('-');
+
+    let year = split[0].substring(2);
+    let month = split[1];
+    let day = split[2];
+
+    month = month.replace(/^0+/, '');      // '1'
+    day = day.replace(/^0+/, '');          // '12'
+
+    return `${month}/${day}/${year}`;
 }
 
 function generateToken(length) {
@@ -173,26 +210,24 @@ function deg2rad(deg) {
     return (deg * Math.PI) / 180;
 }
 
-function getDistanceMeters(loc_1, loc_2) {
+function calculateDistance(loc_1, loc_2, in_km) {
     const dLat = deg2rad(loc_2.lat - loc_1.lat);
     const dLon = deg2rad(loc_2.lon - loc_1.lon);
 
     const a =
         Math.sin(dLat / 2) * Math.sin(dLat / 2) +
         Math.cos((loc_1.lat * Math.PI) / 180) *
-            Math.cos((loc_1.lat * Math.PI) / 180) *
-            Math.sin(dLon / 2) *
-            Math.sin(dLon / 2);
+        Math.cos((loc_1.lat * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
+    if (in_km) {
+        return earth_radius_km * c;
+    }
+
     return earth_radius_km * c * 1000;
-}
-
-function getDistanceMilesOrKM(loc_1, loc_2) {
-    let distance_meters = getDistanceMeters(loc_1, loc_2);
-
-    return getMilesOrKmFromMeters(distance_meters);
 }
 
 function useKM() {
@@ -200,14 +235,6 @@ function useKM() {
     let value = false;
 
     return value;
-}
-
-function getMilesOrKmFromMeters(meters) {
-    if (useKM()) {
-        return meters / 1000;
-    } else {
-        return meters * meters_to_miles;
-    }
 }
 
 function hideLevel(level_el) {

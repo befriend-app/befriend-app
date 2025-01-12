@@ -174,19 +174,20 @@ befriend.location = {
                     lon: befriend.location.device.lon,
                 };
 
-                const MINIMUM_DISTANCE_THRESHOLD = 1000; // 1km
+                const MINIMUM_DISTANCE_THRESHOLD_KM = 1;
 
                 // Check if coordinates have changed from previous by more than threshold
                 if (
                     force_update ||
                     !befriend.location.prev.server ||
-                    getDistanceMeters(
+                    calculateDistance(
                         { lat: currentCoords.lat, lon: currentCoords.lon },
                         {
                             lat: befriend.location.prev.server.lat,
                             lon: befriend.location.prev.server.lon,
                         },
-                    ) > MINIMUM_DISTANCE_THRESHOLD
+                        true
+                    ) > MINIMUM_DISTANCE_THRESHOLD_KM
                 ) {
                     // Save location to server
                     await befriend.auth.put('/location', {

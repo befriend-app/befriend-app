@@ -365,59 +365,12 @@ befriend.places = {
                         }
                     }
 
+
                     //price
-                    if (place.price) {
-                        let price_str = '';
-
-                        for (let i = 0; i < place.price; i++) {
-                            price_str += '$';
-                        }
-
-                        place_html.price += `<div class="price">${price_str}</div>`;
-                    }
+                    place_html.price += befriend.places.activity.html.getPrice(place);
 
                     //rating
-                    if (isNumeric(place.rating)) {
-                        let rating_str = place.rating.toFixed(1);
-                        let rating = parseFloat(rating_str);
-
-                        let stars_html = ``;
-
-                        let color = befriend.variables.brand_color_a;
-
-                        for (let i = 1; i <= 5; i++) {
-                            let percent;
-
-                            if (rating > i) {
-                                percent = 100;
-                            } else {
-                                let diff = i - rating;
-
-                                if (diff > 1) {
-                                    percent = 0;
-                                } else {
-                                    percent = (1 - diff) * 100;
-                                }
-                            }
-
-                            let percent_str = percent + '%';
-
-                            let star_html = `<div class="circle-container">
-                                                <div class="fill" style="background: linear-gradient(to right, ${color} ${percent_str}, transparent ${percent_str});"></div>
-                                            </div>`;
-
-                            stars_html += star_html;
-                        }
-
-                        place_html.rating += `<div class="rating">
-                                                <div class="stars">${stars_html}</div>
-                                                <div class="num">${rating_str}</div>
-                                        </div>`;
-                    } else {
-                        place_html.rating += `<div class="rating">
-                                                <div class="no-rating">No Rating</div>
-                                        </div>`;
-                    }
+                    place_html.rating += befriend.places.activity.html.getRating(place);
 
                     //closed
                     place_html.full = `<div class="left-col">
@@ -521,6 +474,64 @@ befriend.places = {
         isPlacesShown: function () {
             return elHasClass(document.documentElement, befriend.classes.placesShown);
         },
+        html: {
+            getPrice: function (place) {
+                if (place.price) {
+                    let price_str = '';
+
+                    for (let i = 0; i < place.price; i++) {
+                        price_str += '$';
+                    }
+
+                    return `<div class="price">${price_str}</div>`;
+                }
+
+                return '';
+            },
+            getRating: function (place) {
+                if (isNumeric(place.rating)) {
+                    let rating_str = place.rating.toFixed(1);
+                    let rating = parseFloat(rating_str);
+
+                    let stars_html = ``;
+
+                    let color = befriend.variables.brand_color_a;
+
+                    for (let i = 1; i <= 5; i++) {
+                        let percent;
+
+                        if (rating > i) {
+                            percent = 100;
+                        } else {
+                            let diff = i - rating;
+
+                            if (diff > 1) {
+                                percent = 0;
+                            } else {
+                                percent = (1 - diff) * 100;
+                            }
+                        }
+
+                        let percent_str = percent + '%';
+
+                        let star_html = `<div class="circle-container">
+                                                <div class="fill" style="background: linear-gradient(to right, ${color} ${percent_str}, transparent ${percent_str});"></div>
+                                            </div>`;
+
+                        stars_html += star_html;
+                    }
+
+                    return `<div class="rating">
+                                                <div class="stars">${stars_html}</div>
+                                                <div class="num">${rating_str}</div>
+                                        </div>`;
+                } else {
+                    return `<div class="rating">
+                                                <div class="no-rating">No Rating</div>
+                                        </div>`;
+                }
+            }
+        }
     },
     setIsOpen: function (places) {
         if (!places) return;

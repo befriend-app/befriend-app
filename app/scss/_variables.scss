@@ -63,6 +63,7 @@ $activity_transition_ms: 300ms;
 
 $footer_h: 40px;
 $footer_pt: 15px;
+$total_footer_h: $footer_h + $footer_pt * 2;;
 
 $view_spinner_dim: 60px;
 
@@ -125,3 +126,6 @@ $filter_activity_row_items: 3;
 $filter_activity_level_2_row_items: 3;
 $filter_activity_level_3_row_items: 3;
 $secondary_transition_ms: 200ms;
+
+//activities
+$activity_accept_decline_h: 44px;
