@@ -91,4 +91,60 @@ befriend.user = {
 
         befriend.user.setLocal('login.token', token);
     },
+    getReviewsHtml: function (person) {
+        const reviews = person.reviews;
+
+        const ratings = [
+            { name: 'Safety', current_rating: parseFloat(reviews.safety) },
+            { name: 'Trust', current_rating: parseFloat(reviews.trust) },
+            { name: 'Timeliness', current_rating: parseFloat(reviews.timeliness) },
+            { name: 'Friendliness', current_rating: parseFloat(reviews.friendliness) },
+            { name: 'Fun', current_rating: parseFloat(reviews.fun) }
+        ];
+
+        let html = '';
+
+        for(let rating of ratings) {
+            html += `
+            <div class="review">
+                <div class="name">
+                    ${rating.name}
+                </div>
+                
+                <div class="rating-display">
+                    <div class="value">${rating.current_rating.toFixed(1)}</div>
+                </div>
+                
+                <div class="stars">
+                    <div class="stars-container">
+                        ${Array(5)
+                    .fill()
+                    .map((_, i) => {
+                        const fillPercentage = Math.max(0, Math.min(100, (rating.current_rating - i) * 100));
+                        const fillStyle = fillPercentage === 0 ? 'fill: transparent;' :
+                            fillPercentage === 100 ? `fill: ${befriend.variables.brand_color_a};` :
+                                `fill: ${befriend.variables.brand_color_a}; clip-path: polygon(0 0, ${fillPercentage}% 0, ${fillPercentage}% 100%, 0 100%);`;
+    
+                        return `
+                                <div class="star-container">
+                                    <svg class="outline" viewBox="0 0 24 24">
+                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                    </svg>
+                                    <svg class="fill" viewBox="0 0 24 24" style="${fillStyle}">
+                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                    </svg>
+                                </div>
+                            `}).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+        }
+
+        return `<div class="reviews-wrapper">
+                    <div class="count">${reviews.count} reviews</div>
+                    
+                    <div class="reviews-container">${html}</div>
+                </div>`
+    }
 };

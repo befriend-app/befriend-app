@@ -3631,7 +3631,6 @@ befriend.filters = {
                                     .join('')}
                             </div>
                             
-                            
                             <div class="range-container">
                                 <div class="sliders-control">
                                     <div class="slider-track"></div>

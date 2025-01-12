@@ -189,6 +189,17 @@ function getFriendlyDateFromString(date_str) {
     return `${month}/${day}/${year}`;
 }
 
+function isToday(timestamp) {
+    // Create Date objects for the timestamp and now
+    const timestampDate = new Date(timestamp * 1000);
+    const today = new Date();
+
+    // Compare year, month, and day
+    return timestampDate.getFullYear() === today.getFullYear() &&
+        timestampDate.getMonth() === today.getMonth() &&
+        timestampDate.getDate() === today.getDate();
+}
+
 function generateToken(length) {
     if (!length) {
         length = 32;

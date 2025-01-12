@@ -73,13 +73,6 @@ befriend.notifications = {
 
              view_el.innerHTML = html;
 
-             //position accept-decline
-            // let accept_decline_el = befriend.els.activities.querySelector('.accept-decline');
-
-            // let footer_box = befriend.els.footer.getBoundingClientRect();
-            //
-            // accept_decline_el.style.bottom = `${footer_box.top}px`;
-
              befriend.activities.views.showView('notification-view');
         } catch(e) {
             console.error(e);
@@ -98,6 +91,20 @@ befriend.notifications = {
                                     ${data.activity?.activity_type?.activity_name} at ${data.activity?.human_time}
                                 </div>
                             </div>`;
+
+        let reviews_html = befriend.user.getReviewsHtml(data.person);
+
+        let who_html = `<div class="who section">
+                            <div class="label">Who</div>
+                            
+                            <div class="info">
+                                <div class="name">${data.person.first_name}</div>
+                                
+                                <div class="reviews">
+                                    ${reviews_html}
+                                </div>
+                            </div>
+                        </div>`
 
         let rating_price = `
         <div class="rating-price">
@@ -125,14 +132,14 @@ befriend.notifications = {
         }
 
         let place_html = `<div class="place section">
-                                <div class="label">Place 
-                                    <div class="distance">
-                                        (${distance_str})
-                                    </div>
-                                </div>
+                                <div class="label">Place</div> 
                                 
                                 <div class="info">
-                                    <div class="name">${data.activity?.location_name}</div>
+                                    <div class="name">${data.activity?.location_name} 
+                                        <div class="distance">
+                                        (${distance_str})
+                                        </div>
+                                    </div>
                                     
                                     ${rating_price}
                                     
@@ -142,8 +149,10 @@ befriend.notifications = {
                                 </div>
                            </div>`;
 
+        let date = getFriendlyDateFromString(data.activity.human_date);
+
         return `<div class="notification">
-                    <h2>Invitation <div class="date">${getFriendlyDateFromString(data.activity.human_date)}</div></h2>
+                    <h2>Invitation <div class="date">${date}</div></h2>
                     
                     <div class="accept-decline">
                         <div class="button accept">Accept</div>
@@ -152,7 +161,8 @@ befriend.notifications = {
                     
                     ${invite_html}
                     
-                    <div class="details">
+                    <div class="notification-wrapper">
+                        ${who_html}
                         ${place_html}
                     </div>
                 </div>`;
