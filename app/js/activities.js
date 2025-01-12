@@ -40,6 +40,29 @@ befriend.activities = {
             resolve();
         });
     },
+    getDurationStr: function(minutes) {
+        let duration_str = `${minutes} minutes`;
+
+        if (minutes >= 60 && minutes < 120) {
+            if (minutes === 60) {
+                duration_str = '1 hour';
+            } else {
+                duration_str = `1 hour, ${minutes - 60} minutes`;
+            }
+        } else if (minutes >= 120) {
+            let hours = Math.floor(minutes / 60);
+            let half = (minutes % 60) / 60;
+
+            if (half) {
+                let half_str = half.toFixed(1).replace(/0/g, '');
+                duration_str = `${hours}${half_str} hours`;
+            } else {
+                duration_str = `${hours} hours`;
+            }
+        }
+
+        return duration_str;
+    },
     activityTypes: {
         data: null,
         colors: [
@@ -750,7 +773,7 @@ befriend.activities = {
             befriend.els.createActivity
                 .querySelector('.when')
                 .querySelector('.duration')
-                .querySelector('.value').innerHTML = befriend.activities.createActivity.getDurationStr();
+                .querySelector('.value').innerHTML = befriend.activities.getDurationStr(befriend.activities.createActivity.duration.selected);
 
             if (update_buttons) {
                 let level_1 = befriend.els.createActivity.querySelector('.level_1');
@@ -785,30 +808,6 @@ befriend.activities = {
                     }
                 }
             }
-        },
-        getDurationStr: function() {
-            let minutes = befriend.activities.createActivity.duration.selected;
-            let duration_str = `${minutes} minutes`;
-
-            if (minutes >= 60 && minutes < 120) {
-                if (minutes === 60) {
-                    duration_str = '1 hour';
-                } else {
-                    duration_str = `1 hour, ${minutes - 60} minutes`;
-                }
-            } else if (minutes >= 120) {
-                let hours = Math.floor(minutes / 60);
-                let half = (minutes % 60) / 60;
-
-                if (half) {
-                    let half_str = half.toFixed(1).replace(/0/g, '');
-                    duration_str = `${hours}${half_str} hours`;
-                } else {
-                    duration_str = `${hours} hours`;
-                }
-            }
-
-            return duration_str;
         },
         getCurrentTravelTime: function() {
             if (!befriend.activities.createActivity.travel.times) {
@@ -1847,7 +1846,7 @@ befriend.activities = {
 
             when_el.querySelector('.time').innerHTML = when_str;
             when_el.querySelector('.duration').querySelector('.value').innerHTML =
-                befriend.activities.createActivity.getDurationStr();
+                befriend.activities.getDurationStr(befriend.activities.createActivity.duration.selected);
 
             //set friends
             let friend_type_str = '';

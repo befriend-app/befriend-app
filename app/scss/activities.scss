@@ -37,7 +37,7 @@
             margin-left: auto;
             font-size: 18px;
             font-weight: 400;
-            transform: translateY(0px);
+            transform: translateY(-1px);
         }
 
         .accept-decline {
@@ -86,12 +86,18 @@
         }
 
         .invite {
-            display: flex;
-            gap: 0 10px;
             width: 100%;
             border-bottom: 1px solid lighten($brand_color_a, 10%);
             padding-bottom: 6px;
             margin-bottom: 20px;
+            display: flex;
+            gap: 0 8px;
+            align-items: center;
+
+            .name-duration {
+                display: flex;
+                flex-direction: column;
+            }
 
             .name {
                 font-size: 20px;
@@ -101,8 +107,11 @@
                 @include flex-center-col;
 
                 svg {
-                    height: 28px;
+                    height: 36px;
                 }
+            }
+
+            .duration {
             }
         }
 

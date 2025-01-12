@@ -200,6 +200,16 @@ function isToday(timestamp) {
         timestampDate.getDate() === today.getDate();
 }
 
+function isTomorrow(timestamp) {
+    const timestampDate = new Date(timestamp * 1000);
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    return timestampDate.getFullYear() === tomorrow.getFullYear() &&
+        timestampDate.getMonth() === tomorrow.getMonth() &&
+        timestampDate.getDate() === tomorrow.getDate();
+}
+
 function generateToken(length) {
     if (!length) {
         length = 32;

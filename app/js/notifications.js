@@ -87,8 +87,15 @@ befriend.notifications = {
                                 <div class="image">
                                     ${data.activity?.activity_type?.activity_image}
                                 </div>
-                                <div class="name">
-                                    ${data.activity?.activity_type?.activity_name} at ${data.activity?.human_time}
+                                
+                                <div class="name-duration">
+                                    <div class="name">
+                                        ${data.activity?.activity_type?.notification_name} @ ${data.activity?.human_time}
+                                    </div>
+                                    
+                                    <div class="duration">
+                                        ${befriend.activities.getDurationStr(data.activity.activity_duration_min)}
+                                    </div>
                                 </div>
                             </div>`;
 
@@ -150,6 +157,12 @@ befriend.notifications = {
                            </div>`;
 
         let date = getFriendlyDateFromString(data.activity.human_date);
+
+        if(isToday(data.activity.activity_start)) {
+            date = 'Today';
+        } else if(isTomorrow(data.activity.activity_start)) {
+            date = 'Tomorrow';
+        }
 
         return `<div class="notification">
                     <h2>Invitation <div class="date">${date}</div></h2>
