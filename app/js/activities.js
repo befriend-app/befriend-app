@@ -1566,7 +1566,7 @@ befriend.activities = {
                 let stagesDisplay = selectedStages.length === 0 ? 'Any' : '';
 
                 life_stages_html = `<div class="filter life-stages with-importance">
-                            <div class="filter-name">Life Stage</div>
+                            <div class="filter-name">Life Stages</div>
                             <div class="filter-value">
                                 ${selectedStages.length > 0
                     ? selectedStages.map(stage => `<div class="item">
@@ -1602,7 +1602,7 @@ befriend.activities = {
                 let statusDisplay = selectedStatuses.length === 0 ? 'Any' : '';
 
                 relationship_status_html = `<div class="filter relationship-status with-importance">
-                            <div class="filter-name">Relationship Status</div>
+                            <div class="filter-name">Relationships</div>
                             <div class="filter-value">
                                 ${selectedStatuses.length > 0
                     ? selectedStatuses.map(status => `<div class="item">
