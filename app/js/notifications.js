@@ -103,6 +103,40 @@ befriend.notifications = {
                                 </div>
                             </div>`;
 
+        let friends_type = '';
+
+        if(data.activity.is_new_friends && data.activity.is_existing_friends) {
+            friends_type = 'New & Existing';
+        } else if(data.activity.is_new_friends) {
+            friends_type = 'New';
+        } else if(data.activity.is_existing_friends) {
+            friends_type = 'Existing';
+        }
+
+        let overview_html = `<div class="overview">
+                                <div class="friends-mode">
+                                    <div class="friend-type sub-section">
+                                        <div class="title">Friends</div>
+                                        <div class="text">${friends_type}</div>
+                                    </div>
+                                        
+                                    <div class="mode sub-section">
+                                        <div class="title">Mode</div>
+                                        <div class="text">${data.activity?.mode?.name}</div>
+                                    </div>
+                                    
+                                    <div class="total-persons sub-section">
+                                        <div class="title">Total Spots</div>
+                                        <div class="text">${data.activity?.persons_qty}</div>
+                                    </div>
+                                    
+                                    <div class="total-persons sub-section">
+                                        <div class="title">Available</div>
+                                        <div class="text">${data.activity?.persons_qty}</div>
+                                    </div>
+                                </div>
+                            </div>`;
+
         let reviews_html = befriend.user.getReviewsHtml(data.person);
 
         let new_member_html = '';
@@ -206,6 +240,7 @@ befriend.notifications = {
                     ${invite_html}
                     
                     <div class="notification-wrapper">
+                        ${overview_html}
                         ${who_html}
                         ${place_html}
                     </div>

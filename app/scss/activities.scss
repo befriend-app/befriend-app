@@ -133,14 +133,14 @@
                 border-top-left-radius: $section_br;
                 border-bottom-right-radius: $section_br;
 
-                font-size: 17px;
+                font-size: 16px;
                 font-weight: 500;
                 margin-bottom: 8px;
                 display: flex;
                 align-items: center;
                 background-color: $brand_color_b;
                 padding: 4px 8px;
-                width: 100px;
+                width: 110px;
                 text-align: center;
                 justify-content: center;
                 box-sizing: border-box;
@@ -150,6 +150,66 @@
 
             .info {
                 padding: 0 15px;
+            }
+        }
+
+        .overview {
+            $br: 8px;
+
+            .info {
+                margin-top: 20px;
+
+                display: flex;
+                flex-direction: column;
+                gap: 20px 0;
+            }
+
+            .friends-mode {
+                $w: 80px;
+                $mode-w: 70px;
+                display: flex;
+                gap: 0 10px;
+                justify-content: space-between;
+                flex-wrap: wrap;
+
+                .sub-section {
+                    box-sizing: border-box;
+                    width: fit-content;
+                    border-radius: $br;
+
+                    &.mode {
+                        .title, .text {
+                            width: $mode-w;
+                        }
+                    }
+
+                    .title {
+                        $ptb: 4px;
+                        box-sizing: border-box;
+                        font-size: 11px;
+                        font-weight: 500;
+                        padding: $ptb 0;
+                        width: $w;
+                        border-radius: $br;
+                        background-color: lighten($brand_color_c, 5%);
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        @include flex-center-col;
+                    }
+
+                    .text {
+                        margin-top: 3px;
+                        padding: 0 0;
+                        width: $w;
+                        font-size: 14px;
+                        text-align: center;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        @include flex-center-col;
+                    }
+                }
             }
         }
 
