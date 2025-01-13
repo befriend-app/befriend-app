@@ -59,7 +59,7 @@ befriend.notifications = {
 
         //get activity data
         try {
-             let r = await befriend.auth.get(`/activities/${notification.activity_token}`, {
+             let r = await befriend.auth.get(`/activities/${notification.activity_token}/notification`, {
                  network_token: notification.network_token
              });
 
