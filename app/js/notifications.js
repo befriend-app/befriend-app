@@ -374,7 +374,7 @@ befriend.notifications = {
 
                     html += `<div class="matching-group">
                                 <div class="title">${sectionName}</div>
-                                <div class="matching-items">
+                                <div class="matching-table-groups">
                                     ${tableGroupsHtml}
                                 </div>
                             </div>`;

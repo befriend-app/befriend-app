@@ -20,6 +20,7 @@
 
     .notification-view {
         $padding_lr: 30px;
+        $section_padding_lr: 15px;
         $section_br: 10px;
         $overview_padding_tb: 15px;
 
@@ -171,7 +172,7 @@
             }
 
             .content {
-                padding: 0 15px;
+                padding: 0 $section_padding_lr;
             }
         }
 
@@ -473,16 +474,40 @@
             .content {
                 display: flex;
                 flex-direction: column;
-                gap: 15px 0;
+                gap: 20px 0;
+                margin-top: 15px;
+                padding: 0;
+                overflow-x: hidden;
+
+                .matching-table-groups {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 15px 0;
+                    padding: 0 $section_padding_lr;
+                }
 
                 .matching-group {
                     .title {
-                        font-size: 15px;
-                        font-weight: 600;
+                        font-size: 16px;
+                        font-weight: 500;
+                        margin-bottom: 10px;
+                        background-color: $brand_color_a;
+                        color: white;
+                        width: calc(100% - #{$section_padding_lr * 2});
+                        padding: 5px $section_padding_lr;
+                    }
+
+                    .table-key-header {
+                        font-weight: 300;
+                        font-size: 16px;
+                        margin-bottom: 2px;
                     }
 
                     .matching-items {
-
+                        display: flex;
+                        flex-direction: column;
+                        gap: 10px 0;
+                        font-size: 14px;
                     }
                 }
             }
