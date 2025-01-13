@@ -105,6 +105,12 @@ befriend.notifications = {
 
         let reviews_html = befriend.user.getReviewsHtml(data.person);
 
+        let new_member_html = '';
+
+        if(data.person.is_new) {
+            new_member_html = `<div class="new-member">New member</div>`;
+        }
+
         let who_html = `<div class="who section">
                             <div class="label">Who</div>
                             
@@ -131,6 +137,8 @@ befriend.notifications = {
                                 </div>
                                 
                                 <div class="reviews">
+                                    ${new_member_html}
+                                    <div class="count">${data.person.reviews.count} reviews</div>
                                     ${reviews_html}
                                 </div>
                             </div>

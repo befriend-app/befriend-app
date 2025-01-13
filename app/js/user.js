@@ -141,10 +141,6 @@ befriend.user = {
         `;
         }
 
-        return `<div class="reviews-wrapper">
-                    <div class="count">${reviews.count} reviews</div>
-                    
-                    <div class="reviews-container">${html}</div>
-                </div>`
+        return `<div class="reviews-container">${html}</div>`
     }
 };

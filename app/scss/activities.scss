@@ -126,6 +126,7 @@
         .section {
             border: 1px solid lighten(black, 80%);
             padding: 0;
+            padding-bottom: 15px;
             border-radius: $section_br;
 
             .label {
@@ -149,7 +150,6 @@
 
             .info {
                 padding: 0 15px;
-                padding-bottom: 10px;
             }
         }
 
@@ -212,6 +212,17 @@
 
                 margin-left: auto;
                 width: fit-content;
+
+                .new-member {
+                    color: white;
+                    background-color: $brand_color_a;
+                    padding: 3px 16px;
+                    width: fit-content;
+                    font-size: 12px;
+                    border-radius: 6px;
+                    margin-top: 8px;
+                    margin-bottom: 6px;
+                }
 
                 .reviews-container {
                     display: flex;
