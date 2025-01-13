@@ -21,6 +21,7 @@
     .notification-view {
         $padding_lr: 30px;
         $section_br: 10px;
+        $overview_padding_tb: 15px;
 
         display: none;
         padding: 0 $padding_lr;
@@ -49,6 +50,7 @@
             position: fixed;
             left: 0;
             top: calc(var(--view-top));
+            z-index: 10;
 
             .button {
                 width: 50%;
@@ -117,11 +119,19 @@
         }
 
         .notification-wrapper {
-            .sections {
-                display: flex;
-                flex-direction: column;
-                gap: 20px 0;
-            }
+
+        }
+
+        .sections-wrapper {
+            overflow-y: scroll;
+        }
+
+        .sections {
+            display: flex;
+            flex-direction: column;
+            gap: 20px 0;
+            padding-top: $overview_padding_tb;
+            padding-bottom: 20px;
         }
 
         .section {
@@ -149,22 +159,14 @@
                 border-right: 1px solid lighten(black, 80%);
             }
 
-            .info {
+            .content {
                 padding: 0 15px;
             }
         }
 
         .overview {
             $br: 8px;
-            margin: 15px 0;
-
-            .info {
-                margin-top: 20px;
-
-                display: flex;
-                flex-direction: column;
-                gap: 20px 0;
-            }
+            padding-top: $overview_padding_tb;
 
             .friends-mode {
                 $w: 80px;

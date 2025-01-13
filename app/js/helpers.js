@@ -2,6 +2,10 @@ const earth_radius_km = 6371;
 const kms_per_mile = 1.60934;
 const meters_to_miles = 0.000621371192;
 
+String.prototype.capitalize = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+};
+
 function addClassEl(name, el) {
     if (typeof el !== 'object') {
         el = document.getElementById(el);

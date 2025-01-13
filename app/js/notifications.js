@@ -75,6 +75,8 @@ befriend.notifications = {
 
              befriend.activities.views.showView('notification-view');
 
+             befriend.styles.notifications.updateSectionsHeight();
+
              befriend.notifications.events.onImageModal();
              befriend.notifications.events.onAcceptDecline();
              befriend.notifications.events.onViewImage();
@@ -83,11 +85,8 @@ befriend.notifications = {
         }
     },
     getViewHtml: function (data) {
-        let html = '';
-
-        console.log(data);
-
-        let invite_html = `<div class="invite">
+        function getInvite() {
+            return `<div class="invite">
                                 <div class="image">
                                     ${data.activity?.activity_type?.activity_image}
                                 </div>
@@ -102,18 +101,20 @@ befriend.notifications = {
                                     </div>
                                 </div>
                             </div>`;
-
-        let friends_type = '';
-
-        if(data.activity.is_new_friends && data.activity.is_existing_friends) {
-            friends_type = 'New & Existing';
-        } else if(data.activity.is_new_friends) {
-            friends_type = 'New';
-        } else if(data.activity.is_existing_friends) {
-            friends_type = 'Existing';
         }
 
-        let overview_html = `<div class="overview">
+        function getOverview() {
+            let friends_type = '';
+
+            if(data.activity.is_new_friends && data.activity.is_existing_friends) {
+                friends_type = 'New & Existing';
+            } else if(data.activity.is_new_friends) {
+                friends_type = 'New';
+            } else if(data.activity.is_existing_friends) {
+                friends_type = 'Existing';
+            }
+
+           return  `<div class="overview">
                                 <div class="friends-mode">
                                     <div class="friend-type sub-section">
                                         <div class="title">Friends</div>
@@ -136,16 +137,18 @@ befriend.notifications = {
                                     </div>
                                 </div>
                             </div>`;
-
-        let reviews_html = befriend.user.getReviewsHtml(data.person);
-
-        let new_member_html = '';
-
-        if(data.person.is_new) {
-            new_member_html = `<div class="new-member">New member</div>`;
         }
 
-        let who_html = `<div class="who section">
+        function getWho() {
+            let reviews_html = befriend.user.getReviewsHtml(data.person);
+
+            let new_member_html = '';
+
+            if(data.person.is_new) {
+                new_member_html = `<div class="new-member">New member</div>`;
+            }
+
+            return `<div class="who section">
                             <div class="label">Who</div>
                             
                             <div class="age-gender">
@@ -164,7 +167,7 @@ befriend.notifications = {
                                 </div>
                             </div>
                                 
-                            <div class="info">
+                            <div class="content">
                                 <div class="name-image">
                                     <div class="name">${data.person.first_name}</div>
                                     <div class="image" style="background-image: url(${data.person.image_url})" data-image-url="${data.person.image_url}"></div>
@@ -176,37 +179,39 @@ befriend.notifications = {
                                     ${reviews_html}
                                 </div>
                             </div>
-                        </div>`
+                        </div>`;
+        }
 
-        let rating_price = `
+        function getPlace() {
+            let rating_price = `
         <div class="rating-price">
             <div class="rating">${befriend.places.activity.html.getRating(data.activity.place)}</div>
             <div class="price">${befriend.places.activity.html.getPrice(data.activity.place)}</div>
         </div>`;
 
-        let distance_km = calculateDistance(
-            befriend.location.device,
-            {
-                lat: data.activity.location_lat,
-                lon: data.activity.location_lon
-            },
-            true
-        );
+            let distance_km = calculateDistance(
+                befriend.location.device,
+                {
+                    lat: data.activity.location_lat,
+                    lon: data.activity.location_lon
+                },
+                true
+            );
 
-        let distance_miles = distance_km * kms_per_mile;
+            let distance_miles = distance_km * kms_per_mile;
 
-        let distance_str = '';
+            let distance_str = '';
 
-        if(useKM()) {
-            distance_str = `${formatRound(distance_km)} km`;
-        } else {
-            distance_str = `${formatRound(distance_miles)} m`;
-        }
+            if(useKM()) {
+                distance_str = `${formatRound(distance_km)} km`;
+            } else {
+                distance_str = `${formatRound(distance_miles)} m`;
+            }
 
-        let place_html = `<div class="place section">
+            return `<div class="place section">
                                 <div class="label">Place</div> 
                                 
-                                <div class="info">
+                                <div class="content">
                                     <div class="name">${data.activity?.location_name} 
                                         <div class="distance">
                                         (${distance_str})
@@ -220,14 +225,141 @@ befriend.notifications = {
                                     </div>
                                 </div>
                            </div>`;
-
-        let date = getFriendlyDateFromString(data.activity.human_date);
-
-        if(isToday(data.activity.activity_start)) {
-            date = 'Today';
-        } else if(isTomorrow(data.activity.activity_start)) {
-            date = 'Tomorrow';
         }
+
+        function getDate() {
+            let date = getFriendlyDateFromString(data.activity.human_date);
+
+            if(isToday(data.activity.activity_start)) {
+                date = 'Today';
+            } else if(isTomorrow(data.activity.activity_start)) {
+                date = 'Tomorrow';
+            }
+
+            return date;
+        }
+
+        function getMatching() {
+            function getItemDetails(item) {
+                const details = [];
+
+                // Add favorite positions if they exist
+                const myPos = item.match?.mine?.favorite?.position;
+                const theirPos = item.match?.theirs?.favorite?.position;
+
+                if (myPos && theirPos) {
+                    details.push(`Both #${myPos} favorite`);
+                } else if (myPos) {
+                    details.push(`My #${myPos} favorite`);
+                } else if (theirPos) {
+                    details.push(`Their #${theirPos} favorite`);
+                }
+
+                const mySecondary = item.match?.mine?.secondary?.item;
+                const theirSecondary = item.match?.theirs?.secondary?.item;
+
+                if (mySecondary || theirSecondary) {
+                    if (mySecondary === theirSecondary) {
+                        details.push(`Both ${mySecondary}`);
+                    } else {
+                        if (mySecondary) {
+                            details.push(`I'm ${mySecondary}`)
+                        }
+
+                        if (theirSecondary) {
+                            details.push(`They're ${theirSecondary}`)
+                        }
+                    }
+                }
+
+                return details.join(' • ');
+            }
+
+            function getHtml() {
+                let items = data.matching.items;
+
+                const groupedMatches = Object.values(items).reduce((acc, item) => {
+                    if (!acc[item.section]) {
+                        acc[item.section] = {
+                            items: [],
+                            favorites: 0,
+                            total: 0
+                        }
+                    }
+
+                    acc[item.section].items.push(item);
+
+                    if (item.totals?.mine) {
+                        acc[item.section].favorites = item.totals.mine.favorite || 0;
+                        acc[item.section].total = item.totals.mine.all || 0;
+                    }
+
+                    return acc;
+                }, {});
+
+                if (Object.keys(groupedMatches).length === 0) {
+                    return '';
+                }
+
+                //sort sections by number of favorites/items (mine)
+                const sortedSections = Object.entries(groupedMatches).sort(([,a], [,b]) => {
+                    if (a.favorites !== b.favorites) {
+                        return b.favorites - a.favorites;
+                    }
+
+                    return b.total - a.total;
+                });
+
+                let html = '';
+
+                for(let section of sortedSections) {
+                    let sectionData = section[1];
+                    let sectionName = befriend.filters.sections[section[0]]?.name || section[0].capitalize();
+
+                    let group_items_html = '';
+
+                    for(let item of sectionData.items) {
+                        const details = getItemDetails(item);
+
+                        html += `
+                            <div class="matching-item">
+                                <div class="matching-name">${item.name}</div>
+                                ${details ? `<div class="matching-details">${details}</div>` : ''}
+                            </div>`;
+                    }
+
+                    html += `<div class="matching-group">
+                                <div class="title">${sectionName}</div>
+                                <div class="matching-items">
+                                    ${group_items_html}
+                                </div>
+                            </div>`;
+                }
+
+                return html;
+            }
+
+            return `<div class="matches section">
+                            <div class="label">Matching</div>
+                            <div class="content">
+                                ${getHtml()}
+                            </div>
+                        </div>`;
+        }
+
+        console.log(data);
+
+        let date = getDate();
+
+        let invite_html = getInvite();
+
+        let overview_html = getOverview();
+
+        let who_html = getWho();
+
+        let place_html = getPlace();
+
+        let matching_html = getMatching();
 
         return `<div class="notification">
                     <h2>Invitation <div class="date">${date}</div></h2>
@@ -242,9 +374,12 @@ befriend.notifications = {
                     <div class="notification-wrapper">
                         ${overview_html}
                         
-                        <div class="sections">
-                            ${who_html}
-                            ${place_html}
+                        <div class="sections-wrapper">
+                            <div class="sections">
+                                ${who_html}
+                                ${place_html}
+                                ${matching_html}
+                            </div>
                         </div>
                     </div>
                 </div>`;

@@ -367,6 +367,7 @@ befriend.events = {
     resizeHandler: function () {
         window.addEventListener('resize', function () {
             befriend.styles.createActivity.updateCloseMessagePosition();
+            befriend.styles.notifications.updateSectionsHeight();
         });
     },
     onAppState: function () {
