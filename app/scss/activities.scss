@@ -27,6 +27,8 @@
         padding: 0 $padding_lr;
         padding-top: calc(#{$activity_accept_decline_h});
         width: calc(100vw - #{$padding_lr * 2});
+        overflow: hidden;
+        position: fixed;
 
         h2 {
             font-weight: 500;
@@ -81,10 +83,12 @@
 
         .container {
             width: inherit;
+            overflow: hidden;
         }
 
         .notification {
             width: inherit;
+            overflow: hidden;
         }
 
         .invite {
@@ -124,6 +128,12 @@
 
         .sections-wrapper {
             overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            &::-webkit-scrollbar {
+                display: none;
+            }
         }
 
         .sections {
