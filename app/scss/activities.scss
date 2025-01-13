@@ -131,6 +131,7 @@
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
             -ms-overflow-style: none;
+
             &::-webkit-scrollbar {
                 display: none;
             }
@@ -465,6 +466,25 @@
                 font-size: 13px;
                 transform: translateY(0px);
                 width: 20px;
+            }
+        }
+
+        .matching {
+            .content {
+                display: flex;
+                flex-direction: column;
+                gap: 15px 0;
+
+                .matching-group {
+                    .title {
+                        font-size: 15px;
+                        font-weight: 600;
+                    }
+
+                    .matching-items {
+
+                    }
+                }
             }
         }
     }

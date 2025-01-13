@@ -281,17 +281,37 @@ befriend.notifications = {
                 const groupedMatches = Object.values(items).reduce((acc, item) => {
                     if (!acc[item.section]) {
                         acc[item.section] = {
-                            items: [],
+                            tableGroups: {},
                             favorites: 0,
                             total: 0
                         }
                     }
 
-                    acc[item.section].items.push(item);
+                    const section = acc[item.section];
+                    const tableKey = item.table_key || 'default';
+
+                    if (!section.tableGroups[tableKey]) {
+                        section.tableGroups[tableKey] = {
+                            items: [],
+                            key: tableKey
+                        };
+                    }
+
+                    section.tableGroups[tableKey].items.push(item);
+
+                    //sort items by favorite position
+                    section.tableGroups[tableKey].items.sort((a, b) => {
+                        let aPosition = a.match.mine.favorite.position;
+                        let bPosition = b.match.mine.favorite.position;
+
+                        const posA = isNumeric(aPosition) ? aPosition : 9999;
+                        const posB = isNumeric(bPosition) ? bPosition : 9999;
+                        return posA - posB;
+                    });
 
                     if (item.totals?.mine) {
-                        acc[item.section].favorites = item.totals.mine.favorite || 0;
-                        acc[item.section].total = item.totals.mine.all || 0;
+                        section.favorites = item.totals.mine.favorite || 0;
+                        section.total = item.totals.mine.all || 0;
                     }
 
                     return acc;
@@ -312,26 +332,50 @@ befriend.notifications = {
 
                 let html = '';
 
-                for(let section of sortedSections) {
-                    let sectionData = section[1];
-                    let sectionName = befriend.filters.sections[section[0]]?.name || section[0].capitalize();
+                for(let [sectionKey, sectionData] of sortedSections) {
+                    let sectionName = befriend.filters.sections[sectionKey]?.name || sectionKey.capitalize();
+                    let tableGroupsHtml = '';
 
-                    let group_items_html = '';
+                    const sectionConfig = befriend.filters.sections[sectionKey]?.config;
 
-                    for(let item of sectionData.items) {
-                        const details = getItemDetails(item);
+                    const sortedTableGroups = Object.entries(sectionData.tableGroups);
 
-                        html += `
-                            <div class="matching-item">
-                                <div class="matching-name">${item.name}</div>
-                                ${details ? `<div class="matching-details">${details}</div>` : ''}
-                            </div>`;
+                    for (let [tableKey, tableGroup] of sortedTableGroups) {
+                        let tableKeyName = tableKey;
+
+                        if (sectionConfig?.tabs) {
+                            const tab = sectionConfig.tabs.find(t => t.key === tableKey);
+
+                            if (tab) {
+                                tableKeyName = tab.name;
+                            }
+                        }
+
+                        let itemsHtml = '';
+
+                        for(let item of tableGroup.items) {
+                            let details = getItemDetails(item);
+
+                            itemsHtml += `<div class="matching-item">
+                                            <div class="matching-name">${item.name}</div>
+                                            ${details ? `<div class="matching-details">${details}</div>` : ''}
+                                        </div>`;
+                        }
+
+                        const showTableHeader = !(Object.keys(sectionData.tableGroups).find(item => item === 'default'));
+
+                        tableGroupsHtml += `<div class="matching-table-group">
+                                                ${showTableHeader ? `<div class="table-key-header">${tableKeyName}</div>` : ''}
+                                                <div class="matching-items">
+                                                    ${itemsHtml}
+                                                </div>
+                                            </div>`;
                     }
 
                     html += `<div class="matching-group">
                                 <div class="title">${sectionName}</div>
                                 <div class="matching-items">
-                                    ${group_items_html}
+                                    ${tableGroupsHtml}
                                 </div>
                             </div>`;
                 }
@@ -339,7 +383,7 @@ befriend.notifications = {
                 return html;
             }
 
-            return `<div class="matches section">
+            return `<div class="matching section">
                             <div class="label">Matching</div>
                             <div class="content">
                                 ${getHtml()}
