@@ -172,7 +172,7 @@ befriend.notifications = {
                                 
                                 <div class="reviews">
                                     ${new_member_html}
-                                    <div class="count">${data.person.reviews.count} reviews</div>
+                                    <div class="count">${data.person.reviews.count} review${data.person.reviews.count !== 1 ? 's' : ''}</div>
                                     ${reviews_html}
                                 </div>
                             </div>
