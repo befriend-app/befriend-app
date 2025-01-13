@@ -240,39 +240,72 @@ befriend.notifications = {
         }
 
         function getMatching() {
+            function getItemTags(item) {
+                let tags_html = '';
+
+                let match_types = item.match?.types;
+
+                if(!match_types) {
+                    return '';
+                }
+
+                if(match_types.their_filter) {
+                    tags_html += `<div class="tag their-filter">Their Filter</div>`;
+                }
+
+                if(match_types.their_item) {
+                    tags_html += `<div class="tag their-item">Their Item</div>`;
+                }
+
+                if(match_types.my_filter) {
+                    tags_html += `<div class="tag my-filter">My Filter</div>`;
+                }
+
+                if(match_types.my_item) {
+                    tags_html += `<div class="tag my-item">My Item</div>`;
+                }
+
+                if(tags_html) {
+                    return `<div class="tags">${tags_html}</div>`;
+                }
+
+                return '';
+            }
+
             function getItemDetails(item) {
-                const details = [];
-
-                // Add favorite positions if they exist
-                const myPos = item.match?.mine?.favorite?.position;
-                const theirPos = item.match?.theirs?.favorite?.position;
-
-                if (myPos && theirPos) {
-                    details.push(`Both #${myPos} favorite`);
-                } else if (myPos) {
-                    details.push(`My #${myPos} favorite`);
-                } else if (theirPos) {
-                    details.push(`Their #${theirPos} favorite`);
-                }
-
-                const mySecondary = item.match?.mine?.secondary?.item;
-                const theirSecondary = item.match?.theirs?.secondary?.item;
-
-                if (mySecondary || theirSecondary) {
-                    if (mySecondary === theirSecondary) {
-                        details.push(`Both ${mySecondary}`);
-                    } else {
-                        if (mySecondary) {
-                            details.push(`I'm ${mySecondary}`)
-                        }
-
-                        if (theirSecondary) {
-                            details.push(`They're ${theirSecondary}`)
-                        }
-                    }
-                }
-
-                return details.join(' • ');
+                return '';
+                // const details = [];
+                //
+                // // Add favorite positions if they exist
+                // const myPos = item.match?.mine?.favorite?.position;
+                // const theirPos = item.match?.theirs?.favorite?.position;
+                //
+                // if (myPos && theirPos) {
+                //     details.push(`Both #${myPos} favorite`);
+                // } else if (myPos) {
+                //     details.push(`My #${myPos} favorite`);
+                // } else if (theirPos) {
+                //     details.push(`Their #${theirPos} favorite`);
+                // }
+                //
+                // const mySecondary = item.match?.mine?.secondary?.item;
+                // const theirSecondary = item.match?.theirs?.secondary?.item;
+                //
+                // if (mySecondary || theirSecondary) {
+                //     if (mySecondary === theirSecondary) {
+                //         details.push(`Both ${mySecondary}`);
+                //     } else {
+                //         if (mySecondary) {
+                //             details.push(`I'm ${mySecondary}`)
+                //         }
+                //
+                //         if (theirSecondary) {
+                //             details.push(`They're ${theirSecondary}`)
+                //         }
+                //     }
+                // }
+                //
+                // return details.join(' • ');
             }
 
             function getHtml() {
@@ -332,13 +365,14 @@ befriend.notifications = {
 
                 let html = '';
 
-                for(let [sectionKey, sectionData] of sortedSections) {
-                    let sectionName = befriend.filters.sections[sectionKey]?.name || sectionKey.capitalize();
+                for(let [sectionKey, sectionOrganized] of sortedSections) {
+                    let section = befriend.filters.sections[sectionKey];
+                    let sectionName = section?.name || sectionKey.capitalize();
+                    const sectionConfig = section?.config;
+
                     let tableGroupsHtml = '';
 
-                    const sectionConfig = befriend.filters.sections[sectionKey]?.config;
-
-                    const sortedTableGroups = Object.entries(sectionData.tableGroups);
+                    const sortedTableGroups = Object.entries(sectionOrganized.tableGroups);
 
                     for (let [tableKey, tableGroup] of sortedTableGroups) {
                         let tableKeyName = tableKey;
@@ -354,15 +388,17 @@ befriend.notifications = {
                         let itemsHtml = '';
 
                         for(let item of tableGroup.items) {
+                            let tags = getItemTags(item);
                             let details = getItemDetails(item);
 
                             itemsHtml += `<div class="matching-item">
                                             <div class="matching-name">${item.name}</div>
+                                            ${tags}
                                             ${details ? `<div class="matching-details">${details}</div>` : ''}
                                         </div>`;
                         }
 
-                        const showTableHeader = !(Object.keys(sectionData.tableGroups).find(item => item === 'default'));
+                        const showTableHeader = !(Object.keys(sectionOrganized.tableGroups).find(item => item === 'default'));
 
                         tableGroupsHtml += `<div class="matching-table-group">
                                                 ${showTableHeader ? `<div class="table-key-header">${tableKeyName}</div>` : ''}
@@ -373,7 +409,10 @@ befriend.notifications = {
                     }
 
                     html += `<div class="matching-group">
-                                <div class="title">${sectionName}</div>
+                                <div class="title">
+                                    <div class="icon">${section.icon}</div>
+                                    <div class="name">${sectionName}</div>    
+                                </div>
                                 <div class="matching-table-groups">
                                     ${tableGroupsHtml}
                                 </div>

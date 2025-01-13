@@ -21,6 +21,7 @@
     .notification-view {
         $padding_lr: 30px;
         $section_padding_lr: 15px;
+        $section_padding_tb: 10px;
         $section_br: 10px;
         $overview_padding_tb: 15px;
 
@@ -147,28 +148,38 @@
         }
 
         .section {
-            border: 1px solid lighten(black, 80%);
-            padding: 0;
-            padding-bottom: 15px;
+            $bw: 1px;
+            $bc: lighten(black, 80%);
+
+            padding: $section_padding_tb 0;
             border-radius: $section_br;
+            border-top-left-radius: 0;
+            position: relative;
+            margin-top: $notification_label_h;
+            box-sizing: border-box;
+            border: $bw solid $bc;
 
             .label {
-                border-top-left-radius: $section_br;
-                border-bottom-right-radius: $section_br;
+                position: absolute;
+                height: $notification_label_h;
+                top: #{(-$notification_label_h)};
+                left: -$bw;
 
-                font-size: 16px;
+                font-size: 15px;
                 font-weight: 500;
                 margin-bottom: 8px;
                 display: flex;
                 align-items: center;
                 background-color: $brand_color_b;
-                padding: 4px 8px;
+                padding: 5px 8px;
                 width: 110px;
                 text-align: center;
                 justify-content: center;
                 box-sizing: border-box;
-                border-bottom: 1px solid lighten(black, 80%);
-                border-right: 1px solid lighten(black, 80%);
+                border-radius: $section_br;
+                border: $bw solid $bc;
+                border-bottom-right-radius: 0;
+                border-bottom-left-radius: 0;
             }
 
             .content {
@@ -471,11 +482,13 @@
         }
 
         .matching {
+            padding-top: 0;
+            padding-bottom: 0;
+
             .content {
                 display: flex;
                 flex-direction: column;
-                gap: 20px 0;
-                margin-top: 15px;
+                gap: 0 0;
                 padding: 0;
                 overflow-x: hidden;
 
@@ -484,23 +497,45 @@
                     flex-direction: column;
                     gap: 15px 0;
                     padding: 0 $section_padding_lr;
+                    padding-top: 10px;
+                    padding-bottom: 16px;
                 }
 
                 .matching-group {
+                    &:first-of-type {
+                        .title {
+                            border-top-color: transparent !important;
+                            border-top-right-radius: $section_br;
+                        }
+                    }
+
                     .title {
+                        $c: white;
+                        display: flex;
+                        gap: 0 12px;
                         font-size: 16px;
                         font-weight: 500;
-                        margin-bottom: 10px;
                         background-color: $brand_color_a;
-                        color: white;
-                        width: calc(100% - #{$section_padding_lr * 2});
-                        padding: 5px $section_padding_lr;
+                        color: $c;
+                        //border-top: 1px solid $brand_color_a;
+                        //border-bottom: 1px solid $brand_color_a;
+                        //width: calc(100% - #{$section_padding_lr * 2});
+                        padding: 7px $section_padding_lr;
+
+                        .icon {
+                            @include flex-center-col;
+
+                            svg {
+                                height: 18px;
+                                fill: $c;
+                            }
+                        }
                     }
 
                     .table-key-header {
                         font-weight: 300;
                         font-size: 16px;
-                        margin-bottom: 2px;
+                        margin-bottom: 6px;
                     }
 
                     .matching-items {
@@ -508,6 +543,38 @@
                         flex-direction: column;
                         gap: 10px 0;
                         font-size: 14px;
+                    }
+
+                    .matching-item {
+                        .tags {
+                            display: flex;
+                            flex-wrap: wrap;
+                            gap: 0 10px;
+                            margin-top: 4px;
+
+                            .tag {
+                                font-size: 9px;
+                                padding: 3px 9px;
+                                border-radius: 6px;
+
+                                &.my-filter {
+                                    background-color: $brand_color_a;
+                                    color: white;
+                                }
+
+                                &.my-item {
+                                    background-color: $brand_color_c;
+                                }
+
+                                &.their-filter {
+                                    background-color: $brand_color_b;
+                                }
+
+                                &.their-item {
+                                    background-color: $brand_color_d;
+                                }
+                            }
+                        }
                     }
                 }
             }
