@@ -74,6 +74,10 @@ befriend.notifications = {
              view_el.innerHTML = html;
 
              befriend.activities.views.showView('notification-view');
+
+             befriend.notifications.events.onImageModal();
+             befriend.notifications.events.onAcceptDecline();
+             befriend.notifications.events.onViewImage();
         } catch(e) {
             console.error(e);
         }
@@ -123,7 +127,7 @@ befriend.notifications = {
                             <div class="info">
                                 <div class="name-image">
                                     <div class="name">${data.person.first_name}</div>
-                                    <div class="image" style="background-image: url(${data.person.image_url})"></div>
+                                    <div class="image" style="background-image: url(${data.person.image_url})" data-image-url="${data.person.image_url}"></div>
                                 </div>
                                 
                                 <div class="reviews">
@@ -202,6 +206,18 @@ befriend.notifications = {
     showNotificationBar: function () {
 
     },
+    openModal: function(imageUrl) {
+        let modal_el = document.getElementById('person-image-modal');
+        let modal_image_el = modal_el.querySelector('img');
+        modal_image_el.src = imageUrl;
+        addClassEl('active', modal_el);
+        document.body.style.overflow = 'hidden';
+    },
+    closeModal: function() {
+        let modal_el = document.getElementById('person-image-modal');
+        removeClassEl('active', modal_el);
+        document.body.style.overflow = '';
+    },
     events: {
         init: function () {
             return new Promise(async (resolve, reject) => {
@@ -250,6 +266,47 @@ befriend.notifications = {
             } catch (e) {
                 console.error(e);
             }
+        },
+        onAcceptDecline: function () {
+
+        },
+        onViewImage: function () {
+            let image_el = befriend.els.activityNotificationView.querySelector('.who').querySelector('.image');
+
+            if(image_el._listener) {
+                return;
+            }
+
+            image_el._listener = true;
+
+            image_el.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                let url = image_el.getAttribute('data-image-url');
+
+                befriend.notifications.openModal(url)
+            });
+        },
+        onImageModal: function () {
+            let modal_el = document.getElementById('person-image-modal');
+
+            if(modal_el._listener) {
+                return;
+            }
+
+            modal_el._listener = true;
+
+            let modal_image_el = modal_el.querySelector('img');
+
+            modal_el.addEventListener('click', (e) => {
+                befriend.notifications.closeModal();
+            });
+
+            modal_image_el.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            });
         },
     },
 };

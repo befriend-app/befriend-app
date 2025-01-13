@@ -106,6 +106,8 @@
             .image {
                 @include flex-center-col;
 
+                cursor: pointer;
+
                 svg {
                     height: 36px;
                 }
@@ -376,7 +378,47 @@
                 width: 20px;
             }
         }
+    }
+}
 
+#person-image-modal {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    visibility: hidden;
+    transition: background-color 0.3s ease, visibility 0.3s ease;
 
+    &.active {
+        display: flex;
+        visibility: visible;
+        background: rgba(0, 0, 0, 0.5);
+
+        .modal-content {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .modal-content {
+        position: relative;
+        max-width: 90vw;
+        max-height: 90vh;
+        opacity: 0;
+        transform: scale(0.95);
+        transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .modal-content img {
+        max-width: 100%;
+        max-height: 90vh;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 }

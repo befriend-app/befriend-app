@@ -551,6 +551,12 @@ befriend.html = {
                     
                     <div id="overlay"></div>
                     
+                    <div id="person-image-modal" class="modal-overlay" >
+                        <div class="modal-content">
+                            <img>
+                        </div>
+                    </div>
+                    
                     <footer>
                         <div id="navigation">
                             <div class="nav-item active home" data-nav="home">
