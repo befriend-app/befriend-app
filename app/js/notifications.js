@@ -241,8 +241,11 @@ befriend.notifications = {
                     
                     <div class="notification-wrapper">
                         ${overview_html}
-                        ${who_html}
-                        ${place_html}
+                        
+                        <div class="sections">
+                            ${who_html}
+                            ${place_html}
+                        </div>
                     </div>
                 </div>`;
     },

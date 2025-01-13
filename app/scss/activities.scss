@@ -89,7 +89,6 @@
             width: 100%;
             border-bottom: 1px solid lighten($brand_color_a, 10%);
             padding-bottom: 6px;
-            margin-bottom: 20px;
             display: flex;
             gap: 0 8px;
             align-items: center;
@@ -118,9 +117,11 @@
         }
 
         .notification-wrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 20px 0;
+            .sections {
+                display: flex;
+                flex-direction: column;
+                gap: 20px 0;
+            }
         }
 
         .section {
@@ -155,6 +156,7 @@
 
         .overview {
             $br: 8px;
+            margin: 15px 0;
 
             .info {
                 margin-top: 20px;
@@ -176,6 +178,7 @@
                     box-sizing: border-box;
                     width: fit-content;
                     border-radius: $br;
+                    border: 1px solid lighten(black, 80%);
 
                     &.mode {
                         .title, .text {
@@ -190,17 +193,20 @@
                         font-weight: 500;
                         padding: $ptb 0;
                         width: $w;
-                        border-radius: $br;
                         background-color: lighten($brand_color_c, 5%);
                         white-space: nowrap;
                         overflow: hidden;
                         text-overflow: ellipsis;
+                        border-top-left-radius: $br;
+                        border-top-right-radius: $br;
+                        //border-radius: $br;
+
                         @include flex-center-col;
                     }
 
                     .text {
                         margin-top: 3px;
-                        padding: 0 0;
+                        padding: 4px 0;
                         width: $w;
                         font-size: 14px;
                         text-align: center;
