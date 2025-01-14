@@ -132,9 +132,12 @@ befriend.notifications = {
                                         <div class="text">${notification.activity?.persons_qty}</div>
                                     </div>
                                     
-                                    <div class="total-persons sub-section">
+                                    <div class="available-persons sub-section">
                                         <div class="title">Available</div>
-                                        <div class="text">${notification.activity?.persons_qty}</div>
+                                        <div class="text">
+                                            <div class="new"></div>
+                                            <div class="current">${notification.activity?.persons_qty}</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>`;
@@ -538,6 +541,8 @@ befriend.notifications = {
         return `<div class="notification">
                     <h2>Invitation <div class="date">${date}</div></h2>
                     
+                    <div class="max-recipients">Unavailable: max spots reached</div>
+                    
                     <div class="accept-decline">
                         <div class="button accept">
                             <div class="icon"><?xml version="1.0" encoding="UTF-8"?><svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 387.3801 387.4142"><path d="M193.6956,387.4142C86.8959,387.4142,0,300.5072,0,193.6964S86.8959.0009,193.6956.0009c30.6285-.0919,60.8328,7.1589,88.0817,21.1449,5.4504,2.7879,7.6087,9.4663,4.8208,14.9167s-9.4663,7.6087-14.9167,4.8208h0c-24.1259-12.3818-50.8682-18.8004-77.9858-18.7179C99.1086,22.1654,22.1645,99.1094,22.1645,193.6964s76.9441,171.5532,171.5311,171.5532,171.5311-76.9662,171.5311-171.5532c.0073-14.7464-1.8811-29.4325-5.6187-43.6973-1.4369-5.9495,2.2213-11.9374,8.1707-13.3743,5.7829-1.3967,11.6369,2.0217,13.2623,7.7445,4.2184,16.1065,6.3489,32.6884,6.339,49.3382.0111,106.7996-86.8738,193.7067-193.6845,193.7067h0Z"/><path d="M187.7333,240.4192c-2.939-.0006-5.7573-1.1686-7.8352-3.2471l-56.1316-56.1316c-4.0856-4.5573-3.7032-11.5638.854-15.6494,4.2008-3.766,10.5605-3.775,14.7719-.0209l48.2965,48.2965L362.7332,38.6668c4.4023-4.2522,11.4182-4.1304,15.6703.2719,4.1482,4.2947,4.1482,11.1037,0,15.3984l-182.8571,182.8572c-2.076,2.0649-4.8849,3.2243-7.813,3.2249h0Z"/></svg></div>
@@ -580,6 +585,35 @@ befriend.notifications = {
         let modal_el = document.getElementById('person-image-modal');
         removeClassEl('active', modal_el);
         document.body.style.overflow = '';
+    },
+    updateAvailableSpots: function (spots) {
+        const availablePersons = befriend.els.activityNotificationView.querySelector('.available-persons .text');
+        const currentEl = availablePersons.querySelector('.current');
+        const newEl = availablePersons.querySelector('.new');
+
+        newEl.textContent = spots;
+
+        addClassEl('fade-out', currentEl);
+        addClassEl('fade-in', newEl);
+
+        setTimeout(async () => {
+            currentEl.textContent = spots;
+
+            currentEl.style.transition = 'none';
+            newEl.style.transition = 'none';
+
+            await rafAwait();
+
+            removeClassEl('fade-out', currentEl);
+            removeClassEl('fade-in', newEl);
+
+            await rafAwait();
+
+            newEl.textContent = '';
+
+            currentEl.style.removeProperty('transition');
+            newEl.style.removeProperty('transition');
+        }, befriend.variables.notification_spots_transition_ms);
     },
     events: {
         init: function () {
@@ -632,6 +666,8 @@ befriend.notifications = {
         },
         onAccept: function () {
             let accept_el = befriend.els.activityNotificationView.querySelector('.button.accept');
+            let parent_el = accept_el.closest('.accept-decline');
+            let max_recipients_el = befriend.els.activityNotificationView.querySelector('.max-recipients');
 
             if(accept_el._listener) {
                 return;
@@ -642,6 +678,13 @@ befriend.notifications = {
             accept_el.addEventListener('click', async function (e) {
                 e.preventDefault();
                 e.stopPropagation();
+
+                let notification = befriend.notifications.data.current?.notification;
+                let activity = befriend.notifications.data.current?.activity;
+
+                if(notification.accepted_at) {
+                    return;
+                }
 
                 if(this._ip) {
                     return;
@@ -655,7 +698,20 @@ befriend.notifications = {
                     befriend.toggleSpinner(true);
 
                     try {
-                        let r = await befriend.auth.put(`/activities/:${activity_token}/notification/accept`);
+                        let r = await befriend.auth.put(`/activities/${activity_token}/notification/accept`);
+
+                        if(r.data.success) {
+                            notification.accepted_at = timeNow();
+
+                            accept_el.querySelector('.text').innerHTML = `You're going!`;
+                            addClassEl('accepted', parent_el);
+
+                            befriend.notifications.updateAvailableSpots(r.data.spots);
+                        } else {
+                            max_recipients_el.innerHTML = r.data.error;
+                            addClassEl('show', max_recipients_el);
+                            addClassEl('hide', parent_el);
+                        }
                     } catch(e) {
                         console.error(e);
                     }
@@ -705,7 +761,6 @@ befriend.notifications = {
 
                         if(r.data.success) {
                             notification.declined_at = timeNow();
-
                             decline_el.querySelector('.text').innerHTML = 'You declined this invitation';
                             addClassEl('declined', parent_el);
                         }

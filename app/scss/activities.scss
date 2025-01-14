@@ -45,6 +45,29 @@
             transform: translateY(-1px);
         }
 
+        .max-recipients {
+            width: 100vw;
+            display: flex;
+            border: .5px solid lighten(black, 60%);
+            position: fixed;
+            height: 43px;
+            left: 0;
+            top: calc(var(--view-top));
+            z-index: 12;
+            text-align: center;
+            @include flex-center-col;
+            background-color: $color_red;
+            color: white;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 200ms;
+
+            &.show {
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+
         .accept-decline {
             $br: 0px;
             width: 100vw;
@@ -55,6 +78,14 @@
             left: 0;
             top: calc(var(--view-top));
             z-index: 10;
+            transition: all 200ms;
+            opacity: 1;
+            visibility: visible;
+
+            &.hide {
+                opacity: 0;
+                visibility: hidden;
+            }
 
             .icon {
                 $dim: 16px;
@@ -62,6 +93,16 @@
 
                 svg {
                     height: $dim;
+                }
+            }
+
+            &.accepted {
+                .accept {
+                    width: 100%;
+                }
+
+                .decline {
+                    display: none;
                 }
             }
 
@@ -96,6 +137,7 @@
                     border-top-left-radius: $br;
                     border-bottom-left-radius: $br;
                     border-right: .5px solid lighten(black, 60%);
+                    transition: width 300ms;
                 }
 
                 &.decline {
@@ -259,15 +301,46 @@
                     }
 
                     .text {
-                        margin-top: 3px;
-                        padding: 4px 0;
+                        padding: 0 0;
                         width: $w;
+                        height: 36px;
                         font-size: 14px;
                         text-align: center;
                         white-space: nowrap;
                         overflow: hidden;
                         text-overflow: ellipsis;
                         @include flex-center-col;
+                    }
+                }
+            }
+
+            .available-persons {
+                .text {
+                    position: relative;
+
+                    .current, .new {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        transition: opacity $notification_spots_transition_ms ease;
+                        opacity: 1;
+                        width: inherit;
+                        height: inherit;
+                        @include flex-center-col;
+                    }
+
+                    .new {
+                        opacity: 0;
+
+                        &.fade-in {
+                            opacity: 1;
+                        }
+                    }
+
+                    .current {
+                        &.fade-out {
+                            opacity: 0;
+                        }
                     }
                 }
             }
