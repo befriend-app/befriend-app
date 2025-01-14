@@ -78,7 +78,8 @@ befriend.notifications = {
              befriend.styles.notifications.updateSectionsHeight();
 
              befriend.notifications.events.onImageModal();
-             befriend.notifications.events.onAcceptDecline();
+             befriend.notifications.events.onAccept();
+             befriend.notifications.events.onDecline();
              befriend.notifications.events.onViewImage();
         } catch(e) {
             console.error(e);
@@ -538,8 +539,16 @@ befriend.notifications = {
                     <h2>Invitation <div class="date">${date}</div></h2>
                     
                     <div class="accept-decline">
-                        <div class="button accept">Accept</div>
-                        <div class="button decline">Decline</div>
+                        <div class="button accept">
+                            <div class="icon"><?xml version="1.0" encoding="UTF-8"?><svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 387.3801 387.4142"><path d="M193.6956,387.4142C86.8959,387.4142,0,300.5072,0,193.6964S86.8959.0009,193.6956.0009c30.6285-.0919,60.8328,7.1589,88.0817,21.1449,5.4504,2.7879,7.6087,9.4663,4.8208,14.9167s-9.4663,7.6087-14.9167,4.8208h0c-24.1259-12.3818-50.8682-18.8004-77.9858-18.7179C99.1086,22.1654,22.1645,99.1094,22.1645,193.6964s76.9441,171.5532,171.5311,171.5532,171.5311-76.9662,171.5311-171.5532c.0073-14.7464-1.8811-29.4325-5.6187-43.6973-1.4369-5.9495,2.2213-11.9374,8.1707-13.3743,5.7829-1.3967,11.6369,2.0217,13.2623,7.7445,4.2184,16.1065,6.3489,32.6884,6.339,49.3382.0111,106.7996-86.8738,193.7067-193.6845,193.7067h0Z"/><path d="M187.7333,240.4192c-2.939-.0006-5.7573-1.1686-7.8352-3.2471l-56.1316-56.1316c-4.0856-4.5573-3.7032-11.5638.854-15.6494,4.2008-3.766,10.5605-3.775,14.7719-.0209l48.2965,48.2965L362.7332,38.6668c4.4023-4.2522,11.4182-4.1304,15.6703.2719,4.1482,4.2947,4.1482,11.1037,0,15.3984l-182.8571,182.8572c-2.076,2.0649-4.8849,3.2243-7.813,3.2249h0Z"/></svg></div>
+                            <div class="text">Accept</div>
+                        </div>
+                        <div class="button decline">
+                            <div class="icon">
+                                <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><defs><style>.decline-cls-1{fill:none;stroke:#353535;stroke-linecap:round;stroke-linejoin:round;stroke-width:2px;}</style></defs><circle class="decline-cls-1" cx="24" cy="24" r="23"/><path class="decline-cls-1" d="M8,40.013L40,8.013"/></svg>
+                            </div>
+                            <div class="text">Decline</div>
+                        </div>
                     </div>
                     
                     ${invite_html}
@@ -621,8 +630,94 @@ befriend.notifications = {
                 console.error(e);
             }
         },
-        onAcceptDecline: function () {
+        onAccept: function () {
+            let accept_el = befriend.els.activityNotificationView.querySelector('.button.accept');
 
+            if(accept_el._listener) {
+                return;
+            }
+
+            accept_el._listener = true;
+
+            accept_el.addEventListener('click', async function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                if(this._ip) {
+                    return;
+                }
+
+                this._ip = true;
+
+                let activity_token = befriend.notifications.data.current?.activity?.activity_token;
+
+                if(activity_token) {
+                    befriend.toggleSpinner(true);
+
+                    try {
+                        let r = await befriend.auth.put(`/activities/:${activity_token}/notification/accept`);
+                    } catch(e) {
+                        console.error(e);
+                    }
+                }
+
+                befriend.toggleSpinner(false);
+
+                this._ip = false;
+            });
+        },
+        onDecline: function () {
+            let decline_el = befriend.els.activityNotificationView.querySelector('.button.decline');
+
+            let parent_el = decline_el.closest('.accept-decline');
+
+            if(decline_el._listener) {
+                return;
+            }
+
+            decline_el._listener = true;
+
+            decline_el.addEventListener('click', async function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                let notification = befriend.notifications.data.current?.notification;
+                let activity = befriend.notifications.data.current?.activity;
+
+                //already declined
+                if(notification.declined_at) {
+                    return;
+                }
+
+                if(this._ip) {
+                    return;
+                }
+
+                this._ip = true;
+
+                let activity_token = activity?.activity_token;
+
+                if(activity_token) {
+                    try {
+                        befriend.toggleSpinner(true);
+
+                        let r = await befriend.auth.put(`/activities/${activity_token}/notification/decline`);
+
+                        if(r.data.success) {
+                            notification.declined_at = timeNow();
+
+                            decline_el.querySelector('.text').innerHTML = 'You declined this invitation';
+                            addClassEl('declined', parent_el);
+                        }
+                    } catch(e) {
+                        console.error(e);
+                    }
+                }
+
+                befriend.toggleSpinner(false);
+
+                this._ip = false;
+            });
         },
         onViewImage: function () {
             let image_el = befriend.els.activityNotificationView.querySelector('.who').querySelector('.image');

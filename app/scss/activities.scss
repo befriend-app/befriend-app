@@ -56,25 +56,54 @@
             top: calc(var(--view-top));
             z-index: 10;
 
+            .icon {
+                $dim: 16px;
+                @include flex-center-col;
+
+                svg {
+                    height: $dim;
+                }
+            }
+
+            &.declined {
+                .decline {
+                    left: 0 !important;
+                    width: 100%;
+                }
+
+                .accept {
+                    display: none;
+                }
+            }
+
             .button {
                 width: 50%;
                 padding: 10px 0;
                 box-sizing: border-box;
                 text-align: center;
+                display: flex;
+                justify-content: center;
+                gap: 0 10px;
+                position: absolute;
+
+                .text {
+                    transform: translateY(-1px);
+                }
 
                 &.accept {
+                    left: 0;
                     background-color: $brand_color_b;
                     border-top-left-radius: $br;
                     border-bottom-left-radius: $br;
-
                     border-right: .5px solid lighten(black, 60%);
                 }
 
-
                 &.decline {
+                    left: 50%;
                     background-color: lighten(black, 90%);
                     border-top-right-radius: $br;
                     border-bottom-right-radius: $br;
+                    transition: left 300ms;
                 }
             }
         }
