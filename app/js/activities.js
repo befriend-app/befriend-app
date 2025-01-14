@@ -906,6 +906,9 @@ befriend.activities = {
             befriend.when.selected.createActivity = structuredClone(befriend.when.selected.main);
             befriend.activities.createActivity.setHtml();
 
+            //reset view to initial scroll top
+            befriend.els.createActivity.querySelector('.main').scrollTop = 0;
+
             try {
                 befriend.activities.createActivity.getMatchCounts();
             } catch(e) {
