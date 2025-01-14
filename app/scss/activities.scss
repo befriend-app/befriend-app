@@ -541,8 +541,8 @@
                     flex-direction: column;
                     gap: 15px 0;
                     padding: 0 $section_padding_lr;
-                    padding-top: 10px;
-                    padding-bottom: 16px;
+                    padding-top: 15px;
+                    padding-bottom: 22px;
                 }
 
                 .matching-group {
@@ -578,7 +578,7 @@
 
                     .table-key-header {
                         font-weight: 300;
-                        font-size: 16px;
+                        font-size: 18px;
                         margin-bottom: 6px;
                     }
 
@@ -589,8 +589,31 @@
                         font-size: 14px;
                     }
 
+                    .secondary {
+                        $ptb: 2px;
+                        //position: absolute;
+                        //transform: translate(calc(100% + 5px), calc(#{-$ptb} - 2px));
+                        //right: 0;
+                        //top: 0;
+                        border-radius: 10px;
+                        font-size: 11px;
+                        font-weight: 500;
+
+                        border: 1px solid $brand_color_a;
+                        padding: $ptb 10px;
+                        width: fit-content;
+                        transform: translateY(-1px);
+                    }
+
                     .matching-item {
                         $tag_padding_lr: 18px;
+
+                        .matching-name {
+                            position: relative;
+                            width: fit-content;
+                            display: flex;
+                            gap: 0 6px;
+                        }
 
                         .favorite {
                             $dim: 25px;
@@ -615,7 +638,7 @@
                                 height: $dim;
                                 fill: $brand_color_b;
                                 stroke: $brand_color_a;
-                                stroke-width: $dim / 2;
+                                stroke-width: 16px;
                             }
                         }
 
@@ -624,7 +647,7 @@
 
                             position: absolute;
                             top: -2px;
-                            right: calc($dim / -2);
+                            left: calc($dim / -2);
                             z-index: 4;
                             width: $dim;
                             height: $dim;

@@ -204,9 +204,36 @@ befriend.filters = {
                 hasTabs: true,
                 hasTableKey: true,
                 tabs: [
-                    { key: 'teams', col: 'sport_team_id', name: 'Teams', singular: 'Team' },
-                    { key: 'leagues', col: 'sport_league_id', name: 'Leagues', singular: 'League' },
-                    { key: 'play', col: 'sport_play_id', name: 'Play', singular: 'Sport' },
+                    {
+                        key: 'teams',
+                        col: 'sport_team_id',
+                        name: 'Teams',
+                        singular: 'Team',
+                        secondary: {
+                            name: 'Fan Level',
+                            extra: 'fan'
+                        }
+                    },
+                    {
+                        key: 'leagues',
+                        col: 'sport_league_id',
+                        name: 'Leagues',
+                        singular: 'League',
+                        secondary: {
+                            name: 'Fan Level',
+                            extra: 'fan'
+                        }
+                    },
+                    {
+                        key: 'play',
+                        col: 'sport_play_id',
+                        name: 'Play',
+                        singular: 'Sport',
+                        secondary: {
+                            name: 'Skill Level',
+                            extra: 'skill'
+                        }
+                    },
                 ],
             },
         },
@@ -244,6 +271,10 @@ befriend.filters = {
                 endpoint: `/filters/instruments`,
                 key: 'instruments',
                 hasSecondary: true,
+                secondary: {
+                    name: 'Skill Level',
+                    extra: 'skill'
+                }
             },
         },
         schools: {

@@ -324,21 +324,48 @@ befriend.notifications = {
             }
 
             function getItemSecondary(item) {
-                let match = item.match;
-                let myItemSecondary = match?.mine?.secondary?.item;
-                let theirItemSecondary = match?.their?.secondary?.item;
-                let myFilterSecondary = match?.mine?.secondary?.filter;
-                let theirFilterSecondary = match?.theirs?.secondary?.filter;
+                try {
+                    let sectionConfig = befriend.filters.sections[item.section]?.config;
 
-                console.log({
-                    name: item.name,
-                    myItemSecondary,
-                    theirFilterSecondary,
-                    myFilterSecondary,
-                    theirItemSecondary
-                });
+                    let secondary_extra = '';
 
-                return '';
+                    if (sectionConfig?.tabs) {
+                        const tab = sectionConfig.tabs.find(t => t.key === item.table_key);
+
+                        if (tab) {
+                            secondary_extra = tab.secondary?.extra;
+                        }
+                    } else {
+                        secondary_extra = sectionConfig.secondary?.extra;
+                    }
+
+                    let match = item.match;
+                    let myItemSecondary = match?.mine?.secondary?.item;
+                    let theirItemSecondary = match?.their?.secondary?.item;
+                    let myFilterSecondary = match?.mine?.secondary?.filter;
+                    let theirFilterSecondary = match?.theirs?.secondary?.filter;
+
+                    let html = '';
+
+                    let secondary_html = '';
+
+                    if(myItemSecondary && theirItemSecondary && myItemSecondary === theirItemSecondary) {
+                        secondary_html = `${myItemSecondary} ${secondary_extra}`;
+                    } else if(myFilterSecondary && theirItemSecondary && myFilterSecondary.includes(theirItemSecondary)) {
+                        secondary_html = `${theirItemSecondary} ${secondary_extra}`;
+                    } else if(theirFilterSecondary && myItemSecondary && theirFilterSecondary.includes(myItemSecondary)) {
+                        secondary_html = `${myItemSecondary} ${secondary_extra}`;
+                    }
+
+                    if(secondary_html) {
+                        html = `<div class="secondary">${secondary_html}</div>`;
+                    }
+
+                    return html;
+                } catch(e) {
+                    console.error(e);
+                    return '';
+                }
             }
 
             function getHtml() {
@@ -402,6 +429,7 @@ befriend.notifications = {
                     let section = befriend.filters.sections[sectionKey];
                     let sectionName = section?.name || sectionKey.capitalize();
                     const sectionConfig = section?.config;
+                    let showTableHeader = false;
 
                     let tableGroupsHtml = '';
 
@@ -416,6 +444,10 @@ befriend.notifications = {
                             if (tab) {
                                 tableKeyName = tab.name;
                             }
+
+                            if(sectionConfig.tabs.length) {
+                                showTableHeader = true;
+                            }
                         }
 
                         let itemsHtml = '';
@@ -425,13 +457,15 @@ befriend.notifications = {
                             let secondary = getItemSecondary(item);
 
                             itemsHtml += `<div class="matching-item">
-                                            <div class="matching-name">${item.name}</div>
-                                            ${secondary}
+                                            <div class="matching-name">
+                                                <div class="name">${item.name}</div>
+                                                ${secondary}
+
+                                            </div>
+                                            
                                             ${tags}
                                         </div>`;
                         }
-
-                        const showTableHeader = !(Object.keys(sectionOrganized.tableGroups).find(item => item === 'default'));
 
                         tableGroupsHtml += `<div class="matching-table-group">
                                                 ${showTableHeader ? `<div class="table-key-header">${tableKeyName}</div>` : ''}
