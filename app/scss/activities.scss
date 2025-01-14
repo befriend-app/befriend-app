@@ -511,8 +511,8 @@
 
                     .score {
                         //position: absolute;
-                        top: $dim / -2;
-                        right: $dim / 2;
+                        top: calc($dim / -2);
+                        right: calc($dim / 2);
 
                         width: $dim;
                         height: $dim;
@@ -590,19 +590,70 @@
                     }
 
                     .matching-item {
+                        $tag_padding_lr: 18px;
+
+                        .favorite {
+                            $dim: 25px;
+
+                            position: absolute;
+                            top: -3px;
+                            left: calc($dim / -2 + 2px);
+                            z-index: 4;
+
+                            @include flex-center-col;
+
+                            .position {
+                                position: absolute;
+                                //color: white;
+                                font-size: 10px;
+                                font-weight: 500;
+                                @include flex-center-col;
+                            }
+
+                            svg {
+                                width: $dim;
+                                height: $dim;
+                                fill: $brand_color_b;
+                                stroke: $brand_color_a;
+                                stroke-width: $dim / 2;
+                            }
+                        }
+
+                        .importance {
+                            $dim: 20px;
+
+                            position: absolute;
+                            top: calc($dim / -2);
+                            right: calc($dim / -2);
+                            z-index: 4;
+                            width: $dim;
+                            height: $dim;
+                            border-radius: 50%;
+                            background-color: $brand_color_b;
+                            border: 1px solid $brand_color_a;
+                            color: black;
+                            font-size: 9px;
+                            font-weight: 600;
+
+                            @include flex-center-col;
+                        }
+
+
                         .tags {
                             display: flex;
                             flex-wrap: wrap;
-                            gap: 0 10px;
-                            margin-top: 4px;
+                            gap: 10px 12px;
+                            margin-top: 7px;
 
                             .tag {
                                 font-size: 9px;
-                                padding: 3px 9px;
+                                padding: 3px $tag_padding_lr;
                                 border-radius: 6px;
+                                position: relative;
+                                border: .5px solid lighten(black, 80%);
 
                                 &.my-filter {
-                                    background-color: $brand_color_a;
+                                    background-color: lighten($brand_color_a, 5%);
                                     color: white;
                                 }
 

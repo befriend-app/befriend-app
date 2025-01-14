@@ -249,20 +249,71 @@ befriend.notifications = {
                     return '';
                 }
 
+                const heart_svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 439.9961">
+                                        <path class="outline" d="M240,422.9023c-29.3828-16.2148-224-129.4961-224-282.9023,0-66.0547,54.1992-124,116-124,41.8672.0742,80.4609,22.6602,101.0312,59.1289,1.5391,2.3516,4.1602,3.7656,6.9688,3.7656s5.4297-1.4141,6.9688-3.7656c20.5703-36.4688,59.1641-59.0547,101.0312-59.1289,61.8008,0,116,57.9453,116,124,0,153.4062-194.6172,266.6875-224,282.9023Z"></path>
+                                    </svg>`;
+
+                const myPos = item.match?.mine?.favorite?.position;
+                const theirPos = item.match?.theirs?.favorite?.position;
+                const myImportance = item.match?.mine?.importance;
+                const theirImportance = item.match?.theirs?.importance;
+
                 if(match_types.their_filter) {
-                    tags_html += `<div class="tag their-filter">Their Filter</div>`;
+                    let importance = ``;
+
+                    if(theirImportance) {
+                        importance = `<div class="importance">${theirImportance}</div>`
+                    }
+
+                    tags_html += `<div class="tag their-filter">
+                                        ${importance}
+                                        Their Filter
+                                    </div>`;
                 }
 
                 if(match_types.their_item) {
-                    tags_html += `<div class="tag their-item">Their Item</div>`;
+                    let favorite_heart = '';
+
+                    if(theirPos) {
+                        favorite_heart = `<div class="favorite">
+                                                <div class="position">${theirPos}</div>
+                                                ${heart_svg}
+                                           </div>`
+                    }
+
+                    tags_html += `<div class="tag their-item">
+                                    ${favorite_heart}
+                                    Their Item
+                                    </div>`;
                 }
 
                 if(match_types.my_filter) {
-                    tags_html += `<div class="tag my-filter">My Filter</div>`;
+                    let importance = ``;
+
+                    if(myImportance) {
+                        importance = `<div class="importance">${myImportance}</div>`
+                    }
+
+                    tags_html += `<div class="tag my-filter">
+                                    ${importance}
+                                    My Filter
+                                  </div>`;
                 }
 
                 if(match_types.my_item) {
-                    tags_html += `<div class="tag my-item">My Item</div>`;
+                    let favorite_heart = '';
+
+                    if(myPos) {
+                        favorite_heart = `<div class="favorite">
+                                                <div class="position">${myPos}</div>
+                                                ${heart_svg}
+                                           </div>`
+                    }
+
+                    tags_html += `<div class="tag my-item">
+                                    ${favorite_heart}
+                                    My Item
+                                    </div>`;
                 }
 
                 if(tags_html) {
@@ -274,38 +325,6 @@ befriend.notifications = {
 
             function getItemDetails(item) {
                 return '';
-                // const details = [];
-                //
-                // // Add favorite positions if they exist
-                // const myPos = item.match?.mine?.favorite?.position;
-                // const theirPos = item.match?.theirs?.favorite?.position;
-                //
-                // if (myPos && theirPos) {
-                //     details.push(`Both #${myPos} favorite`);
-                // } else if (myPos) {
-                //     details.push(`My #${myPos} favorite`);
-                // } else if (theirPos) {
-                //     details.push(`Their #${theirPos} favorite`);
-                // }
-                //
-                // const mySecondary = item.match?.mine?.secondary?.item;
-                // const theirSecondary = item.match?.theirs?.secondary?.item;
-                //
-                // if (mySecondary || theirSecondary) {
-                //     if (mySecondary === theirSecondary) {
-                //         details.push(`Both ${mySecondary}`);
-                //     } else {
-                //         if (mySecondary) {
-                //             details.push(`I'm ${mySecondary}`)
-                //         }
-                //
-                //         if (theirSecondary) {
-                //             details.push(`They're ${theirSecondary}`)
-                //         }
-                //     }
-                // }
-                //
-                // return details.join(' • ');
             }
 
             function getHtml() {
