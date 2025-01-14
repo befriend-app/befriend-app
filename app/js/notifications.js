@@ -706,7 +706,7 @@ befriend.notifications = {
                             accept_el.querySelector('.text').innerHTML = `You're going!`;
                             addClassEl('accepted', parent_el);
 
-                            befriend.notifications.updateAvailableSpots(r.data.spots);
+                            befriend.notifications.updateAvailableSpots(r.data.spots.available);
                         } else {
                             max_recipients_el.innerHTML = r.data.error;
                             addClassEl('show', max_recipients_el);
