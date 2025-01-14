@@ -585,7 +585,7 @@
                     .matching-items {
                         display: flex;
                         flex-direction: column;
-                        gap: 10px 0;
+                        gap: 15px 0;
                         font-size: 14px;
                     }
 
@@ -623,7 +623,7 @@
                             $dim: 20px;
 
                             position: absolute;
-                            top: calc($dim / -2);
+                            top: -2px;
                             right: calc($dim / -2);
                             z-index: 4;
                             width: $dim;
@@ -643,7 +643,7 @@
                             display: flex;
                             flex-wrap: wrap;
                             gap: 10px 12px;
-                            margin-top: 7px;
+                            margin-top: 5px;
 
                             .tag {
                                 font-size: 9px;

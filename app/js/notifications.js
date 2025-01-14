@@ -323,7 +323,21 @@ befriend.notifications = {
                 return '';
             }
 
-            function getItemDetails(item) {
+            function getItemSecondary(item) {
+                let match = item.match;
+                let myItemSecondary = match?.mine?.secondary?.item;
+                let theirItemSecondary = match?.their?.secondary?.item;
+                let myFilterSecondary = match?.mine?.secondary?.filter;
+                let theirFilterSecondary = match?.theirs?.secondary?.filter;
+
+                console.log({
+                    name: item.name,
+                    myItemSecondary,
+                    theirFilterSecondary,
+                    myFilterSecondary,
+                    theirItemSecondary
+                });
+
                 return '';
             }
 
@@ -408,12 +422,12 @@ befriend.notifications = {
 
                         for(let item of tableGroup.items) {
                             let tags = getItemTags(item);
-                            let details = getItemDetails(item);
+                            let secondary = getItemSecondary(item);
 
                             itemsHtml += `<div class="matching-item">
                                             <div class="matching-name">${item.name}</div>
+                                            ${secondary}
                                             ${tags}
-                                            ${details ? `<div class="matching-details">${details}</div>` : ''}
                                         </div>`;
                         }
 
