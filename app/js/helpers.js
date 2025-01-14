@@ -558,3 +558,15 @@ function removeArrItem(arr, item) {
         arr.splice(index, 1);
     }
 }
+
+function numberWithCommas(x, to_integer) {
+    if (!x) {
+        return x;
+    }
+
+    if (to_integer) {
+        x = Number.parseInt(x);
+    }
+
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}

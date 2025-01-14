@@ -351,7 +351,7 @@ befriend.notifications = {
                 }, {});
 
                 if (Object.keys(groupedMatches).length === 0) {
-                    return '';
+                    return `<div class="no-items">No matching items</div>`;
                 }
 
                 //sort sections by number of favorites/items (mine)
@@ -413,13 +413,23 @@ befriend.notifications = {
                                     <div class="icon">${section.icon}</div>
                                     <div class="name">${sectionName}</div>    
                                 </div>
+                                
                                 <div class="matching-table-groups">
                                     ${tableGroupsHtml}
                                 </div>
                             </div>`;
                 }
 
-                return html;
+                return `<div class="matching-overview">
+                            <div class="count">${data.matching.count} item${data.matching.count > 1 ? 's' : ''}</div>
+                            <div class="score">
+                                <div class="text">Score</div>
+                                <div class="number">${numberWithCommas(data.matching.total_score, true)}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="matching-groups">${html}</div>`;
+
             }
 
             return `<div class="matching section">

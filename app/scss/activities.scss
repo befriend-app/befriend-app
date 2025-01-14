@@ -485,12 +485,56 @@
             padding-top: 0;
             padding-bottom: 0;
 
+            .no-items {
+                padding: 15px $section_padding_lr;
+                font-weight: 300;
+            }
+
             .content {
                 display: flex;
                 flex-direction: column;
                 gap: 0 0;
                 padding: 0;
-                overflow-x: hidden;
+
+                .matching-overview {
+                    $dim: 50px;
+
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                    padding: $dim * .15 $section_padding_lr;
+
+                    .count {
+                        font-weight: 300;
+                        font-size: 17px;
+                    }
+
+                    .score {
+                        //position: absolute;
+                        top: $dim / -2;
+                        right: $dim / 2;
+
+                        width: $dim;
+                        height: $dim;
+                        border-radius: 50%;
+                        border: 2px solid $brand_color_a;
+                        margin-left: auto;
+                        font-size: 12px;
+                        font-weight: 500;
+                        background: white;
+
+                        @include flex-center-col;
+
+                        .text {
+                            font-size: 11px;
+                            font-weight: 300;
+                        }
+                    }
+                }
+
+                .matching-groups {
+                    overflow-x: hidden;
+                }
 
                 .matching-table-groups {
                     display: flex;
@@ -504,8 +548,8 @@
                 .matching-group {
                     &:first-of-type {
                         .title {
-                            border-top-color: transparent !important;
-                            border-top-right-radius: $section_br;
+                            //border-top-color: transparent !important;
+                            //border-top-right-radius: $section_br;
                         }
                     }
 
