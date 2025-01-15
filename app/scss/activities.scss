@@ -19,7 +19,7 @@
     }
 
     .notification-view {
-        $padding_lr: 30px;
+        $padding_lr: 20px;
         $section_padding_lr: 15px;
         $section_padding_tb: 10px;
         $section_br: 10px;
@@ -32,17 +32,21 @@
         overflow: hidden;
         position: fixed;
 
-        h2 {
-            font-weight: 500;
+        .top-row {
             display: flex;
             align-items: center;
+        }
+
+        h2 {
+            font-weight: 500;
+            margin-left: 15px;
         }
 
         .date {
             margin-left: auto;
             font-size: 18px;
             font-weight: 400;
-            transform: translateY(-1px);
+            //transform: translateY(-1px);
         }
 
         .max-recipients {
@@ -819,6 +823,26 @@
                     }
                 }
             }
+        }
+    }
+
+    .back-button {
+        $dim: 40px;
+        height: $dim;
+        width: $dim;
+        z-index: 15;
+        border-radius: 50%;
+        background: white;
+        border: 1px solid $color_lightgray;
+        transition:
+                opacity $overlay_transition_ms,
+                visibility 0ms $overlay_transition_ms;
+        transform: translateY(1px);
+
+        @include flex-center-col;
+
+        svg {
+            height: 17px;
         }
     }
 }

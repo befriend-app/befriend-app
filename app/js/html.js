@@ -149,7 +149,7 @@ befriend.html = {
                             </div>
                             
                             <div class="current-activity-view">
-                                <div class="back"></div>
+                                <div class="back-button"></div>
                                 
                                 <div class="container">
                                 
@@ -157,8 +157,6 @@ befriend.html = {
                             </div>  
                             
                             <div class="notification-view">
-                                <div class="back"></div>
-                                
                                 <div class="container">
                                 
                                 </div>
