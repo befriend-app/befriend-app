@@ -290,7 +290,7 @@
                             gap: 2px 0;
                             font-size: 11px;
                             font-weight: 500;
-                            transform: translateY(.5px);
+                            transform: translateY(1px);
                             //flex-direction: row;
                         }
 
@@ -687,7 +687,7 @@
                     flex-direction: column;
                     gap: 15px 0;
                     padding: 0 $section_padding_lr;
-                    padding-top: 15px;
+                    padding-top: 12gpx;
                     padding-bottom: 22px;
                 }
 
@@ -700,16 +700,15 @@
                     }
 
                     .title {
-                        $c: white;
+                        //$c: white;
+                        $c: black;
                         display: flex;
                         gap: 0 12px;
-                        font-size: 16px;
-                        font-weight: 500;
-                        background-color: $brand_color_a;
+                        font-size: 17px;
+                        font-weight: 300;
+                        //background-color: darken($brand_color_b, 5%);
+                        background-color: lighten($brand_color_a, 40%);;
                         color: $c;
-                        //border-top: 1px solid $brand_color_a;
-                        //border-bottom: 1px solid $brand_color_a;
-                        //width: calc(100% - #{$section_padding_lr * 2});
                         padding: 7px $section_padding_lr;
 
                         .icon {
@@ -719,6 +718,10 @@
                                 height: 18px;
                                 fill: $c;
                             }
+                        }
+
+                        .name {
+                            transform: translateY(-1px);
                         }
                     }
 
