@@ -37,8 +37,6 @@ befriend.ws = {
     },
 
     init: function () {
-        //tmp unused
-        return;
         // Reset state if previously set
         befriend.ws.authenticationFailed = false;
         befriend.ws.connectionTry = 0;
@@ -61,15 +59,17 @@ befriend.ws = {
 
         try {
             befriend.ws.client = new WebSocket(wsUrl);
-            befriend.ws.setupEventHandlers();
+            befriend.ws.events();
         } catch (error) {
             console.error('Failed to create WebSocket connection:', error);
             befriend.ws.reconnect();
         }
     },
 
-    setupEventHandlers: function () {
-        if (!befriend.ws.client) return;
+    events: function () {
+        if (!befriend.ws.client) {
+            return;
+        }
 
         befriend.ws.client.onopen = () => {
             console.log('WebSocket connection established');
@@ -81,14 +81,16 @@ befriend.ws = {
             try {
                 // Handle 401 authentication error
                 const data = event.data;
+
                 if (data === '401' || Number.parseInt(data) === 401) {
                     console.log('Authentication failed (401)');
                     befriend.ws.forceClose('Unauthenticated');
                     return;
                 }
 
-                // Parse and process normal messages
+                //process message
                 const parsedData = JSON.parse(data);
+
                 befriend.processWS(parsedData);
             } catch (error) {
                 console.error('Error processing message:', error);

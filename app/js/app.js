@@ -373,14 +373,15 @@ window['befriend'] = {
 
         return elHasClass(view_el, 'active');
     },
-    processWS: function (data) {
-        if (!data || !data.action) {
-            return false;
+    processWS: function (message) {
+        if (!message || !message.namespace) {
+            return;
         }
 
-        console.log('process ws');
+        console.log(message);
 
-        if (data.action === '') {
+        if (message.namespace === 'notifications') {
+            befriend.notifications.updateAvailableSpots(message.data?.activity_token, message.data?.spots?.available);
         }
     },
     initFinished: function () {

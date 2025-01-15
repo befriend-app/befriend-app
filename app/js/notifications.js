@@ -592,8 +592,17 @@ befriend.notifications = {
         removeClassEl('active', modal_el);
         document.body.style.overflow = '';
     },
-    updateAvailableSpots: function (spots) {
+    updateAvailableSpots: function (activity_token, spots) {
+        if(!isNumeric(spots)) {
+            return;
+        }
+
         const availablePersons = befriend.els.activityNotificationView.querySelector('.available-persons .text');
+
+        if(!availablePersons) {
+            return;
+        }
+
         const currentEl = availablePersons.querySelector('.current');
         const newEl = availablePersons.querySelector('.new');
 
@@ -601,6 +610,12 @@ befriend.notifications = {
 
         addClassEl('fade-out', currentEl);
         addClassEl('fade-in', newEl);
+
+        let { notification } = befriend.notifications.data.all[activity_token];
+
+        if(!notification.accepted_at) {
+            befriend.notifications.showUnavailable();
+        }
 
         setTimeout(async () => {
             currentEl.textContent = spots;
@@ -620,6 +635,21 @@ befriend.notifications = {
             currentEl.style.removeProperty('transition');
             newEl.style.removeProperty('transition');
         }, befriend.variables.notification_spots_transition_ms);
+    },
+    showUnavailable: function (message) {
+        let max_recipients_el = befriend.els.activityNotificationView.querySelector('.max-recipients');
+        let accept_decline_el = befriend.els.activityNotificationView.querySelector('.accept-decline');
+
+        if(!max_recipients_el || !accept_decline_el) {
+            return;
+        }
+
+        if(message) {
+            max_recipients_el.innerHTML = message;
+        }
+
+        addClassEl('show', max_recipients_el);
+        addClassEl('hide', accept_decline_el);
     },
     events: {
         init: function () {
@@ -673,7 +703,6 @@ befriend.notifications = {
         onAccept: function () {
             let accept_el = befriend.els.activityNotificationView.querySelector('.button.accept');
             let parent_el = accept_el.closest('.accept-decline');
-            let max_recipients_el = befriend.els.activityNotificationView.querySelector('.max-recipients');
 
             if(accept_el._listener) {
                 return;
@@ -698,7 +727,7 @@ befriend.notifications = {
 
                 this._ip = true;
 
-                let activity_token = befriend.notifications.data.current?.activity?.activity_token;
+                let activity_token = activity?.activity_token;
 
                 if(activity_token) {
                     befriend.toggleSpinner(true);
@@ -712,11 +741,9 @@ befriend.notifications = {
                             accept_el.querySelector('.text').innerHTML = `You're going!`;
                             addClassEl('accepted', parent_el);
 
-                            befriend.notifications.updateAvailableSpots(r.data.spots.available);
+                            befriend.notifications.updateAvailableSpots(activity_token, r.data.spots.available);
                         } else {
-                            max_recipients_el.innerHTML = r.data.error;
-                            addClassEl('show', max_recipients_el);
-                            addClassEl('hide', parent_el);
+                            befriend.notifications.showUnavailable(r.data.error);
                         }
                     } catch(e) {
                         console.error(e);
