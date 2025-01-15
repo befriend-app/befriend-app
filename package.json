@@ -18,8 +18,8 @@
     "keywords": [
         "ecosystem:cordova"
     ],
-    "author": "Befriend",
-    "license": "Apache-2.0",
+    "author": "Befriend, Inc.",
+    "license": "MIT",
     "dependencies": {
         "axios": "^1.7.7",
         "cordova-android": "^12.0.1",
