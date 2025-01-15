@@ -46,7 +46,7 @@
             margin-left: auto;
             font-size: 18px;
             font-weight: 400;
-            //transform: translateY(-1px);
+            transform: translateY(-.5px);
         }
 
         .max-recipients {
@@ -268,9 +268,9 @@
 
             .friends-mode {
                 $w: 80px;
-                $mode-w: 70px;
+                $mode-w: 76px;
                 display: flex;
-                gap: 0 10px;
+                gap: 0 5px;
                 justify-content: space-between;
                 flex-wrap: wrap;
 
@@ -283,6 +283,25 @@
                     &.mode {
                         .title, .text {
                             width: $mode-w;
+                        }
+
+                        .text {
+                            display: flex;
+                            gap: 2px 0;
+                            font-size: 11px;
+                            font-weight: 500;
+                            transform: translateY(.5px);
+                            //flex-direction: row;
+                        }
+
+                        .icon {
+                            $dim: 13px;
+                            @include flex-center-col;
+                            transform: translateY(0);
+
+                            svg {
+                                height: $dim;
+                            }
                         }
                     }
 
@@ -307,7 +326,7 @@
                     .text {
                         padding: 0 0;
                         width: $w;
-                        height: 36px;
+                        height: 40px;
                         font-size: 14px;
                         text-align: center;
                         white-space: nowrap;

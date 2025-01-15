@@ -115,16 +115,26 @@ befriend.notifications = {
                 friends_type = 'Existing';
             }
 
+            let selected_mode = befriend.modes.options.find(mode => mode.id === notification.activity?.mode?.token);
+            let mode_icon_html = '';
+
+            if(selected_mode) {
+                mode_icon_html = `<div class="icon">${selected_mode.icon}</div>`;
+            }
+
            return  `<div class="overview">
                                 <div class="friends-mode">
+                                    <div class="mode sub-section">
+                                        <div class="title">Mode</div>
+                                        <div class="text">
+                                            ${mode_icon_html}
+                                            ${notification.activity?.mode?.name}
+                                        </div>
+                                    </div>
+                                    
                                     <div class="friend-type sub-section">
                                         <div class="title">Friends</div>
                                         <div class="text">${friends_type}</div>
-                                    </div>
-                                        
-                                    <div class="mode sub-section">
-                                        <div class="title">Mode</div>
-                                        <div class="text">${notification.activity?.mode?.name}</div>
                                     </div>
                                     
                                     <div class="total-persons sub-section">
