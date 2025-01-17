@@ -39,7 +39,6 @@ befriend.ws = {
     init: function () {
         // Reset state if previously set
         befriend.ws.authenticationFailed = false;
-        befriend.ws.connectionTry = 0;
         befriend.ws.reconnectInProgress = false;
 
         if (befriend.ws.reconnectTimeout) {
