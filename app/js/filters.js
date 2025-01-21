@@ -1290,20 +1290,25 @@ befriend.filters = {
                 this.data[dayIndex] = {
                     isDisabled: false,
                     isAny: currentData.isAny,
-                    times: currentData.times || {}, // Preserve existing times
+                    times: {...currentData.times}, // Preserve existing times
                 };
 
                 // Check if we have stored filter data
-                const filter_data = befriend.filters.data.filters?.['availability'];
-                if (filter_data?.items) {
-                    const dayRecord = Object.values(filter_data.items).find(
-                        (record) => record.day_of_week === parseInt(dayIndex) && record.is_day,
-                    );
+                const hasNoExistingState = !currentData.times ||
+                    (Object.keys(currentData.times).length === 0 && !currentData.isAny);
 
-                    // If we have a day record and it was set to any time, restore that state
-                    if (dayRecord?.is_any_time) {
-                        this.data[dayIndex].isAny = true;
-                        this.data[dayIndex].times = {}; // Clear times when setting to any time
+                if (hasNoExistingState) {
+                    const filter_data = befriend.filters.data.filters?.['availability'];
+                    if (filter_data?.items) {
+                        const dayRecord = Object.values(filter_data.items).find(
+                            (record) => record.day_of_week === parseInt(dayIndex) && record.is_day,
+                        );
+
+                        // Only set to any time if we don't have existing times
+                        if (dayRecord?.is_any_time) {
+                            this.data[dayIndex].isAny = true;
+                            this.data[dayIndex].times = {};
+                        }
                     }
                 }
             } else {
