@@ -1299,6 +1299,7 @@ befriend.filters = {
 
                 if (hasNoExistingState) {
                     const filter_data = befriend.filters.data.filters?.['availability'];
+
                     if (filter_data?.items) {
                         const dayRecord = Object.values(filter_data.items).find(
                             (record) => record.day_of_week === parseInt(dayIndex) && record.is_day,
@@ -4303,7 +4304,7 @@ befriend.filters = {
 
                     const matchingItem = filter_data?.items
                         ? Object.values(filter_data.items).find(
-                              (item) => item.gender_id === gender.id,
+                              (item) => item.gender_token === gender.token,
                           )
                         : null;
 
@@ -4349,9 +4350,11 @@ befriend.filters = {
 
                         let genderToken = this.getAttribute('data-token');
                         let isAny = genderToken === 'any';
+
                         const anyButton = section_el.querySelector(
                             '.gender-button[data-token="any"]',
                         );
+
                         const wasSelected = elHasClass(this, 'selected');
 
                         // If selecting "Any", deselect all others
