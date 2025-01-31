@@ -143,7 +143,7 @@ window['befriend'] = {
 
             //todo remove
             setTimeout(function () {
-                // befriend.navigateToView('me');
+                // befriend.navigateToView('filters');
             }, 50);
 
             resolve();

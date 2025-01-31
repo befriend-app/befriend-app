@@ -3,9 +3,9 @@ befriend.notifications = {
         all: {},
         current: null,
     },
-    setDeviceToken: async function (token) {
+    setDeviceToken: async function (token, force_update) {
         //save on server if new device token
-        if (!befriend.user.sameDeviceToken(token)) {
+        if (!befriend.user.sameDeviceToken(token) || force_update) {
             let platform = null;
 
             if (is_ios) {
@@ -29,9 +29,21 @@ befriend.notifications = {
     init: function () {
         return new Promise(async (resolve, reject) => {
             try {
+                await befriend.notifications.getDeviceToken();
+
+                resolve();
+            } catch (e) {
+                console.error(e);
+                return reject();
+            }
+        });
+    },
+    getDeviceToken: async function (force_update) {
+        return new Promise(async (resolve, reject) => {
+            try {
                 befriend.plugins.notifications.registerForPushNotifications(
                     function (token) {
-                        befriend.notifications.setDeviceToken(token);
+                        befriend.notifications.setDeviceToken(token, force_update);
                         resolve();
                     },
                     function (err) {
