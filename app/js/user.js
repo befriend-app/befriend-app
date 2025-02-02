@@ -70,7 +70,7 @@ befriend.user = {
     sameDeviceToken: function (token) {
         let data = befriend.user.getLocal();
 
-        if (!data.device || data.device.token !== token) {
+        if(!data.device || data.device.token !== token) {
             return false;
         }
 

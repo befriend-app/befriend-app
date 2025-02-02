@@ -1,6 +1,7 @@
 befriend.notifications = {
     data: {
         all: {},
+        networks: {}, //store one-time data in local storage and merge with all
         current: null,
     },
     setDeviceToken: async function (token, force_update) {
@@ -57,29 +58,70 @@ befriend.notifications = {
             }
         });
     },
-    showActivity: async function (notification, on_launch) {
-        if(!notification?.activity_token || !notification.network_token) {
+    fetchActivity: function (notification, on_launch) {
+        return new Promise(async (resolve, reject) => {
+            if(!notification?.activity_token) {
+                return resolve();
+            }
+
+            if(!on_launch) {
+                fireClick(document.getElementById('create-activity-back'));
+            }
+
+            //navigate to activities view
+            befriend.navigateToView('activities', true);
+
+            //get activity data
+            try {
+                let activityData;
+
+                if(notification.access?.token) {
+                    let url = joinPaths(notification.access.domain, `activities/networks/notifications/${notification.activity_token}/${notification.access.token}`);
+
+                    let r = await axios.get(url, {
+                        params: {
+                            person_token: befriend.user.person.token
+                        }
+                    });
+
+                    activityData = r.data;
+
+                    //save one-time data to local storage
+                    if(activityData.person?.first_name) {
+                        befriend.notifications.data.networks[notification.activity_token] = {
+                            first_name: activityData.person.first_name,
+                            image_url: activityData.person.image_url
+                        }
+
+                        befriend.user.setLocal('notifications.networks', befriend.notifications.data.networks)
+                    }
+                } else {
+                    let r = await befriend.auth.get(`/activities/${notification.activity_token}/notification`);
+
+                    activityData = r.data;
+                }
+
+                befriend.notifications.data.current = activityData;
+
+                befriend.notifications.data.all[notification.activity_token] = activityData;
+
+                befriend.notifications.showActivity(notification.activity_token);
+            } catch(e) {
+                console.error(e);
+            }
+
+            resolve();
+        });
+    },
+    showActivity: async function (activity_token) {
+        if(!activity_token) {
             return;
         }
 
-        if(!on_launch) {
-            fireClick(document.getElementById('create-activity-back'));
-        }
-
-        //navigate to activities view
-        befriend.navigateToView('activities', true);
-
-        //get activity data
         try {
-             let r = await befriend.auth.get(`/activities/${notification.activity_token}/notification`, {
-                 network_token: notification.network_token
-             });
+            let activity_data = befriend.notifications.data.all[activity_token];
 
-             befriend.notifications.data.current = r.data;
-
-             befriend.notifications.data.all[notification.activity_token] = r.data;
-
-             let html = this.getViewHtml(r.data);
+             let html = this.getViewHtml(activity_data);
 
              let view_el = befriend.els.activities.querySelector('.notification-view').querySelector('.container');
 
@@ -689,9 +731,9 @@ befriend.notifications = {
                     //wait for init to be finished
                     await befriend.initFinished();
 
-                    console.log("after init finished")
+                    console.log("after init finished");
 
-                    befriend.notifications.showActivity(notification, true);
+                    befriend.notifications.fetchActivity(notification, true);
 
                     removeClassEl('loading', document.body);
 
@@ -709,13 +751,13 @@ befriend.notifications = {
                     console.log('Received notification:', notification);
 
                     if (notification?.type === 'click') {
-                        befriend.notifications.showActivity(notification.notification);
+                        befriend.notifications.fetchActivity(notification.notification);
                     } else {
                         //show in-app notification
                         befriend.notifications.showNotificationBar();
 
                         //tmp - todo remove
-                        befriend.notifications.showActivity(notification);
+                        befriend.notifications.fetchActivity(notification);
                     }
                 });
             } catch (e) {
