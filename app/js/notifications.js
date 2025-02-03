@@ -778,10 +778,11 @@ befriend.notifications = {
                 e.preventDefault();
                 e.stopPropagation();
 
-                let notification = befriend.notifications.data.current?.notification;
-                let activity = befriend.notifications.data.current?.activity;
+                let currentNotification = befriend.notifications.data.current;
 
-                if(notification.accepted_at) {
+                let activity = currentNotification?.activity;
+
+                if(currentNotification.notification.accepted_at) {
                     return;
                 }
 
@@ -797,15 +798,27 @@ befriend.notifications = {
                     befriend.toggleSpinner(true);
 
                     try {
-                        let r = await befriend.auth.put(`/activities/${activity_token}/notification/accept`);
+                        let responseData;
 
-                        if(r.data.success) {
-                            notification.accepted_at = timeNow();
+                        if(currentNotification.access?.token) { //3rd-party network
+                            let url = joinPaths(currentNotification.access.domain, `activities/networks/notifications/accept/${activity.activity_token}/${currentNotification.access.token}`);
+
+                            let r = await axios.put(url, {
+                                person_token: befriend.user.person.token
+                            });
+
+                            responseData = r.data;
+                        } else { //own network
+                            let r = await befriend.auth.put(`/activities/${activity_token}/notification/accept`);
+                            responseData = r.data;
+                        }
+
+                        if(responseData.success) {
+                            currentNotification.notification.accepted_at = timeNow();
 
                             accept_el.querySelector('.text').innerHTML = `You're going!`;
                             addClassEl('accepted', parent_el);
-
-                            befriend.notifications.updateAvailableSpots(activity_token, r.data.spots.available);
+                            befriend.notifications.updateAvailableSpots(activity_token, responseData.spots.available);
                         } else {
                             befriend.notifications.showUnavailable(r.data.error);
                         }
