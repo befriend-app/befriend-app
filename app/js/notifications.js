@@ -834,11 +834,11 @@ befriend.notifications = {
                 e.preventDefault();
                 e.stopPropagation();
 
-                let notification = befriend.notifications.data.current?.notification;
-                let activity = befriend.notifications.data.current?.activity;
+                let currentNotification = befriend.notifications.data.current;
+                let activity = currentNotification?.activity;
 
                 //already declined
-                if(notification.declined_at) {
+                if(currentNotification.notification.declined_at) {
                     return;
                 }
 
@@ -854,10 +854,23 @@ befriend.notifications = {
                     try {
                         befriend.toggleSpinner(true);
 
-                        let r = await befriend.auth.put(`/activities/${activity_token}/notification/decline`);
+                        let responseData;
 
-                        if(r.data.success) {
-                            notification.declined_at = timeNow();
+                        if(currentNotification.access?.token) { //3rd-party network
+                            let url = joinPaths(currentNotification.access.domain, `activities/networks/notifications/decline/${activity.activity_token}/${currentNotification.access.token}`);
+
+                            let r = await axios.put(url, {
+                                person_token: befriend.user.person.token
+                            });
+
+                            responseData = r.data;
+                        } else { //own network
+                            let r = await befriend.auth.put(`/activities/${activity_token}/notification/decline`);
+                            responseData = r.data;
+                        }
+
+                        if(responseData.success) {
+                            currentNotification.notification.declined_at = timeNow();
                             decline_el.querySelector('.text').innerHTML = 'You declined this invitation';
                             addClassEl('declined', parent_el);
                         }
