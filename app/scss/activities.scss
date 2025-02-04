@@ -369,6 +369,62 @@
             }
         }
 
+        .network {
+            position: relative;
+
+            .logo-name {
+                display: flex;
+                align-items: center;
+                gap: 0 10px;
+            }
+
+            .name {
+                font-size: 16px;
+                font-weight: 300;
+            }
+
+            .logo {
+                $dim: 50px;
+                background-size: contain;
+                background-repeat: no-repeat;
+
+                width: $dim;
+                height: $dim;
+            }
+
+            .verification-status {
+                width: fit-content;
+                padding: 6px 24px;
+                border-radius: 6px;
+                font-size: 13px;
+                font-weight: 500;
+                margin-bottom: $section_padding_tb;
+
+                &.verified {
+                    background: lighten($brand_color_b, 6%);
+                    border: 1px solid lighten($brand_color_a, 10%);
+                    color: $brand_color_a;
+                }
+
+                &.unverified {
+                    background: lighten(black, 95%);
+                    border: 1px solid lighten(black, 60%);
+                    color: lighten(black, 30%);
+                }
+            }
+
+            .website {
+                position: absolute;
+                top: $section_padding_tb;
+                right: $section_padding_lr;
+
+                a {
+                    text-decoration: none;
+                    color: #0080ea;
+                }
+            }
+        }
+
         .who {
             position: relative;
 
@@ -414,7 +470,7 @@
                 align-items: center;
             }
             .image {
-                $dim: 40px;
+                $dim: 50px;
                 border-radius: 50%;
                 width: $dim;
                 height: $dim;
@@ -430,9 +486,9 @@
                 margin-bottom: 6px;
 
                 .tag {
-                    padding: 3px 16px;
+                    padding: 4px 16px;
                     width: fit-content;
-                    font-size: 11px;
+                    font-size: 12px;
                     font-weight: 500;
                     border-radius: 6px;
                 }

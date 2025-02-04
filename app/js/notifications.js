@@ -207,6 +207,31 @@ befriend.notifications = {
                             </div>`;
         }
 
+        function getNetwork() {
+            let network = notification.network;
+
+            if(!network) {
+                return '';
+            }
+
+            return `<div class="network section">
+                                <div class="label">Network</div> 
+                                
+                                <div class="content">
+                                    <div class="verification-status ${network.verified ? 'verified' : 'unverified'}">${network.verified ? 'Verified' : 'Unverified'}</div>
+
+                                    <div class="logo-name">
+                                        <div class="logo" style="background-image: url(${network.icon})"></div>
+                                        <div class="name">${network.name}</div>
+                                    </div>
+                                    
+                                    <div class="website">
+                                        <a href="${network.website}" target="_blank">Website</a>
+                                    </div>
+                                </div>
+                           </div>`;
+        }
+
         function getWho() {
             let reviews_html = befriend.user.getReviewsHtml(notification.person);
 
@@ -596,6 +621,8 @@ befriend.notifications = {
 
         let overview_html = getOverview();
 
+        let network_html = getNetwork();
+
         let who_html = getWho();
 
         let place_html = getPlace();
@@ -633,6 +660,7 @@ befriend.notifications = {
                         
                         <div class="sections-wrapper">
                             <div class="sections">
+                                ${network_html}
                                 ${who_html}
                                 ${place_html}
                                 ${matching_html}
