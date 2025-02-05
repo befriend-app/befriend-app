@@ -4,6 +4,9 @@ befriend.notifications = {
         networks: {}, //store one-time data in local storage and merge with all
         current: null,
     },
+    messages: {
+        unavailable: 'Unavailable: max spots reached',
+    },
     setDeviceToken: async function (token, force_update) {
         //save on server if new device token
         if (!befriend.user.sameDeviceToken(token) || force_update) {
@@ -638,7 +641,7 @@ befriend.notifications = {
                         <div class="date">${date}</div>
                     </div>
                     
-                    <div class="max-recipients">Unavailable: max spots reached</div>
+                    <div class="max-recipients">${befriend.notifications.messages.unavailable}</div>
                     
                     <div class="accept-decline">
                         <div class="button accept">
@@ -705,8 +708,8 @@ befriend.notifications = {
 
         let { notification } = befriend.notifications.data.all[activity_token];
 
-        if(!notification.accepted_at) {
-            befriend.notifications.showUnavailable();
+        if(spots <= 0 && !notification.accepted_at) {
+            befriend.notifications.showUnavailable(befriend.notifications.messages.unavailable);
         }
 
         setTimeout(async () => {
@@ -848,9 +851,12 @@ befriend.notifications = {
                             addClassEl('accepted', parent_el);
                             befriend.notifications.updateAvailableSpots(activity_token, responseData.spots.available);
                         } else {
-                            befriend.notifications.showUnavailable(r.data.error);
+                            befriend.notifications.showUnavailable(responseData.data.error);
                         }
                     } catch(e) {
+                        if(e.response?.data?.error) {
+                            befriend.notifications.showUnavailable(e.response.data.error);
+                        }
                         console.error(e);
                     }
                 }
