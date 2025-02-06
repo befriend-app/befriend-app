@@ -322,6 +322,8 @@ befriend.me = {
 
                 let data = r.data;
 
+                befriend.activities.setData(data.activities);
+
                 befriend.me.data.me = data.me;
                 befriend.me.data.genders = data.genders;
                 befriend.me.data.modes = data.modes;

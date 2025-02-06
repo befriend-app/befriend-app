@@ -40,6 +40,11 @@ befriend.activities = {
             resolve();
         });
     },
+    setData: function (data) {
+        befriend.activities.data.all = data;
+
+        befriend.friends.updateMaxSelectableFriends();
+    },
     getDurationStr: function(minutes) {
         let duration_str = `${minutes} minutes`;
 
