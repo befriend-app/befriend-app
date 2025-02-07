@@ -10,15 +10,7 @@
         }
     }
 
-    .current-activity-view {
-        display: none;
-
-        &.show {
-            display: flex;
-        }
-    }
-
-    .notification-view {
+    .notification-view, .current-activity-view {
         $padding_lr: 20px;
         $section_padding_lr: 15px;
         $section_padding_tb: 10px;
@@ -163,7 +155,7 @@
             overflow: hidden;
         }
 
-        .notification {
+        .activity, .notification {
             width: inherit;
             overflow: hidden;
         }
@@ -901,6 +893,16 @@
                     }
                 }
             }
+        }
+    }
+
+    .current-activity-view {
+        display: none;
+
+        padding-top: 20px;
+
+        &.show {
+            display: flex;
         }
     }
 

@@ -174,7 +174,7 @@ window['befriend'] = {
             removeElsClass(nav_items, 'no-transition');
         });
 
-        //hide any overlays on footer nav
+        //hide any overlays of footer nav
         befriend.places.search.toggleAutoComplete(false);
         befriend.places.activity.toggleDisplayPlaces(false);
         befriend.me.toggleSectionOptions(false);
@@ -191,7 +191,7 @@ window['befriend'] = {
         if(view === 'home') {
             if(befriend.maps.needsResize) {
                 requestAnimationFrame(function () {
-                    befriend.maps.maps.activities.resize();
+                    befriend.maps.centerMap();
                     befriend.maps.needsResize = false;
                 });
             }

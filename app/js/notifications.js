@@ -68,7 +68,7 @@ befriend.notifications = {
             }
 
             if(!on_launch) {
-                fireClick(document.getElementById('create-activity-back'));
+                befriend.activities.createActivity.backButton();
             }
 
             //navigate to activities view
