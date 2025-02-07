@@ -2703,11 +2703,11 @@ befriend.activities = {
                                         <div class="text">${activity?.persons_qty}</div>
                                     </div>
                                     
-                                    <div class="available-persons sub-section">
-                                        <div class="title">Available</div>
+                                    <div class="persons-accepted sub-section">
+                                        <div class="title">Accepted</div>
                                         <div class="text">
                                             <div class="new"></div>
-                                            <div class="current">${activity?.persons_qty}</div>
+                                            <div class="current">${activity?.persons_qty - activity.spots_available}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -3178,6 +3178,64 @@ befriend.activities = {
             befriend.activities.displayActivity.events.onViewImage();
             befriend.activities.displayActivity.events.onMapsNavigate();
             befriend.activities.displayActivity.events.onReport();
+        },
+        updateData: function (data) {
+            if(!data.activity_token) {
+                return;
+            }
+
+            if(!befriend.activities.data.all) {
+                befriend.activities.data.all = {};
+            }
+
+            let activity = befriend.activities.data.all[data.activity_token] || {};
+
+            if(!Object.keys(activity).length) {
+                befriend.activities.data.all[data.activity_token] = activity;
+            }
+
+            activity.spots = data.spots;
+            activity.matching = data.matching;
+
+            this.updateSpotsAccepted(data.activity_token, data.spots.accepted);
+        },
+        updateSpotsAccepted: function (activity_token, spots) {
+            if(!isNumeric(spots)) {
+                return;
+            }
+
+            const personsAcceptedEl = befriend.els.currentActivityView.querySelector('.persons-accepted .text');
+
+            if(!personsAcceptedEl) {
+                return;
+            }
+
+            const currentEl = personsAcceptedEl.querySelector('.current');
+            const newEl = personsAcceptedEl.querySelector('.new');
+
+            newEl.textContent = spots;
+
+            addClassEl('fade-out', currentEl);
+            addClassEl('fade-in', newEl);
+
+            setTimeout(async () => {
+                currentEl.textContent = spots;
+
+                currentEl.style.transition = 'none';
+                newEl.style.transition = 'none';
+
+                await rafAwait();
+
+                removeClassEl('fade-out', currentEl);
+                removeClassEl('fade-in', newEl);
+
+                await rafAwait();
+
+                newEl.textContent = '';
+
+                currentEl.style.removeProperty('transition');
+                newEl.style.removeProperty('transition');
+            }, befriend.variables.notification_spots_transition_ms);
         },
         events: {
             onCancel: function () {

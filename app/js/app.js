@@ -384,6 +384,8 @@ window['befriend'] = {
 
         if (message.namespace === 'notifications') {
             befriend.notifications.updateAvailableSpots(message.data?.activity_token, message.data?.spots?.available);
+        } else if(message.namespace === 'activities') {
+            befriend.activities.displayActivity.updateData(message.data);
         }
     },
     initFinished: function () {
