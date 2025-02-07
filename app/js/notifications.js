@@ -126,15 +126,17 @@ befriend.notifications = {
 
              let html = this.getViewHtml(activity_data);
 
-             let view_el = befriend.els.activities.querySelector('.notification-view').querySelector('.container');
+             let view_el = befriend.els.activityNotificationView.querySelector('.container');
 
              view_el.innerHTML = html;
 
-             befriend.activities.views.showView('notification-view');
+             //show view
+             removeClassEl('show', befriend.els.mainActivitiesView);
+             removeClassEl('show', befriend.els.currentActivityView);
+             addClassEl('show', befriend.els.activityNotificationView);
 
              befriend.styles.notifications.updateSectionsHeight();
 
-             befriend.notifications.events.onImageModal();
              befriend.notifications.events.onAccept();
              befriend.notifications.events.onDecline();
              befriend.notifications.events.onViewImage();
@@ -675,18 +677,6 @@ befriend.notifications = {
     showNotificationBar: function () {
 
     },
-    openModal: function(imageUrl) {
-        let modal_el = document.getElementById('person-image-modal');
-        let modal_image_el = modal_el.querySelector('img');
-        modal_image_el.src = imageUrl;
-        addClassEl('active', modal_el);
-        document.body.style.overflow = 'hidden';
-    },
-    closeModal: function() {
-        let modal_el = document.getElementById('person-image-modal');
-        removeClassEl('active', modal_el);
-        document.body.style.overflow = '';
-    },
     updateAvailableSpots: function (activity_token, spots) {
         if(!isNumeric(spots)) {
             return;
@@ -946,27 +936,7 @@ befriend.notifications = {
 
                 let url = image_el.getAttribute('data-image-url');
 
-                befriend.notifications.openModal(url)
-            });
-        },
-        onImageModal: function () {
-            let modal_el = document.getElementById('person-image-modal');
-
-            if(modal_el._listener) {
-                return;
-            }
-
-            modal_el._listener = true;
-
-            let modal_image_el = modal_el.querySelector('img');
-
-            modal_el.addEventListener('click', (e) => {
-                befriend.notifications.closeModal();
-            });
-
-            modal_image_el.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
+                befriend.modals.images.openModal(url)
             });
         },
     },

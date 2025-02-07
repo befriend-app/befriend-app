@@ -36,8 +36,10 @@ window['befriend'] = {
     when: null,
     maps: null,
     notifications: null,
+    modals: null,
     ws: null,
     variables: null,
+
     els: {},
     timeouts: {},
     plugins: {},

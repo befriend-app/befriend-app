@@ -125,6 +125,18 @@ befriend.styles = {
             }
         },
     },
+    displayActivity: {
+        updateSectionsHeight: function() {
+            const notificationView = befriend.els.currentActivityView;
+
+            let sections_wrapper_el = notificationView.querySelector('.sections-wrapper');
+
+            let sections_box = sections_wrapper_el.getBoundingClientRect();
+            let footer_box = befriend.els.footer.getBoundingClientRect();
+
+            sections_wrapper_el.style.height = `${footer_box.top - sections_box.top}px`;
+        },
+    },
     notifications: {
         updateSectionsHeight: function() {
             const notificationView = befriend.els.activityNotificationView;

@@ -3,6 +3,21 @@ befriend.activities = {
         draft: null,
         current: null,
         all: null,
+        setData: function (data) {
+            befriend.activities.data.all = data;
+
+            befriend.friends.updateMaxSelectableFriends();
+        },
+        addActivity: function (activity) {
+            if(!befriend.activities.data.all) {
+                befriend.activities.data.all = {};
+            }
+
+            befriend.activities.data.all[activity.activity_token] = activity;
+        },
+        getActivity: function (activity_token) {
+            return befriend.activities.data.all[activity_token];
+        }
     },
     draft: {
         create: function(data) {
@@ -40,11 +55,6 @@ befriend.activities = {
             resolve();
         });
     },
-    setData: function (data) {
-        befriend.activities.data.all = data;
-
-        befriend.friends.updateMaxSelectableFriends();
-    },
     getDurationStr: function(minutes) {
         let duration_str = `${minutes} minutes`;
 
@@ -71,7 +81,7 @@ befriend.activities = {
     activityTypes: {
         data: null,
         colors: [
-            '#FAF000', // Bright Yellow
+            '#8E44AD', // Bright Yellow
             '#C70039', // Bold Crimson
             '#31a663', // Bold Leaf Green
             '#e0f3fd', // Light Blue
@@ -645,6 +655,170 @@ befriend.activities = {
             mode: 'driving', // [driving, walking, bicycle]
             token: null,
             times: null
+        },
+        setHtml: function () {
+            let place = befriend.places.selected.place;
+
+            let parent_el = befriend.els.createActivity.querySelector('.main');
+            let activity_el = parent_el.querySelector('.activity');
+            let place_el = parent_el.querySelector('.place').querySelector('.info');
+            let when_el = parent_el.querySelector('.when');
+            let friends_el = parent_el.querySelector('.friends');
+            let filters_el = parent_el.querySelector('.filters');
+
+            //set activity
+            let activity_name = null;
+            let activity_type = null;
+
+            if (befriend.places.selected.is_activity_type) {
+                activity_type = befriend.activities.activityTypes.getCurrent();
+                activity_name = activity_type.notification;
+            } else {
+                activity_name = 'Meet';
+            }
+
+            activity_el.querySelector('.info').innerHTML = activity_name;
+
+            //set place
+            let place_name_html = ``;
+
+            if (place.name) {
+                place_name_html = `<div class="place-name">${place.name}</div>`;
+            }
+
+            let location_html = befriend.places.getPlaceLocation(place);
+
+            place_el.innerHTML = `${place_name_html}<div class="location">${location_html}</div>`;
+
+            //set when
+            let when_current = befriend.when.selected.main;
+
+            let when_str = '';
+
+            if (when_current.is_schedule) {
+                //todo
+                when_str = 'Scheduled';
+            } else {
+                when_str = when_current.time.formatted;
+            }
+
+            when_el.querySelector('.time').innerHTML = when_str;
+            when_el.querySelector('.duration').querySelector('.value').innerHTML =
+                befriend.activities.getDurationStr(befriend.activities.createActivity.duration.selected);
+
+            //set friends
+            let friend_type_str = '';
+
+            if (befriend.friends.type.is_new) {
+                friend_type_str = 'New';
+            } else if (befriend.friends.type.is_existing) {
+                friend_type_str = 'Existing';
+            } else if (befriend.friends.type.is_both) {
+                friend_type_str = 'New/Existing';
+            }
+
+            //friend type
+            friends_el.querySelector('.type').querySelector('.value').innerHTML = friend_type_str;
+
+            //number of persons
+            friends_el.querySelector('.quantity').querySelector('.value').innerHTML =
+                befriend.friends.activity_qty;
+
+            //show filters
+            let filters_html = befriend.activities.createActivity.getFilterList();
+
+            filters_el.querySelector('.info').innerHTML = filters_html ?
+                `<div class="active-filters">${filters_html}</div>` :
+                `<div class="no-filters">No active filters</div>`;
+
+            //data for activity
+            befriend.activities.draft.create({
+                activity: {
+                    name: activity_name,
+                    token: activity_type ? activity_type.token : null,
+                },
+                place: {
+                    id: place.fsq_place_id ? place.fsq_place_id : place.fsq_address_id,
+                    is_address: !!place.fsq_address_id,
+                },
+                travel: {
+                    mode: befriend.activities.createActivity.travel.mode,
+                    token: null,
+                },
+                duration: befriend.activities.createActivity.duration.selected,
+                when: befriend.when.selected.main,
+                friends: {
+                    type: befriend.friends.type,
+                    qty: befriend.friends.activity_qty,
+                },
+                filters: {},
+            });
+
+            //set dynamic mode options
+            let modes_el = befriend.els.createActivity.querySelector('.modes');
+            let modes_html = '';
+
+            let valid_modes = [];
+            let modes_enabled = structuredClone(befriend.me.modes.selected);
+            let has_valid_partner = false;
+            let has_valid_kid = false;
+
+            for(let option of befriend.modes.options) {
+                if(modes_enabled.includes(option.id)) {
+                    if(option.id === 'mode-solo') {
+                        valid_modes.push(option);
+                    } else if(option.id === 'mode-partner') {
+                        if(befriend.me.modes.hasValidPartner()) {
+                            has_valid_partner = true;
+                            valid_modes.push(option);
+                        }
+                    } else if(option.id === 'mode-kids') {
+                        if(befriend.me.modes.hasValidKids()) {
+                            has_valid_kid = true;
+                            valid_modes.push(option);
+                        }
+                    }
+                }
+            }
+
+            if(!valid_modes.length) {
+                valid_modes.push(befriend.modes.options.find(mode => mode.id === 'mode-solo'));
+            }
+
+            if(valid_modes.length > 1) {
+                removeClassEl('hide', modes_el);
+
+                for(let mode of valid_modes) {
+                    modes_html += `<div class="mode-option ${mode.id}" data-mode="${mode.id}">
+                                <div class="icon">${mode.icon}</div>
+                                <div class="name">${mode.label}</div>
+                            </div>`;
+                }
+            } else {
+                let hadInvalidPartnerKidSelected = false;
+
+                if(modes_enabled.includes('mode-partner') && !has_valid_partner) {
+                    hadInvalidPartnerKidSelected = true;
+                } else if(modes_enabled.includes('mode-kids') && has_valid_kid) {
+                    hadInvalidPartnerKidSelected = true;
+                }
+
+                if(!hadInvalidPartnerKidSelected) {
+                    addClassEl('hide', modes_el);
+                }
+            }
+
+            modes_el.innerHTML = modes_html;
+
+            befriend.activities.createActivity.events.appMode();
+
+            //select active mode
+            if(valid_modes.length > 1) {
+                fireClick(befriend.els.createActivity.querySelector('.modes').querySelector('.mode-option'));
+            } else {
+                befriend.activities.createActivity.setAppMode(valid_modes[0].id);
+            }
+
         },
         setAppMode: function(mode) {
             befriend.activities.createActivity.person.mode = mode;
@@ -1806,170 +1980,6 @@ befriend.activities = {
 
             return html;
         },
-        setHtml: function () {
-            let place = befriend.places.selected.place;
-
-            let parent_el = befriend.els.createActivity.querySelector('.main');
-            let activity_el = parent_el.querySelector('.activity');
-            let place_el = parent_el.querySelector('.place').querySelector('.info');
-            let when_el = parent_el.querySelector('.when');
-            let friends_el = parent_el.querySelector('.friends');
-            let filters_el = parent_el.querySelector('.filters');
-
-            //set activity
-            let activity_name = null;
-            let activity_type = null;
-
-            if (befriend.places.selected.is_activity_type) {
-                activity_type = befriend.activities.activityTypes.getCurrent();
-                activity_name = activity_type.notification;
-            } else {
-                activity_name = 'Meet';
-            }
-
-            activity_el.querySelector('.info').innerHTML = activity_name;
-
-            //set place
-            let place_name_html = ``;
-
-            if (place.name) {
-                place_name_html = `<div class="place-name">${place.name}</div>`;
-            }
-
-            let location_html = befriend.places.getPlaceLocation(place);
-
-            place_el.innerHTML = `${place_name_html}<div class="location">${location_html}</div>`;
-
-            //set when
-            let when_current = befriend.when.selected.main;
-
-            let when_str = '';
-
-            if (when_current.is_schedule) {
-                //todo
-                when_str = 'Scheduled';
-            } else {
-                when_str = when_current.time.formatted;
-            }
-
-            when_el.querySelector('.time').innerHTML = when_str;
-            when_el.querySelector('.duration').querySelector('.value').innerHTML =
-                befriend.activities.getDurationStr(befriend.activities.createActivity.duration.selected);
-
-            //set friends
-            let friend_type_str = '';
-
-            if (befriend.friends.type.is_new) {
-                friend_type_str = 'New';
-            } else if (befriend.friends.type.is_existing) {
-                friend_type_str = 'Existing';
-            } else if (befriend.friends.type.is_both) {
-                friend_type_str = 'New/Existing';
-            }
-
-            //friend type
-            friends_el.querySelector('.type').querySelector('.value').innerHTML = friend_type_str;
-
-            //number of persons
-            friends_el.querySelector('.quantity').querySelector('.value').innerHTML =
-                befriend.friends.activity_qty;
-
-            //show filters
-            let filters_html = befriend.activities.createActivity.getFilterList();
-
-            filters_el.querySelector('.info').innerHTML = filters_html ?
-                `<div class="active-filters">${filters_html}</div>` :
-                `<div class="no-filters">No active filters</div>`;
-
-            //data for activity
-            befriend.activities.draft.create({
-                activity: {
-                    name: activity_name,
-                    token: activity_type ? activity_type.token : null,
-                },
-                place: {
-                    id: place.fsq_place_id ? place.fsq_place_id : place.fsq_address_id,
-                    is_address: !!place.fsq_address_id,
-                },
-                travel: {
-                    mode: befriend.activities.createActivity.travel.mode,
-                    token: null,
-                },
-                duration: befriend.activities.createActivity.duration.selected,
-                when: befriend.when.selected.main,
-                friends: {
-                    type: befriend.friends.type,
-                    qty: befriend.friends.activity_qty,
-                },
-                filters: {},
-            });
-
-            //set dynamic mode options
-            let modes_el = befriend.els.createActivity.querySelector('.modes');
-            let modes_html = '';
-
-            let valid_modes = [];
-            let modes_enabled = structuredClone(befriend.me.modes.selected);
-            let has_valid_partner = false;
-            let has_valid_kid = false;
-
-            for(let option of befriend.modes.options) {
-                if(modes_enabled.includes(option.id)) {
-                    if(option.id === 'mode-solo') {
-                        valid_modes.push(option);
-                    } else if(option.id === 'mode-partner') {
-                        if(befriend.me.modes.hasValidPartner()) {
-                            has_valid_partner = true;
-                            valid_modes.push(option);
-                        }
-                    } else if(option.id === 'mode-kids') {
-                        if(befriend.me.modes.hasValidKids()) {
-                            has_valid_kid = true;
-                            valid_modes.push(option);
-                        }
-                    }
-                }
-            }
-
-            if(!valid_modes.length) {
-                valid_modes.push(befriend.modes.options.find(mode => mode.id === 'mode-solo'));
-            }
-
-            if(valid_modes.length > 1) {
-                removeClassEl('hide', modes_el);
-
-                for(let mode of valid_modes) {
-                    modes_html += `<div class="mode-option ${mode.id}" data-mode="${mode.id}">
-                                <div class="icon">${mode.icon}</div>
-                                <div class="name">${mode.label}</div>
-                            </div>`;
-                }
-            } else {
-                let hadInvalidPartnerKidSelected = false;
-
-                if(modes_enabled.includes('mode-partner') && !has_valid_partner) {
-                    hadInvalidPartnerKidSelected = true;
-                } else if(modes_enabled.includes('mode-kids') && has_valid_kid) {
-                    hadInvalidPartnerKidSelected = true;
-                }
-
-                if(!hadInvalidPartnerKidSelected) {
-                    addClassEl('hide', modes_el);
-                }
-            }
-
-            modes_el.innerHTML = modes_html;
-
-            befriend.activities.createActivity.events.appMode();
-
-            //select active mode
-            if(valid_modes.length > 1) {
-                fireClick(befriend.els.createActivity.querySelector('.modes').querySelector('.mode-option'));
-            } else {
-                befriend.activities.createActivity.setAppMode(valid_modes[0].id);
-            }
-
-        },
         resizeAndRepositionMap: function (mapEl) {
             return new Promise(async (resolve, reject) => {
                 mapEl.style.transition = 'initial';
@@ -2061,7 +2071,10 @@ befriend.activities = {
                         let r = await befriend.auth.post('/activities', {
                             activity: befriend.activities.data.draft,
                         });
-                        console.log(r);
+
+                        befriend.activities.data.addActivity(r.data);
+
+                        befriend.activities.displayActivity.display(r.data.activity_token);
                     } catch (e) {
                         let error = e.response?.data?.error;
                         if(Array.isArray(error)) {
@@ -2321,16 +2334,263 @@ befriend.activities = {
                     removeClassEl('show', message_el);
                 });
             },
+            notifications: {
+                init: function () {
+                    return new Promise(async (resolve, reject) => {
+                        befriend.activities.events.notifications.onLaunched();
+                        befriend.activities.events.notifications.onNotification();
+                        resolve();
+                    });
+                },
+                onLaunched: function () {
+                    try {
+                        befriend.plugins.notifications.onLaunchNotification(async function (notification) {
+                            window.launched_from_notification = true;
+
+                            //wait for init to be finished
+                            await befriend.initFinished();
+
+                            console.log("after init finished");
+
+                            befriend.notifications.fetchActivity(notification, true);
+
+                            removeClassEl('loading', document.body);
+
+                            if (notification) {
+                                console.log('App was launched from notification:', notification);
+                            }
+                        });
+                    } catch (e) {
+                        console.error(e);
+                    }
+                },
+                onNotification: function () {
+                    try {
+                        befriend.plugins.notifications.onNotificationReceived(function (notification) {
+                            console.log('Received notification:', notification);
+
+                            if (notification?.type === 'click') {
+                                befriend.notifications.fetchActivity(notification.notification);
+                            } else {
+                                //show in-app notification
+                                befriend.notifications.showNotificationBar();
+
+                                //tmp - todo remove
+                                befriend.notifications.fetchActivity(notification);
+                            }
+                        });
+                    } catch (e) {
+                        console.error(e);
+                    }
+                },
+                onAccept: function () {
+                    let accept_el = befriend.els.activityNotificationView.querySelector('.button.accept');
+                    let parent_el = accept_el.closest('.accept-decline');
+
+                    if(accept_el._listener) {
+                        return;
+                    }
+
+                    accept_el._listener = true;
+
+                    accept_el.addEventListener('click', async function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        let currentNotification = befriend.notifications.data.current;
+
+                        let activity = currentNotification?.activity;
+
+                        if(currentNotification.notification.accepted_at) {
+                            return;
+                        }
+
+                        if(this._ip) {
+                            return;
+                        }
+
+                        this._ip = true;
+
+                        let activity_token = activity?.activity_token;
+
+                        if(activity_token) {
+                            befriend.toggleSpinner(true);
+
+                            try {
+                                let responseData;
+
+                                if(currentNotification.access?.token) { //3rd-party network
+                                    let url = joinPaths(currentNotification.access.domain, `activities/networks/notifications/accept/${activity.activity_token}/${currentNotification.access.token}`);
+
+                                    let r = await axios.put(url, {
+                                        person_token: befriend.user.person.token
+                                    });
+
+                                    responseData = r.data;
+                                } else { //own network
+                                    let r = await befriend.auth.put(`/activities/${activity_token}/notification/accept`);
+                                    responseData = r.data;
+                                }
+
+                                if(responseData.success) {
+                                    currentNotification.notification.accepted_at = timeNow();
+
+                                    accept_el.querySelector('.text').innerHTML = `You're going!`;
+                                    addClassEl('accepted', parent_el);
+                                    befriend.notifications.updateAvailableSpots(activity_token, responseData.spots.available);
+                                } else {
+                                    befriend.notifications.showUnavailable(responseData.data.error);
+                                }
+                            } catch(e) {
+                                if(e.response?.data?.error) {
+                                    befriend.notifications.showUnavailable(e.response.data.error);
+                                }
+                                console.error(e);
+                            }
+                        }
+
+                        befriend.toggleSpinner(false);
+
+                        this._ip = false;
+                    });
+                },
+                onDecline: function () {
+                    let decline_el = befriend.els.activityNotificationView.querySelector('.button.decline');
+
+                    let parent_el = decline_el.closest('.accept-decline');
+
+                    if(decline_el._listener) {
+                        return;
+                    }
+
+                    decline_el._listener = true;
+
+                    decline_el.addEventListener('click', async function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        let currentNotification = befriend.notifications.data.current;
+                        let activity = currentNotification?.activity;
+
+                        //already declined
+                        if(currentNotification.notification.declined_at) {
+                            return;
+                        }
+
+                        if(this._ip) {
+                            return;
+                        }
+
+                        this._ip = true;
+
+                        let activity_token = activity?.activity_token;
+
+                        if(activity_token) {
+                            try {
+                                befriend.toggleSpinner(true);
+
+                                let responseData;
+
+                                if(currentNotification.access?.token) { //3rd-party network
+                                    let url = joinPaths(currentNotification.access.domain, `activities/networks/notifications/decline/${activity.activity_token}/${currentNotification.access.token}`);
+
+                                    let r = await axios.put(url, {
+                                        person_token: befriend.user.person.token
+                                    });
+
+                                    responseData = r.data;
+                                } else { //own network
+                                    let r = await befriend.auth.put(`/activities/${activity_token}/notification/decline`);
+                                    responseData = r.data;
+                                }
+
+                                if(responseData.success) {
+                                    currentNotification.notification.declined_at = timeNow();
+                                    decline_el.querySelector('.text').innerHTML = 'You declined this invitation';
+                                    addClassEl('declined', parent_el);
+                                }
+                            } catch(e) {
+                                console.error(e);
+                            }
+                        }
+
+                        befriend.toggleSpinner(false);
+
+                        this._ip = false;
+                    });
+                },
+                onViewImage: function () {
+                    let image_el = befriend.els.activityNotificationView.querySelector('.who').querySelector('.image');
+
+                    if(image_el._listener) {
+                        return;
+                    }
+
+                    image_el._listener = true;
+
+                    image_el.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        let url = image_el.getAttribute('data-image-url');
+
+                        befriend.notifications.openModal(url)
+                    });
+                },
+                onImageModal: function () {
+                    let modal_el = document.getElementById('person-image-modal');
+
+                    if(modal_el._listener) {
+                        return;
+                    }
+
+                    modal_el._listener = true;
+
+                    let modal_image_el = modal_el.querySelector('img');
+
+                    modal_el.addEventListener('click', (e) => {
+                        befriend.notifications.closeModal();
+                    });
+
+                    modal_image_el.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    });
+                },
+            }
         }
     },
-    views: {
-         showView: function (view) {
-             if(view === 'notification-view') {
-                 removeClassEl('show', befriend.els.mainActivitiesView);
-                 removeClassEl('show', befriend.els.currentActivityView);
-                 addClassEl('show', befriend.els.activityNotificationView);
-             }
-         }
+    displayActivity: {
+        display: function (activity_token) {
+            let activity_data = befriend.activities.data.all[activity_token];
+
+            fireClick(document.getElementById('create-activity-back'));
+
+            befriend.navigateToView('activities', true);
+
+            this.setHtml(activity_data);
+        },
+        getViewHtml(activity_data) {
+
+        },
+        setHtml: function (activity_data) {
+            let view_el = befriend.els.currentActivityView.querySelector('.container');
+
+            let html = this.getViewHtml(activity_data);
+
+            view_el.innerHTML = html;
+
+            removeClassEl('show', befriend.els.mainActivitiesView);
+            removeClassEl('show', befriend.els.currentActivityView);
+            addClassEl('show', befriend.els.activityNotificationView);
+
+            befriend.styles.displayActivity.updateSectionsHeight();
+
+            befriend.activities.displayActivity.events.onImageModal();
+            befriend.activities.displayActivity.events.onCancel();
+            befriend.activities.displayActivity.events.onViewImage();
+        },
+        events: {}
     },
     events: {
         init: function() {

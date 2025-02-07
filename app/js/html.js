@@ -149,8 +149,6 @@ befriend.html = {
                             </div>
                             
                             <div class="current-activity-view">
-                                <div class="back-button"></div>
-                                
                                 <div class="container">
                                 
                                 </div>

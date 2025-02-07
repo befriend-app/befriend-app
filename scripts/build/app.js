@@ -50,6 +50,7 @@ let js_files = {
         'html.js',
         'styles.js',
         'helpers.js',
+        'modals.js',
         'events.js',
         'ws.js',
         styles_variables_file_name,

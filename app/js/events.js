@@ -20,6 +20,8 @@ befriend.events = {
                 await befriend.places.events.init();
 
                 await befriend.me.events.init();
+
+                befriend.modals.events.init();
             } catch (e) {
                 console.error(e);
             }
@@ -368,6 +370,7 @@ befriend.events = {
         window.addEventListener('resize', function () {
             befriend.styles.createActivity.updateCloseMessagePosition();
             befriend.styles.notifications.updateSectionsHeight();
+            befriend.styles.displayActivity.updateSectionsHeight();
         });
     },
     onAppState: function () {
