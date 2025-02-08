@@ -2575,6 +2575,9 @@ befriend.activities = {
 
                 this.setHtml(activity_data);
 
+                //prevent navigation
+                befriend.preventNavigation(true);
+
                 removeClassEl('show', befriend.els.mainActivitiesView);
                 removeClassEl('show', befriend.els.activityNotificationView);
                 addClassEl('show', befriend.els.currentActivityView);
@@ -2638,7 +2641,8 @@ befriend.activities = {
 
                     befriend.activities.createActivity.backButton();
 
-                    await rafAwait();
+                    befriend.preventNavigation(false);
+
                 }, befriend.variables.display_activity_transition_ms);
             } catch(e) {
                 console.error(e);

@@ -553,6 +553,8 @@ befriend.html = {
                         </div>
                     </div>
                     
+                    <div id="transition-overlay"></div>
+                    
                     <footer>
                         <div id="navigation">
                             <div class="nav-item active home" data-nav="home">

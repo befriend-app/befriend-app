@@ -92,6 +92,21 @@ body.loading {
     }
 }
 
+#transition-overlay {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    top: 0;
+    left: 0;
+    display: none;
+    z-index: 10000;
+
+    &.show {
+        display: block;
+    }
+}
+
 html.#{$class_places_shown},
 html.#{$class_change_location},
 html.#{$class_available_me_sections},

@@ -43,6 +43,150 @@ window['befriend'] = {
     els: {},
     timeouts: {},
     plugins: {},
+    api: {
+        get: function (route) {
+            return new Promise(async (resolve, reject) => {
+                try {
+                    let r = await axios.get(joinPaths(api_domain, route));
+
+                    resolve(r);
+                } catch (e) {
+                    console.error(e);
+                    return reject(e);
+                }
+            });
+        },
+        post: function (route, data) {
+            return new Promise(async (resolve, reject) => {
+                try {
+                    let r = await axios.post(joinPaths(api_domain, route), data);
+
+                    resolve(r);
+                } catch (e) {
+                    console.error(e);
+                    return reject(e);
+                }
+            });
+        },
+        put: function (route, data) {
+            return new Promise(async (resolve, reject) => {
+                try {
+                    let r = await axios.put(joinPaths(api_domain, route), data);
+
+                    resolve(r);
+                } catch (e) {
+                    console.error(e);
+                    return reject(e);
+                }
+            });
+        },
+    },
+    auth: {
+        get: function (route, data) {
+            return new Promise(async (resolve, reject) => {
+                let loginObj = {
+                    person_token: befriend.user.person.token,
+                    login_token: befriend.user.login.token,
+                };
+
+                let requestData = {};
+
+                if (data && typeof data === 'object') {
+                    requestData = { ...loginObj, ...data };
+                } else {
+                    requestData = { ...loginObj };
+                }
+
+                try {
+                    let r = await axios.get(joinPaths(api_domain, route), {
+                        params: requestData,
+                    });
+
+                    resolve(r);
+                } catch (e) {
+                    console.error(e);
+                    return reject(e);
+                }
+            });
+        },
+        post: function (route, data) {
+            return new Promise(async (resolve, reject) => {
+                let requestData = {};
+
+                let loginObj = {
+                    person_token: befriend.user.person.token,
+                    login_token: befriend.user.login.token,
+                };
+
+                if (data && typeof data === 'object') {
+                    requestData = { ...loginObj, ...data };
+                } else {
+                    requestData = { ...loginObj };
+                }
+
+                try {
+                    let r = await axios.post(joinPaths(api_domain, route), requestData);
+
+                    resolve(r);
+                } catch (e) {
+                    console.error(e);
+                    return reject(e);
+                }
+            });
+        },
+        put: function (route, data) {
+            return new Promise(async (resolve, reject) => {
+                let requestData = {};
+
+                let loginObj = {
+                    person_token: befriend.user.person.token,
+                    login_token: befriend.user.login.token,
+                };
+
+                if (data && typeof data === 'object') {
+                    requestData = { ...loginObj, ...data };
+                } else {
+                    requestData = { ...loginObj };
+                }
+
+                try {
+                    let r = await axios.put(joinPaths(api_domain, route), requestData);
+
+                    resolve(r);
+                } catch (e) {
+                    console.error(e);
+                    return reject(e);
+                }
+            });
+        },
+        delete: function (route, data) {
+            return new Promise(async (resolve, reject) => {
+                let requestData = {};
+
+                let loginObj = {
+                    person_token: befriend.user.person.token,
+                    login_token: befriend.user.login.token,
+                };
+
+                if (data && typeof data === 'object') {
+                    requestData = { ...loginObj, ...data };
+                } else {
+                    requestData = { ...loginObj };
+                }
+
+                try {
+                    let r = await axios.delete(joinPaths(api_domain, route), {
+                        data: requestData,
+                    });
+
+                    resolve(r);
+                } catch (e) {
+                    console.error(e);
+                    return reject(e);
+                }
+            });
+        },
+    },
     init: function () {
         console.log('Befriend: [init]');
 
@@ -213,150 +357,6 @@ window['befriend'] = {
             befriend.filters.matches.needsUpdate = false;
         }
     },
-    api: {
-        get: function (route) {
-            return new Promise(async (resolve, reject) => {
-                try {
-                    let r = await axios.get(joinPaths(api_domain, route));
-
-                    resolve(r);
-                } catch (e) {
-                    console.error(e);
-                    return reject(e);
-                }
-            });
-        },
-        post: function (route, data) {
-            return new Promise(async (resolve, reject) => {
-                try {
-                    let r = await axios.post(joinPaths(api_domain, route), data);
-
-                    resolve(r);
-                } catch (e) {
-                    console.error(e);
-                    return reject(e);
-                }
-            });
-        },
-        put: function (route, data) {
-            return new Promise(async (resolve, reject) => {
-                try {
-                    let r = await axios.put(joinPaths(api_domain, route), data);
-
-                    resolve(r);
-                } catch (e) {
-                    console.error(e);
-                    return reject(e);
-                }
-            });
-        },
-    },
-    auth: {
-        get: function (route, data) {
-            return new Promise(async (resolve, reject) => {
-                let loginObj = {
-                    person_token: befriend.user.person.token,
-                    login_token: befriend.user.login.token,
-                };
-
-                let requestData = {};
-
-                if (data && typeof data === 'object') {
-                    requestData = { ...loginObj, ...data };
-                } else {
-                    requestData = { ...loginObj };
-                }
-
-                try {
-                    let r = await axios.get(joinPaths(api_domain, route), {
-                        params: requestData,
-                    });
-
-                    resolve(r);
-                } catch (e) {
-                    console.error(e);
-                    return reject(e);
-                }
-            });
-        },
-        post: function (route, data) {
-            return new Promise(async (resolve, reject) => {
-                let requestData = {};
-
-                let loginObj = {
-                    person_token: befriend.user.person.token,
-                    login_token: befriend.user.login.token,
-                };
-
-                if (data && typeof data === 'object') {
-                    requestData = { ...loginObj, ...data };
-                } else {
-                    requestData = { ...loginObj };
-                }
-
-                try {
-                    let r = await axios.post(joinPaths(api_domain, route), requestData);
-
-                    resolve(r);
-                } catch (e) {
-                    console.error(e);
-                    return reject(e);
-                }
-            });
-        },
-        put: function (route, data) {
-            return new Promise(async (resolve, reject) => {
-                let requestData = {};
-
-                let loginObj = {
-                    person_token: befriend.user.person.token,
-                    login_token: befriend.user.login.token,
-                };
-
-                if (data && typeof data === 'object') {
-                    requestData = { ...loginObj, ...data };
-                } else {
-                    requestData = { ...loginObj };
-                }
-
-                try {
-                    let r = await axios.put(joinPaths(api_domain, route), requestData);
-
-                    resolve(r);
-                } catch (e) {
-                    console.error(e);
-                    return reject(e);
-                }
-            });
-        },
-        delete: function (route, data) {
-            return new Promise(async (resolve, reject) => {
-                let requestData = {};
-
-                let loginObj = {
-                    person_token: befriend.user.person.token,
-                    login_token: befriend.user.login.token,
-                };
-
-                if (data && typeof data === 'object') {
-                    requestData = { ...loginObj, ...data };
-                } else {
-                    requestData = { ...loginObj };
-                }
-
-                try {
-                    let r = await axios.delete(joinPaths(api_domain, route), {
-                        data: requestData,
-                    });
-
-                    resolve(r);
-                } catch (e) {
-                    console.error(e);
-                    return reject(e);
-                }
-            });
-        },
-    },
     toggleSpinner: function (show, timeout_ms) {
         if (show) {
             addClassEl('show', befriend.els.viewSpinner);
@@ -401,4 +401,11 @@ window['befriend'] = {
             resolve(await befriend.initFinished());
         });
     },
+    preventNavigation: function (prevent) {
+        if(prevent) {
+            addClassEl('show', 'transition-overlay');
+        } else {
+            removeClassEl('show', 'transition-overlay');
+        }
+    }
 };
