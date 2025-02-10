@@ -250,16 +250,16 @@ window['befriend'] = {
                 console.error(e);
             }
 
-            //activities
+            //me
             try {
-                await befriend.activities.init();
+                await befriend.me.init();
             } catch (e) {
                 console.error(e);
             }
 
-            //me
+            //activities
             try {
-                await befriend.me.init();
+                await befriend.activities.init();
             } catch (e) {
                 console.error(e);
             }
@@ -289,7 +289,7 @@ window['befriend'] = {
 
             //todo remove
             setTimeout(function () {
-                // befriend.navigateToView('filters');
+                befriend.navigateToView('activities');
             }, 50);
 
             resolve();

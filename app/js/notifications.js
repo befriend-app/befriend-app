@@ -785,6 +785,20 @@ befriend.notifications = {
                 console.error(e);
             }
         },
+        onBack: function () {
+            let el = befriend.els.activityNotificationView.querySelector('.back-button');
+
+            if(el._listener) {
+                return;
+            }
+
+            el._listener = true;
+
+            el.addEventListener('click', function (e) {
+                removeClassEl('show', befriend.els.activityNotificationView);
+                addClassEl('show', befriend.els.mainActivitiesView);
+            });
+        },
         onAccept: function () {
             let accept_el = befriend.els.activityNotificationView.querySelector('.button.accept');
             let parent_el = accept_el.closest('.accept-decline');
