@@ -137,6 +137,7 @@ befriend.notifications = {
 
              befriend.styles.notifications.updateSectionsHeight();
 
+             befriend.notifications.events.onBack();
              befriend.notifications.events.onAccept();
              befriend.notifications.events.onDecline();
              befriend.notifications.events.onViewImage();
