@@ -398,13 +398,11 @@ befriend.activities = {
                             let image_html = '';
 
                             if (activity.image) {
-                                image_html += `<div class="image">
+                                if(!activity.token.endsWith('-any')) {
+                                    image_html += `<div class="image">
                                         ${activity.image}
                                     </div>`;
-                            } else if (activity.emoji) {
-                                // image_html += `<div class="emoji">
-                                //             ${activity.emoji}
-                                //         </div>`;
+                                }
                             }
 
                             let icon_html = ``;
@@ -547,13 +545,11 @@ befriend.activities = {
                             let image_html = '';
 
                             if (activity.image) {
-                                image_html += `<div class="image">
+                                if(!activity.token.endsWith('-any')) {
+                                    image_html += `<div class="image">
                                         ${activity.image}
                                     </div>`;
-                            } else if (activity.emoji) {
-                                // image_html += `<div class="emoji">
-                                //             ${activity.emoji}
-                                //         </div>`;
+                                }
                             }
 
                             let icon_html = ``;
