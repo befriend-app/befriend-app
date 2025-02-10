@@ -45,8 +45,6 @@ befriend.activities = {
         console.log('[init] Activities');
 
         return new Promise(async (resolve, reject) => {
-            befriend.activities.setView();
-
             befriend.activities.createActivity.setDurations();
 
             try {
@@ -54,16 +52,92 @@ befriend.activities = {
             } catch (e) {
                 console.error(e);
             }
+
+            befriend.activities.setView();
+
             resolve();
         });
     },
     setView: function () {
+        function getActivityHtml(activity, is_current, is_upcoming) {
+            if(!activity?.data) {
+                console.warn('No data for activity');
+                return '';
+            }
+
+            let accepted_qty = activity.data?.persons_qty - activity.data?.spots_available;
+
+            if(!isNumeric(accepted_qty)) {
+                accepted_qty = 0;
+            }
+
+            let date = befriend.activities.displayActivity.getViewHtml(activity, 'getDate');
+
+            let date_html = is_current || is_upcoming ? '' : `<div class="date">${date}</div>`;
+
+            let activity_type_token = activity?.data?.activity_type_token;
+
+            let activity_type = befriend.activities.activityTypes.getActivityType(activity_type_token);
+
+            let image = activity_type?.image;
+
+            let activity_name = activity_type?.notification;
+
+            let duration = activity.activity_duration_min;
+
+            let activity_start_human = dayjs(activity.activity_start * 1000)
+                .format('h:mm a')
+                .toLowerCase();
+
+            let activity_end_human = dayjs(activity.activity_end * 1000)
+                .format('h:mm a')
+                .toLowerCase();
+
+            let time_string = `${activity_start_human} - ${activity_end_human}`;
+
+            if(activity_start_human !== activity.data?.human_time) {
+                let tz = getTimezoneAbbreviation();
+
+                time_string += ` ${tz}`;
+            }
+
+            return `
+                <div class="activity" data-activity-token="${activity.activity_token}">
+                    <div class="activity-type-accepted">
+                         <div class="activity-type-date-time">
+                            <div class="activity-type">
+                                <div class="image">
+                                    ${image}
+                                </div>
+                                <div class="name">${activity_name}</div>
+                            </div>
+                            
+                            <div class="date-time">
+                                ${date_html}
+                                <div class="time">${time_string}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="accepted-date-time">
+                            <div class="accepted ${accepted_qty > 0 ? 'w-qty' : ''}">
+                                <div class="label">Accepted</div>
+                                <div class="qty">${accepted_qty}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="location">${activity.data.location_name}</div>
+                    <div class="address">${activity.data.location_address}, ${activity.data.location_locality}, ${activity.data.location_region}</div>
+                </div>
+            `;
+        }
+
         let activities = befriend.activities.data.all;
 
         activities = Object.values(activities);
 
         activities.sort(function (a, b) {
-           return b.activity_start - a.activity_start;
+            return b.activity_start - a.activity_start;
         });
 
         let currentActivityEl = befriend.els.mainActivitiesView.querySelector('.current-activity .container');
@@ -76,32 +150,77 @@ befriend.activities = {
 
         let currentTime = timeNow(true);
 
+        let activities_organized = {
+            current: null,
+            upcoming: [],
+            past: []
+        }
+
         for (let activity of activities) {
             const start = activity.activity_start;
             const end = activity.activity_end;
 
-            let date = befriend.activities.displayActivity.getViewHtml(activity, 'getDate');
-
-            const activityHtml = `
-            <div class="activity" data-activity-token="${activity.activity_token}">
-                <div class="date">${date}</div>
-                <div class="time">${activity.data.human_time}</div>
-                <div class="location">${activity.data.location_name}</div>
-                <div class="address">${activity.data.location_address}</div>
-                <div class="participants">
-                    Spots: ${activity.data.spots_available} available
-                </div>
-            </div>
-        `;
-
             // add to corresponding section
             if (currentTime >= start && currentTime <= end) {
-                currentActivityHtml = activityHtml;
+                activities_organized.current = activity;
             } else if (start > currentTime) {
-                upcomingActivitiesHtml += activityHtml;
+                activities_organized.upcoming.push(activity);
             } else if (end < currentTime) {
-                pastActivitiesHtml += activityHtml;
+                activities_organized.past.push(activity);
             }
+        }
+
+        if(!activities_organized.current) {
+            //move from upcoming to current
+            for(let activity of activities_organized.upcoming) {
+                if(activity.activity_start - currentTime < 600) {
+                    activities_organized.current = activity;
+                    break;
+                }
+            }
+
+            if(activities_organized.current) {
+                removeArrItem(activities_organized.upcoming, activities_organized.current);
+            }
+        }
+
+        if(activities_organized.current) {
+            currentActivityHtml = getActivityHtml(activities_organized.current, true);
+        }
+
+        //organize upcoming by today/tomorrow/date
+        let upcoming_dates = new Map();
+        let upcoming_activities = activities_organized.upcoming;
+
+        upcoming_activities.sort(function (a, b) {
+           return a.activity_start - b.activity_start;
+        });
+
+        for(let activity of upcoming_activities) {
+            let date = befriend.activities.displayActivity.getViewHtml(activity, 'getDate');
+
+            if(!upcoming_dates.has(date)) {
+                upcoming_dates.set(date, []);
+            }
+
+            upcoming_dates.get(date).push(activity);
+        }
+
+        for(let [date, activities] of upcoming_dates) {
+            let dateActivitiesHtml = '';
+
+            for(let activity of activities) {
+                dateActivitiesHtml += getActivityHtml(activity, false, true);
+            }
+
+            upcomingActivitiesHtml += `<div class="group">
+                                            <div class="date">${date}</div>
+                                            <div class="activities">${dateActivitiesHtml}</div>
+                                       </div>`
+        }
+
+        for(let activity of activities_organized.past) {
+            pastActivitiesHtml += getActivityHtml(activity);
         }
 
         if (!currentActivityHtml) {
@@ -145,6 +264,10 @@ befriend.activities = {
     },
     activityTypes: {
         data: null,
+        lookup: {
+            byId: {},
+            byToken: {}
+        },
         colors: [
             '#8E44AD', // Bright Yellow
             '#C70039', // Bold Crimson
@@ -167,24 +290,52 @@ befriend.activities = {
             level_2: null,
             level_3: null,
         },
+        getActivityType: function (token) {
+            return this.lookup.byToken[token];
+        },
         getActivityTypes: function() {
             return new Promise(async (resolve, reject) => {
                 try {
                     let r = await befriend.api.get('activity_types');
                     befriend.activities.activityTypes.data = r.data;
                     befriend.user.setLocal('activities.type', r.data);
-                    
-                    resolve();
                 } catch (e) {
                     console.error(e);
                     
-                    if (befriend.user.local.data && befriend.user.local.data.activities) {
+                    if (befriend.user.local?.data?.activities) {
                         console.log('Using local activity types data');
                         befriend.activities.activityTypes.data = befriend.user.local.data.activities.type;
-                        return resolve();
+                    } else {
+                        return reject();
                     }
-                    return reject();
                 }
+
+                for(let id_1 in befriend.activities.activityTypes.data) {
+                    let level_1 = befriend.activities.activityTypes.data[id_1];
+
+                    befriend.activities.activityTypes.lookup.byId[id_1] = level_1;
+                    befriend.activities.activityTypes.lookup.byToken[level_1.token] = level_1;
+
+                    if(Object.keys(level_1.sub || {}).length) {
+                        for(let id_2 in level_1.sub) {
+                            let level_2 = level_1.sub[id_2];
+
+                            befriend.activities.activityTypes.lookup.byId[id_2] = level_2;
+                            befriend.activities.activityTypes.lookup.byToken[level_2.token] = level_2;
+
+                            if(Object.keys(level_2.sub || {}).length) {
+                                for(let id_3 in level_2.sub) {
+                                    let level_3 = level_2.sub[id_3];
+
+                                    befriend.activities.activityTypes.lookup.byId[id_3] = level_3;
+                                    befriend.activities.activityTypes.lookup.byToken[level_3.token] = level_3;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                resolve();
             });
         },
         setActivityTypes: function() {
@@ -2714,6 +2865,11 @@ befriend.activities = {
         },
         getViewHtml(activity_data, view_fn) {
             let activity = activity_data.data;
+
+            if(!activity) {
+                console.error("No data for activity");
+                return '';
+            }
 
             let fns = {
                 getInvite: function () {

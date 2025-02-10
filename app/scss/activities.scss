@@ -10,7 +10,8 @@
 
     .main-view {
         display: none;
-        padding: 20px $padding_lr;
+        padding: 15px $padding_lr;
+        padding-bottom: 30px;
         flex-direction: column;
 
         &.show {
@@ -19,6 +20,151 @@
 
         h2 {
             margin: 0;
+            font-weight: 400;
+            padding-bottom: 10px;
+        }
+
+        .activity {
+            padding: $section_padding_tb $section_padding_lr;
+            border: 1px solid $color_lightgray;
+            border-radius: 10px;
+
+            .activity-type-accepted {
+                display: flex;
+            }
+
+            .activity-type-date-time {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .date-time {
+                margin-top: 4px;
+
+                .date {
+                    font-size: 20px;
+                }
+
+                .time {
+                    font-size: 15px;
+                    font-weight: 500;
+                }
+            }
+
+            .accepted {
+                $br: 8px;
+                $ptb: 4px;
+                $plr: 8px;
+
+                display: flex;
+                margin-left: auto;
+                text-align: center;
+
+                box-sizing: border-box;
+                width: fit-content;
+                border-radius: $br;
+                border: 1px solid lighten(black, 80%);
+
+                &.w-qty {
+                    .label {
+                        background-color: lighten($color_green, 0%);
+                        color: white;
+                    }
+                }
+
+                .label {
+                    $ptb: 4px;
+                    box-sizing: border-box;
+                    font-size: 11px;
+                    font-weight: 500;
+                    padding: $ptb $plr;
+                    width: fit-content;
+                    background-color: lighten($brand_color_c, 5%);
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    border-top-left-radius: $br;
+                    border-bottom-left-radius: $br;
+                    //border-radius: $br;
+
+                    @include flex-center-col;
+                }
+
+                .qty {
+                    padding: $ptb $plr;
+                    width: fit-content;
+                    font-size: 14px;
+                    text-align: center;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    @include flex-center-col;
+                }
+
+            }
+
+            .accepted-date-time {
+                margin-left: auto;
+            }
+
+            .activity-type {
+                display: flex;
+                gap: 0 10px;
+                align-items: center;
+
+                .image {
+                    svg {
+                        height: 30px;
+                    }
+                }
+
+                .name {
+                    font-size: 17px;
+                }
+            }
+
+            .location {
+                margin-top: 3px;
+            }
+
+            .address {
+                margin-top: 4px;
+                font-size: 14px;
+            }
+        }
+
+        .current-activity {
+            $br: 10px;
+            padding: 0;
+            border: 1px solid $color_lightgray;
+            border-radius: $br;
+
+            .heading {
+                background-color: $brand_color_a;
+                color: white;
+                border-top-left-radius: $br;
+                border-top-right-radius: $br;
+                padding-left: $section_padding_lr;
+                padding-top: 6px;
+                padding-bottom: 6px;
+                margin-bottom: 0;
+            }
+
+            .activity {
+                padding: $section_padding_tb $section_padding_lr;
+                border: initial;
+                border-radius: 0;
+            }
+
+            .no-items {
+                padding: $section_padding_tb $section_padding_lr;
+            }
+        }
+
+        .heading {
+            font-size: 22px;
+            font-weight: 300;
+            margin-bottom: 8px;
         }
 
         .sections {
@@ -27,19 +173,51 @@
             gap: 30px 0;
             margin-top: 10px;
 
-            .heading {
-                font-size: 20px;
-                font-weight: 300;
-                margin-bottom: 8px;
-            }
-
-            .current-activity {
-                .container {
-                    padding: $section_padding_tb $section_padding_lr;
-                    border: 1px solid $color_lightgray;
-                    border-radius: 10px;
+            .section {
+                .separator {
+                    width: 100%;
+                    border: .7px solid $brand_color_a;
+                    margin-top: 5px;
                 }
             }
+
+            .upcoming-activities {
+                .group {
+                    .date {
+                        font-size: 18px;
+                        font-weight: 500;
+                        margin-bottom: 10px;
+                    }
+
+                    .activities {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 15px 0;
+                    }
+                }
+            }
+
+            .past-activities {
+                .date-time {
+                    margin-top: 0;
+
+                    .date {
+                        margin-bottom: 4px;
+                    }
+                }
+            }
+
+            .upcoming-activities, .past-activities {
+                .container {
+                    padding-top: 10px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0 30px;
+                    overflow-y: scroll;
+                    max-height: 470px;
+                }
+            }
+
         }
     }
 

@@ -554,6 +554,7 @@ function sortObj(obj, key, desc) {
 
 function removeArrItem(arr, item) {
     let index = arr.indexOf(item);
+
     if (index > -1) {
         arr.splice(index, 1);
     }
@@ -569,4 +570,13 @@ function numberWithCommas(x, to_integer) {
     }
 
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+function getTimezoneAbbreviation() {
+    const date = new Date();
+    const options = { timeZoneName: 'short' };
+
+    const timeParts = date.toLocaleTimeString('en-US', options).split(' ');
+
+    return timeParts[timeParts.length - 1];
 }

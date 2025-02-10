@@ -141,26 +141,27 @@ befriend.html = {
                         
                         <div id="activities" class="view view-activities">
                             <div class="main-view show">
-                                <h2>Activities</h2>
-                                
                                 <div class="sections">
-                                    <div class="notifications">
-                                        <div class="heading">Notifications</div>
-                                        <div class="container"></div>
-                                    </div>
-                                    
-                                    <div class="current-activity">
+                                    <div class="current-activity section">
                                         <div class="heading">Current Activity</div>
                                         <div class="container"></div>
                                     </div>
                                     
-                                    <div class="upcoming-activities">
-                                        <div class="heading">Upcoming</div>
+                                    <div class="notifications section">
+                                        <div class="heading">Notifications</div>
+                                        <div class="separator"></div>
                                         <div class="container"></div>
                                     </div>
                                     
-                                    <div class="past-activities">
+                                    <div class="upcoming-activities section">
+                                        <div class="heading">Upcoming</div>
+                                        <div class="separator"></div>
+                                        <div class="container"></div>
+                                    </div>
+                                    
+                                    <div class="past-activities section">
                                         <div class="heading">Past</div>
+                                        <div class="separator"></div>
                                         <div class="container"></div>
                                     </div>
                                 </div>
