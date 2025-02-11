@@ -3424,6 +3424,10 @@ befriend.activities = {
                 ...data
             }
 
+            //update main view on data update
+            befriend.activities.setView();
+
+            //update displayed activity view with new data
             this.updateView(data.activity_token);
         },
         updateView: function (activity_token) {
