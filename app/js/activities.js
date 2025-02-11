@@ -219,7 +219,7 @@ befriend.activities = {
             upcomingActivitiesHtml += `<div class="group">
                                             <div class="date">${date}</div>
                                             <div class="activities">${dateActivitiesHtml}</div>
-                                       </div>`
+                                       </div>`;
         }
 
         for(let activity of activities_organized.past) {
@@ -246,6 +246,8 @@ befriend.activities = {
         notificationsEl.innerHTML = notificationsHtml;
         upcomingActivitiesEl.innerHTML = upcomingActivitiesHtml;
         pastActivitiesEl.innerHTML = `<div class="activities">${pastActivitiesHtml}</div>`;
+
+        befriend.activities.events.onShowActivity();
     },
     getDurationStr: function(minutes) {
         let duration_str = `${minutes} minutes`;
@@ -2790,83 +2792,111 @@ befriend.activities = {
     },
     displayActivity: {
         currentToken: null,
-        display: async function (activity_token) {
+        display: async function (activity_token, no_transition) {
             try {
-                this.currentToken = activity_token;
-
                 let activity_data = befriend.activities.data.all[activity_token];
+
+                if(!activity_data) {
+                    return;
+                }
+
+                //get/set dynamic properties
+                const propertyRequests = {};
+
+                if(!activity_data.data?.place) {
+                    propertyRequests.place = befriend.auth.get(`/places/fsq/${activity_data.data.fsq_place_id}`);
+                }
+
+                if(Object.keys(propertyRequests).length) {
+                    try {
+                        await Promise.all(
+                            Object.entries(propertyRequests).map(async ([key, promise]) => {
+                                let response = await promise;
+                                activity_data.data[key] = response.data;
+                            })
+                        );
+                    } catch(e) {
+                        console.error(e);
+                    }
+                }
+
+                this.currentToken = activity_token;
 
                 this.setHtml(activity_data);
 
-                //prevent navigation
-                befriend.preventNavigation(true);
+                if(!no_transition) {
+                    //prevent navigation
+                    befriend.preventNavigation(true);
+                }
 
                 removeClassEl('show', befriend.els.mainActivitiesView);
                 removeClassEl('show', befriend.els.activityNotificationView);
                 addClassEl('show', befriend.els.currentActivityView);
 
-                document.getElementById('create-activity-back').style.display = 'none';
-                befriend.els.travelTimes.style.display = 'none';
+                if(!no_transition) {
+                    document.getElementById('create-activity-back').style.display = 'none';
+                    befriend.els.travelTimes.style.display = 'none';
 
-                befriend.styles.transformStatusBar(
-                    0,
-                    befriend.variables.create_activity_transition_ms / 1000,
-                );
+                    befriend.styles.transformStatusBar(
+                        0,
+                        befriend.variables.create_activity_transition_ms / 1000,
+                    );
 
-                let view_el = befriend.els.views.querySelector(`.view-activities`);
-                let map_el = befriend.els.activityMap.querySelector('canvas');
+                    let view_el = befriend.els.views.querySelector(`.view-activities`);
+                    let map_el = befriend.els.activityMap.querySelector('canvas');
 
-                view_el.style.position = 'fixed';
-                view_el.style.backgroundColor = 'white';
-                view_el.style.zIndex = '10';
-                view_el.style.top = '0';
-                view_el.style.width = '100vw';
-                view_el.style.height = '100vh';
-                view_el.style.transform = `translateX(-100vw)`;
+                    view_el.style.position = 'fixed';
+                    view_el.style.backgroundColor = 'white';
+                    view_el.style.zIndex = '10';
+                    view_el.style.top = '0';
+                    view_el.style.width = '100vw';
+                    view_el.style.height = '100vh';
+                    view_el.style.transform = `translateX(-100vw)`;
 
-                addClassEl('active', view_el);
-
-                await rafAwait();
-
-                view_el.style.transition = `all ${befriend.variables.display_activity_transition_ms}ms`;
-
-                map_el.style.transition = `all ${befriend.variables.display_activity_transition_ms}ms`;
-
-                befriend.els.createActivity.style.transition = `all ${befriend.variables.display_activity_transition_ms}ms`;
-
-                await rafAwait();
-
-                view_el.style.transform = `translateX(0)`;
-
-                befriend.els.createActivity.style.transform = `translateX(100vw)`;
-                map_el.style.transform = `translateX(100vw)`;
-
-                befriend.navigateToView('activities', true);
-
-                setTimeout(async function () {
-                    let remove_props = ['position', 'background-color', 'z-index', 'top', 'width', 'height', 'transition'];
-
-                    for(let prop of remove_props) {
-                        view_el.style.removeProperty(prop);
-                    }
-
-                    befriend.els.createActivity.style.removeProperty('transition');
-                    befriend.els.createActivity.style.removeProperty('transform');
-
-                    map_el.style.removeProperty('transition');
-                    map_el.style.transform = `translateX(0)`;
+                    addClassEl('active', view_el);
 
                     await rafAwait();
 
-                    befriend.activities.createActivity.toggle(false);
+                    view_el.style.transition = `all ${befriend.variables.display_activity_transition_ms}ms`;
 
-                    befriend.maps.needsResize = true;
+                    map_el.style.transition = `all ${befriend.variables.display_activity_transition_ms}ms`;
 
-                    befriend.activities.createActivity.backButton();
+                    befriend.els.createActivity.style.transition = `all ${befriend.variables.display_activity_transition_ms}ms`;
 
-                    befriend.preventNavigation(false);
+                    await rafAwait();
 
-                }, befriend.variables.display_activity_transition_ms);
+                    view_el.style.transform = `translateX(0)`;
+
+                    befriend.els.createActivity.style.transform = `translateX(100vw)`;
+                    map_el.style.transform = `translateX(100vw)`;
+
+                    befriend.navigateToView('activities', true);
+
+                    setTimeout(async function () {
+                        let remove_props = ['position', 'background-color', 'z-index', 'top', 'width', 'height', 'transition'];
+
+                        for(let prop of remove_props) {
+                            view_el.style.removeProperty(prop);
+                        }
+
+                        befriend.els.createActivity.style.removeProperty('transition');
+                        befriend.els.createActivity.style.removeProperty('transform');
+
+                        map_el.style.removeProperty('transition');
+                        map_el.style.transform = `translateX(0)`;
+
+                        await rafAwait();
+
+                        befriend.activities.createActivity.toggle(false);
+
+                        befriend.maps.needsResize = true;
+
+                        befriend.activities.createActivity.backButton();
+
+                        befriend.preventNavigation(false);
+
+                    }, befriend.variables.display_activity_transition_ms);
+                }
             } catch(e) {
                 console.error(e);
             }
@@ -2881,14 +2911,16 @@ befriend.activities = {
 
             let fns = {
                 getInvite: function () {
+                    let activity_type = befriend.activities.activityTypes.lookup.byToken[activity.activity_type_token];
+
                     return `<div class="invite">
                                 <div class="image">
-                                    ${activity?.activity_type?.activity_image}
+                                    ${activity_type?.image}
                                 </div>
                                 
                                 <div class="name-duration">
                                     <div class="name">
-                                        ${activity?.activity_type?.notification_name} @ ${activity?.human_time}
+                                        ${activity_type?.notification} @ ${activity?.human_time}
                                     </div>
                                     
                                     <div class="duration">
@@ -3512,6 +3544,30 @@ befriend.activities = {
                 
                 resolve();
             });
+        },
+        onShowActivity: function () {
+            let activityEls = befriend.els.mainActivitiesView.getElementsByClassName('activity');
+
+            for(let i = 0; i < activityEls.length; i++) {
+                let activityEl = activityEls[i];
+
+                if(activityEl._listener) {
+                    continue;
+                }
+
+                activityEl._listener = true;
+
+                activityEl.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    let activityToken = activityEl.getAttribute('data-activity-token');
+
+                    if(activityToken) {
+                        befriend.activities.displayActivity.display(activityToken, true);
+                    }
+                });
+            }
         }
     }
 };

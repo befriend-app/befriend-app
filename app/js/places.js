@@ -476,7 +476,7 @@ befriend.places = {
         },
         html: {
             getPrice: function (place) {
-                if (place.price) {
+                if (place?.price) {
                     let price_str = '';
 
                     for (let i = 0; i < place.price; i++) {
@@ -489,7 +489,7 @@ befriend.places = {
                 return '';
             },
             getRating: function (place) {
-                if (isNumeric(place.rating)) {
+                if (isNumeric(place?.rating)) {
                     let rating_str = place.rating.toFixed(1);
                     let rating = parseFloat(rating_str);
 
