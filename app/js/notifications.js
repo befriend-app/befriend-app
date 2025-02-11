@@ -324,10 +324,9 @@ befriend.notifications = {
                                 <div class="label">Place</div> 
                                 
                                 <div class="content">
-                                    <div class="name">${notification.activity?.location_name} 
-                                        <div class="distance">
-                                        (${distance_str})
-                                        </div>
+                                    <div class="name">
+                                        <div class="distance">${distance_str}</div>                                        
+                                        ${notification.activity?.location_name} 
                                     </div>
                                     
                                     ${rating_price}

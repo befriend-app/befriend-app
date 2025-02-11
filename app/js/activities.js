@@ -65,7 +65,7 @@ befriend.activities = {
                 return '';
             }
 
-            let accepted_qty = activity.data?.persons_qty - activity.data?.spots_available;
+            let accepted_qty = activity.spots?.accepted ?? activity.data?.persons_qty - activity.data?.spots_available;
 
             if(!isNumeric(accepted_qty)) {
                 accepted_qty = 0;
@@ -3049,10 +3049,9 @@ befriend.activities = {
                                 <div class="label">Place</div> 
                                 
                                 <div class="content">
-                                    <div class="name">${activity?.location_name} 
-                                        <div class="distance">
-                                        (${distance_str})
-                                        </div>
+                                    <div class="name">
+                                        <div class="distance">${distance_str}</div>
+                                        ${activity?.location_name} 
                                     </div>
                                     
                                     ${rating_price}
@@ -3394,9 +3393,7 @@ befriend.activities = {
         setHtml: function (activity_data) {
             let view_el = befriend.els.currentActivityView.querySelector('.container');
 
-            let html = this.getViewHtml(activity_data);
-
-            view_el.innerHTML = html;
+            view_el.innerHTML = this.getViewHtml(activity_data);
 
             befriend.styles.displayActivity.updateSectionsHeight();
 

@@ -813,17 +813,19 @@
         }
 
         .place {
-            $mb: 4px;
+            $mb: 6px;
 
             .distance {
-                font-size: 13px;
-                margin-left: 6px;
-                transform: translateY(1px);
+                font-size: 12px;
+                margin-bottom: 2px;
+                //margin-left: 6px;
+                //transform: translateY(1px);
             }
 
             .name {
                 display: flex;
-                align-items: center;
+                flex-direction: column;
+                //align-items: center;
                 margin-bottom: $mb;
             }
 
