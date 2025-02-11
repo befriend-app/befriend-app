@@ -42,7 +42,7 @@
                 margin-top: 4px;
 
                 .date {
-                    font-size: 20px;
+                    font-size: 18px;
                 }
 
                 .time {
@@ -140,14 +140,15 @@
             border-radius: $br;
 
             .heading {
-                background-color: $brand_color_a;
-                color: white;
+                background-color: $brand_color_b;
+                //color: white;
                 border-top-left-radius: $br;
                 border-top-right-radius: $br;
                 padding-left: $section_padding_lr;
                 padding-top: 6px;
                 padding-bottom: 6px;
                 margin-bottom: 0;
+                border-bottom: 1px solid $color_lightgray;
             }
 
             .activity {
