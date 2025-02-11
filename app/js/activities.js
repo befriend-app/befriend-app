@@ -141,10 +141,13 @@ befriend.activities = {
         });
 
         let currentActivityEl = befriend.els.mainActivitiesView.querySelector('.current-activity .container');
+        let notificationsEl = befriend.els.mainActivitiesView.querySelector('.notifications .container');
+
         let upcomingActivitiesEl = befriend.els.mainActivitiesView.querySelector('.upcoming-activities .container');
         let pastActivitiesEl = befriend.els.mainActivitiesView.querySelector('.past-activities .container');
 
         let currentActivityHtml = '';
+        let notificationsHtml = '';
         let upcomingActivitiesHtml = '';
         let pastActivitiesHtml = '';
 
@@ -224,20 +227,25 @@ befriend.activities = {
         }
 
         if (!currentActivityHtml) {
-            currentActivityHtml = '<div class="no-items">No current activity</div>';
+            currentActivityHtml = `<div class="no-items">No current activity</div>`;
+        }
+
+        if(!notificationsHtml) {
+            notificationsHtml = `<div class="no-items">No current notifications</div>`;
         }
 
         if (!upcomingActivitiesHtml) {
-            upcomingActivitiesHtml = '<div class="no-items">No upcoming activities</div>';
+            upcomingActivitiesHtml = `<div class="no-items">No upcoming activities</div>`;
         }
 
         if (!pastActivitiesHtml) {
-            pastActivitiesHtml = '<div class="no-items">No past activities</div>';
+            pastActivitiesHtml = `<div class="no-items">No past activities</div>`;
         }
 
         currentActivityEl.innerHTML = currentActivityHtml;
+        notificationsEl.innerHTML = notificationsHtml;
         upcomingActivitiesEl.innerHTML = upcomingActivitiesHtml;
-        pastActivitiesEl.innerHTML = pastActivitiesHtml;
+        pastActivitiesEl.innerHTML = `<div class="activities">${pastActivitiesHtml}</div>`;
     },
     getDurationStr: function(minutes) {
         let duration_str = `${minutes} minutes`;

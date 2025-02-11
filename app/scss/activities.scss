@@ -199,6 +199,12 @@
             }
 
             .past-activities {
+                .activities {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 15px 0;
+                }
+
                 .date-time {
                     margin-top: 0;
 
@@ -208,7 +214,7 @@
                 }
             }
 
-            .upcoming-activities, .past-activities {
+            .upcoming-activities, .past-activities, .notifications {
                 .container {
                     padding-top: 10px;
                     display: flex;

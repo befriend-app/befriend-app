@@ -28,7 +28,6 @@ befriend.html = {
         befriend.els.mainActivitiesView = befriend.els.activities.querySelector('.main-view');
         befriend.els.currentActivityView = befriend.els.activities.querySelector('.current-activity-view');
         befriend.els.activityNotificationView = befriend.els.activities.querySelector('.notification-view');
-
     },
     appInit: function () {
         return new Promise(async (resolve, reject) => {
