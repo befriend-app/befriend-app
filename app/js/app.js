@@ -290,6 +290,14 @@ window['befriend'] = {
             //todo remove
             setTimeout(function () {
                 befriend.navigateToView('activities');
+
+                //show first activity
+                let activity = befriend.els.mainActivitiesView.querySelector('.activity');
+
+                if(activity) {
+                    fireClick(activity);
+                }
+
             }, 50);
 
             resolve();

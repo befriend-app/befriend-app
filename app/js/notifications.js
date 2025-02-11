@@ -688,6 +688,14 @@ befriend.notifications = {
             return;
         }
 
+        let notificationObj = befriend.notifications.data.all[activity_token];
+
+        if(notificationObj.acceptance_in_progress) {
+            return;
+        }
+
+        let notification = notificationObj.notification;
+
         const currentEl = availablePersons.querySelector('.current');
         const newEl = availablePersons.querySelector('.new');
 
@@ -695,8 +703,6 @@ befriend.notifications = {
 
         addClassEl('fade-out', currentEl);
         addClassEl('fade-in', newEl);
-
-        let { notification } = befriend.notifications.data.all[activity_token];
 
         if(spots <= 0 && !notification.accepted_at) {
             befriend.notifications.showUnavailable(befriend.notifications.messages.unavailable);
@@ -831,6 +837,7 @@ befriend.notifications = {
 
                 if(activity_token) {
                     befriend.toggleSpinner(true);
+                    currentNotification.acceptance_in_progress = true;
 
                     try {
                         let responseData;
@@ -839,7 +846,9 @@ befriend.notifications = {
                             let url = joinPaths(currentNotification.access.domain, `activities/networks/notifications/accept/${activity.activity_token}/${currentNotification.access.token}`);
 
                             let r = await axios.put(url, {
-                                person_token: befriend.user.person.token
+                                person_token: befriend.user.person.token,
+                                first_name: befriend.me.data?.me?.first_name || null,
+                                image_url: befriend.me.data?.me?.image_url || null,
                             });
 
                             responseData = r.data;
@@ -863,6 +872,8 @@ befriend.notifications = {
                         }
                         console.error(e);
                     }
+
+                    currentNotification.acceptance_in_progress = false;
                 }
 
                 befriend.toggleSpinner(false);

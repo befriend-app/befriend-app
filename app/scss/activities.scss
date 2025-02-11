@@ -1108,6 +1108,12 @@
                 }
             }
         }
+
+        .no-persons {
+            font-weight: 300;
+            font-size: 15px;
+            text-align: center;
+        }
     }
 
     .current-activity-view {
@@ -1117,6 +1123,31 @@
 
         &.show {
             display: flex;
+        }
+
+        .persons-nav {
+            .person-nav {
+                width: fit-content;
+                border: 1px solid $color_lightgray;
+                padding: 5px 10px;
+                border-radius: 6px;
+                @include flex-center-col;
+
+                &.active {
+                    background-color: $brand_color_b;
+                    //border-color: $brand_color_a;
+
+                    .name {
+                        //color: white;
+                    }
+                }
+
+                .name {
+                    font-weight: 500;
+                    font-size: 14px;
+                    margin-top: 4px;
+                }
+            }
         }
     }
 

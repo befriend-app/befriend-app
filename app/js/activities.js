@@ -2568,230 +2568,6 @@ befriend.activities = {
                     removeClassEl('show', message_el);
                 });
             },
-            notifications: {
-                init: function () {
-                    return new Promise(async (resolve, reject) => {
-                        befriend.activities.events.notifications.onLaunched();
-                        befriend.activities.events.notifications.onNotification();
-                        resolve();
-                    });
-                },
-                onLaunched: function () {
-                    try {
-                        befriend.plugins.notifications.onLaunchNotification(async function (notification) {
-                            window.launched_from_notification = true;
-
-                            //wait for init to be finished
-                            await befriend.initFinished();
-
-                            console.log("after init finished");
-
-                            befriend.notifications.fetchActivity(notification, true);
-
-                            removeClassEl('loading', document.body);
-
-                            if (notification) {
-                                console.log('App was launched from notification:', notification);
-                            }
-                        });
-                    } catch (e) {
-                        console.error(e);
-                    }
-                },
-                onNotification: function () {
-                    try {
-                        befriend.plugins.notifications.onNotificationReceived(function (notification) {
-                            console.log('Received notification:', notification);
-
-                            if (notification?.type === 'click') {
-                                befriend.notifications.fetchActivity(notification.notification);
-                            } else {
-                                //show in-app notification
-                                befriend.notifications.showNotificationBar();
-
-                                //tmp - todo remove
-                                befriend.notifications.fetchActivity(notification);
-                            }
-                        });
-                    } catch (e) {
-                        console.error(e);
-                    }
-                },
-                onAccept: function () {
-                    let accept_el = befriend.els.activityNotificationView.querySelector('.button.accept');
-                    let parent_el = accept_el.closest('.accept-decline');
-
-                    if(accept_el._listener) {
-                        return;
-                    }
-
-                    accept_el._listener = true;
-
-                    accept_el.addEventListener('click', async function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        let currentNotification = befriend.notifications.data.current;
-
-                        let activity = currentNotification?.activity;
-
-                        if(currentNotification.notification.accepted_at) {
-                            return;
-                        }
-
-                        if(this._ip) {
-                            return;
-                        }
-
-                        this._ip = true;
-
-                        let activity_token = activity?.activity_token;
-
-                        if(activity_token) {
-                            befriend.toggleSpinner(true);
-
-                            try {
-                                let responseData;
-
-                                if(currentNotification.access?.token) { //3rd-party network
-                                    let url = joinPaths(currentNotification.access.domain, `activities/networks/notifications/accept/${activity.activity_token}/${currentNotification.access.token}`);
-
-                                    let r = await axios.put(url, {
-                                        person_token: befriend.user.person.token
-                                    });
-
-                                    responseData = r.data;
-                                } else { //own network
-                                    let r = await befriend.auth.put(`/activities/${activity_token}/notification/accept`);
-                                    responseData = r.data;
-                                }
-
-                                if(responseData.success) {
-                                    currentNotification.notification.accepted_at = timeNow();
-
-                                    accept_el.querySelector('.text').innerHTML = `You're going!`;
-                                    addClassEl('accepted', parent_el);
-                                    befriend.notifications.updateAvailableSpots(activity_token, responseData.spots.available);
-                                } else {
-                                    befriend.notifications.showUnavailable(responseData.data.error);
-                                }
-                            } catch(e) {
-                                if(e.response?.data?.error) {
-                                    befriend.notifications.showUnavailable(e.response.data.error);
-                                }
-                                console.error(e);
-                            }
-                        }
-
-                        befriend.toggleSpinner(false);
-
-                        this._ip = false;
-                    });
-                },
-                onDecline: function () {
-                    let decline_el = befriend.els.activityNotificationView.querySelector('.button.decline');
-
-                    let parent_el = decline_el.closest('.accept-decline');
-
-                    if(decline_el._listener) {
-                        return;
-                    }
-
-                    decline_el._listener = true;
-
-                    decline_el.addEventListener('click', async function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        let currentNotification = befriend.notifications.data.current;
-                        let activity = currentNotification?.activity;
-
-                        //already declined
-                        if(currentNotification.notification.declined_at) {
-                            return;
-                        }
-
-                        if(this._ip) {
-                            return;
-                        }
-
-                        this._ip = true;
-
-                        let activity_token = activity?.activity_token;
-
-                        if(activity_token) {
-                            try {
-                                befriend.toggleSpinner(true);
-
-                                let responseData;
-
-                                if(currentNotification.access?.token) { //3rd-party network
-                                    let url = joinPaths(currentNotification.access.domain, `activities/networks/notifications/decline/${activity.activity_token}/${currentNotification.access.token}`);
-
-                                    let r = await axios.put(url, {
-                                        person_token: befriend.user.person.token
-                                    });
-
-                                    responseData = r.data;
-                                } else { //own network
-                                    let r = await befriend.auth.put(`/activities/${activity_token}/notification/decline`);
-                                    responseData = r.data;
-                                }
-
-                                if(responseData.success) {
-                                    currentNotification.notification.declined_at = timeNow();
-                                    decline_el.querySelector('.text').innerHTML = 'You declined this invitation';
-                                    addClassEl('declined', parent_el);
-                                }
-                            } catch(e) {
-                                console.error(e);
-                            }
-                        }
-
-                        befriend.toggleSpinner(false);
-
-                        this._ip = false;
-                    });
-                },
-                onViewImage: function () {
-                    let image_el = befriend.els.activityNotificationView.querySelector('.who').querySelector('.image');
-
-                    if(image_el._listener) {
-                        return;
-                    }
-
-                    image_el._listener = true;
-
-                    image_el.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        let url = image_el.getAttribute('data-image-url');
-
-                        befriend.notifications.openModal(url)
-                    });
-                },
-                onImageModal: function () {
-                    let modal_el = document.getElementById('person-image-modal');
-
-                    if(modal_el._listener) {
-                        return;
-                    }
-
-                    modal_el._listener = true;
-
-                    let modal_image_el = modal_el.querySelector('img');
-
-                    modal_el.addEventListener('click', (e) => {
-                        befriend.notifications.closeModal();
-                    });
-
-                    modal_image_el.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                    });
-                },
-            }
         }
     },
     displayActivity: {
@@ -2809,6 +2585,10 @@ befriend.activities = {
 
                 if(!activity_data.data?.place) {
                     propertyRequests.place = befriend.auth.get(`/places/fsq/${activity_data.data.fsq_place_id}`);
+                }
+
+                if(!activity_data.matching && !activity_data.data?.matching) {
+                    propertyRequests.matching = befriend.auth.get(`/activities/${activity_token}/matching`);
                 }
 
                 if(Object.keys(propertyRequests).length) {
@@ -3006,16 +2786,50 @@ befriend.activities = {
                            </div>`;
                 },
                 getWho: function () {
-                    //do not show who section if nobody has accepted the activity yet
-                    if(!activity_data.matching || !(Object.keys(activity_data.matching).length)) {
-                        return '';
+                    let matching = activity_data.matching || activity.matching || {};
+                    let persons = activity_data.persons || activity.persons || {};
+
+                    let html = '';
+
+                    let person_tokens = Object.keys(matching);
+
+                    if(person_tokens.length) {
+                        let persons_nav_html = '';
+                        let person_html = '';
+
+                        let unknown_person_int = 1;
+
+                        for(let i = 0; i < person_tokens.length; i++) {
+                            let person_token = person_tokens[i];
+                            let person = persons[person_token];
+
+                            if(!person) {
+                                console.warn('Person not found for activity data');
+                                continue;
+                            }
+
+                            persons_nav_html += `<div class="person-nav ${i === 0 ? 'active' : ''}" data-person-token="${person_token}">
+                                                    <div class="image" style="background-image: url(${person.image_url})"></div>
+                                                    <div class="name">${person.first_name || `Person ${unknown_person_int++}`}</div>
+                                                </div>`;
+                        }
+
+                         html = `<div class="persons-nav">
+                                    ${persons_nav_html}
+                                </div>
+                                
+                                <div class="person">
+                                ${person_html}
+                                </div>`;
+                    } else {
+                        html = `<div class="no-persons">No matches have accepted this activity yet.</div>`
                     }
 
-                    // debugger;
                     return `<div class="who section">
                             <div class="label">Who</div>
                             
                             <div class="content">
+                                ${html}
                             </div>
                         </div>`;
                 },
