@@ -2353,6 +2353,10 @@ befriend.activities = {
 
                         befriend.activities.data.addActivity(r.data);
 
+                        //update main view
+                        befriend.activities.setView();
+
+                        //show current activity view
                         befriend.activities.displayActivity.display(r.data.activity_token);
                     } catch (e) {
                         let error = e.response?.data?.error;
