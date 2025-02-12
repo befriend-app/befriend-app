@@ -679,6 +679,7 @@
                 gap: 0 8px;
                 align-items: center;
             }
+
             .image {
                 $dim: 50px;
                 border-radius: 50%;
@@ -689,7 +690,7 @@
                 //border: .5px solid lighten(black, 50%);
             }
 
-            .match-new {
+            .tags {
                 display: flex;
                 gap: 0 10px;
                 margin-top: 8px;
@@ -701,6 +702,11 @@
                     font-size: 12px;
                     font-weight: 500;
                     border-radius: 6px;
+                }
+
+                .new-member {
+                    color: white;
+                    background-color: $brand_color_a;
                 }
             }
 
@@ -721,11 +727,6 @@
 
                 margin-left: auto;
                 width: fit-content;
-
-                .new-member {
-                    color: white;
-                    background-color: $brand_color_a;
-                }
 
                 .reviews-container {
                     display: flex;
@@ -1152,24 +1153,47 @@
                 }
 
                 .name {
-                    font-weight: 400;
-                    font-size: 14px;
+                    font-weight: 300;
+                    font-size: 15px;
                     margin-top: 6px;
                 }
             }
         }
 
         .person {
+            .tags {
+                margin-top: 12px;
+            }
+
             .about {
+                display: flex;
+                gap: 0 10px;
+                margin-top: 12px;
+
+                .age, .gender {
+                    @include flex-center;
+                    gap: 0 10px;
+                    width: fit-content;
+                    border: 1px solid $color_lightgray;
+                    border-radius: 8px;
+                    padding: 4px 16px;
+                }
+
                 .icon {
                     svg {
-                        height: 24px;
+                        height: 20px;
                     }
                 }
 
                 .text {
                     font-size: 15px;
                 }
+            }
+
+
+
+            .reviews {
+                margin-top: 6px;
             }
         }
     }

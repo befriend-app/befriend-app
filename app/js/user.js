@@ -91,7 +91,7 @@ befriend.user = {
 
         befriend.user.setLocal('login.token', token);
     },
-    getReviewsHtml: function (person) {
+    getReviewsHtml: function (person, with_count) {
         const reviews = person.reviews;
 
         const ratings = [
@@ -102,10 +102,10 @@ befriend.user = {
             { name: 'Fun', current_rating: parseFloat(reviews.fun) }
         ];
 
-        let html = '';
+        let reviews_html = '';
 
         for(let rating of ratings) {
-            html += `
+            reviews_html += `
             <div class="review">
                 <div class="name">
                     ${rating.name}
@@ -141,6 +141,13 @@ befriend.user = {
         `;
         }
 
-        return `<div class="reviews-container">${html}</div>`
+        let count_html = '';
+
+        if(with_count) {
+            count_html = `<div class="count">${person.reviews.count} review${person.reviews.count !== 1 ? 's' : ''}</div>`;
+        }
+
+        return `${count_html}
+                <div class="reviews-container">${reviews_html}</div>`
     }
 };

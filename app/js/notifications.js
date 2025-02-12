@@ -239,7 +239,7 @@ befriend.notifications = {
         }
 
         function getWho() {
-            let reviews_html = befriend.user.getReviewsHtml(notification.person);
+            let reviews_html = befriend.user.getReviewsHtml(notification.person, true);
 
             let match_type_html = '';
 
@@ -248,7 +248,6 @@ befriend.notifications = {
             } else if(notification.matching?.total_score >= notification.matching?.thresholds?.super) {
                 match_type_html = `<div class="tag match-type super">Super match</div>`
             }
-            
 
             let new_member_html = '';
 
@@ -281,13 +280,12 @@ befriend.notifications = {
                                     <div class="image" style="background-image: url(${notification.person.image_url})" data-image-url="${notification.person.image_url}"></div>
                                 </div>
                                 
+                                <div class="tags">
+                                    ${match_type_html}
+                                    ${new_member_html}
+                                </div>
+                                
                                 <div class="reviews">
-                                    <div class="match-new">
-                                        ${match_type_html}
-                                        ${new_member_html}
-                                    </div>
-                                    
-                                    <div class="count">${notification.person.reviews.count} review${notification.person.reviews.count !== 1 ? 's' : ''}</div>
                                     ${reviews_html}
                                 </div>
                             </div>
@@ -351,269 +349,12 @@ befriend.notifications = {
         }
 
         function getMatching() {
-            function getItemTags(item) {
-                let tags_html = '';
-
-                let match_types = item.match?.types;
-
-                if(!match_types) {
-                    return '';
-                }
-
-                const heart_svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 439.9961">
-                                        <path class="outline" d="M240,422.9023c-29.3828-16.2148-224-129.4961-224-282.9023,0-66.0547,54.1992-124,116-124,41.8672.0742,80.4609,22.6602,101.0312,59.1289,1.5391,2.3516,4.1602,3.7656,6.9688,3.7656s5.4297-1.4141,6.9688-3.7656c20.5703-36.4688,59.1641-59.0547,101.0312-59.1289,61.8008,0,116,57.9453,116,124,0,153.4062-194.6172,266.6875-224,282.9023Z"></path>
-                                    </svg>`;
-
-                const myPos = item.match?.mine?.favorite?.position;
-                const theirPos = item.match?.theirs?.favorite?.position;
-                const myImportance = item.match?.mine?.importance;
-                const theirImportance = item.match?.theirs?.importance;
-
-                if(match_types.their_filter) {
-                    let importance = ``;
-
-                    if(theirImportance) {
-                        importance = `<div class="importance">${theirImportance}</div>`
-                    }
-
-                    tags_html += `<div class="tag their-filter">
-                                        ${importance}
-                                        Their Filter
-                                    </div>`;
-                }
-
-                if(match_types.their_item) {
-                    let favorite_heart = '';
-
-                    if(theirPos) {
-                        favorite_heart = `<div class="favorite">
-                                                <div class="position">${theirPos}</div>
-                                                ${heart_svg}
-                                           </div>`
-                    }
-
-                    tags_html += `<div class="tag their-item">
-                                    ${favorite_heart}
-                                    Their Item
-                                    </div>`;
-                }
-
-                if(match_types.my_filter) {
-                    let importance = ``;
-
-                    if(myImportance) {
-                        importance = `<div class="importance">${myImportance}</div>`
-                    }
-
-                    tags_html += `<div class="tag my-filter">
-                                    ${importance}
-                                    My Filter
-                                  </div>`;
-                }
-
-                if(match_types.my_item) {
-                    let favorite_heart = '';
-
-                    if(myPos) {
-                        favorite_heart = `<div class="favorite">
-                                                <div class="position">${myPos}</div>
-                                                ${heart_svg}
-                                           </div>`
-                    }
-
-                    tags_html += `<div class="tag my-item">
-                                    ${favorite_heart}
-                                    My Item
-                                    </div>`;
-                }
-
-                if(tags_html) {
-                    return `<div class="tags">${tags_html}</div>`;
-                }
-
-                return '';
-            }
-
-            function getItemSecondary(item) {
-                try {
-                    let sectionConfig = befriend.filters.sections[item.section]?.config;
-
-                    let secondary_extra = '';
-
-                    if (sectionConfig?.tabs) {
-                        const tab = sectionConfig.tabs.find(t => t.key === item.table_key);
-
-                        if (tab) {
-                            secondary_extra = tab.secondary?.extra;
-                        }
-                    } else {
-                        secondary_extra = sectionConfig.secondary?.extra;
-                    }
-
-                    let match = item.match;
-                    let myItemSecondary = match?.mine?.secondary?.item;
-                    let theirItemSecondary = match?.their?.secondary?.item;
-                    let myFilterSecondary = match?.mine?.secondary?.filter;
-                    let theirFilterSecondary = match?.theirs?.secondary?.filter;
-
-                    let html = '';
-
-                    let secondary_html = '';
-
-                    if(myItemSecondary && theirItemSecondary && myItemSecondary === theirItemSecondary) {
-                        secondary_html = `${myItemSecondary} ${secondary_extra}`;
-                    } else if(myFilterSecondary && theirItemSecondary && myFilterSecondary.includes(theirItemSecondary)) {
-                        secondary_html = `${theirItemSecondary} ${secondary_extra}`;
-                    } else if(theirFilterSecondary && myItemSecondary && theirFilterSecondary.includes(myItemSecondary)) {
-                        secondary_html = `${myItemSecondary} ${secondary_extra}`;
-                    }
-
-                    if(secondary_html) {
-                        html = `<div class="secondary">${secondary_html}</div>`;
-                    }
-
-                    return html;
-                } catch(e) {
-                    console.error(e);
-                    return '';
-                }
-            }
-
-            function getHtml() {
-                let items = notification.matching.items;
-
-                const groupedMatches = Object.values(items).reduce((acc, item) => {
-                    if (!acc[item.section]) {
-                        acc[item.section] = {
-                            tableGroups: {},
-                            favorites: 0,
-                            total: 0
-                        }
-                    }
-
-                    const section = acc[item.section];
-                    const tableKey = item.table_key || 'default';
-
-                    if (!section.tableGroups[tableKey]) {
-                        section.tableGroups[tableKey] = {
-                            items: [],
-                            key: tableKey
-                        };
-                    }
-
-                    section.tableGroups[tableKey].items.push(item);
-
-                    //sort items by favorite position
-                    section.tableGroups[tableKey].items.sort((a, b) => {
-                        let aPosition = a.match.mine.favorite.position;
-                        let bPosition = b.match.mine.favorite.position;
-
-                        const posA = isNumeric(aPosition) ? aPosition : 9999;
-                        const posB = isNumeric(bPosition) ? bPosition : 9999;
-                        return posA - posB;
-                    });
-
-                    if (item.totals?.mine) {
-                        section.favorites = item.totals.mine.favorite || 0;
-                        section.total = item.totals.mine.all || 0;
-                    }
-
-                    return acc;
-                }, {});
-
-                if (Object.keys(groupedMatches).length === 0) {
-                    return `<div class="no-items">No matching items</div>`;
-                }
-
-                //sort sections by number of favorites/items (mine)
-                const sortedSections = Object.entries(groupedMatches).sort(([,a], [,b]) => {
-                    if (a.favorites !== b.favorites) {
-                        return b.favorites - a.favorites;
-                    }
-
-                    return b.total - a.total;
-                });
-
-                let html = '';
-
-                for(let [sectionKey, sectionOrganized] of sortedSections) {
-                    let section = befriend.filters.sections[sectionKey];
-                    let sectionName = section?.name || sectionKey.capitalize();
-                    const sectionConfig = section?.config;
-                    let showTableHeader = false;
-
-                    let tableGroupsHtml = '';
-
-                    const sortedTableGroups = Object.entries(sectionOrganized.tableGroups);
-
-                    for (let [tableKey, tableGroup] of sortedTableGroups) {
-                        let tableKeyName = tableKey;
-
-                        if (sectionConfig?.tabs) {
-                            const tab = sectionConfig.tabs.find(t => t.key === tableKey);
-
-                            if (tab) {
-                                tableKeyName = tab.name;
-                            }
-
-                            if(sectionConfig.tabs.length) {
-                                showTableHeader = true;
-                            }
-                        }
-
-                        let itemsHtml = '';
-
-                        for(let item of tableGroup.items) {
-                            let tags = getItemTags(item);
-                            let secondary = getItemSecondary(item);
-
-                            itemsHtml += `<div class="matching-item">
-                                            <div class="matching-name">
-                                                <div class="name">${item.name}</div>
-                                                ${secondary}
-
-                                            </div>
-                                            
-                                            ${tags}
-                                        </div>`;
-                        }
-
-                        tableGroupsHtml += `<div class="matching-table-group">
-                                                ${showTableHeader ? `<div class="table-key-header">${tableKeyName}</div>` : ''}
-                                                <div class="matching-items">
-                                                    ${itemsHtml}
-                                                </div>
-                                            </div>`;
-                    }
-
-                    html += `<div class="matching-group">
-                                <div class="title">
-                                    <div class="icon">${section.icon}</div>
-                                    <div class="name">${sectionName}</div>    
-                                </div>
-                                
-                                <div class="matching-table-groups">
-                                    ${tableGroupsHtml}
-                                </div>
-                            </div>`;
-                }
-
-                return `<div class="matching-overview">
-                            <div class="count">${notification.matching.count} item${notification.matching.count > 1 ? 's' : ''}</div>
-                            <div class="score">
-                                <div class="text">Score</div>
-                                <div class="number">${numberWithCommas(notification.matching.total_score, true)}</div>
-                            </div>
-                        </div>
-                        
-                        <div class="matching-groups">${html}</div>`;
-
-            }
+            let html = befriend.activities.displayActivity.html.matching.getContent(notification.matching);
 
             return `<div class="matching section">
                             <div class="label">Matching</div>
                             <div class="content">
-                                ${getHtml()}
+                                ${html}
                             </div>
                         </div>`;
         }
