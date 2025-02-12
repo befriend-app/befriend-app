@@ -94,6 +94,10 @@ befriend.user = {
     getReviewsHtml: function (person, with_count) {
         const reviews = person.reviews;
 
+        if (!reviews) {
+            return '';
+        }
+
         const ratings = [
             { name: 'Safety', current_rating: parseFloat(reviews.safety) },
             { name: 'Trust', current_rating: parseFloat(reviews.trust) },

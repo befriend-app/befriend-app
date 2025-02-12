@@ -2612,8 +2612,6 @@ befriend.activities = {
                 removeClassEl('show', befriend.els.activityNotificationView);
                 addClassEl('show', befriend.els.currentActivityView);
 
-                befriend.styles.displayActivity.updateSectionsHeight();
-
                 if(!no_transition) {
                     document.getElementById('create-activity-back').style.display = 'none';
                     befriend.els.travelTimes.style.display = 'none';
@@ -2678,6 +2676,10 @@ befriend.activities = {
 
                     }, befriend.variables.display_activity_transition_ms);
                 }
+
+                await rafAwait();
+
+                befriend.styles.displayActivity.updateSectionsHeight();
             } catch(e) {
                 console.error(e);
             }
@@ -2805,45 +2807,42 @@ befriend.activities = {
                 return date;
             },
             getWho: function (activity) {
-                let matching = activity.matching || {};
                 let persons = activity.persons || {};
 
                 let html = '';
+                let persons_nav_html = '';
+                let person_html = '';
 
-                let person_tokens = Object.keys(matching);
+                let defaultSet = false;
+                let unknown_person_int = 1;
 
-                if(person_tokens.length) {
-                    let persons_nav_html = '';
-                    let person_html = '';
+                for(let person_token in persons) {
+                    let person = persons[person_token];
 
-                    let unknown_person_int = 1;
+                    if(person_token === befriend.user.person.token) {
+                        continue;
+                    }
 
-                    for(let i = 0; i < person_tokens.length; i++) {
-                        let person_token = person_tokens[i];
-                        let person = persons[person_token];
+                    if(!defaultSet) {
+                        person_html = this.getWhoPerson(activity, person_token);
+                    }
 
-                        if(!person) {
-                            console.warn('Person not found for activity data');
-                            continue;
-                        }
-
-                        if(i === 0) {
-                            person_html = this.getWhoPerson(activity, person_token);
-                        }
-
-                        persons_nav_html += `<div class="person-nav ${i === 0 ? 'active' : ''}" data-person-token="${person_token}">
+                    persons_nav_html += `<div class="person-nav ${!defaultSet ? 'active' : ''}" data-person-token="${person_token}">
                                                     <div class="image" style="background-image: url(${person.image_url})"></div>
                                                     <div class="name">${person.first_name || `Person ${unknown_person_int++}`}</div>
                                                 </div>`;
-                    }
 
+                    defaultSet = true;
+                }
+
+                if(persons_nav_html) {
                     html = `<div class="persons-nav">
-                                    ${persons_nav_html}
-                                </div>
+                                ${persons_nav_html}
+                            </div>
                                 
-                                <div class="person">
+                            <div class="person">
                                 ${person_html}
-                                </div>`;
+                            </div>`;
                 } else {
                     html = `<div class="no-persons">No matches have accepted this activity yet.</div>`
                 }
@@ -3176,13 +3175,61 @@ befriend.activities = {
                         
                         <div class="matching-groups">${html}</div>`;
                 },
-                getMatching: function (activity) {
+                getPersonNav: function(activity) {
+                    let persons_nav_html = '';
+                    let person_tokens = Object.keys(activity.matching || {});
 
+                    if(person_tokens.length) {
+                        let unknown_person_int = 1;
+
+                        for(let i = 0; i < person_tokens.length; i++) {
+                            let person_token = person_tokens[i];
+                            let person = activity.persons[person_token];
+
+                            if(!person) {
+                                console.warn('Person not found for activity data');
+                                continue;
+                            }
+
+                            persons_nav_html += `<div class="person-nav ${i === 0 ? 'active' : ''}" data-person-token="${person_token}">
+                                    <div class="image" style="background-image: url(${person.image_url})"></div>
+                                    <div class="name">${person.first_name || `Person ${unknown_person_int++}`}</div>
+                                </div>`;
+                        }
+                    }
+
+                    return persons_nav_html;
+                },
+                getMatching: function (activity) {
+                    let html = '';
+                    let default_person_matching = null;
+
+                    if(Object.keys(activity.matching || {}).length) {
+                        default_person_matching = Object.values(activity.matching)[0];
+                    }
+
+                    if(!default_person_matching) {
+                        return '';
+                    }
+
+                    let persons_nav = this.getPersonNav(activity);
+                    let content = this.getContent(default_person_matching);
+
+                    html = `<div class="persons-nav">
+                                ${persons_nav}
+                            </div>
+                            <div class="matching-content">
+                                ${content}
+                            </div>`;
+
+                    return `<div class="matching section">
+                        <div class="label">Matching</div>
+                        <div class="content">
+                            ${html}
+                        </div>
+                    </div>`;
                 }
             },
-            getMatchingContent: function (activity, person_token) {
-
-            }
         },
         getViewHtml(activity_data) {
             let activity = activity_data.data;
@@ -3281,6 +3328,7 @@ befriend.activities = {
 
             this.updateSpotsAccepted(activity_token);
             this.updateWho(activity_token);
+            this.updateMatching(activity_token);
         },
         updateSpotsAccepted: function (activity_token) {
             let activity = befriend.activities.data.all[activity_token];
@@ -3350,9 +3398,10 @@ befriend.activities = {
         updateMatching: function (activity_token) {
             let activity = befriend.activities.data.all[activity_token];
 
-            let html = this.html.getMatching(activity.data);
+            let html = this.html.matching.getMatching(activity.data);
 
             let matching_el = befriend.els.currentActivityView.querySelector('.section.matching');
+            let place_el = befriend.els.currentActivityView.querySelector('.section.place');
 
             if(matching_el) {
                 let prev_selected_person = matching_el.querySelector('.person-nav.active');
@@ -3363,12 +3412,14 @@ befriend.activities = {
 
                 matching_el.innerHTML = el.querySelector('.matching').innerHTML;
 
-                befriend.activities.displayActivity.events.onMatchingPersonNav();
-
                 if(prev_selected_person) {
                     befriend.activities.displayActivity.selectMatchingPersonNav(prev_selected_person.getAttribute('data-person-token'));
                 }
+            } else {
+                place_el.insertAdjacentHTML('afterend', html);
             }
+
+            befriend.activities.displayActivity.events.onMatchingPersonNav();
         },
         selectPersonNav: function (person_token) {
             let activity = befriend.activities.displayActivity.getActivity();
@@ -3404,7 +3455,11 @@ befriend.activities = {
                 if(matching_nav_el.getAttribute('data-person-token') === person_token) {
                     addClassEl('active', matching_nav_el);
 
-                    matching_content_el.innerHTML = befriend.activities.displayActivity.html.getMatchingContent(activity.data, person_token);
+                    let matching = activity.data.matching[person_token];
+
+                    if(matching) {
+                        matching_content_el.innerHTML = befriend.activities.displayActivity.html.matching.getContent(matching);
+                    }
 
                     break;
                 }
