@@ -144,11 +144,11 @@ befriend.events = {
                 e.preventDefault();
                 e.stopPropagation();
 
-                if (elHasClass(this, 'active')) {
+                let nav_name = nav_item.getAttribute('data-nav');
+
+                if (elHasClass(this, 'active') && !['activities'].includes(nav_name)) {
                     return false;
                 }
-
-                let nav_name = nav_item.getAttribute('data-nav');
 
                 befriend.navigateToView(nav_name);
             });

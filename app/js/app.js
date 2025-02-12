@@ -347,6 +347,10 @@ window['befriend'] = {
                     befriend.maps.needsResize = false;
                 });
             }
+        } else if (view === 'activities') {
+            removeClassEl('show', befriend.els.activityNotificationView);
+            removeClassEl('show', befriend.els.currentActivityView);
+            addClassEl('show', befriend.els.mainActivitiesView);
         } else if (view === 'filters') {
             requestAnimationFrame(function () {
                 befriend.filters.updateSectionHeights(true);
