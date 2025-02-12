@@ -65,7 +65,7 @@ befriend.activities = {
                 return '';
             }
 
-            let accepted_qty = activity.spots?.accepted ?? activity.data?.persons_qty - activity.data?.spots_available;
+            let accepted_qty = activity.data?.spots?.accepted ?? activity.data?.persons_qty - activity.data?.spots_available;
 
             if(!isNumeric(accepted_qty)) {
                 accepted_qty = 0;
