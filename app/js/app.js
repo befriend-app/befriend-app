@@ -303,7 +303,7 @@ window['befriend'] = {
             resolve();
         });
     },
-    navigateToView: function (view, skip_transition) {
+    navigateToView: function (view, skip_transition, classes_only) {
         let nav_items = befriend.els.footer.getElementsByClassName('nav-item');
         let views = befriend.els.views.getElementsByClassName('view');
 
@@ -325,6 +325,10 @@ window['befriend'] = {
         requestAnimationFrame(function () {
             removeElsClass(nav_items, 'no-transition');
         });
+
+        if(classes_only) {
+            return;
+        }
 
         //hide any overlays of footer nav
         befriend.places.search.toggleAutoComplete(false);

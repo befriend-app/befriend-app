@@ -200,8 +200,9 @@
 
             .past-activities {
                 .container {
-                    max-height: 100vh !important;
-                    //overflow-y: initial !important;
+                    //max-height: 100vh !important;
+                    max-height: initial !important;
+                    overflow-y: initial !important;
                 }
 
                 .activities {
@@ -1137,13 +1138,13 @@
             .person-nav {
                 width: fit-content;
                 border: 1px solid $color_lightgray;
-                padding: 5px 10px;
+                padding: 6px 12px;
                 border-radius: 6px;
                 @include flex-center-col;
 
                 &.active {
-                    background-color: $brand_color_b;
-                    //border-color: $brand_color_a;
+                    background-color: lighten($brand_color_b, 4%);
+                    border-color: $brand_color_a;
 
                     .name {
                         //color: white;
@@ -1151,9 +1152,23 @@
                 }
 
                 .name {
-                    font-weight: 500;
+                    font-weight: 400;
                     font-size: 14px;
-                    margin-top: 4px;
+                    margin-top: 6px;
+                }
+            }
+        }
+
+        .person {
+            .about {
+                .icon {
+                    svg {
+                        height: 24px;
+                    }
+                }
+
+                .text {
+                    font-size: 15px;
                 }
             }
         }
