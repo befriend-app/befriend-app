@@ -3030,11 +3030,38 @@ befriend.activities = {
             let who_el = befriend.els.currentActivityView.querySelector('.section.who');
 
             if(who_el) {
+                let prev_selected_person = who_el.querySelector('.person-nav.active');
+
                 let el = document.createElement('div');
 
                 el.innerHTML = html;
 
                 who_el.innerHTML = el.querySelector('.who').innerHTML;
+
+                befriend.activities.displayActivity.events.onPersonNav();
+
+                if(prev_selected_person) {
+                    befriend.activities.displayActivity.selectPersonNav(prev_selected_person.getAttribute('data-person-token'));
+                }
+            }
+        },
+        selectPersonNav: function (person_token) {
+            let person_nav_els = befriend.els.currentActivityView.getElementsByClassName('person-nav');
+
+            removeElsClass(person_nav_els, 'active');
+
+            let person_el = befriend.els.currentActivityView.querySelector('.who .person');
+
+            let activity = befriend.activities.displayActivity.getActivity();
+
+            for(let i = 0; i < person_nav_els.length; i++) {
+                let person_nav_el = person_nav_els[i];
+
+                if(person_nav_el.getAttribute('data-person-token') === person_token) {
+                    addClassEl('active', person_nav_el);
+                    person_el.innerHTML = befriend.activities.displayActivity.html.getWhoPerson(activity.data, person_token);
+                    break;
+                }
             }
         },
         events: {
@@ -3077,18 +3104,9 @@ befriend.activities = {
 
                         let person_token = this.getAttribute('data-person-token');
 
-                        removeElsClass(person_nav_els, 'active');
-
-                        addClassEl('active', person_nav_el);
-
-                        let activity = befriend.activities.displayActivity.getActivity();
-
-                        let person_el = befriend.els.currentActivityView.querySelector('.who .person');
-
-                        person_el.innerHTML = befriend.activities.displayActivity.html.getWhoPerson(activity.data, person_token);
+                        befriend.activities.displayActivity.selectPersonNav(person_token);
                     });
                 }
-
             },
             onViewImage: function () {
                 let image_els = befriend.els.currentActivityView.querySelectorAll('.person .image');
