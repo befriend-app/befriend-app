@@ -3484,7 +3484,7 @@ befriend.activities = {
 
             },
             onPersonNav: function () {
-                let person_nav_els = befriend.els.currentActivityView.getElementsByClassName('person-nav');
+                let person_nav_els = befriend.els.currentActivityView.querySelectorAll('.who .person-nav');
 
                 for(let i = 0; i < person_nav_els.length; i++) {
                     let person_nav_el = person_nav_els[i];

@@ -1152,6 +1152,15 @@
                     }
                 }
 
+                .image {
+                    $dim: 44px;
+                    border-radius: 50%;
+                    width: $dim;
+                    height: $dim;
+                    background-repeat: no-repeat;
+                    background-size: contain;
+                }
+
                 .name {
                     font-weight: 300;
                     font-size: 15px;
@@ -1190,10 +1199,18 @@
                 }
             }
 
-
-
             .reviews {
                 margin-top: 6px;
+            }
+        }
+
+        .matching {
+            .persons-nav {
+                margin: $section_padding_tb $section_padding_lr;
+            }
+
+            .matching-content {
+                border-top: 1px solid $brand_color_a;
             }
         }
     }
