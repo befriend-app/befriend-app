@@ -857,6 +857,8 @@ befriend.notifications = {
                             responseData = r.data;
                         }
 
+                        currentNotification.acceptance_in_progress = false;
+
                         if(responseData.success) {
                             currentNotification.notification.accepted_at = timeNow();
 
