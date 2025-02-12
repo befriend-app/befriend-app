@@ -12,10 +12,7 @@ html.#{$class_change_location} {
 
 #change-location-btn {
     z-index: 3;
-    //top: $icon_pos_x_y;
-    //left: $icon_pos_x_y;
-    //position: absolute;
-    font-size: 11px;
+    font-size: 12px;
     color: black;
     border-radius: 6px;
     background-color: lighten($brand_color_b, 5%);

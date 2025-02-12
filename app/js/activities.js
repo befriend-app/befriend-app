@@ -71,7 +71,7 @@ befriend.activities = {
                 accepted_qty = 0;
             }
 
-            let date = befriend.activities.displayActivity.getViewHtml(activity, 'getDate');
+            let date = befriend.activities.displayActivity.html.getDate(activity.data);
 
             let date_html = is_current || is_upcoming ? '' : `<div class="date">${date}</div>`;
 
@@ -200,7 +200,7 @@ befriend.activities = {
         });
 
         for(let activity of upcoming_activities) {
-            let date = befriend.activities.displayActivity.getViewHtml(activity, 'getDate');
+            let date = befriend.activities.displayActivity.html.getDate(activity.data);
 
             if(!upcoming_dates.has(date)) {
                 upcoming_dates.set(date, []);
@@ -1462,11 +1462,15 @@ befriend.activities = {
                 } else if(networkFilter.is_all_verified) {
                     selectedName = 'Any Verified Network';
                 } else if (networkFilter.items) {
-                    const activeNetworks = Object.values(networkFilter.items).filter(
+                    let activeNetworks = Object.values(networkFilter.items).filter(
                         (item) => item.is_active && !item.deleted,
                     );
 
-                    selectedName = `${activeNetworks.length} Network${activeNetworks.length > 1 ? 's' : ''}`;
+                    if(Object.keys(activeNetworks).length === 0) {
+                        selectedName = 'My network only';
+                    } else {
+                        selectedName = `${activeNetworks.length} Network${activeNetworks.length === 1 ? '' : 's'}`;
+                    }
                 }
 
                 networks_html = `<div class="filter networks">
@@ -2572,6 +2576,9 @@ befriend.activities = {
     },
     displayActivity: {
         currentToken: null,
+        getActivity: function () {
+            return befriend.activities.data.all[this.currentToken] || null;
+        },
         display: async function (activity_token, no_transition) {
             try {
                 let activity_data = befriend.activities.data.all[activity_token];
@@ -2685,19 +2692,11 @@ befriend.activities = {
                 console.error(e);
             }
         },
-        getViewHtml(activity_data, view_fn) {
-            let activity = activity_data.data;
+        html: {
+            getInvite: function (activity) {
+                let activity_type = befriend.activities.activityTypes.lookup.byToken[activity.activity_type_token];
 
-            if(!activity) {
-                console.error("No data for activity");
-                return '';
-            }
-
-            let fns = {
-                getInvite: function () {
-                    let activity_type = befriend.activities.activityTypes.lookup.byToken[activity.activity_type_token];
-
-                    return `<div class="invite">
+                return `<div class="invite">
                                 <div class="image">
                                     ${activity_type?.image}
                                 </div>
@@ -2712,26 +2711,26 @@ befriend.activities = {
                                     </div>
                                 </div>
                             </div>`;
-                },
-                getOverview: function () {
-                    let friends_type = '';
+            },
+            getOverview: function (activity) {
+                let friends_type = '';
 
-                    if(activity.is_new_friends && activity.is_existing_friends) {
-                        friends_type = 'Both';
-                    } else if(activity.is_new_friends) {
-                        friends_type = 'New';
-                    } else if(activity.is_existing_friends) {
-                        friends_type = 'Existing';
-                    }
+                if(activity.is_new_friends && activity.is_existing_friends) {
+                    friends_type = 'Both';
+                } else if(activity.is_new_friends) {
+                    friends_type = 'New';
+                } else if(activity.is_existing_friends) {
+                    friends_type = 'Existing';
+                }
 
-                    let selected_mode = befriend.modes.options.find(mode => mode.id === activity?.mode?.token);
-                    let mode_icon_html = '';
+                let selected_mode = befriend.modes.options.find(mode => mode.id === activity?.mode?.token);
+                let mode_icon_html = '';
 
-                    if(selected_mode) {
-                        mode_icon_html = `<div class="icon">${selected_mode.icon}</div>`;
-                    }
+                if(selected_mode) {
+                    mode_icon_html = `<div class="icon">${selected_mode.icon}</div>`;
+                }
 
-                    return  `<div class="overview">
+                return  `<div class="overview">
                                 <div class="friends-mode">
                                     <div class="mode sub-section">
                                         <div class="title">Mode</div>
@@ -2760,106 +2759,34 @@ befriend.activities = {
                                     </div>
                                 </div>
                             </div>`;
-                },
-                getNetwork: function () {
-                    let network = activity.network;
+            },
+            getPlace: function (activity) {
+                let rating_price = `
+                    <div class="rating-price">
+                        <div class="rating">${befriend.places.activity.html.getRating(activity.place)}</div>
+                        <div class="price">${befriend.places.activity.html.getPrice(activity.place)}</div>
+                    </div>`;
 
-                    if(!network) {
-                        return '';
-                    }
+                let distance_km = calculateDistance(
+                    befriend.location.device,
+                    {
+                        lat: activity.location_lat,
+                        lon: activity.location_lon
+                    },
+                    true
+                );
 
-                    return `<div class="network section">
-                                <div class="label">Network</div> 
-                                
-                                <div class="content">
-                                    <div class="verification-status ${network.verified ? 'verified' : 'unverified'}">${network.verified ? 'Verified' : 'Unverified'}</div>
+                let distance_miles = distance_km * kms_per_mile;
 
-                                    <div class="logo-name">
-                                        <div class="logo" style="background-image: url(${network.icon})"></div>
-                                        <div class="name">${network.name}</div>
-                                    </div>
-                                    
-                                    <div class="website">
-                                        <a href="${network.website}" target="_blank">Website</a>
-                                    </div>
-                                </div>
-                           </div>`;
-                },
-                getWho: function () {
-                    let matching = activity_data.matching || activity.matching || {};
-                    let persons = activity_data.persons || activity.persons || {};
+                let distance_str = '';
 
-                    let html = '';
+                if(useKM()) {
+                    distance_str = `${formatRound(distance_km)} km`;
+                } else {
+                    distance_str = `${formatRound(distance_miles)} m`;
+                }
 
-                    let person_tokens = Object.keys(matching);
-
-                    if(person_tokens.length) {
-                        let persons_nav_html = '';
-                        let person_html = '';
-
-                        let unknown_person_int = 1;
-
-                        for(let i = 0; i < person_tokens.length; i++) {
-                            let person_token = person_tokens[i];
-                            let person = persons[person_token];
-
-                            if(!person) {
-                                console.warn('Person not found for activity data');
-                                continue;
-                            }
-
-                            persons_nav_html += `<div class="person-nav ${i === 0 ? 'active' : ''}" data-person-token="${person_token}">
-                                                    <div class="image" style="background-image: url(${person.image_url})"></div>
-                                                    <div class="name">${person.first_name || `Person ${unknown_person_int++}`}</div>
-                                                </div>`;
-                        }
-
-                         html = `<div class="persons-nav">
-                                    ${persons_nav_html}
-                                </div>
-                                
-                                <div class="person">
-                                ${person_html}
-                                </div>`;
-                    } else {
-                        html = `<div class="no-persons">No matches have accepted this activity yet.</div>`
-                    }
-
-                    return `<div class="who section">
-                            <div class="label">Who</div>
-                            
-                            <div class="content">
-                                ${html}
-                            </div>
-                        </div>`;
-                },
-                getPlace: function () {
-                    let rating_price = `
-        <div class="rating-price">
-            <div class="rating">${befriend.places.activity.html.getRating(activity.place)}</div>
-            <div class="price">${befriend.places.activity.html.getPrice(activity.place)}</div>
-        </div>`;
-
-                    let distance_km = calculateDistance(
-                        befriend.location.device,
-                        {
-                            lat: activity.location_lat,
-                            lon: activity.location_lon
-                        },
-                        true
-                    );
-
-                    let distance_miles = distance_km * kms_per_mile;
-
-                    let distance_str = '';
-
-                    if(useKM()) {
-                        distance_str = `${formatRound(distance_km)} km`;
-                    } else {
-                        distance_str = `${formatRound(distance_miles)} m`;
-                    }
-
-                    return `<div class="place section">
+                return `<div class="place section">
                                 <div class="label">Place</div> 
                                 
                                 <div class="content">
@@ -2875,318 +2802,106 @@ befriend.activities = {
                                     </div>
                                 </div>
                            </div>`;
-                },
-                getDate: function () {
-                    let date = getFriendlyDateFromString(activity.human_date);
+            },
+            getDate: function (activity) {
+                let date = getFriendlyDateFromString(activity.human_date);
 
-                    if(isToday(activity.activity_start)) {
-                        date = 'Today';
-                    } else if(isTomorrow(activity.activity_start)) {
-                        date = 'Tomorrow';
+                if(isToday(activity.activity_start)) {
+                    date = 'Today';
+                } else if(isTomorrow(activity.activity_start)) {
+                    date = 'Tomorrow';
+                }
+
+                return date;
+            },
+            getWho: function (activity) {
+                let matching = activity.matching || {};
+                let persons = activity.persons || {};
+
+                let html = '';
+
+                let person_tokens = Object.keys(matching);
+
+                if(person_tokens.length) {
+                    let persons_nav_html = '';
+                    let person_html = '';
+
+                    let unknown_person_int = 1;
+
+                    for(let i = 0; i < person_tokens.length; i++) {
+                        let person_token = person_tokens[i];
+                        let person = persons[person_token];
+
+                        if(!person) {
+                            console.warn('Person not found for activity data');
+                            continue;
+                        }
+
+                        if(i === 0) {
+                            person_html = this.getWhoPerson(activity, person_token);
+                        }
+
+                        persons_nav_html += `<div class="person-nav ${i === 0 ? 'active' : ''}" data-person-token="${person_token}">
+                                                    <div class="image" style="background-image: url(${person.image_url})"></div>
+                                                    <div class="name">${person.first_name || `Person ${unknown_person_int++}`}</div>
+                                                </div>`;
                     }
 
-                    return date;
-                },
-                getMatching: function () {
-                    return '';
-                    function getItemTags(item) {
-                        let tags_html = '';
-
-                        let match_types = item.match?.types;
-
-                        if(!match_types) {
-                            return '';
-                        }
-
-                        const heart_svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 439.9961">
-                                        <path class="outline" d="M240,422.9023c-29.3828-16.2148-224-129.4961-224-282.9023,0-66.0547,54.1992-124,116-124,41.8672.0742,80.4609,22.6602,101.0312,59.1289,1.5391,2.3516,4.1602,3.7656,6.9688,3.7656s5.4297-1.4141,6.9688-3.7656c20.5703-36.4688,59.1641-59.0547,101.0312-59.1289,61.8008,0,116,57.9453,116,124,0,153.4062-194.6172,266.6875-224,282.9023Z"></path>
-                                    </svg>`;
-
-                        const myPos = item.match?.mine?.favorite?.position;
-                        const theirPos = item.match?.theirs?.favorite?.position;
-                        const myImportance = item.match?.mine?.importance;
-                        const theirImportance = item.match?.theirs?.importance;
-
-                        if(match_types.their_filter) {
-                            let importance = ``;
-
-                            if(theirImportance) {
-                                importance = `<div class="importance">${theirImportance}</div>`
-                            }
-
-                            tags_html += `<div class="tag their-filter">
-                                        ${importance}
-                                        Their Filter
-                                    </div>`;
-                        }
-
-                        if(match_types.their_item) {
-                            let favorite_heart = '';
-
-                            if(theirPos) {
-                                favorite_heart = `<div class="favorite">
-                                                <div class="position">${theirPos}</div>
-                                                ${heart_svg}
-                                           </div>`
-                            }
-
-                            tags_html += `<div class="tag their-item">
-                                    ${favorite_heart}
-                                    Their Item
-                                    </div>`;
-                        }
-
-                        if(match_types.my_filter) {
-                            let importance = ``;
-
-                            if(myImportance) {
-                                importance = `<div class="importance">${myImportance}</div>`
-                            }
-
-                            tags_html += `<div class="tag my-filter">
-                                    ${importance}
-                                    My Filter
-                                  </div>`;
-                        }
-
-                        if(match_types.my_item) {
-                            let favorite_heart = '';
-
-                            if(myPos) {
-                                favorite_heart = `<div class="favorite">
-                                                <div class="position">${myPos}</div>
-                                                ${heart_svg}
-                                           </div>`
-                            }
-
-                            tags_html += `<div class="tag my-item">
-                                    ${favorite_heart}
-                                    My Item
-                                    </div>`;
-                        }
-
-                        if(tags_html) {
-                            return `<div class="tags">${tags_html}</div>`;
-                        }
-
-                        return '';
-                    }
-
-                    function getItemSecondary(item) {
-                        try {
-                            let sectionConfig = befriend.filters.sections[item.section]?.config;
-
-                            let secondary_extra = '';
-
-                            if (sectionConfig?.tabs) {
-                                const tab = sectionConfig.tabs.find(t => t.key === item.table_key);
-
-                                if (tab) {
-                                    secondary_extra = tab.secondary?.extra;
-                                }
-                            } else {
-                                secondary_extra = sectionConfig.secondary?.extra;
-                            }
-
-                            let match = item.match;
-                            let myItemSecondary = match?.mine?.secondary?.item;
-                            let theirItemSecondary = match?.their?.secondary?.item;
-                            let myFilterSecondary = match?.mine?.secondary?.filter;
-                            let theirFilterSecondary = match?.theirs?.secondary?.filter;
-
-                            let html = '';
-
-                            let secondary_html = '';
-
-                            if(myItemSecondary && theirItemSecondary && myItemSecondary === theirItemSecondary) {
-                                secondary_html = `${myItemSecondary} ${secondary_extra}`;
-                            } else if(myFilterSecondary && theirItemSecondary && myFilterSecondary.includes(theirItemSecondary)) {
-                                secondary_html = `${theirItemSecondary} ${secondary_extra}`;
-                            } else if(theirFilterSecondary && myItemSecondary && theirFilterSecondary.includes(myItemSecondary)) {
-                                secondary_html = `${myItemSecondary} ${secondary_extra}`;
-                            }
-
-                            if(secondary_html) {
-                                html = `<div class="secondary">${secondary_html}</div>`;
-                            }
-
-                            return html;
-                        } catch(e) {
-                            console.error(e);
-                            return '';
-                        }
-                    }
-
-                    function getHtml() {
-                        let items = activity.matching.items;
-
-                        const groupedMatches = Object.values(items).reduce((acc, item) => {
-                            if (!acc[item.section]) {
-                                acc[item.section] = {
-                                    tableGroups: {},
-                                    favorites: 0,
-                                    total: 0
-                                }
-                            }
-
-                            const section = acc[item.section];
-                            const tableKey = item.table_key || 'default';
-
-                            if (!section.tableGroups[tableKey]) {
-                                section.tableGroups[tableKey] = {
-                                    items: [],
-                                    key: tableKey
-                                };
-                            }
-
-                            section.tableGroups[tableKey].items.push(item);
-
-                            //sort items by favorite position
-                            section.tableGroups[tableKey].items.sort((a, b) => {
-                                let aPosition = a.match.mine.favorite.position;
-                                let bPosition = b.match.mine.favorite.position;
-
-                                const posA = isNumeric(aPosition) ? aPosition : 9999;
-                                const posB = isNumeric(bPosition) ? bPosition : 9999;
-                                return posA - posB;
-                            });
-
-                            if (item.totals?.mine) {
-                                section.favorites = item.totals.mine.favorite || 0;
-                                section.total = item.totals.mine.all || 0;
-                            }
-
-                            return acc;
-                        }, {});
-
-                        if (Object.keys(groupedMatches).length === 0) {
-                            return `<div class="no-items">No matching items</div>`;
-                        }
-
-                        //sort sections by number of favorites/items (mine)
-                        const sortedSections = Object.entries(groupedMatches).sort(([,a], [,b]) => {
-                            if (a.favorites !== b.favorites) {
-                                return b.favorites - a.favorites;
-                            }
-
-                            return b.total - a.total;
-                        });
-
-                        let html = '';
-
-                        for(let [sectionKey, sectionOrganized] of sortedSections) {
-                            let section = befriend.filters.sections[sectionKey];
-                            let sectionName = section?.name || sectionKey.capitalize();
-                            const sectionConfig = section?.config;
-                            let showTableHeader = false;
-
-                            let tableGroupsHtml = '';
-
-                            const sortedTableGroups = Object.entries(sectionOrganized.tableGroups);
-
-                            for (let [tableKey, tableGroup] of sortedTableGroups) {
-                                let tableKeyName = tableKey;
-
-                                if (sectionConfig?.tabs) {
-                                    const tab = sectionConfig.tabs.find(t => t.key === tableKey);
-
-                                    if (tab) {
-                                        tableKeyName = tab.name;
-                                    }
-
-                                    if(sectionConfig.tabs.length) {
-                                        showTableHeader = true;
-                                    }
-                                }
-
-                                let itemsHtml = '';
-
-                                for(let item of tableGroup.items) {
-                                    let tags = getItemTags(item);
-                                    let secondary = getItemSecondary(item);
-
-                                    itemsHtml += `<div class="matching-item">
-                                            <div class="matching-name">
-                                                <div class="name">${item.name}</div>
-                                                ${secondary}
-
-                                            </div>
-                                            
-                                            ${tags}
-                                        </div>`;
-                                }
-
-                                tableGroupsHtml += `<div class="matching-table-group">
-                                                ${showTableHeader ? `<div class="table-key-header">${tableKeyName}</div>` : ''}
-                                                <div class="matching-items">
-                                                    ${itemsHtml}
-                                                </div>
-                                            </div>`;
-                            }
-
-                            html += `<div class="matching-group">
-                                <div class="title">
-                                    <div class="icon">${section.icon}</div>
-                                    <div class="name">${sectionName}</div>    
+                    html = `<div class="persons-nav">
+                                    ${persons_nav_html}
                                 </div>
                                 
-                                <div class="matching-table-groups">
-                                    ${tableGroupsHtml}
-                                </div>
-                            </div>`;
-                        }
+                                <div class="person">
+                                ${person_html}
+                                </div>`;
+                } else {
+                    html = `<div class="no-persons">No matches have accepted this activity yet.</div>`
+                }
 
-                        return `<div class="matching-overview">
-                            <div class="count">${activity.matching.count} item${activity.matching.count > 1 ? 's' : ''}</div>
-                            <div class="score">
-                                <div class="text">Score</div>
-                                <div class="number">${numberWithCommas(activity.matching.total_score, true)}</div>
-                            </div>
-                        </div>
-                        
-                        <div class="matching-groups">${html}</div>`;
-
-                    }
-
-                    return `<div class="matching section">
-                            <div class="label">Matching</div>
+                return `<div class="who section">
+                            <div class="label">Who</div>
+                            
                             <div class="content">
-                                ${getHtml()}
+                                ${html}
                             </div>
                         </div>`;
-                }
+            },
+            getWhoPerson: function (activity, person_token) {
+                return person_token;
             }
+        },
+        getViewHtml(activity_data) {
+            let activity = activity_data.data;
 
-            if(view_fn) {
-                return fns[view_fn]();
+            if(!activity) {
+                console.error("No data for activity");
+                return '';
             }
 
             console.log(activity);
 
-            let date = fns.getDate();
+            let date = this.html.getDate(activity);
 
-            let invite_html = fns.getInvite();
+            let invite_html = this.html.getInvite(activity);
 
-            let overview_html = fns.getOverview();
+            let overview_html = this.html.getOverview(activity);
 
-            let network_html = fns.getNetwork();
+            let who_html = this.html.getWho(activity);
 
-            let who_html = fns.getWho();
-
-            let place_html = fns.getPlace();
-
-            let matching_html = fns.getMatching();
+            let place_html = this.html.getPlace(activity);
 
             return `<div class="activity">
                     <div class="top-row">
                         <div class="back-button">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 416.001 351.9995"><path id="Left_Arrow" d="M400.001,159.9995H54.625L187.313,27.3115c6.252-6.252,6.252-16.376,0-22.624s-16.376-6.252-22.624,0L4.689,164.6875c-6.252,6.252-6.252,16.376,0,22.624l160,160c3.124,3.124,7.22,4.688,11.312,4.688s8.188-1.564,11.312-4.688c6.252-6.252,6.252-16.376,0-22.624L54.625,191.9995h345.376c8.836,0,16-7.164,16-16s-7.164-16-16-16Z"></path></svg>
                         </div>
+                        
                         <h2>Activity</h2>
+                        
                         <div class="date">${date}</div>
                     </div>
                     
-                    <div class="max-recipients">Temp placeholder</div>
+                    <div class="max-recipients"></div>
                     
                     ${invite_html}
                     
@@ -3195,10 +2910,8 @@ befriend.activities = {
                         
                         <div class="sections-wrapper">
                             <div class="sections">
-                                ${network_html}
                                 ${who_html}
                                 ${place_html}
-                                ${matching_html}
                             </div>
                         </div>
                     </div>
@@ -3216,6 +2929,7 @@ befriend.activities = {
             befriend.activities.displayActivity.events.onViewImage();
             befriend.activities.displayActivity.events.onMapsNavigate();
             befriend.activities.displayActivity.events.onReport();
+            befriend.activities.displayActivity.events.onPersonNav();
         },
         updateData: function (data) {
             if(!data.activity_token) {
@@ -3230,10 +2944,11 @@ befriend.activities = {
                 befriend.activities.data.all[data.activity_token] = {};
             }
 
-            befriend.activities.data.all[data.activity_token] = {
-                ...befriend.activities.data.all[data.activity_token],
-                ...data
-            }
+            let activity = befriend.activities.data.all[data.activity_token];
+
+            activity.data.spots = data.spots;
+            activity.data.matching = data.matching;
+            activity.data.persons = data.persons;
 
             //update main view on data update
             befriend.activities.setView();
@@ -3252,7 +2967,7 @@ befriend.activities = {
         updateSpotsAccepted: function (activity_token) {
             let activity = befriend.activities.data.all[activity_token];
 
-            let spots = activity.spots?.accepted;
+            let spots = activity.data?.spots?.accepted;
 
             if(!isNumeric(spots)) {
                 return;
@@ -3294,13 +3009,16 @@ befriend.activities = {
         updateWho: function (activity_token) {
             let activity = befriend.activities.data.all[activity_token];
 
-            let html = this.getViewHtml(activity, 'getWho');
+            let html = this.html.getWho(activity.data);
 
-            let place_section = befriend.els.currentActivityView.querySelector('.place.section');
-            let existing_who = befriend.els.currentActivityView.querySelector('.place.who');
+            let who_el = befriend.els.currentActivityView.querySelector('.section.who');
 
-            if(!existing_who) {
-                place_section.insertAdjacentHTML('afterend', html);
+            if(who_el) {
+                let el = document.createElement('div');
+
+                el.innerHTML = html;
+
+                who_el.innerHTML = el.querySelector('.who').innerHTML;
             }
         },
         events: {
@@ -3319,6 +3037,41 @@ befriend.activities = {
                 });
             },
             onCancel: function () {
+
+            },
+            onPersonNav: function () {
+                let person_nav_els = befriend.els.currentActivityView.getElementsByClassName('person-nav');
+
+                for(let i = 0; i < person_nav_els.length; i++) {
+                    let person_nav_el = person_nav_els[i];
+
+                    if(person_nav_el._listener) {
+                        continue;
+                    }
+
+                    person_nav_el._listener = true;
+
+                    person_nav_el.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        if(elHasClass(person_nav_el, 'active')) {
+                            return;
+                        }
+
+                        let person_token = this.getAttribute('data-person-token');
+
+                        removeElsClass(person_nav_els, 'active');
+
+                        addClassEl('active', person_nav_el);
+
+                        let activity = befriend.activities.displayActivity.getActivity();
+
+                        let person_el = befriend.els.currentActivityView.querySelector('.who .person');
+
+                        person_el.innerHTML = befriend.activities.displayActivity.html.getWhoPerson(activity.data, person_token);
+                    });
+                }
 
             },
             onViewImage: function () {

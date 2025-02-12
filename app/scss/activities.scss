@@ -199,6 +199,11 @@
             }
 
             .past-activities {
+                .container {
+                    max-height: 100vh !important;
+                    //overflow-y: initial !important;
+                }
+
                 .activities {
                     display: flex;
                     flex-direction: column;
@@ -1126,6 +1131,9 @@
         }
 
         .persons-nav {
+            display: flex;
+            gap: 0 10px;
+
             .person-nav {
                 width: fit-content;
                 border: 1px solid $color_lightgray;
