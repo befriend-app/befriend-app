@@ -172,8 +172,36 @@ befriend.activities = {
             return b.data.activity_start - a.data.activity_start;
         });
 
-        //do not show notification if converted to activity
+        //filter out notifications that were converted to activities
         notifications = notifications.filter(notification => !befriend.activities.data.all[notification.activity_token]);
+
+        //filter out notifications that overlap with any activity's time period
+        notifications = notifications.filter(notification => {
+            const notificationStart = notification.activity.activity_start;
+            const notificationEnd = notification.activity.activity_end;
+
+            for (const activity of activities) {
+                if(activity.cancelled_at) {
+                    continue;
+                }
+
+                const activityStart = activity.data.activity_start;
+                const activityEnd = activity.data.activity_end;
+
+                const hasOverlap = (
+                    // Notification starts during activity
+                    (notificationStart >= activityStart && notificationStart <= activityEnd) ||
+                    // Notification ends during activity
+                    (notificationEnd >= activityStart && notificationEnd <= activityEnd)
+                );
+
+                if (hasOverlap) {
+                    return false;
+                }
+            }
+
+            return true;
+        });
 
         //sort oldest->newest
         notifications.sort(function (a, b) {
