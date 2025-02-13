@@ -8,6 +8,9 @@
     <content src="index.html" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
+    <allow-intent href="maps:*" />
+
+    <allow-navigation href="maps://*" />
 
     <preference name="Orientation" value="portrait" />
 
