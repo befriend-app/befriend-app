@@ -226,10 +226,6 @@ befriend.activities = {
             pastActivitiesHtml += getActivityHtml(activity);
         }
 
-        if (!currentActivityHtml) {
-            currentActivityHtml = `<div class="no-items">No current activity</div>`;
-        }
-
         if(!notificationsHtml) {
             notificationsHtml = `<div class="no-items">No current notifications</div>`;
         }
@@ -246,6 +242,12 @@ befriend.activities = {
         notificationsEl.innerHTML = notificationsHtml;
         upcomingActivitiesEl.innerHTML = upcomingActivitiesHtml;
         pastActivitiesEl.innerHTML = `<div class="activities">${pastActivitiesHtml}</div>`;
+
+        if(!currentActivityHtml) {
+            addClassEl('dni', currentActivityEl.closest('.section'));
+        } else {
+            removeClassEl('dni', currentActivityEl.closest('.section'));
+        }
 
         befriend.activities.events.onShowActivity();
     },

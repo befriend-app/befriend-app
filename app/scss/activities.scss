@@ -901,8 +901,8 @@
                 display: flex;
                 gap: 6px 6px;
                 position: absolute;
-                top: $section_padding_tb / 2;
-                right: $section_padding_lr / 2;
+                top: calc($section_padding_tb / 2);
+                right: calc($section_padding_lr / 2);
 
                 .nav-button {
                     $dim: 27px;

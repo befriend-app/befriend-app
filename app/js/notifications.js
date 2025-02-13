@@ -72,7 +72,7 @@ befriend.notifications = {
             }
 
             //navigate to activities view
-            befriend.navigateToView('activities', true);
+            befriend.navigateToView('activities', true, true);
 
             //get activity data
             try {
@@ -318,7 +318,7 @@ befriend.notifications = {
                 distance_str = `${formatRound(distance_miles)} m`;
             }
 
-            let navigation_buttons = this.getNavigation(activity);
+            let navigation_buttons = befriend.activities.displayActivity.html.getNavigation(notification.activity);
 
             return `<div class="place section">
                                 <div class="label">Place</div> 
