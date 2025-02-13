@@ -318,6 +318,8 @@ befriend.notifications = {
                 distance_str = `${formatRound(distance_miles)} m`;
             }
 
+            let navigation_buttons = this.getNavigation(activity);
+
             return `<div class="place section">
                                 <div class="label">Place</div> 
                                 
@@ -327,6 +329,8 @@ befriend.notifications = {
                                         ${notification.activity?.location_name} 
                                     </div>
                                     
+                                    ${navigation_buttons}
+
                                     ${rating_price}
                                     
                                     <div class="address-container">

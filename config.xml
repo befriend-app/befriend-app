@@ -10,7 +10,7 @@
     <allow-intent href="https://*/*" />
     <allow-intent href="maps:*" />
 
-    <allow-navigation href="maps://*" />
+<!--    <allow-navigation href="maps://*" />-->
 
     <preference name="Orientation" value="portrait" />
 
@@ -64,4 +64,6 @@
     <preference name="android-compileSdkVersion" value="33" />
     <preference name="scheme" value="http" />
     <preference name="Fullscreen" value="true" />
+
+    <allow-intent href="geo:*" />
 </widget>
