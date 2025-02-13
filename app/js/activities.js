@@ -2968,7 +2968,13 @@ befriend.activities = {
                                 ${person_html}
                             </div>`;
                 } else {
-                    html = `<div class="no-persons">No matches have accepted this activity yet.</div>`
+                    let message = `No matches have accepted this activity yet.`;
+
+                    if(timeNow(true) > activity.activity_end) {
+                        message = 'No matches accepted this activity';
+                    }
+
+                    html = `<div class="no-persons">${message}</div>`
                 }
 
                 return `<div class="who section">
