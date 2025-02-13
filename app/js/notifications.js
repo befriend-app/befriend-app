@@ -604,6 +604,9 @@ befriend.notifications = {
                             responseData = r.data;
                         }
 
+                        befriend.activities.data.addActivity(responseData.activity);
+                        befriend.activities.setView();
+
                         currentNotification.acceptance_in_progress = false;
 
                         if(responseData.success) {
@@ -611,7 +614,7 @@ befriend.notifications = {
 
                             accept_el.querySelector('.text').innerHTML = `You're going!`;
                             addClassEl('accepted', parent_el);
-                            befriend.notifications.updateAvailableSpots(activity_token, responseData.spots.available);
+                            befriend.notifications.updateAvailableSpots(activity_token, responseData.activity.data.spots_available);
                         } else {
                             befriend.notifications.showUnavailable(responseData.data.error);
                         }
