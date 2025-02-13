@@ -59,23 +59,25 @@ befriend.activities = {
         });
     },
     setView: function () {
-        function getActivityHtml(activity, is_current, is_upcoming) {
-            if(!activity?.data) {
+        function getActivityHtml(activity, is_current, is_upcoming, is_notification) {
+            let activity_data = activity?.data || activity?.activity;
+
+            if(!activity_data) {
                 console.warn('No data for activity');
                 return '';
             }
 
-            let accepted_qty = activity.data?.spots?.accepted ?? activity.data?.persons_qty - activity.data?.spots_available;
+            let accepted_qty = activity_data?.spots?.accepted ?? activity_data?.persons_qty - activity_data?.spots_available;
 
             if(!isNumeric(accepted_qty)) {
                 accepted_qty = 0;
             }
 
-            let date = befriend.activities.displayActivity.html.getDate(activity.data);
+            let date = befriend.activities.displayActivity.html.getDate(activity_data);
 
-            let date_html = is_current || is_upcoming ? '' : `<div class="date">${date}</div>`;
+            let date_html = is_current || is_upcoming || is_notification ? '' : `<div class="date">${date}</div>`;
 
-            let activity_type_token = activity?.data?.activity_type_token;
+            let activity_type_token = activity_data?.activity_type_token;
 
             let activity_type = befriend.activities.activityTypes.getActivityType(activity_type_token);
 
@@ -85,24 +87,24 @@ befriend.activities = {
 
             let duration = activity.activity_duration_min;
 
-            let activity_start_human = dayjs(activity.activity_start * 1000)
+            let activity_start_human = dayjs(activity_data.activity_start * 1000)
                 .format('h:mm a')
                 .toLowerCase();
 
-            let activity_end_human = dayjs(activity.activity_end * 1000)
+            let activity_end_human = dayjs(activity_data.activity_end * 1000)
                 .format('h:mm a')
                 .toLowerCase();
 
             let time_string = `${activity_start_human} - ${activity_end_human}`;
 
-            if(activity_start_human !== activity.data?.human_time) {
+            if(activity_start_human !== activity_data?.human_time) {
                 let tz = getTimezoneAbbreviation();
 
                 time_string += ` ${tz}`;
             }
 
             return `
-                <div class="activity" data-activity-token="${activity.activity_token}">
+                <div class="activity ${is_notification ? 'is-notification' : ''}" data-activity-token="${activity.activity_token}">
                     <div class="activity-type-accepted">
                          <div class="activity-type-date-time">
                             <div class="activity-type">
@@ -126,18 +128,24 @@ befriend.activities = {
                         </div>
                     </div>
                     
-                    <div class="location">${activity.data.location_name}</div>
-                    <div class="address">${activity.data.location_address}, ${activity.data.location_locality}, ${activity.data.location_region}</div>
+                    <div class="location">${activity_data.location_name}</div>
+                    <div class="address">${activity_data.location_address}, ${activity_data.location_locality}, ${activity_data.location_region}</div>
                 </div>
             `;
         }
 
         let activities = befriend.activities.data.all;
+        let notifications = befriend.notifications.data.all;
 
         activities = Object.values(activities);
+        notifications = Object.values(notifications);
 
         activities.sort(function (a, b) {
-            return b.activity_start - a.activity_start;
+            return b.data.activity_start - a.data.activity_start;
+        });
+
+        notifications.sort(function (a, b) {
+            return a.created - b.created;
         });
 
         let currentActivityEl = befriend.els.mainActivitiesView.querySelector('.current-activity .container');
@@ -160,8 +168,8 @@ befriend.activities = {
         }
 
         for (let activity of activities) {
-            const start = activity.activity_start;
-            const end = activity.activity_end;
+            const start = activity.data.activity_start;
+            const end = activity.data.activity_end;
 
             // add to corresponding section
             if (currentTime >= start && currentTime <= end) {
@@ -189,6 +197,45 @@ befriend.activities = {
 
         if(activities_organized.current) {
             currentActivityHtml = getActivityHtml(activities_organized.current, true);
+        }
+
+        //organize notifications
+        let notification_dates = new Map();
+
+        for(let activity of notifications) {
+            let activity_date = dayjs(activity.activity.activity_start * 1000);
+
+            let isBeforeToday = activity_date.isBefore(dayjs(), 'day');
+
+            if(isBeforeToday) {
+                continue;
+            }
+
+            let date_str = befriend.activities.displayActivity.html.getDate(activity.activity);
+
+            if(!notification_dates.has(date_str)) {
+                notification_dates.set(date_str, []);
+            }
+
+            notification_dates.get(date_str).push(activity);
+        }
+
+        for(let [date, activities] of notification_dates) {
+            //sort activities by most recent for each date
+            activities.sort(function (a, b) {
+                return b.created - a.created;
+            });
+
+            let dateActivitiesHtml = '';
+
+            for(let activity of activities) {
+                dateActivitiesHtml += getActivityHtml(activity, false, false, true);
+            }
+
+            notificationsHtml += `<div class="group">
+                                            <div class="date">${date}</div>
+                                            <div class="activities">${dateActivitiesHtml}</div>
+                                       </div>`;
         }
 
         //organize upcoming by today/tomorrow/date
@@ -2595,12 +2642,21 @@ befriend.activities = {
                     try {
                         //get activity data from own network or 3rd-party network
                         let r;
+                        let needsData = true;
 
                         if(activity_data.access?.token) {
-                            r = await befriend.networks.get(activity_data.access.domain, `activities/networks/${activity_token}/${activity_data.access.token}`, {
-                                person_token: befriend.user.person.token
-                            });
-                        } else {
+                            try {
+                                r = await befriend.networks.get(activity_data.access.domain, `activities/networks/${activity_token}/${activity_data.access.token}`, {
+                                    person_token: befriend.user.person.token
+                                });
+
+                                needsData = false;
+                            } catch(e) {
+                                console.error(e);
+                            }
+                        }
+
+                        if(needsData) {
                             r = await befriend.auth.get(`/activities/${activity_token}`);
                         }
 
@@ -3647,7 +3703,12 @@ befriend.activities = {
                     let activityToken = activityEl.getAttribute('data-activity-token');
 
                     if(activityToken) {
-                        befriend.activities.displayActivity.display(activityToken, true);
+                        //show either regular activity or notification view
+                        if(elHasClass(activityEl, 'is-notification')) {
+                            befriend.notifications.showActivity(activityToken);
+                        } else {
+                            befriend.activities.displayActivity.display(activityToken, true);
+                        }
                     }
                 });
             }

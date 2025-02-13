@@ -36,6 +36,10 @@ befriend.user = {
                 }
             }
 
+            if(localData?.notifications?.networks) {
+                befriend.notifications.data.networks = localData.notifications.networks;
+            }
+
             resolve();
         });
     },

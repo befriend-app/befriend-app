@@ -182,7 +182,7 @@
                 }
             }
 
-            .upcoming-activities {
+            .upcoming-activities, .notifications {
                 .group {
                     .date {
                         font-size: 18px;
@@ -1124,7 +1124,6 @@
 
                             @include flex-center-col;
                         }
-
 
                         .tags {
                             display: flex;

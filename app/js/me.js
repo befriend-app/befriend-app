@@ -323,6 +323,7 @@ befriend.me = {
                 let data = r.data;
 
                 befriend.activities.data.setData(data.activities);
+                befriend.notifications.data.setData(data.notifications);
 
                 befriend.me.data.me = data.me;
                 befriend.me.data.genders = data.genders;
