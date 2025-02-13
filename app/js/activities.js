@@ -46,6 +46,7 @@ befriend.activities = {
 
         return new Promise(async (resolve, reject) => {
             befriend.activities.createActivity.setDurations();
+            befriend.activities.updateViewInterval();
 
             try {
                 await befriend.activities.activityTypes.setActivityTypes();
@@ -328,6 +329,13 @@ befriend.activities = {
         }
 
         befriend.activities.events.onShowActivity();
+    },
+    updateViewInterval: function () {
+        //update activities view every minute
+
+        setInterval(function () {
+            befriend.activities.setView();
+        }, 1000 * 60);
     },
     getDurationStr: function(minutes) {
         let duration_str = `${minutes} minutes`;
