@@ -665,6 +665,8 @@ befriend.notifications = {
                         }
 
                         befriend.activities.data.addActivity(responseData.activity);
+
+                        //update main activities view after successful acceptance
                         befriend.activities.setView();
 
                         currentNotification.acceptance_in_progress = false;

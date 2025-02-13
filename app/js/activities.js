@@ -3436,6 +3436,12 @@ befriend.activities = {
                 return;
             }
 
+            let notificationObj = befriend.notifications.data.all[data.activity_token];
+
+            if(notificationObj?.acceptance_in_progress) {
+                return;
+            }
+
             if(!befriend.activities.data.all) {
                 befriend.activities.data.all = {};
             }
