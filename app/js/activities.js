@@ -166,10 +166,15 @@ befriend.activities = {
         activities = Object.values(activities);
         notifications = Object.values(notifications);
 
+        //sort newest->oldest
         activities.sort(function (a, b) {
             return b.data.activity_start - a.data.activity_start;
         });
 
+        //do not show notification if converted to activity
+        notifications = notifications.filter(notification => !befriend.activities.data.all[notification.activity_token]);
+\
+        //sort oldest->newest
         notifications.sort(function (a, b) {
             return a.created - b.created;
         });
