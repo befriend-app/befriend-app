@@ -276,6 +276,11 @@
             visibility: hidden;
             transition: all 200ms;
 
+            &.is-past {
+                background-color: lighten($color_lightgray, 10%);
+                color: black;
+            }
+
             &.show {
                 opacity: 1;
                 visibility: visible;

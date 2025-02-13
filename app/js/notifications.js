@@ -165,6 +165,11 @@ befriend.notifications = {
 
              view_el.innerHTML = html;
 
+             //if notification is in the past
+            if(timeNow(true) > activity_data.activity.activity_end) {
+                befriend.notifications.showUnavailable('This activity is in the past', true);
+            }
+
              //show view
              removeClassEl('show', befriend.els.mainActivitiesView);
              removeClassEl('show', befriend.els.currentActivityView);
@@ -507,7 +512,7 @@ befriend.notifications = {
             newEl.style.removeProperty('transition');
         }, befriend.variables.notification_spots_transition_ms);
     },
-    showUnavailable: function (message) {
+    showUnavailable: function (message, is_past) {
         let max_recipients_el = befriend.els.activityNotificationView.querySelector('.max-recipients');
         let accept_decline_el = befriend.els.activityNotificationView.querySelector('.accept-decline');
 
@@ -517,6 +522,12 @@ befriend.notifications = {
 
         if(message) {
             max_recipients_el.innerHTML = message;
+        }
+
+        if(is_past) {
+            addClassEl('is-past', max_recipients_el);
+        } else {
+            removeClassEl('is-past', max_recipients_el);
         }
 
         addClassEl('show', max_recipients_el);
