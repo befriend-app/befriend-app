@@ -187,6 +187,38 @@ window['befriend'] = {
             });
         },
     },
+    networks: {
+        get: function (domain, route, data = {}) {
+            return new Promise(async (resolve, reject) => {
+                try {
+                    let params = {
+                        ...data
+                    };
+
+                    let r = await axios.get(joinPaths(domain, route), {
+                        params
+                    });
+
+                    resolve(r);
+                } catch (e) {
+                    console.error(e);
+                    return reject(e);
+                }
+            });
+        },
+        put: function (domain, route, data = {}) {
+            return new Promise(async (resolve, reject) => {
+                try {
+                    let r = await axios.put(joinPaths(domain, route), data);
+
+                    resolve(r);
+                } catch (e) {
+                    console.error(e);
+                    return reject(e);
+                }
+            });
+        }
+    },
     init: function () {
         console.log('Befriend: [init]');
 

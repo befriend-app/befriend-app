@@ -2593,7 +2593,16 @@ befriend.activities = {
 
                 if(!activity_data.enriched && !skip_enrich) {
                     try {
-                        let r = await befriend.auth.get(`/activities/${activity_token}`);
+                        //get activity data from own network or 3rd-party network
+                        let r;
+
+                        if(activity_data.access?.token) {
+                            r = await befriend.networks.get(activity_data.access.domain, `activities/networks/${activity_token}/${activity_data.access.token}`, {
+                                person_token: befriend.user.person.token
+                            });
+                        } else {
+                            r = await befriend.auth.get(`/activities/${activity_token}`);
+                        }
 
                         activity_data = befriend.activities.data.all[activity_token] = r.data;
 
