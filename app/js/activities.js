@@ -3353,9 +3353,17 @@ befriend.activities = {
 
             let activity = befriend.activities.data.all[data.activity_token];
 
-            activity.data.spots = data.spots;
-            activity.data.matching = data.matching;
-            activity.data.persons = data.persons;
+            if(data.spots) {
+                activity.data.spots = data.spots;
+            }
+
+            if(data.matching) {
+                activity.data.matching = data.matching;
+            }
+
+            if(data.persons) {
+                activity.data.persons = data.persons;
+            }
 
             //update main view on data update
             befriend.activities.setView();
