@@ -29,7 +29,7 @@
             border: 1px solid $color_lightgray;
             border-radius: 10px;
 
-            .activity-type-accepted {
+            .wrapper {
                 display: flex;
             }
 
@@ -51,7 +51,7 @@
                 }
             }
 
-            .accepted {
+            .accepted, .available {
                 $br: 8px;
                 $ptb: 4px;
                 $plr: 8px;
@@ -69,6 +69,19 @@
                     .label {
                         background-color: lighten($color_green, 0%);
                         color: white;
+                    }
+                }
+
+                &.unavailable {
+                    .label {
+                        background-color: $color_red;
+                    }
+                }
+
+                &.ended {
+                    .label {
+                        background-color: lighten($color_lightgray, 10%);
+                        color: black;
                     }
                 }
 
@@ -103,7 +116,7 @@
 
             }
 
-            .accepted-date-time {
+            .accepted-available {
                 margin-left: auto;
             }
 
@@ -120,6 +133,7 @@
 
                 .name {
                     font-size: 17px;
+                    margin-right: 10px;
                 }
             }
 

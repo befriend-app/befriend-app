@@ -68,9 +68,14 @@ befriend.activities = {
             }
 
             let accepted_qty = activity_data?.spots?.accepted ?? activity_data?.persons_qty - activity_data?.spots_available;
+            let available_qty = activity_data?.spots_available;
 
             if(!isNumeric(accepted_qty)) {
                 accepted_qty = 0;
+            }
+
+            if(!isNumeric(available_qty)) {
+                available_qty = 0;
             }
 
             let date = befriend.activities.displayActivity.html.getDate(activity_data);
@@ -103,9 +108,32 @@ befriend.activities = {
                 time_string += ` ${tz}`;
             }
 
+            let accepted_html = '';
+            let available_html = '';
+
+            if(is_notification) {
+                let isPast = timeNow(true) > activity_data.activity_end;
+
+                if(isPast) {
+                    available_html = `<div class="available ended">
+                                <div class="label">Ended</div>
+                            </div>`;
+                } else {
+                    available_html = `<div class="available ${available_qty <= 0 ? 'unavailable' : ''}">
+                                <div class="label">Spots Available</div>
+                                <div class="qty">${available_qty}</div>
+                            </div>`;
+                }
+            } else {
+                accepted_html = `<div class="accepted ${accepted_qty > 0 ? 'w-qty' : ''}">
+                                <div class="label">Accepted</div>
+                                <div class="qty">${accepted_qty}</div>
+                            </div>`;
+            }
+
             return `
                 <div class="activity ${is_notification ? 'is-notification' : ''}" data-activity-token="${activity.activity_token}">
-                    <div class="activity-type-accepted">
+                    <div class="wrapper">
                          <div class="activity-type-date-time">
                             <div class="activity-type">
                                 <div class="image">
@@ -120,11 +148,9 @@ befriend.activities = {
                             </div>
                         </div>
                         
-                        <div class="accepted-date-time">
-                            <div class="accepted ${accepted_qty > 0 ? 'w-qty' : ''}">
-                                <div class="label">Accepted</div>
-                                <div class="qty">${accepted_qty}</div>
-                            </div>
+                        <div class="accepted-available">
+                            ${accepted_html}
+                            ${available_html}
                         </div>
                     </div>
                     
