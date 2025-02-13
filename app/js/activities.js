@@ -173,7 +173,7 @@ befriend.activities = {
 
         //do not show notification if converted to activity
         notifications = notifications.filter(notification => !befriend.activities.data.all[notification.activity_token]);
-\
+
         //sort oldest->newest
         notifications.sort(function (a, b) {
             return a.created - b.created;
