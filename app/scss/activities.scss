@@ -74,7 +74,8 @@
 
                 &.unavailable {
                     .label {
-                        background-color: $color_red;
+                        background-color: darken($color_red, 20%);
+                        color: white;
                     }
                 }
 

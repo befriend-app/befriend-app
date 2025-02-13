@@ -132,6 +132,10 @@ befriend.notifications = {
 
                 befriend.notifications.data.all[notification.activity_token] = activityData;
 
+                //update main activities view with new notifications data
+                befriend.activities.setView();
+
+                //show current notification view
                 befriend.notifications.showActivity(notification.activity_token, true);
             } catch(e) {
                 console.error(e);
@@ -462,18 +466,22 @@ befriend.notifications = {
     showNotificationBar: function () {
 
     },
-    updateAvailableSpots: function (activity_token, spots) {
-        if(!isNumeric(spots)) {
-            return;
-        }
-
-        const availablePersons = befriend.els.activityNotificationView.querySelector('.available-persons .text');
-
-        if(!availablePersons) {
+    updateAvailableSpots: function (activity_token, spots_available) {
+        if(!isNumeric(spots_available)) {
             return;
         }
 
         let notificationObj = befriend.notifications.data.all[activity_token];
+
+        if(!notificationObj) {
+            console.warn('No activity notification found');
+            return;
+        }
+
+        notificationObj.activity.spots_available = spots_available;
+
+        //update main view with latest spots data
+        befriend.activities.setView();
 
         if(notificationObj.acceptance_in_progress) {
             return;
@@ -481,20 +489,26 @@ befriend.notifications = {
 
         let notification = notificationObj.notification;
 
+        const availablePersons = befriend.els.activityNotificationView.querySelector('.available-persons .text');
+
+        if(!availablePersons) {
+            return;
+        }
+
         const currentEl = availablePersons.querySelector('.current');
         const newEl = availablePersons.querySelector('.new');
 
-        newEl.textContent = spots;
+        newEl.textContent = spots_available;
 
         addClassEl('fade-out', currentEl);
         addClassEl('fade-in', newEl);
 
-        if(spots <= 0 && !notification.accepted_at) {
+        if(spots_available <= 0 && !notification.accepted_at) {
             befriend.notifications.showUnavailable(befriend.notifications.messages.unavailable);
         }
 
         setTimeout(async () => {
-            currentEl.textContent = spots;
+            currentEl.textContent = spots_available;
 
             currentEl.style.transition = 'none';
             newEl.style.transition = 'none';
