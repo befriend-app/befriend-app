@@ -113,9 +113,14 @@ befriend.activities = {
             let available_html = '';
 
             if(is_notification) {
+                let isDeclined = activity.declined_at || activity.notification?.declined_at;
                 let isPast = timeNow(true) > activity_data.activity_end;
 
-                if(isPast) {
+                if(isDeclined) {
+                    available_html = `<div class="available declined">
+                                <div class="label">Declined</div>
+                            </div>`;
+                } else if(isPast) {
                     available_html = `<div class="available ended">
                                 <div class="label">Ended</div>
                             </div>`;

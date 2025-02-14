@@ -47,7 +47,7 @@
                 transition: opacity 200ms;
                 position: absolute;
                 width: 100%;
-                transform: translate(calc(100vw - #{$padding_lr * 2} - #{$section_padding_lr * 2} + 4px), calc(#{-$section_padding_tb} - #{$dim / 2}));
+                transform: translate(calc(100vw - #{$padding_lr * 2} - #{$section_padding_lr * 2} + 4px), calc(#{-$section_padding_tb} - $dim / 2));
 
                 .remove {
                     width: $dim;
@@ -120,6 +120,13 @@
                     .label {
                         background-color: lighten($color_green, 0%);
                         color: white;
+                    }
+                }
+
+                &.declined {
+                    .label {
+                        background-color: lighten($color_lightgray, 10%);
+                        color: black;
                     }
                 }
 

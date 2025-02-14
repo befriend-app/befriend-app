@@ -752,6 +752,8 @@ befriend.notifications = {
                             currentNotification.notification.declined_at = timeNow();
                             decline_el.querySelector('.text').innerHTML = 'You declined this invitation';
                             addClassEl('declined', parent_el);
+
+                            befriend.activities.setView();
                         }
                     } catch(e) {
                         console.error(e);
