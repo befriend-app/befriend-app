@@ -135,7 +135,6 @@ befriend.activities = {
             let faces_html = ``;
 
             if(is_notification) {
-                // debugger;
                 if(activity.person?.image_url) {
                     faces_html = `<div class="face" style="background-image: url(${activity.person.image_url})"></div>`;
                 }
@@ -149,8 +148,22 @@ befriend.activities = {
                 }
             }
 
+            let remove_html = '';
+
+            if(is_notification) {
+                remove_html = `<div class="remove-container">
+                                    <div class="remove">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 121.805 14.619">
+                                            <path d="M7.308,14.619h107.188c4.037,0,7.309-3.272,7.309-7.31s-3.271-7.309-7.309-7.309H7.308C3.272.001,0,3.273,0,7.31s3.272,7.309,7.308,7.309Z"></path>
+                                        </svg>
+                                    </div>
+                                </div>`
+            }
+
             return `
                 <div class="activity ${is_notification ? 'is-notification' : ''}" data-activity-token="${activity.activity_token}">
+                    ${remove_html}
+
                     <div class="wrapper">
                         <div class="cols">
                              <div class="left-col">
@@ -181,6 +194,7 @@ befriend.activities = {
                                 <div class="faces">${faces_html}</div>
                             </div>
                         </div>
+                        
                        
                     </div>
                 </div>
@@ -198,10 +212,17 @@ befriend.activities = {
             return b.data.activity_start - a.data.activity_start;
         });
 
-        //filter out notifications that were converted to activities
-        notifications = notifications.filter(notification => !befriend.activities.data.all[notification.activity_token]);
+        /* filter out notifications
+        -- converted to activity
+        -- overlaps with any activity
+        -- removed by user action
+         */
 
-        //filter out notifications that overlap with any activity's time period
+        notifications = notifications.filter(notification =>
+            !befriend.activities.data.all[notification.activity_token] &&
+            !befriend.notifications.data.removed[notification.activity_token]
+        );
+
         notifications = notifications.filter(notification => {
             const notificationStart = notification.activity.activity_start;
             const notificationEnd = notification.activity.activity_end;
@@ -383,6 +404,7 @@ befriend.activities = {
         }
 
         befriend.activities.events.onShowActivity();
+        befriend.activities.events.onRemoveNotification();
     },
     updateViewInterval: function () {
         //update activities view every minute
@@ -3816,6 +3838,34 @@ befriend.activities = {
                             befriend.activities.displayActivity.display(activityToken, true);
                         }
                     }
+                });
+            }
+        },
+        onRemoveNotification: function () {
+            let removeEls = befriend.els.mainActivitiesView.querySelectorAll('.activity .remove');
+
+            for(let i = 0; i < removeEls.length; i++) {
+                let removeEl = removeEls[i];
+
+                if(removeEl._listener) {
+                    continue;
+                }
+
+                removeEl._listener = true;
+
+                removeEl.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    let activityEl = removeEl.closest('.activity');
+
+                    let activityToken = activityEl.getAttribute('data-activity-token');
+
+                    befriend.notifications.data.removed[activityToken] = true;
+
+                    befriend.user.setLocal('notifications.removed', befriend.notifications.data.removed);
+
+                    befriend.activities.setView();
                 });
             }
         }

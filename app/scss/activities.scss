@@ -26,14 +26,48 @@
 
         .activity {
             $accepted_available_label_h: 28px;
-            position: relative;
             padding: $section_padding_tb $section_padding_lr;
             border: 1px solid $color_lightgray;
             border-radius: 10px;
 
-            .cols {
+            .wrapper {
+                position: relative;
                 display: flex;
             }
+
+            .cols {
+                width: 100%;
+                display: flex;
+            }
+
+            .remove-container {
+                $dim: 16px;
+                z-index: 2;
+                cursor: pointer;
+                transition: opacity 200ms;
+                position: absolute;
+                width: 100%;
+                transform: translate(calc(100vw - #{$padding_lr * 2} - #{$section_padding_lr * 2} + 4px), calc(#{-$section_padding_tb} - #{$dim / 2}));
+
+                .remove {
+                    width: $dim;
+                    height: $dim;
+                    border-radius: 50%;
+                    background-color: white;
+                    border: 1px solid lighten(black, 70%);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    flex-direction: column;
+
+
+                    svg {
+                        height: 1px;
+                        transform: scale(0.7, 0.7);
+                    }
+                }
+            }
+
 
             .left-col {
                 display: flex;
@@ -65,7 +99,7 @@
 
             .accepted-available {
                 position: absolute;
-                right: calc($section_padding_lr / 2);
+                right: 0;
             }
 
             .accepted, .available {
@@ -277,7 +311,6 @@
                     max-height: 470px;
                 }
             }
-
         }
     }
 

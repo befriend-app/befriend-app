@@ -40,6 +40,10 @@ befriend.user = {
                 befriend.notifications.data.networks = localData.notifications.networks;
             }
 
+            if(localData?.notifications?.removed) {
+                befriend.notifications.data.removed = localData.notifications.removed;
+            }
+
             resolve();
         });
     },

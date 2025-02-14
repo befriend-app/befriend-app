@@ -2,6 +2,7 @@ befriend.notifications = {
     data: {
         all: {},
         networks: {}, //store one-time data in local storage and merge with all
+        removed: {},
         current: null,
         setData: function(data) {
             befriend.notifications.data.all = data;
