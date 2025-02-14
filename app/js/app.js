@@ -43,6 +43,9 @@ window['befriend'] = {
     els: {},
     timeouts: {},
     plugins: {},
+    getPersonToken: function () {
+        return befriend.user.person.token;
+    },
     api: {
         get: function (route) {
             return new Promise(async (resolve, reject) => {
@@ -85,7 +88,7 @@ window['befriend'] = {
         get: function (route, data) {
             return new Promise(async (resolve, reject) => {
                 let loginObj = {
-                    person_token: befriend.user.person.token,
+                    person_token: befriend.getPersonToken(),
                     login_token: befriend.user.login.token,
                 };
 
@@ -114,7 +117,7 @@ window['befriend'] = {
                 let requestData = {};
 
                 let loginObj = {
-                    person_token: befriend.user.person.token,
+                    person_token: befriend.getPersonToken(),
                     login_token: befriend.user.login.token,
                 };
 
@@ -139,7 +142,7 @@ window['befriend'] = {
                 let requestData = {};
 
                 let loginObj = {
-                    person_token: befriend.user.person.token,
+                    person_token: befriend.getPersonToken(),
                     login_token: befriend.user.login.token,
                 };
 
@@ -164,7 +167,7 @@ window['befriend'] = {
                 let requestData = {};
 
                 let loginObj = {
-                    person_token: befriend.user.person.token,
+                    person_token: befriend.getPersonToken(),
                     login_token: befriend.user.login.token,
                 };
 

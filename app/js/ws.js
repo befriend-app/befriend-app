@@ -54,7 +54,7 @@ befriend.ws = {
             befriend.ws.client = null;
         }
 
-        const wsUrl = `${ws_domain}/?login_token=${befriend.user.login.token}&person_token=${befriend.user.person.token}`;
+        const wsUrl = `${ws_domain}/?login_token=${befriend.user.login.token}&person_token=${befriend.getPersonToken()}`;
 
         try {
             befriend.ws.client = new WebSocket(wsUrl);

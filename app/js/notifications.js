@@ -102,7 +102,7 @@ befriend.notifications = {
                         notification.access.domain,
                         `activities/networks/notifications/${notification.activity_token}/${notification.access.token}`,
                         {
-                            person_token: befriend.user.person.token
+                            person_token: befriend.getPersonToken()
                         }
                     );
 
@@ -653,7 +653,7 @@ befriend.notifications = {
                                 currentNotification.access.domain,
                                 `activities/networks/notifications/accept/${activity.activity_token}/${currentNotification.access.token}`,
                                 {
-                                    person_token: befriend.user.person.token,
+                                    person_token: befriend.getPersonToken(),
                                     first_name: befriend.me.data?.me?.first_name || null,
                                     image_url: befriend.me.data?.me?.image_url || null,
                                 }
@@ -738,7 +738,7 @@ befriend.notifications = {
                                 currentNotification.access.domain,
                                 `activities/networks/notifications/decline/${activity.activity_token}/${currentNotification.access.token}`,
                                 {
-                                    person_token: befriend.user.person.token
+                                    person_token: befriend.getPersonToken()
                                 }
                             );
 

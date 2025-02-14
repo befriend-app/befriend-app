@@ -145,6 +145,10 @@ befriend.activities = {
                 }
             } else {
                 for(let person_token in activity_data.persons) {
+                    if(person_token === befriend.getPersonToken()) {
+
+                    }
+
                     let person = activity_data.persons[person_token];
 
                     if(person?.image_url) {
@@ -2768,7 +2772,7 @@ befriend.activities = {
                         if(activity_data.access?.token) {
                             try {
                                 r = await befriend.networks.get(activity_data.access.domain, `activities/networks/${activity_token}/${activity_data.access.token}`, {
-                                    person_token: befriend.user.person.token
+                                    person_token: befriend.getPersonToken()
                                 });
 
                                 needsData = false;
@@ -3038,7 +3042,7 @@ befriend.activities = {
                 for(let person_token in persons) {
                     let person = persons[person_token];
 
-                    if(person_token === befriend.user.person.token) {
+                    if(person_token === befriend.getPersonToken()) {
                         continue;
                     }
 
