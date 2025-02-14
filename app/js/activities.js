@@ -49,6 +49,7 @@ befriend.activities = {
             befriend.activities.updateViewInterval();
 
             try {
+                befriend.activities.activityTypes.setColors();
                 await befriend.activities.activityTypes.setActivityTypes();
             } catch (e) {
                 console.error(e);
@@ -60,6 +61,24 @@ befriend.activities = {
         });
     },
     setView: function () {
+        function getModeHtml(activity) {
+            if(!activity.mode) {
+                return '';
+            }
+
+            let mode = activity.mode;
+
+            let kids = '';
+
+            // mode.token = 'kids';
+            // mode.name = 'Kids';
+
+            return `<div class="mode-wrapper">
+                        <div class="mode ${mode.token}">${mode.name}</div>
+                        <div class="kids">${kids}</div>
+                    </div>`;
+        }
+
         function getActivityHtml(activity, is_current, is_upcoming, is_notification) {
             let activity_data = activity?.data || activity?.activity;
 
@@ -82,6 +101,8 @@ befriend.activities = {
             let date = befriend.activities.displayActivity.html.getDate(activity_data);
 
             let date_html = is_current || is_upcoming || is_notification ? '' : `<div class="date">${date}</div>`;
+
+            let mode_html = getModeHtml(activity_data)
 
             let activity_type_token = activity_data?.activity_type_token;
 
@@ -176,6 +197,8 @@ befriend.activities = {
                     <div class="wrapper">
                         <div class="cols">
                              <div class="left-col">
+                                ${mode_html}
+                                
                                 <div class="activity-type-date-time">
                                     <div class="activity-type">
                                         <div class="image">
@@ -450,27 +473,30 @@ befriend.activities = {
             byId: {},
             byToken: {}
         },
-        colors: [
-            '#8E44AD', // Bright Yellow
-            '#C70039', // Bold Crimson
-            '#31a663', // Bold Leaf Green
-            '#e0f3fd', // Light Blue
-            '#79A881', // Bold Green
-            '#D35400', // Bold Carrot Orange
-            '#3498DB', // Bold Sky Blue
-            '#2980B9', // Bold Blue
-            '#cc6b6b', // Bold Fruit
-            '#9B59B6', // Bold Lavender
-            '#E74C3C', // Bright Red
-            '#F39C12', // Bold Orange
-            '#33b1d1', // Light Teal
-            '#16A085', // Bold Teal
-            '#F1C40F', // Bold Yellow-Green
-        ],
+        colors: [],
         selected: {
             level_1: null,
             level_2: null,
             level_3: null,
+        },
+        setColors: function () {
+            this.colors = [
+                '#8E44AD', // Bright Yellow
+                '#C70039', // Bold Crimson
+                '#31a663', // Bold Leaf Green
+                '#e0f3fd', // Light Blue
+                '#79A881', // Bold Green
+                '#D35400', // Bold Carrot Orange
+                '#3498DB', // Bold Sky Blue
+                '#2980B9', // Bold Blue
+                '#cc6b6b', // Bold Fruit
+                '#9B59B6', // Bold Lavender
+                '#E74C3C', // Bright Red
+                '#F39C12', // Bold Orange
+                '#33b1d1', // Light Teal
+                befriend.variables.color_kids,
+                '#F1C40F', // Bold Yellow-Green
+            ];
         },
         getActivityType: function (token) {
             return this.lookup.byToken[token];

@@ -79,6 +79,31 @@
                 margin-left: auto;
             }
 
+            .mode-wrapper {
+                display: flex;
+                gap: 0 10px;
+                margin-bottom: 10px;
+
+                .mode {
+                    font-size: 12px;
+                    font-weight: 500;
+                    text-transform: uppercase;
+                    padding: 5px 16px;
+                    background-color: $brand_color_a;
+                    color: white;
+                    border-radius: 12px;
+
+                    &.partner {
+                        background-color: $color_green;
+                    }
+
+                    &.kids {
+                        background-color: $color_kids;
+                        color: black;
+                    }
+                }
+            }
+
             .activity-type-date-time {
                 display: flex;
                 flex-direction: column;
