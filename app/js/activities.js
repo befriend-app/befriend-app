@@ -506,16 +506,26 @@ befriend.activities = {
                 try {
                     let r = await befriend.api.get('activity-types');
                     befriend.activities.activityTypes.data = r.data;
-                    befriend.user.setLocal('activities.type', r.data);
+
+                    await saveObjectToDisk(r.data, 'activity-types');
                 } catch (e) {
                     console.error(e);
-                    
-                    if (befriend.user.local?.data?.activities) {
-                        console.log('Using local activity types data');
-                        befriend.activities.activityTypes.data = befriend.user.local.data.activities.type;
-                    } else {
-                        return reject();
+
+                    try {
+                         let localActivityTypes = await getObjectFromDisk('activity-types');
+
+                         if(isObject(localActivityTypes)) {
+                             console.log('Using local activity types data');
+                             befriend.activities.activityTypes.data = localActivityTypes;
+                         }
+                    } catch(e) {
+                        console.error(e);
                     }
+                }
+
+                if(!befriend.activities.activityTypes.data) {
+                    console.error('No activity type data');
+                    return resolve();
                 }
 
                 for(let id_1 in befriend.activities.activityTypes.data) {
@@ -1234,7 +1244,7 @@ befriend.activities = {
 
             //select active mode
             if(valid_modes.length > 1) {
-                //first option
+                //default option
                 let mode_el = befriend.els.createActivity.querySelector('.modes').querySelector('.mode-option');
 
                 //previous selection

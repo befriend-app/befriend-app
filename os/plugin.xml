@@ -19,7 +19,7 @@
         <clobbers target="window.BefriendPlugin" />
     </js-module>
 
-    <!--    geo files-->
+    <!-- geo files-->
     <js-module src="www/geo/geolocation.js" name="GeoLocation">
     </js-module>
     <js-module src="www/geo/Coordinates.js" name="Coordinates">
@@ -46,14 +46,20 @@
         </config-file>
 
         <config-file target="config.xml" parent="/*">
-            <feature name="Location">
-                <param name="ios-package" value="Location" />
+            <feature name="Notifications">
+                <param name="ios-package" value="Notifications" />
             </feature>
         </config-file>
 
         <config-file target="config.xml" parent="/*">
-            <feature name="Notifications">
-                <param name="ios-package" value="Notifications" />
+            <feature name="FileSystem">
+                <param name="ios-package" value="FileSystem" />
+            </feature>
+        </config-file>
+
+        <config-file target="config.xml" parent="/*">
+            <feature name="Location">
+                <param name="ios-package" value="Location" />
             </feature>
         </config-file>
 
@@ -61,13 +67,17 @@
         <header-file src="src/ios/StatusBar.h" />
         <source-file src="src/ios/StatusBar.m" />
 
-        <!-- location -->
-        <header-file src="src/ios/Location.h" />
-        <source-file src="src/ios/Location.m" />
-
         <!-- notifications -->
         <header-file src="src/ios/Notifications.h" />
         <source-file src="src/ios/Notifications.m" />
+
+        <!-- filesystem -->
+        <header-file src="src/ios/FileSystem.h" />
+        <source-file src="src/ios/FileSystem.m" />
+
+        <!-- location -->
+        <header-file src="src/ios/Location.h" />
+        <source-file src="src/ios/Location.m" />
 
     </platform>
 </plugin>

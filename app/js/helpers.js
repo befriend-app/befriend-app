@@ -580,3 +580,102 @@ function getTimezoneAbbreviation() {
 
     return timeParts[timeParts.length - 1];
 }
+
+function isObject(value) {
+    return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+function getFullDirectory(customDir) {
+    return new Promise((resolve, reject) => {
+        if (!is_app) {
+            return resolve('');
+        }
+
+        befriend.plugins.fileSystem.getDataDirectory(function (baseDir) {
+            let fullPath = customDir ? joinPaths(baseDir, customDir) : baseDir;
+
+            resolve(fullPath);
+        }, function (error) {
+            reject(error);
+        });
+    });
+}
+
+function getFileData(filename, customDir) {
+    return new Promise(async (resolve, reject) => {
+        if (!is_app) {
+            return resolve();
+        }
+
+        try {
+            let directory = await getFullDirectory(customDir);
+
+            let path = joinPaths(directory, filename);
+
+            befriend.plugins.fileSystem.readFile(
+                path,
+                (data) => resolve(data),
+                (error) => reject(error)
+            );
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+function saveFileData(filename, data, customDir) {
+    return new Promise(async (resolve, reject) => {
+        if (!is_app) {
+            return resolve();
+        }
+
+        try {
+            let directory = await getFullDirectory(customDir);
+            let path = joinPaths(directory, filename);
+
+            befriend.plugins.fileSystem.writeFile(
+                path,
+                data,
+                () => resolve(),
+                (error) => reject(error)
+            );
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+function getObjectFromDisk(schemaName, customDir) {
+    return new Promise(async (resolve, reject) => {
+        if (!is_app) {
+            return resolve();
+        }
+
+        try {
+            let filename = `${schemaName}.json`;
+
+            let data = await getFileData(filename, customDir);
+
+            resolve(JSON.parse(data));
+        } catch(e) {
+            console.error(e);
+            reject(e);
+        }
+    });
+}
+
+function saveObjectToDisk(obj, schemaName, customDir) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let data = JSON.stringify(obj);
+            let filename = `${schemaName}.json`;
+
+            await saveFileData(filename, data, customDir);
+
+            resolve();
+        } catch(e) {
+            console.error(e);
+            reject(e);
+        }
+    });
+}

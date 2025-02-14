@@ -62,6 +62,21 @@ var Befriend = {
             exec(success, error, Befriend.notifications.nameSpace, 'setBadgeNumber', [number]);
         },
     },
+    fileSystem: {
+        nameSpace: 'FileSystem',
+        getFile: function(path, options, success, error) {
+            exec(success, error, 'FileSystem', 'getFile', [path, options]);
+        },
+        readFile: function(path, success, error) {
+            exec(success, error, 'FileSystem', 'readFile', [path]);
+        },
+        writeFile: function(path, data, success, error) {
+            exec(success, error, 'FileSystem', 'writeFile', [path, data]);
+        },
+        getDataDirectory: function(success, error) {
+            exec(success, error, 'FileSystem', 'getDataDirectory', []);
+        }
+    },
     geo: geo,
 };
 
