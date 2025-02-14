@@ -30,17 +30,21 @@ befriend.user = {
                 befriend.user.device.token = localData.device.token;
             }
 
+            if(localData.activities?.person?.mode) {
+                befriend.activities.createActivity.setAppMode(localData.activities.person.mode, true);
+            }
+
             if (localData.me) {
                 if (localData.me.sections && localData.me.sections.collapsed) {
                     befriend.me.data.sections.collapsed = localData.me.sections.collapsed;
                 }
             }
 
-            if(localData?.notifications?.networks) {
+            if(localData.notifications?.networks) {
                 befriend.notifications.data.networks = localData.notifications.networks;
             }
 
-            if(localData?.notifications?.removed) {
+            if(localData.notifications?.removed) {
                 befriend.notifications.data.removed = localData.notifications.removed;
             }
 

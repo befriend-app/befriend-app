@@ -23,7 +23,7 @@ befriend.activities = {
         create: function(data) {
             befriend.activities.data.draft = data;
         },
-        update: function(key, value, update_counts) {
+        update: function(key, value, update_match_counts) {
             if (!key) {
                 return false;
             }
@@ -36,7 +36,7 @@ befriend.activities = {
 
             setNestedValue(draft, key, value);
 
-            if(befriend.activities.createActivity.isShown() && update_counts) {
+            if(befriend.activities.createActivity.isShown() && update_match_counts) {
                 befriend.activities.createActivity.getMatchCounts();
             }
         }
@@ -1234,15 +1234,39 @@ befriend.activities = {
 
             //select active mode
             if(valid_modes.length > 1) {
-                fireClick(befriend.els.createActivity.querySelector('.modes').querySelector('.mode-option'));
+                //first option
+                let mode_el = befriend.els.createActivity.querySelector('.modes').querySelector('.mode-option');
+
+                //previous selection
+                for(let mode of valid_modes) {
+                    if(mode.id === befriend.activities.createActivity.person.mode) {
+                        mode_el = befriend.els.createActivity.querySelector('.modes').querySelector(`.mode-option[data-mode="${befriend.activities.createActivity.person.mode}"]`);
+                        break;
+                    }
+                }
+
+                befriend.activities.createActivity.selectAppMode(mode_el);
             } else {
                 befriend.activities.createActivity.setAppMode(valid_modes[0].id);
             }
-
         },
-        setAppMode: function(mode) {
+        selectAppMode: function(mode_el){
+            let els = befriend.els.createActivity.querySelector('.modes').getElementsByClassName('mode-option');
+
+            removeElsClass(els, 'active');
+
+            addClassEl('active', mode_el);
+
+            befriend.activities.createActivity.setAppMode(mode_el.getAttribute('data-mode'));
+        },
+        setAppMode: function(mode, skip_update) {
             befriend.activities.createActivity.person.mode = mode;
-            befriend.activities.draft.update('person.mode', mode, true);
+
+            if(!skip_update) {
+                befriend.user.setLocal('activities.person.mode', mode)
+
+                befriend.activities.draft.update('person.mode', mode, true);
+            }
         },
         setTravelTimes: function(from, to) {
             return new Promise(async (resolve, reject) => {
@@ -2750,11 +2774,7 @@ befriend.activities = {
                             return false;
                         }
 
-                        removeElsClass(els, 'active');
-
-                        addClassEl('active', mode_el);
-
-                        befriend.activities.createActivity.setAppMode(mode_el.getAttribute('data-mode'));
+                        befriend.activities.createActivity.selectAppMode(mode_el);
                     });
                 }
             },

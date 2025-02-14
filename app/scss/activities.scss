@@ -93,11 +93,11 @@
                     color: white;
                     border-radius: 12px;
 
-                    &.partner {
+                    &.partner, &.mode-partner {
                         background-color: $color_green;
                     }
 
-                    &.kids {
+                    &.kids, &.mode-kids {
                         background-color: $color_kids;
                         color: black;
                     }
