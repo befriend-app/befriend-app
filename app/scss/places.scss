@@ -241,7 +241,10 @@ html.#{$class_places_shown} {
             position: relative;
             padding: 5px $places_padding_lr;
             border-bottom: 1px solid $color_lightgray;
-            display: flex;
+
+            .cols {
+                display: flex;
+            }
 
             .left-col {
                 display: flex;

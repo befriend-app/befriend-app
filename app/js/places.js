@@ -373,31 +373,33 @@ befriend.places = {
                     place_html.rating += befriend.places.activity.html.getRating(place);
 
                     //closed
-                    place_html.full = `<div class="left-col">
-                        <div class="distance-price">
-                            <div class="distance">${place_html.distance}</div>
-                            ${place_html.price}
-                        </div>
-                            
-                        <div class="name-price">
-                            <div class="name">${place.name}</div>
-                        </div>
-                        
-                         <div class="rating-price">
-                             ${place_html.rating}
-                         </div>
-    
-                         <div class="location">
-                             <div class="location-address">
-                                ${place_html.location}
-                             </div>
-                         </div>
-                    </div>
-                                    
-                    <div class="right-col">
-                        <div class="hours"></div>
-                        <div class="button">Select</div>
-                    </div>`;
+                    place_html.full = `<div class="cols">
+                                            <div class="left-col">
+                                                <div class="distance-price">
+                                                    <div class="distance">${place_html.distance}</div>
+                                                    ${place_html.price}
+                                                </div>
+                                                    
+                                                <div class="name-price">
+                                                    <div class="name">${place.name}</div>
+                                                </div>
+                                                
+                                                 <div class="rating-price">
+                                                     ${place_html.rating}
+                                                 </div>
+                                            </div>
+                                                            
+                                            <div class="right-col">
+                                                <div class="hours"></div>
+                                                <div class="button">Select</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="location">
+                                             <div class="location-address">
+                                                ${place_html.location}
+                                             </div>
+                                         </div>`;
 
                     html += `<div class="place" data-place-id="${place.fsq_place_id}">${place_html.full}</div>`;
                 }
