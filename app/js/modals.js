@@ -4,7 +4,7 @@ befriend.modals = {
     },
     images: {
         openModal: function(imageUrl) {
-            let modal_el = document.getElementById(this.ids.images);
+            let modal_el = document.getElementById(befriend.modals.ids.images);
             let modal_image_el = modal_el.querySelector('img');
             modal_image_el.src = imageUrl;
 
@@ -12,7 +12,7 @@ befriend.modals = {
             document.body.style.overflow = 'hidden';
         },
         closeModal: function() {
-            let modal_el = document.getElementById(this.ids.images);
+            let modal_el = document.getElementById(befriend.modals.ids.images);
             removeClassEl('active', modal_el);
             document.body.style.overflow = '';
         },

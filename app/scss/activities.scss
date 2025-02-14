@@ -114,7 +114,7 @@
                     transform: translateY(.5px);
 
                     .kid-tag {
-                        //border: 1px solid lighten(black, 70%);
+                        border: .5px solid lighten(black, 70%);
                         height: fit-content;
                         padding: 3px 16px;
                         border-radius: 12px;
@@ -136,7 +136,7 @@
                             width: $dim;
                             height: $dim;
                             color: black;
-                            border: 1px solid $brand_color_a;
+                            border: .5px solid lighten(black, 50%);
                             background-color: $brand_color_b;
                             @include flex-center-col;
                         }
@@ -796,6 +796,8 @@
 
             .website {
                 position: absolute;
+                font-size: 14px;
+                font-weight: 500;
                 top: $section_padding_tb;
                 right: $section_padding_lr;
 
@@ -825,7 +827,7 @@
                     justify-content: center;
                     gap: 0 10px;
                     font-size: 14px;
-                    font-weight: 300;
+                    font-weight: 400;
                     padding: 6px 12px;
                 }
 
@@ -864,8 +866,8 @@
             .tags {
                 display: flex;
                 gap: 0 10px;
-                margin-top: 8px;
-                margin-bottom: 6px;
+                margin-top: 10px;
+                margin-bottom: 10px;
 
                 .tag {
                     padding: 4px 16px;
@@ -984,6 +986,73 @@
                             transition: all 0.2s ease;
                             stroke: none;
                             fill: $brand_color_a;
+                        }
+                    }
+                }
+            }
+
+            .partner-kids {
+                margin-top: 20px;
+                border-top: .5px solid lighten(black, 50%);
+                width: 100%;
+
+                .partner-kids-title {
+                    margin-top: 8px;
+                    font-size: 15px;
+                    font-weight: 500;
+                }
+
+                .partner {
+                    margin-top: 4px;
+                    font-weight: 400;
+                    font-size: 14px;
+                }
+
+                .kids {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 6px 14px;
+                    margin-top: 6px;
+
+                    .kid-tag {
+                        border: .5px solid lighten(black, 70%);
+                        height: fit-content;
+                        padding: 3px 16px;
+                        border-radius: 12px;
+                        font-size: 12px;
+                        position: relative;
+                        color: white;
+                        font-weight: 600;
+                        @include flex-center-col;
+
+                        .qty {
+                            $dim: 20px;
+                            font-size: 12px;
+                            font-weight: 500;
+                            position: absolute;
+                            right: -10px;
+                            top: -10px;
+                            z-index: 2;
+                            border-radius: 50%;
+                            width: $dim;
+                            height: $dim;
+                            color: black;
+                            border: .5px solid lighten(black, 50%);
+                            background-color: $brand_color_b;
+                            @include flex-center-col;
+                        }
+
+                        &.male {
+                            background-color: #1E90FF;
+                        }
+
+                        &.female {
+                            background-color: #FF69B4;
+                        }
+
+                        &.non-binary {
+                            background-color: #98FF98;
+                            color: black;
                         }
                     }
                 }

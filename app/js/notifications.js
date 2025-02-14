@@ -300,6 +300,47 @@ befriend.notifications = {
                 new_member_html = `<div class="tag new-member">New member</div>`;
             }
 
+            let partner_kids_html = '';
+
+            let mode = notification.activity.mode;
+
+            if(['mode-partner', 'mode-kids'].includes(mode?.token)) {
+                let title = '';
+                let content = '';
+
+                if(mode.token === 'mode-partner') {
+                    title = 'Partner';
+
+                    content = `<div class="partner">${mode.partner?.gender?.name}</div>`;
+                } else if(mode.token === 'mode-kids') {
+                    title = 'Kids';
+
+                    let kids_html = '';
+
+                    for(let k in (mode.kids || {})) {
+                        let kid = mode.kids[k];
+
+                        let qty_html = '';
+
+                        if(kid.qty > 1) {
+                            qty_html = `<div class="qty">${kid.qty}</div>`;
+                        }
+
+                        kids_html += `<div class="kid-tag ${kid.gender?.token}">
+                                ${qty_html}
+                                <div class="name">${kid.age?.name}</div>
+                             </div>`;
+                    }
+
+                    content = `<div class="kids">${kids_html}</div>`;
+                }
+
+                partner_kids_html = `<div class="partner-kids">
+                                        <div class="partner-kids-title">${title}</div>
+                                        <div class="partner-kids-content">${content}</div>                    
+                                    </div>`;
+            }
+
             return `<div class="who section">
                             <div class="label">Who</div>
                             
@@ -321,8 +362,8 @@ befriend.notifications = {
                                 
                             <div class="content">
                                 <div class="name-image">
-                                    <div class="name">${notification.person.first_name}</div>
                                     <div class="image" style="background-image: url(${notification.person.image_url})" data-image-url="${notification.person.image_url}"></div>
+                                    <div class="name">${notification.person.first_name}</div>
                                 </div>
                                 
                                 <div class="tags">
@@ -333,6 +374,8 @@ befriend.notifications = {
                                 <div class="reviews">
                                     ${reviews_html}
                                 </div>
+                                
+                                ${partner_kids_html}
                             </div>
                         </div>`;
         }
