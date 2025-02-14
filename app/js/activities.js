@@ -146,7 +146,7 @@ befriend.activities = {
             } else {
                 for(let person_token in activity_data.persons) {
                     if(person_token === befriend.getPersonToken()) {
-
+                        continue;
                     }
 
                     let person = activity_data.persons[person_token];
@@ -203,8 +203,6 @@ befriend.activities = {
                                 <div class="faces">${faces_html}</div>
                             </div>
                         </div>
-                        
-                       
                     </div>
                 </div>
             `;
