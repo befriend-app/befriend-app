@@ -81,6 +81,8 @@
 
             .mode-wrapper {
                 display: flex;
+                align-items: center;
+
                 gap: 0 10px;
                 margin-bottom: 10px;
 
@@ -92,14 +94,65 @@
                     background-color: $brand_color_a;
                     color: white;
                     border-radius: 12px;
+                    height: fit-content;
 
-                    &.partner, &.mode-partner {
+                    &.mode-partner {
                         background-color: $color_green;
                     }
 
-                    &.kids, &.mode-kids {
+                    &.mode-kids {
                         background-color: $color_kids;
                         color: black;
+                    }
+                }
+
+                .kids {
+                    display: flex;
+                    flex-wrap: wrap;
+                    max-width: 160px;
+                    gap: 6px 6px;
+                    transform: translateY(.5px);
+
+                    .kid-tag {
+                        //border: 1px solid lighten(black, 70%);
+                        height: fit-content;
+                        padding: 3px 16px;
+                        border-radius: 12px;
+                        font-size: 12px;
+                        position: relative;
+                        color: white;
+                        font-weight: 600;
+                        @include flex-center-col;
+
+                        .qty {
+                            $dim: 20px;
+                            font-size: 12px;
+                            font-weight: 500;
+                            position: absolute;
+                            right: -10px;
+                            top: -10px;
+                            z-index: 2;
+                            border-radius: 50%;
+                            width: $dim;
+                            height: $dim;
+                            color: black;
+                            border: 1px solid $brand_color_a;
+                            background-color: $brand_color_b;
+                            @include flex-center-col;
+                        }
+
+                        &.male {
+                            background-color: #1E90FF;
+                        }
+
+                        &.female {
+                            background-color: #FF69B4;
+                        }
+
+                        &.non-binary {
+                            background-color: #98FF98;
+                            color: black;
+                        }
                     }
                 }
             }
@@ -457,6 +510,7 @@
                 justify-content: center;
                 gap: 0 10px;
                 position: absolute;
+                border-bottom: .5px solid lighten(black, 60%);
 
                 .text {
                     transform: translateY(-1px);

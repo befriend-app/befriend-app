@@ -70,8 +70,27 @@ befriend.activities = {
 
             let kids = '';
 
-            // mode.token = 'kids';
-            // mode.name = 'Kids';
+            if(mode.token.includes('kids')) {
+                for(let k in (mode.kids || {})) {
+                    let kid = mode.kids[k];
+
+                    //do not show age if own activity
+                    if(activity.persons?.[befriend.getPersonToken()]?.is_creator) {
+                        continue;
+                    }
+
+                    let qty_html = '';
+
+                    if(kid.qty > 1) {
+                        qty_html = `<div class="qty">${kid.qty}</div>`;
+                    }
+
+                    kids += `<div class="kid-tag ${kid.gender?.token}">
+                                ${qty_html}
+                                <div class="name">${kid.age?.name}</div>
+                             </div>`;
+                }
+            }
 
             return `<div class="mode-wrapper">
                         <div class="mode ${mode.token}">${mode.name}</div>
