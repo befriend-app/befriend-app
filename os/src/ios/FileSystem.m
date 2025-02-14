@@ -94,6 +94,41 @@
     }];
 }
 
+- (void)readFile:(CDVInvokedUrlCommand*)command
+{
+    [self.commandDelegate runInBackground:^{
+        NSString* path = [command.arguments objectAtIndex:0];
+
+        NSString* appDocPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+        NSString* filePath = [appDocPath stringByAppendingPathComponent:path];
+
+        NSFileManager* fileManager = [NSFileManager defaultManager];
+        if (![fileManager fileExistsAtPath:filePath]) {
+            NSString* errorMessage = [NSString stringWithFormat:@"File does not exist at path: %@", path];
+            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                                          messageAsString:errorMessage];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+            return;
+        }
+
+        NSError* error;
+        NSString* fileContent = [NSString stringWithContentsOfFile:filePath
+                                                        encoding:NSUTF8StringEncoding
+                                                           error:&error];
+
+        if (error) {
+            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                                          messageAsString:[error localizedDescription]];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+            return;
+        }
+
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                                        messageAsString:fileContent];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }];
+}
+
 - (void)writeFile:(CDVInvokedUrlCommand*)command
 {
     [self.commandDelegate runInBackground:^{
@@ -103,15 +138,34 @@
         NSString* appDocPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
         NSString* filePath = [appDocPath stringByAppendingPathComponent:path];
 
-        NSError* error;
+        // Create intermediate directories if they don't exist
+        NSString* directoryPath = [filePath stringByDeletingLastPathComponent];
+        NSFileManager* fileManager = [NSFileManager defaultManager];
+        NSError* dirError;
+
+        if (![fileManager fileExistsAtPath:directoryPath]) {
+            [fileManager createDirectoryAtPath:directoryPath
+                  withIntermediateDirectories:YES
+                                   attributes:nil
+                                      error:&dirError];
+
+            if (dirError) {
+                CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                                              messageAsString:[dirError localizedDescription]];
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+                return;
+            }
+        }
+
+        NSError* writeError;
         [data writeToFile:filePath
               atomically:YES
                 encoding:NSUTF8StringEncoding
-                   error:&error];
+                   error:&writeError];
 
-        if (error) {
+        if (writeError) {
             CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                                          messageAsString:[error localizedDescription]];
+                                                          messageAsString:[writeError localizedDescription]];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
             return;
         }
