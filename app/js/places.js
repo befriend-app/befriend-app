@@ -253,7 +253,7 @@ befriend.places = {
 
                 try {
                     let r = await befriend.api.put(
-                        joinPaths('activity_type', activity_type.token, 'places'),
+                        joinPaths('activity-types', activity_type.token, 'places'),
                         {
                             location: {
                                 map: befriend.location.getMarkerCoords(),

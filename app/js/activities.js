@@ -504,7 +504,7 @@ befriend.activities = {
         getActivityTypes: function() {
             return new Promise(async (resolve, reject) => {
                 try {
-                    let r = await befriend.api.get('activity_types');
+                    let r = await befriend.api.get('activity-types');
                     befriend.activities.activityTypes.data = r.data;
                     befriend.user.setLocal('activities.type', r.data);
                 } catch (e) {
