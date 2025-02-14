@@ -132,31 +132,57 @@ befriend.activities = {
                             </div>`;
             }
 
+            let faces_html = ``;
+
+            if(is_notification) {
+                // debugger;
+                if(activity.person?.image_url) {
+                    faces_html = `<div class="face" style="background-image: url(${activity.person.image_url})"></div>`;
+                }
+            } else {
+                for(let person_token in activity_data.persons) {
+                    let person = activity_data.persons[person_token];
+
+                    if(person?.image_url) {
+                        faces_html += `<div class="face" style="background-image: url(${person.image_url})"></div>`;
+                    }
+                }
+            }
+
             return `
                 <div class="activity ${is_notification ? 'is-notification' : ''}" data-activity-token="${activity.activity_token}">
                     <div class="wrapper">
-                         <div class="activity-type-date-time">
-                            <div class="activity-type">
-                                <div class="image">
-                                    ${image}
+                        <div class="cols">
+                             <div class="left-col">
+                                <div class="activity-type-date-time">
+                                    <div class="activity-type">
+                                        <div class="image">
+                                            ${image}
+                                        </div>
+                                        <div class="name">${activity_name}</div>
+                                    </div>
+                                    
+                                    <div class="date-time">
+                                        ${date_html}
+                                        <div class="time">${time_string}</div>
+                                    </div>
                                 </div>
-                                <div class="name">${activity_name}</div>
+                                
+                                <div class="location">${activity_data.location_name}</div>
+                                <div class="address">${activity_data.location_address}, ${activity_data.location_locality}, ${activity_data.location_region}</div>
                             </div>
                             
-                            <div class="date-time">
-                                ${date_html}
-                                <div class="time">${time_string}</div>
+                            <div class="right-col">
+                                <div class="accepted-available">
+                                    ${accepted_html}
+                                    ${available_html}
+                                </div>
+                                
+                                <div class="faces">${faces_html}</div>
                             </div>
                         </div>
-                        
-                        <div class="accepted-available">
-                            ${accepted_html}
-                            ${available_html}
-                        </div>
+                       
                     </div>
-                    
-                    <div class="location">${activity_data.location_name}</div>
-                    <div class="address">${activity_data.location_address}, ${activity_data.location_locality}, ${activity_data.location_region}</div>
                 </div>
             `;
         }
@@ -362,7 +388,8 @@ befriend.activities = {
         //update activities view every minute
 
         setInterval(function () {
-            befriend.activities.setView();
+            //todo uncomment
+            // befriend.activities.setView();
         }, 1000 * 60);
     },
     getDurationStr: function(minutes) {

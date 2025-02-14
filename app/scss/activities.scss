@@ -25,12 +25,24 @@
         }
 
         .activity {
+            $accepted_available_label_h: 28px;
+            position: relative;
             padding: $section_padding_tb $section_padding_lr;
             border: 1px solid $color_lightgray;
             border-radius: 10px;
 
-            .wrapper {
+            .cols {
                 display: flex;
+            }
+
+            .left-col {
+                display: flex;
+                flex-direction: column;
+                margin-right: 10px;
+            }
+
+            .right-col {
+                margin-left: auto;
             }
 
             .activity-type-date-time {
@@ -49,6 +61,11 @@
                     font-size: 15px;
                     font-weight: 500;
                 }
+            }
+
+            .accepted-available {
+                position: absolute;
+                right: calc($section_padding_lr / 2);
             }
 
             .accepted, .available {
@@ -114,11 +131,26 @@
                     text-overflow: ellipsis;
                     @include flex-center-col;
                 }
-
             }
 
-            .accepted-available {
+            .faces {
+                $dim: 26px;
+                $gap_lr: 10px;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px $gap_lr;
+                margin-top: calc($accepted_available_label_h + 12px);
+                max-width: calc($dim * 3 + $gap_lr * 2 + 10px);
                 margin-left: auto;
+                justify-content: end;
+
+                .face {
+                    width: $dim;
+                    height: $dim;
+                    border-radius: 50%;
+                    background-size: contain;
+                    background-repeat: no-repeat;
+                }
             }
 
             .activity-type {

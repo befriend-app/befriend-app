@@ -327,7 +327,7 @@ window['befriend'] = {
                 let activity = befriend.els.mainActivitiesView.querySelector('.activity');
 
                 if(activity) {
-                    fireClick(activity);
+                    // fireClick(activity);
                 }
 
             }, 50);
