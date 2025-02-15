@@ -400,16 +400,20 @@
     }
 
     .notification-view, .current-activity-view {
+        $max_recipients_h: 43px;
+
         display: none;
         padding: 0 $padding_lr;
         padding-top: calc(#{$activity_accept_decline_h});
         width: calc(100vw - #{$padding_lr * 2});
         overflow: hidden;
         position: fixed;
+        top: 0;
 
         .top-row {
             display: flex;
             align-items: center;
+            margin-top: calc(#{$max_recipients_h} + 17px);
         }
 
         h2 {
@@ -429,7 +433,7 @@
             display: flex;
             border: .5px solid lighten(black, 60%);
             position: fixed;
-            height: 43px;
+            height: $max_recipients_h;
             left: 0;
             top: calc(var(--view-top));
             z-index: 12;
@@ -1411,7 +1415,7 @@
     .current-activity-view {
         display: none;
 
-        padding-top: 0px;
+        padding-top: 0;
 
         &.show {
             display: flex;

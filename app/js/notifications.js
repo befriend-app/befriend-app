@@ -727,6 +727,11 @@ befriend.notifications = {
                             accept_el.querySelector('.text').innerHTML = `You're going!`;
                             addClassEl('accepted', parent_el);
                             befriend.notifications.updateAvailableSpots(activity_token, responseData.activity.data.spots_available);
+
+                            setTimeout(function () {
+                                befriend.activities.displayActivity.display(activity_token, true, true);
+                                befriend.activities.displayActivity.transition(befriend.els.activityNotificationView, befriend.els.currentActivityView);
+                            }, 1000);
                         } else {
                             befriend.notifications.showUnavailable(responseData.data.error);
                         }

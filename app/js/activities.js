@@ -2812,6 +2812,44 @@ befriend.activities = {
         getActivity: function () {
             return befriend.activities.data.all[this.currentToken] || null;
         },
+        transition: async function (fromEl, toEl) {
+            let duration = befriend.variables.display_activity_transition_ms;
+
+            toEl.style.opacity = '0';
+            // toEl.style.transform = `translateX(100vw)`;
+
+            addClassEl('show', fromEl);
+            addClassEl('show', toEl);
+
+            await rafAwait();
+
+            fromEl.style.transition = `all ${duration}ms ease-out`;
+            toEl.style.transition = `all ${duration}ms ease-out`;
+
+            await rafAwait();
+
+            fromEl.style.opacity = '0';
+            toEl.style.opacity = '1';
+
+            // fromEl.style.transform = `translateX(-100vw)`;
+            // toEl.style.transform = `translateX(0)`;
+
+            setTimeout(async () => {
+                removeClassEl('show', fromEl);
+
+                fromEl.style.removeProperty('transform');
+                fromEl.style.removeProperty('opacity');
+                fromEl.style.removeProperty('transition');
+
+                toEl.style.removeProperty('opacity');
+
+                const cleanupProps = ['position', 'top', 'width', 'height', 'transform', 'transition', 'z-index', 'background-color'];
+
+                cleanupProps.forEach(prop => toEl.style.removeProperty(prop));
+
+                await rafAwait();
+            }, duration);
+        },
         display: async function (activity_token, no_transition, skip_enrich) {
             try {
                 let activity_data = befriend.activities.data.all[activity_token];
