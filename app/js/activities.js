@@ -621,10 +621,6 @@ befriend.activities = {
                             image_html += `<div class="image">
                                         ${activity.image}
                                     </div>`;
-                        } else if (activity.emoji) {
-                            // image_html += `<div class="emoji">
-                            //                 ${activity.emoji}
-                            //             </div>`;
                         }
 
                         let icon_html = ``;
@@ -974,25 +970,13 @@ befriend.activities = {
                             befriend.activities.activityTypes.updateLevelHeight(2, true);
                         });
 
-                        // let last_row = lastArrItem(level_3_el.getElementsByClassName("level_3_row"));
-                        //
-                        // last_row.style.marginBottom = "0px";
-                        //
-                        // let level_3_height = getElHeightHidden(level_3_el);
-                        //
-                        // level_3_el.style.height = `${level_3_height}px`;
-                        //
-                        // let total_level_2_height = parseFloat(prev_height_level_2) + level_3_height;
-                        //
-                        // closest_level_2_el.style.height = `${total_level_2_height}px`;
-
                         befriend.activities.activityTypes.events.level3();
                     });
                 }
             },
             level3: function () {
                 let level_3_activity_els =
-                    befriend.els.activities.getElementsByClassName('level_3_activity');
+                    befriend.els.activityTypes.getElementsByClassName('level_3_activity');
 
                 for (let i = 0; i < level_3_activity_els.length; i++) {
                     let el = level_3_activity_els[i];
@@ -1000,8 +984,6 @@ befriend.activities = {
                     el.addEventListener('click', function (e) {
                         e.preventDefault();
                         e.stopPropagation();
-
-                        console.log('level 3 clicked');
 
                         let level_3_el = this.closest('.level_3');
 
