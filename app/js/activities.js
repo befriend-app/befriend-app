@@ -2574,7 +2574,10 @@ befriend.activities = {
             },
             createActivity: function() {
                 befriend.els.createActivityBtn.addEventListener('click', async function(e) {
-                    if(this._ip) return false;
+                    if(this._ip) {
+                        return false;
+                    }
+
                     this._ip = true;
 
                     e.preventDefault();
@@ -2606,6 +2609,7 @@ befriend.activities = {
                     }
 
                     this._ip = false;
+
                     befriend.activities.createActivity.toggleSpinner(false);
                 });
             },
@@ -2860,16 +2864,21 @@ befriend.activities = {
                 addClassEl('show', befriend.els.currentActivityView);
 
                 if(!no_transition) {
-                    document.getElementById('create-activity-back').style.display = 'none';
-                    befriend.els.travelTimes.style.display = 'none';
-
                     befriend.styles.transformStatusBar(
                         0,
                         befriend.variables.create_activity_transition_ms / 1000,
                     );
 
                     let view_el = befriend.els.views.querySelector(`.view-activities`);
-                    let map_el = befriend.els.activityMap.querySelector('canvas');
+                    let map_el = befriend.els.activityMap;
+
+                    let previousMapTransform = map_el.style.transform;
+                    let matches = previousMapTransform.match(/translate\(([-\d.]+)px,\s*([-\d.]+)px\)/);
+
+                    let prevMapCoords = {
+                        x: parseFloat(matches[1]),
+                        y: parseFloat(matches[2])
+                    }
 
                     view_el.style.position = 'fixed';
                     view_el.style.backgroundColor = 'white';
@@ -2877,39 +2886,55 @@ befriend.activities = {
                     view_el.style.top = '0';
                     view_el.style.width = '100vw';
                     view_el.style.height = '100vh';
-                    view_el.style.transform = `translateX(-100vw)`;
+                    view_el.style.transform = `translateX(100vw)`;
 
                     addClassEl('active', view_el);
 
                     await rafAwait();
 
-                    view_el.style.transition = `all ${befriend.variables.display_activity_transition_ms}ms`;
+                    let transition_els = [befriend.els.createActivity, view_el, map_el, document.getElementById('create-activity-back'), befriend.els.travelTimes];
 
-                    map_el.style.transition = `all ${befriend.variables.display_activity_transition_ms}ms`;
-
-                    befriend.els.createActivity.style.transition = `all ${befriend.variables.display_activity_transition_ms}ms`;
+                    for(let el of transition_els) {
+                        el.style.transition = `all ${befriend.variables.display_activity_transition_ms}ms ease-out`;
+                    }
 
                     await rafAwait();
 
                     view_el.style.transform = `translateX(0)`;
 
-                    befriend.els.createActivity.style.transform = `translateX(100vw)`;
-                    map_el.style.transform = `translateX(100vw)`;
-
+                    //show activities view
                     befriend.navigateToView('activities', true, true);
 
+                    //keep home view visible temporarily
+                    addClassEl('active', befriend.els.views.querySelector(`.view-home`));
+
+                    for(let el of transition_els) {
+                        if(![view_el, map_el].includes(el)) {
+                            el.style.transform = `translateX(-100vw)`;
+                        }
+                    }
+
+                    map_el.style.transform = `translate(calc(${prevMapCoords.x}px - 100vw), ${prevMapCoords.y}px)`;
+
                     setTimeout(async function () {
+                        //hide home view again
+                        removeClassEl('active', befriend.els.views.querySelector(`.view-home`));
+
                         let remove_props = ['position', 'background-color', 'z-index', 'top', 'width', 'height', 'transition'];
 
                         for(let prop of remove_props) {
                             view_el.style.removeProperty(prop);
                         }
 
-                        befriend.els.createActivity.style.removeProperty('transition');
-                        befriend.els.createActivity.style.removeProperty('transform');
+                        for(let el of transition_els) {
+                            el.style.removeProperty('transition');
 
-                        map_el.style.removeProperty('transition');
-                        map_el.style.transform = `translateX(0)`;
+                            if(el !== map_el) {
+                                el.style.removeProperty('transform');
+                            }
+                        }
+
+                        map_el.style.transform = `translate(${prevMapCoords.x}px, ${prevMapCoords.y}px)`;
 
                         await rafAwait();
 
@@ -3122,7 +3147,7 @@ befriend.activities = {
                                 ${person_html}
                             </div>`;
                 } else {
-                    let message = `No matches have accepted this activity yet.`;
+                    let message = `Notifications sent to matches.`;
 
                     if(timeNow(true) > activity.activity_end) {
                         message = 'No matches accepted this activity';
