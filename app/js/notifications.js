@@ -311,7 +311,9 @@ befriend.notifications = {
                 if(mode.token === 'mode-partner') {
                     title = 'Partner';
 
-                    content = `<div class="partner">${mode.partner?.gender?.name}</div>`;
+                    if(mode.partner?.gender?.name) {
+                        content = `<div class="partner">${mode.partner.gender.name}</div>`;
+                    }
                 } else if(mode.token === 'mode-kids') {
                     title = 'Kids';
 
@@ -332,13 +334,17 @@ befriend.notifications = {
                              </div>`;
                     }
 
-                    content = `<div class="kids">${kids_html}</div>`;
+                    if(kids_html) {
+                        content = `<div class="kids">${kids_html}</div>`;
+                    }
                 }
 
-                partner_kids_html = `<div class="partner-kids">
+                if(content) {
+                    partner_kids_html = `<div class="partner-kids">
                                         <div class="partner-kids-title">${title}</div>
                                         <div class="partner-kids-content">${content}</div>                    
                                     </div>`;
+                }
             }
 
             return `<div class="who section">

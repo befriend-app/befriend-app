@@ -998,12 +998,13 @@
 
                 .partner-kids-title {
                     margin-top: 8px;
-                    font-size: 15px;
+                    font-size: 12px;
                     font-weight: 500;
+                    margin-bottom: 6px;
+                    text-transform: uppercase;
                 }
 
                 .partner {
-                    margin-top: 4px;
                     font-weight: 400;
                     font-size: 14px;
                 }
@@ -1012,7 +1013,6 @@
                     display: flex;
                     flex-wrap: wrap;
                     gap: 6px 14px;
-                    margin-top: 6px;
 
                     .kid-tag {
                         border: .5px solid lighten(black, 70%);

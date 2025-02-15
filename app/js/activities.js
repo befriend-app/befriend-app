@@ -3196,8 +3196,6 @@ befriend.activities = {
                                 </div>`;
                 }
 
-                let reviews_html = `<div class="reviews">${befriend.user.getReviewsHtml(person, true)}</div>`;
-
                 let about_html = `<div class="about">
                             <div class="age">
                                 <div class="icon">
@@ -3216,9 +3214,59 @@ befriend.activities = {
                             </div>
                         </div>`;
 
+                let reviews_html = `<div class="reviews">${befriend.user.getReviewsHtml(person, true)}</div>`;
+
+                let partner_kids_html = '';
+
+                let mode = activity.mode;
+
+                if(['mode-partner', 'mode-kids'].includes(mode?.token)) {
+                    let title = '';
+                    let content = '';
+
+                    if(mode.token === 'mode-partner') {
+                        title = 'Partner';
+
+                        if(person.partner?.gender?.name) {
+                            content = `<div class="partner">${person.partner.gender.name}</div>`;
+                        }
+                    } else if(mode.token === 'mode-kids') {
+                        title = 'Kids';
+
+                        let kids_html = '';
+
+                        for(let k in (person.kids || {})) {
+                            let kid = person.kids[k];
+
+                            let qty_html = '';
+
+                            if(kid.qty > 1) {
+                                qty_html = `<div class="qty">${kid.qty}</div>`;
+                            }
+
+                            kids_html += `<div class="kid-tag ${kid.gender?.token}">
+                                ${qty_html}
+                                <div class="name">${kid.age?.name}</div>
+                             </div>`;
+                        }
+
+                        if(kids_html) {
+                            content = `<div class="kids">${kids_html}</div>`;
+                        }
+                    }
+
+                    if(content) {
+                        partner_kids_html = `<div class="partner-kids">
+                                        <div class="partner-kids-title">${title}</div>
+                                        <div class="partner-kids-content">${content}</div>                    
+                                    </div>`;
+                    }
+                }
+
                 return `${tags_html}
                         ${about_html}
-                        ${reviews_html}`
+                        ${reviews_html}
+                        ${partner_kids_html}`
 
             },
             matching: {

@@ -385,6 +385,7 @@ html.#{$class_places_shown} {
                 justify-content: center;
                 flex-direction: column;
                 margin-top: $places_right_col_tb;
+                text-align: right;
 
                 .open-hours {
                     font-size: 11px;
