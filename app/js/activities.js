@@ -2995,6 +2995,8 @@ befriend.activities = {
         },
         html: {
             getInvite: function (activity) {
+                let action_buttons_html = this.getButtons(activity);
+
                 let activity_type = befriend.activities.activityTypes.lookup.byToken[activity.activity_type_token];
 
                 return `<div class="invite">
@@ -3010,6 +3012,9 @@ befriend.activities = {
                                     <div class="duration">
                                         ${befriend.activities.getDurationStr(activity.activity_duration_min)}
                                     </div>
+                                    
+                                    ${action_buttons_html}
+                                    
                                 </div>
                             </div>`;
             },
@@ -3060,6 +3065,30 @@ befriend.activities = {
                                     </div>
                                 </div>
                             </div>`;
+            },
+            getButtons: function (activity) {
+                let cancel_button = '';
+                let report_button = '';
+
+                if(timeNow(true) - activity.activity_start > 60 * 30) {
+                    //do not show cancel button if it's x minutes past start of activity
+                } else {
+                   cancel_button = `<div class="button cancel">Cancel</div>`
+                }
+
+                if(timeNow(true) < activity.activity_start || timeNow(true) - activity.activity_end > 3600 * 24 * 7) {
+                    //do not show report button if the activity time hasn't started or is a week after activity
+                } else {
+                    report_button = `<div class="button report">Report</div>`;
+                }
+
+                if(!cancel_button && !report_button) {
+                    return '';
+                }
+
+                return `<div class="action-buttons">
+                            ${cancel_button} ${report_button}
+                        </div>`
             },
             getPlace: function (activity) {
                 let rating_price = `
@@ -3680,8 +3709,6 @@ befriend.activities = {
                         
                         <div class="date">${date}</div>
                     </div>
-                    
-                    <div class="max-recipients"></div>
                     
                     ${invite_html}
                     

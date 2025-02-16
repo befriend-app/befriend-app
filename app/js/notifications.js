@@ -340,8 +340,8 @@ befriend.notifications = {
                 }
 
                 if(content) {
-                    partner_kids_html = `<div class="partner-kids">
-                                        <div class="partner-kids-title">${title}</div>
+                    partner_kids_html = `<div class="partner-kids sub-section">
+                                        <div class="sub-section-title">${title}</div>
                                         <div class="partner-kids-content">${content}</div>                    
                                     </div>`;
                 }

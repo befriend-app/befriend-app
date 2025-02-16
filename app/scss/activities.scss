@@ -560,6 +560,7 @@
             display: flex;
             gap: 0 8px;
             align-items: center;
+            position: relative;
 
             .name-duration {
                 display: flex;
@@ -750,6 +751,37 @@
                             opacity: 0;
                         }
                     }
+                }
+            }
+        }
+
+        .action-buttons {
+            display: flex;
+            margin-left: auto;
+            gap: 0 8px;
+            width: fit-content;
+            margin-top: 0;
+            margin-bottom: 0;
+            position: absolute;
+            right: 0;
+            bottom: 6px;
+
+            .button {
+                padding: 4px 12px;
+                font-size: 11px;
+                font-weight: 500;
+                text-transform: uppercase;
+                border-radius: 6px;
+
+                &.cancel {
+                    //border: 1px solid darken($color_red, 20%);
+                    background-color: darken($color_red, 25%);
+                    color: white;
+                }
+
+                &.report {
+                    background-color: lighten($color_lightgray, 5%);
+                    border: .5px solid lighten(black, 60%);
                 }
             }
         }
