@@ -373,8 +373,8 @@ befriend.notifications = {
                                 </div>
                                 
                                 <div class="tags">
-                                    ${match_type_html}
                                     ${new_member_html}
+                                    ${match_type_html}
                                 </div>
                                 
                                 <div class="reviews">
@@ -725,7 +725,9 @@ befriend.notifications = {
                             currentNotification.notification.accepted_at = timeNow();
 
                             accept_el.querySelector('.text').innerHTML = `You're going!`;
+
                             addClassEl('accepted', parent_el);
+
                             befriend.notifications.updateAvailableSpots(activity_token, responseData.activity.data.spots_available);
 
                             setTimeout(function () {

@@ -12,6 +12,7 @@ befriend.user = {
     login: {
         token: null,
     },
+    network: null,
     init: function () {
         return new Promise(async (resolve, reject) => {
             befriend.user.loadLocal();

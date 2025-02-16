@@ -459,8 +459,7 @@ befriend.activities = {
         //update activities view every minute
 
         setInterval(function () {
-            //todo uncomment
-            // befriend.activities.setView();
+            befriend.activities.setView();
         }, 1000 * 60);
     },
     getDurationStr: function(minutes) {
@@ -3185,7 +3184,7 @@ befriend.activities = {
                                 ${person_html}
                             </div>`;
                 } else {
-                    let message = `Notifications sent to matches.`;
+                    let message = `Notifications sent to matches`;
 
                     if(timeNow(true) > activity.activity_end) {
                         message = 'No matches accepted this activity';
@@ -3236,8 +3235,8 @@ befriend.activities = {
 
                 if(match_type_html || new_member_html) {
                     tags_html = `<div class="tags">
-                                ${match_type_html}
                                 ${new_member_html}
+                                ${match_type_html}
                                 </div>`;
                 }
 
@@ -3301,16 +3300,39 @@ befriend.activities = {
                     }
 
                     if(content) {
-                        partner_kids_html = `<div class="partner-kids">
-                                        <div class="partner-kids-title">${title}</div>
+                        partner_kids_html = `<div class="partner-kids sub-section">
+                                        <div class="sub-section-title">${title}</div>
                                         <div class="partner-kids-content">${content}</div>                    
                                     </div>`;
                     }
                 }
 
+                let network_html = '';
+
+                //show network if different from my own
+                if(befriend.user.network?.network_token !== person.network?.token) {
+                    let verified_html = `<div class="verification unverified">Unverified</div>`;
+
+                    if(person.network.verified) {
+                        verified_html = `<div class="verification verified">Verified</div>`;
+                    }
+
+                    network_html = `<div class="network sub-section">
+                                        <div class="sub-section-title">Network ${verified_html}</div>
+                                        <div class="network-content">
+                                            <div class="details">
+                                                <div class="icon" style="background-image: url(${person.network.icon})"></div>
+                                                <div class="name">${person.network.name}</div>
+                                                <div class="website"><a href="${person.network.domain}">Website</a></div>
+                                            </div>
+                                        </div>
+                                    </div>`
+                }
+
                 return `${tags_html}
                         ${about_html}
                         ${reviews_html}
+                        ${network_html}
                         ${partner_kids_html}`
 
             },

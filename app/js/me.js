@@ -322,6 +322,8 @@ befriend.me = {
 
                 let data = r.data;
 
+                befriend.user.network = data.network;
+
                 befriend.activities.data.setData(data.activities);
                 befriend.notifications.data.setData(data.notifications);
 

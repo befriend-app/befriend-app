@@ -3,8 +3,8 @@
     padding-right: 0 !important;
 
     $padding_lr: 20px;
-    $section_padding_lr: 15px;
-    $section_padding_tb: 10px;
+    $section_padding_lr: 16px;
+    $section_padding_tb: 12px;
     $section_br: 10px;
     $overview_padding_tb: 15px;
 
@@ -995,68 +995,127 @@
                 }
             }
 
-            .partner-kids {
-                margin-top: 20px;
+            //kids & network
+            .sub-section {
+                margin-top: $section_padding_tb;
                 border-top: .5px solid lighten(black, 50%);
                 width: 100%;
 
-                .partner-kids-title {
+                .sub-section-title {
                     margin-top: 8px;
                     font-size: 12px;
                     font-weight: 500;
                     margin-bottom: 6px;
                     text-transform: uppercase;
                 }
+            }
 
-                .partner {
-                    font-weight: 400;
-                    font-size: 14px;
+            .partner {
+                font-weight: 400;
+                font-size: 14px;
+            }
+
+            .kids {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px 14px;
+
+                .kid-tag {
+                    border: .5px solid lighten(black, 70%);
+                    height: fit-content;
+                    padding: 3px 16px;
+                    border-radius: 12px;
+                    font-size: 12px;
+                    position: relative;
+                    color: white;
+                    font-weight: 600;
+                    @include flex-center-col;
+
+                    .qty {
+                        $dim: 20px;
+                        font-size: 12px;
+                        font-weight: 500;
+                        position: absolute;
+                        right: -10px;
+                        top: -10px;
+                        z-index: 2;
+                        border-radius: 50%;
+                        width: $dim;
+                        height: $dim;
+                        color: black;
+                        border: .5px solid lighten(black, 50%);
+                        background-color: $brand_color_b;
+                        @include flex-center-col;
+                    }
+
+                    &.male {
+                        background-color: #1E90FF;
+                    }
+
+                    &.female {
+                        background-color: #FF69B4;
+                    }
+
+                    &.non-binary {
+                        background-color: #98FF98;
+                        color: black;
+                    }
+                }
+            }
+
+            .network {
+                .sub-section-title {
+                    display: flex;
+                    gap: 0 12px;
+                    align-items: center;
                 }
 
-                .kids {
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: 6px 14px;
+                .verification {
+                    width: fit-content;
+                    padding: 4px 16px;
+                    border-radius: 6px;
+                    font-size: 12px;
+                    font-weight: 600;
 
-                    .kid-tag {
-                        border: .5px solid lighten(black, 70%);
-                        height: fit-content;
-                        padding: 3px 16px;
-                        border-radius: 12px;
-                        font-size: 12px;
-                        position: relative;
-                        color: white;
-                        font-weight: 600;
-                        @include flex-center-col;
+                    &.verified {
+                        background: lighten($brand_color_b, 6%);
+                        border: 1px solid lighten($brand_color_a, 10%);
+                        color: $brand_color_a;
+                    }
 
-                        .qty {
-                            $dim: 20px;
-                            font-size: 12px;
-                            font-weight: 500;
-                            position: absolute;
-                            right: -10px;
-                            top: -10px;
-                            z-index: 2;
-                            border-radius: 50%;
-                            width: $dim;
-                            height: $dim;
-                            color: black;
-                            border: .5px solid lighten(black, 50%);
-                            background-color: $brand_color_b;
-                            @include flex-center-col;
-                        }
+                    &.unverified {
+                        background: lighten(black, 95%);
+                        border: 1px solid lighten(black, 60%);
+                        color: lighten(black, 30%);
+                    }
+                }
 
-                        &.male {
-                            background-color: #1E90FF;
-                        }
+                .network-content {
+                    .details {
+                        display: flex;
+                        align-items: center;
+                    }
 
-                        &.female {
-                            background-color: #FF69B4;
-                        }
+                    .icon {
+                        $dim: 30px;
+                        width: $dim;
+                        height: $dim;
+                        background-repeat: no-repeat;
+                        background-size: contain;
+                    }
 
-                        &.non-binary {
-                            background-color: #98FF98;
-                            color: black;
+                    .name {
+                        margin-left: 8px;
+                        font-weight: 400;
+                        font-size: 16px;
+                    }
+
+                    .website {
+                        margin-left: auto;
+
+                        a {
+                            text-decoration: none;
+                            color: #0080ea;
                         }
                     }
                 }
