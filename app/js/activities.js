@@ -184,12 +184,31 @@ befriend.activities = {
                                 <div class="qty">${accepted_qty}</div>
                             </div>`;
             } else if(is_past) {
-                if(typeof activity_data.is_fulfilled !== 'undefined' && !activity_data.is_fulfilled) {
+                let isCancelled = false;
+
+                if(activity.is_creator) {
+                    if(activity.cancelled_at) {
+                        isCancelled = true;
+                    }
+                } else {
+                    //both top level cancellation and my cancellation
+                    if(activity.data.cancelled_at || activity.cancelled_at) {
+                        isCancelled = true;
+                    }
+                }
+
+                if(isCancelled) {
+                    statusTag = true;
+
+                    tag_html = `<div class="status-tag cancelled">
+                                    <div class="label">Cancelled</div>
+                                </div>`;
+                } else if(typeof activity_data.is_fulfilled !== 'undefined' && !activity_data.is_fulfilled) {
                     statusTag = true;
 
                     tag_html = `<div class="status-tag unfulfilled">
                                     <div class="label">Unfulfilled</div>
-                                </div>`
+                                </div>`;
                 }
             }
 
@@ -344,12 +363,29 @@ befriend.activities = {
             const start = activity.data.activity_start;
             const end = activity.data.activity_end;
 
+            //move activity to past section if cancelled
+            let setPast = false;
+
+            if(activity.is_creator) {
+                if(activity.cancelled_at) {
+                    setPast = true;
+                }
+            } else {
+                //both top level cancellation and my cancellation
+                if(activity.data.cancelled_at || activity.cancelled_at) {
+                    setPast = true;
+                }
+            }
+
+            //if I created the activity and then I cancelled it, move to past
+            //if I didn't create the activity but I cancelled my participation, move to past
+
             // add to corresponding section
-            if (currentTime >= start && currentTime <= end) {
+            if (currentTime >= start && currentTime <= end && !setPast) {
                 activities_organized.current = activity;
-            } else if (start > currentTime) {
+            } else if (start > currentTime && !setPast) {
                 activities_organized.upcoming.push(activity);
-            } else if (end < currentTime) {
+            } else if (end < currentTime || !setPast) {
                 activities_organized.past.push(activity);
             }
         }

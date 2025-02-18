@@ -26,6 +26,8 @@
 
         .activity {
             $accepted_available_label_h: 28px;
+            $tag_br: 8px;
+
             padding: $section_padding_tb $section_padding_lr;
             border: 1px solid $color_lightgray;
             border-radius: 10px;
@@ -198,8 +200,8 @@
                 right: 0;
             }
 
+
             .accepted, .available, .status-tag {
-                $br: 8px;
                 $ptb: 4px;
                 $plr: 8px;
 
@@ -209,8 +211,7 @@
 
                 box-sizing: border-box;
                 width: fit-content;
-                border-radius: $br;
-                border: 1px solid lighten(black, 80%);
+                border-radius: $tag_br;
 
                 &.w-qty {
                     .label {
@@ -219,24 +220,22 @@
                     }
                 }
 
-                &.declined {
-                    .label {
-                        background-color: lighten($color_lightgray, 10%);
-                        color: black;
-                    }
-                }
+                &.unavailable, &.cancelled {
+                    border-color: transparent;
 
-                &.unavailable {
                     .label {
                         background-color: darken($color_red, 20%);
                         color: white;
+                        border-radius: $tag_br;
                     }
                 }
 
-                &.ended, &.unfulfilled {
+                &.declined, &.ended, &.unfulfilled {
                     .label {
                         background-color: lighten($color_lightgray, 10%);
+                        border: 1px solid lighten(black, 80%);
                         color: black;
+                        border-radius: $tag_br;
                     }
                 }
 
@@ -251,8 +250,8 @@
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
-                    border-top-left-radius: $br;
-                    border-bottom-left-radius: $br;
+                    border-top-left-radius: $tag_br;
+                    border-bottom-left-radius: $tag_br;
                     //border-radius: $br;
 
                     @include flex-center-col;
@@ -270,9 +269,17 @@
                 }
             }
 
+            .accepted {
+                .qty {
+                    border: 1px solid lighten(black, 80%);
+                    border-left-color: transparent;
+                    border-top-right-radius: $tag_br;
+                    border-bottom-right-radius: $tag_br;
+                }
+            }
+
             .status-tag {
                 font-size: 12px;
-
             }
 
             .faces {
