@@ -271,7 +271,7 @@ befriend.activities = {
                                 <div class="address">${activity_data.location_address}, ${activity_data.location_locality}, ${activity_data.location_region}</div>
                             </div>
                             
-                            <div class="right-col ${statusTag ? 'w-tag' : ''} ${is_notification && !tag_html ? 'no-tag' : ''}">
+                            <div class="right-col ${statusTag ? 'w-tag' : ''} ${is_past && !statusTag ? 'no-tag' : ''}">
                                 <div class="accepted-available">
                                     ${tag_html}
                                     ${accepted_html}
@@ -4004,7 +4004,20 @@ befriend.activities = {
                 });
             },
             onCancel: function () {
+                let el = befriend.els.currentActivityView.querySelector('.button.cancel');
 
+                if(el._listener) {
+                    return;
+                }
+
+                el._listener = true;
+
+                el.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    befriend.modals.activity.showCancel(befriend.activities.displayActivity.currentToken);
+                });
             },
             onPersonNav: function () {
                 let person_nav_els = befriend.els.currentActivityView.querySelectorAll('.who .person-nav');
