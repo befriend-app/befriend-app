@@ -98,7 +98,9 @@ befriend.activities = {
                     </div>`;
         }
 
-        function getActivityHtml(activity, is_current, is_upcoming, is_notification) {
+        function getActivityHtml(activity, params = {}) {
+            let { is_current, is_upcoming, is_past, is_notification } = params;
+
             let activity_data = activity?.data || activity?.activity;
 
             if(!activity_data) {
@@ -151,16 +153,22 @@ befriend.activities = {
 
             let accepted_html = '';
             let available_html = '';
+            let tag_html = '';
+            let statusTag = false;
 
             if(is_notification) {
                 let isDeclined = activity.declined_at || activity.notification?.declined_at;
                 let isPast = timeNow(true) > activity_data.activity_end;
 
                 if(isDeclined) {
+                    statusTag = true;
+
                     available_html = `<div class="available declined">
                                 <div class="label">Declined</div>
                             </div>`;
                 } else if(isPast) {
+                    statusTag = true;
+
                     available_html = `<div class="available ended">
                                 <div class="label">Ended</div>
                             </div>`;
@@ -170,11 +178,19 @@ befriend.activities = {
                                 <div class="qty">${available_qty}</div>
                             </div>`;
                 }
-            } else {
+            } else if(is_upcoming || is_current) {
                 accepted_html = `<div class="accepted ${accepted_qty > 0 ? 'w-qty' : ''}">
                                 <div class="label">Accepted</div>
                                 <div class="qty">${accepted_qty}</div>
                             </div>`;
+            } else if(is_past) {
+                if(typeof activity_data.is_fulfilled !== 'undefined' && !activity_data.is_fulfilled) {
+                    statusTag = true;
+
+                    tag_html = `<div class="status-tag unfulfilled">
+                                    <div class="label">Unfulfilled</div>
+                                </div>`
+                }
             }
 
             let faces_html = ``;
@@ -210,7 +226,7 @@ befriend.activities = {
             }
 
             return `
-                <div class="activity ${is_notification ? 'is-notification' : ''}" data-activity-token="${activity.activity_token}">
+                <div class="activity ${is_notification ? 'is-notification' : ''} ${is_past ? 'is-past' : ''}" data-activity-token="${activity.activity_token}">
                     ${remove_html}
 
                     <div class="wrapper">
@@ -236,8 +252,9 @@ befriend.activities = {
                                 <div class="address">${activity_data.location_address}, ${activity_data.location_locality}, ${activity_data.location_region}</div>
                             </div>
                             
-                            <div class="right-col">
+                            <div class="right-col ${statusTag ? 'w-tag' : ''} ${is_notification && !tag_html ? 'no-tag' : ''}">
                                 <div class="accepted-available">
+                                    ${tag_html}
                                     ${accepted_html}
                                     ${available_html}
                                 </div>
@@ -352,7 +369,9 @@ befriend.activities = {
         }
 
         if(activities_organized.current) {
-            currentActivityHtml = getActivityHtml(activities_organized.current, true);
+            currentActivityHtml = getActivityHtml(activities_organized.current, {
+                is_current: true
+            });
         }
 
         //organize notifications
@@ -385,7 +404,9 @@ befriend.activities = {
             let dateActivitiesHtml = '';
 
             for(let activity of activities) {
-                dateActivitiesHtml += getActivityHtml(activity, false, false, true);
+                dateActivitiesHtml += getActivityHtml(activity, {
+                    is_notification: true
+                });
             }
 
             notificationsHtml += `<div class="group">
@@ -416,7 +437,9 @@ befriend.activities = {
             let dateActivitiesHtml = '';
 
             for(let activity of activities) {
-                dateActivitiesHtml += getActivityHtml(activity, false, true);
+                dateActivitiesHtml += getActivityHtml(activity, {
+                    is_upcoming: true
+                });
             }
 
             upcomingActivitiesHtml += `<div class="group">
@@ -426,7 +449,9 @@ befriend.activities = {
         }
 
         for(let activity of activities_organized.past) {
-            pastActivitiesHtml += getActivityHtml(activity);
+            pastActivitiesHtml += getActivityHtml(activity, {
+                is_past: true
+            });
         }
 
         if(!notificationsHtml) {

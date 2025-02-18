@@ -31,6 +31,16 @@
             border-radius: 10px;
             position: relative;
 
+            &.is-past {
+                .right-col {
+                    &.no-tag {
+                        .faces {
+                            margin-top: 0 !important;
+                        }
+                    }
+                }
+            }
+
             .wrapper {
                 position: relative;
                 display: flex;
@@ -71,7 +81,6 @@
                 }
             }
 
-
             .left-col {
                 display: flex;
                 flex-direction: column;
@@ -80,6 +89,12 @@
 
             .right-col {
                 margin-left: auto;
+
+                &.w-tag {
+                    .faces {
+                        margin-top: 35px !important;
+                    }
+                }
             }
 
             .mode-wrapper {
@@ -183,7 +198,7 @@
                 right: 0;
             }
 
-            .accepted, .available {
+            .accepted, .available, .status-tag {
                 $br: 8px;
                 $ptb: 4px;
                 $plr: 8px;
@@ -218,7 +233,7 @@
                     }
                 }
 
-                &.ended {
+                &.ended, &.unfulfilled {
                     .label {
                         background-color: lighten($color_lightgray, 10%);
                         color: black;
@@ -253,6 +268,11 @@
                     text-overflow: ellipsis;
                     @include flex-center-col;
                 }
+            }
+
+            .status-tag {
+                font-size: 12px;
+
             }
 
             .faces {
