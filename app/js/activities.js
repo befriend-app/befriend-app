@@ -459,7 +459,7 @@ befriend.activities = {
         //update activities view every minute
 
         setInterval(function () {
-            befriend.activities.setView();
+            // befriend.activities.setView();
         }, 1000 * 60);
     },
     getDurationStr: function(minutes) {
@@ -3771,6 +3771,10 @@ befriend.activities = {
 
             if(data.persons) {
                 activity.data.persons = data.persons;
+            }
+
+            if(typeof data.is_unfulfilled !== 'undefined') {
+                activity.data.is_unfulfilled = data.is_unfulfilled;
             }
 
             //update main view on data update

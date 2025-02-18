@@ -10,7 +10,7 @@
 
     .main-view {
         display: none;
-        padding: 15px $padding_lr;
+        padding: 15px 0;
         padding-bottom: 30px;
         flex-direction: column;
 
@@ -29,6 +29,7 @@
             padding: $section_padding_tb $section_padding_lr;
             border: 1px solid $color_lightgray;
             border-radius: 10px;
+            position: relative;
 
             .wrapper {
                 position: relative;
@@ -42,12 +43,14 @@
 
             .remove-container {
                 $dim: 16px;
+                position: absolute;
+                width: 0;
+                height: 0;
                 z-index: 2;
                 cursor: pointer;
                 transition: opacity 200ms;
-                position: absolute;
-                width: 100%;
-                transform: translate(calc(100vw - #{$padding_lr * 2} - #{$section_padding_lr * 2} + 4px), calc(#{-$section_padding_tb} - $dim / 2));
+                top: -9px;
+                right: 9px;
 
                 .remove {
                     width: $dim;
@@ -301,6 +304,7 @@
 
         .current-activity {
             $br: 10px;
+            margin: 0 $padding_lr;
             padding: 0;
             border: 1px solid $color_lightgray;
             border-radius: $br;
@@ -332,6 +336,7 @@
             font-size: 20px;
             font-weight: 300;
             margin-bottom: 8px;
+            padding-left: $padding_lr;
         }
 
         .sections {
@@ -342,7 +347,8 @@
 
             .section {
                 .separator {
-                    width: 100%;
+                    width: calc(100% - #{$padding_lr * 2});
+                    margin: auto;
                     border: .7px solid $brand_color_a;
                     margin-top: 5px;
                 }
@@ -354,12 +360,14 @@
                         font-size: 18px;
                         font-weight: 500;
                         margin-bottom: 10px;
+                        padding-left: $padding_lr;
                     }
 
                     .activities {
                         display: flex;
                         flex-direction: column;
                         gap: 15px 0;
+                        padding: 0 $padding_lr;
                     }
                 }
             }
@@ -375,6 +383,7 @@
                     display: flex;
                     flex-direction: column;
                     gap: 15px 0;
+                    padding: 0 $padding_lr;
                 }
 
                 .date-time {
@@ -757,8 +766,9 @@
 
         .action-buttons {
             display: flex;
+            flex-direction: column;
             margin-left: auto;
-            gap: 0 8px;
+            gap: 4px 8px;
             width: fit-content;
             margin-top: 0;
             margin-bottom: 0;
@@ -1542,8 +1552,8 @@
                 }
 
                 .name {
-                    font-weight: 300;
-                    font-size: 15px;
+                    font-weight: 400;
+                    font-size: 14px;
                     margin-top: 6px;
                 }
             }
