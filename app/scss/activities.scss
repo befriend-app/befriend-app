@@ -353,10 +353,10 @@
                 border: initial;
                 border-radius: 0;
             }
+        }
 
-            .no-items {
-                padding: $section_padding_tb $section_padding_lr;
-            }
+        .no-items {
+            padding-left: $padding_lr;
         }
 
         .heading {
