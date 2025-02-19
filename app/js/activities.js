@@ -17,6 +17,20 @@ befriend.activities = {
         },
         getActivity: function (activity_token) {
             return befriend.activities.data.all[activity_token];
+        },
+        isUnfulfilled: function (activity_token) {
+            let activity = this.getActivity(activity_token);
+
+            if(activity && 'is_fulfilled' in activity?.data && !activity.data.is_fulfilled) {
+                return true;
+            }
+
+            return false;
+        },
+        isCancelled: function (activity_token) {
+            let activity = this.getActivity(activity_token);
+
+            return activity.data.cancelled_at || activity.cancelled_at;
         }
     },
     draft: {
@@ -157,6 +171,7 @@ befriend.activities = {
             let statusTag = false;
 
             if(is_notification) {
+                //todo if activity cancelled
                 let isDeclined = activity.declined_at || activity.notification?.declined_at;
                 let isPast = timeNow(true) > activity_data.activity_end;
 
@@ -184,18 +199,8 @@ befriend.activities = {
                                 <div class="qty">${accepted_qty}</div>
                             </div>`;
             } else if(is_past) {
-                let isCancelled = false;
-
-                if(activity.is_creator) {
-                    if(activity.cancelled_at) {
-                        isCancelled = true;
-                    }
-                } else {
-                    //both top level cancellation and my cancellation
-                    if(activity.data.cancelled_at || activity.cancelled_at) {
-                        isCancelled = true;
-                    }
-                }
+                let isCancelled = befriend.activities.data.isCancelled(activity_data.activity_token);
+                let isUnfulfilled = befriend.activities.data.isUnfulfilled(activity_data.activity_token);
 
                 if(isCancelled) {
                     statusTag = true;
@@ -203,7 +208,7 @@ befriend.activities = {
                     tag_html = `<div class="status-tag cancelled">
                                     <div class="label">Cancelled</div>
                                 </div>`;
-                } else if(typeof activity_data.is_fulfilled !== 'undefined' && !activity_data.is_fulfilled) {
+                } else if(isUnfulfilled) {
                     statusTag = true;
 
                     tag_html = `<div class="status-tag unfulfilled">
@@ -366,19 +371,9 @@ befriend.activities = {
             //move activity to past section if cancelled or unfulfilled
             let setPast = false;
 
-            if('is_fulfilled' in activity.data && !activity.data.is_fulfilled) {
+            if(befriend.activities.data.isUnfulfilled(activity.data.activity_token) ||
+                befriend.activities.data.isCancelled(activity.data.activity_token)) {
                 setPast = true;
-            }
-
-            if(activity.is_creator) {
-                if(activity.cancelled_at) {
-                    setPast = true;
-                }
-            } else {
-                //both top level cancellation and my cancellation
-                if(activity.data.cancelled_at || activity.cancelled_at) {
-                    setPast = true;
-                }
             }
 
             // add to corresponding section
@@ -524,11 +519,13 @@ befriend.activities = {
             //update main activities view
             befriend.activities.setView();
 
+            let activitiesViewEl = befriend.els.views.querySelector(`.view-activities`);
+
             //update current activity view if active
-            if(elHasClass(befriend.els.currentActivityView, 'show')) {
+            if(elHasClass(activitiesViewEl, 'active') && elHasClass(befriend.els.currentActivityView, 'show')) {
                 befriend.activities.displayActivity.display(befriend.activities.displayActivity.currentToken, true, true);
             }
-        }, 60 * 1000);
+        }, 2 * 1000);
     },
     getDurationStr: function(minutes) {
         let duration_str = `${minutes} minutes`;
@@ -3065,7 +3062,21 @@ befriend.activities = {
         },
         html: {
             getInvite: function (activity) {
-                let action_buttons_html = this.getButtons(activity);
+                let isCancelled = befriend.activities.data.isCancelled(activity.activity_token);
+                let isUnfulfilled = befriend.activities.data.isUnfulfilled(activity.activity_token);
+
+                let action_buttons_html = '';
+                let tag_html = '';
+
+                if(!isCancelled && !isUnfulfilled) {
+                    action_buttons_html = this.getButtons(activity);
+                }
+
+                if(isCancelled) {
+                    tag_html = `<div class="tag-status cancelled">Cancelled</div>`;
+                } else if(isUnfulfilled) {
+                    tag_html = `<div class="tag-status unfulfilled">Unfulfilled</div>`;   
+                }
 
                 let activity_type = befriend.activities.activityTypes.lookup.byToken[activity.activity_type_token];
 
@@ -3084,6 +3095,8 @@ befriend.activities = {
                                     </div>
                                     
                                     ${action_buttons_html}
+                                    
+                                    ${tag_html}
                                     
                                 </div>
                             </div>`;

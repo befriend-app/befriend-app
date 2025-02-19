@@ -394,6 +394,10 @@ window['befriend'] = {
                 removeClassEl('show', befriend.els.activityNotificationView);
                 removeClassEl('show', befriend.els.currentActivityView);
                 addClassEl('show', befriend.els.mainActivitiesView);
+            } else {
+                if(befriend.activities.displayActivity.currentToken && elHasClass(befriend.els.currentActivityView, 'show')) {
+                    befriend.activities.displayActivity.display(befriend.activities.displayActivity.currentToken, true, true);
+                }
             }
         } else if (view === 'filters') {
             requestAnimationFrame(function () {
