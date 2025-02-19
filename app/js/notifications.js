@@ -714,7 +714,7 @@ befriend.notifications = {
                             responseData = r.data;
                         }
 
-                        befriend.activities.data.addActivity(responseData.activity);
+                        befriend.activities.data.updateActivity(responseData.activity);
 
                         //update main activities view after successful acceptance
                         befriend.activities.setView();

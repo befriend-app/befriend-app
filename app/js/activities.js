@@ -8,7 +8,7 @@ befriend.activities = {
 
             befriend.friends.updateMaxSelectableFriends();
         },
-        addActivity: function (activity) {
+        updateActivity: function (activity) {
             if(!befriend.activities.data.all) {
                 befriend.activities.data.all = {};
             }
@@ -523,7 +523,8 @@ befriend.activities = {
 
             //update current activity view if active
             if(elHasClass(activitiesViewEl, 'active') && elHasClass(befriend.els.currentActivityView, 'show')) {
-                befriend.activities.displayActivity.display(befriend.activities.displayActivity.currentToken, true, true);
+                //todo
+                // befriend.activities.displayActivity.display(befriend.activities.displayActivity.currentToken, true, true);
             }
         }, 2 * 1000);
     },
@@ -2655,7 +2656,7 @@ befriend.activities = {
                             activity: befriend.activities.data.draft,
                         });
 
-                        befriend.activities.data.addActivity(r.data);
+                        befriend.activities.data.updateActivity(r.data);
 
                         //update main view
                         befriend.activities.setView();
@@ -2961,7 +2962,7 @@ befriend.activities = {
                     befriend.preventNavigation(true);
                 }
 
-                befriend.activities.displayActivity.toggleErrorMessage(false);
+                befriend.activities.displayActivity.toggleMessage(false);
 
                 removeClassEl('show', befriend.els.mainActivitiesView);
                 removeClassEl('show', befriend.els.activityNotificationView);
@@ -3305,10 +3306,14 @@ befriend.activities = {
                                 ${person_html}
                             </div>`;
                 } else {
-                    let message = `Notifications sent to matches`;
+                    let message = `Notifications sent to matches.`;
 
                     if(timeNow(true) > activity.activity_end) {
-                        message = 'No matches accepted this activity';
+                        message = 'No matches accepted this activity.';
+                    }
+
+                    if(befriend.activities.data.isCancelled(activity.activity_token)) {
+                        message = 'This activity was cancelled.';
                     }
 
                     html = `<div class="no-persons">${message}</div>`
@@ -3791,7 +3796,7 @@ befriend.activities = {
 
             let matching_html = this.html.matching.getMatching(activity);
 
-            return `<div class="error-message">
+            return `<div class="activity-message">
                         <div class="message"></div>
                         <div class="close">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 448"><g><path d="M303.9838,167.36l-57.44,56.64,57.44,56.64c6.4507,6.0393,6.7841,16.1645.7448,22.6151-.2401.2564-.4885.5048-.7448.7448-3.0195,2.995-7.1071,4.6646-11.36,4.64-4.1974-.0177-8.2198-1.6841-11.2-4.64l-57.44-57.44-56.64,57.44c-2.9802,2.9559-7.0026,4.6223-11.2,4.64-4.2529.0246-8.3405-1.645-11.36-4.64-6.2036-6.2406-6.2036-16.3194,0-22.56l56.64-57.44-56.64-56.64c-5.7478-6.7118-4.9663-16.8122,1.7454-22.56,5.99-5.1297,14.8245-5.1297,20.8146,0l56.64,56.64,56.64-56.64c6.2298-6.4507,16.5093-6.6298,22.96-.4s6.6298,16.5093.4,22.96ZM382.3838,382.4c-87.4819,87.473-229.3109,87.4658-316.7838-.0161-87.473-87.4819-87.4658-229.3109.0162-316.7838,87.4756-87.4667,229.2921-87.4667,316.7677,0,87.4819,87.473,87.4891,229.3019.0161,316.7838l-.0161.0161ZM359.8238,88.16c-75.1107-74.8504-196.6782-74.6393-271.5286.4714-74.8504,75.1107-74.6393,196.6782.4714,271.5286,74.9264,74.6667,196.1308,74.6667,271.0572,0,75.1107-74.8504,75.3218-196.4179.4714-271.5286-.1569-.1574-.314-.3145-.4714-.4714Z"/></g></svg>
@@ -3824,17 +3829,23 @@ befriend.activities = {
                         </div>
                     </div>`;
         },
-        toggleErrorMessage: function (show, message) {
-            let cls = 'display-error-message';
+        toggleMessage: function (show, message, is_success) {
+            let cls = 'display-message';
 
-            let error_el = befriend.els.currentActivityView.querySelector('.error-message');
+            let message_el = befriend.els.currentActivityView.querySelector('.activity-message');
 
-            if(!error_el) {
+            if(!message_el) {
                 return;
             }
 
+            if(is_success) {
+                addClassEl('success', message_el);
+            } else {
+                removeClassEl('success', message_el);
+            }
+
             if(message) {
-                error_el.querySelector('.message').innerHTML = message;
+                message_el.querySelector('.message').innerHTML = message;
             }
 
             if(show) {
@@ -3992,12 +4003,40 @@ befriend.activities = {
                         r = await befriend.auth.put(`/activities/${activity_token}/cancel`);
                     }
 
-                    debugger;
+                    let message = r.data?.message;
+
+                    if(r.status === 202) {
+                        //update activity data
+                        activity.cancelled_at = r.data.cancelled_at;
+
+                        if(r.data.activity_cancelled_at) {
+                            activity.data.cancelled_at = r.data.activity_cancelled_at;
+                        }
+
+                        //update activity view
+                        try {
+                            await befriend.activities.displayActivity.display(activity_token, true, true);
+                        } catch(e) {
+                            console.error(e);
+                        }
+
+                        //update main view
+                        befriend.activities.displayActivity.toggleMessage(true, message, true);
+
+                        befriend.activities.setView();
+                    }
                 } catch(e) {
                     console.error(e);
+                    let message = e.response?.error;
+
+                    if(message) {
+                        befriend.activities.displayActivity.toggleMessage(true, message, false);
+                    }
                 }
 
                 removeClassEl('show', spinnerEl);
+
+                closePopup();
 
                 this._ip = false;
             });
@@ -4237,7 +4276,7 @@ befriend.activities = {
                     e.preventDefault();
                     e.stopPropagation();
 
-                    befriend.activities.displayActivity.toggleErrorMessage(false);
+                    befriend.activities.displayActivity.toggleMessage(false);
                 });
             },
             onPersonNav: function () {

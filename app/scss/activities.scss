@@ -464,7 +464,7 @@
             transform: translateY(-.5px);
         }
 
-        .max-recipients, .error-message {
+        .max-recipients, .activity-message {
             width: 100vw;
             display: flex;
             border: .5px solid lighten(black, 60%);
@@ -492,7 +492,7 @@
             }
         }
 
-        .error-message {
+        .activity-message {
             display: flex;
             flex-direction: row;
             justify-content: center;
@@ -500,6 +500,17 @@
 
             .message {
                 width: calc(100vw - 60px);
+            }
+
+            &.success {
+                background-color: lighten($color_lightgray, 10%);
+                color: black;
+
+                .close {
+                    svg {
+                        fill: black !important;
+                    }
+                }
             }
 
             .close {
@@ -566,7 +577,6 @@
                     }
                 }
             }
-
         }
 
         .accept-decline {
@@ -1652,12 +1662,12 @@
             display: flex;
         }
 
-        &.display-error-message {
+        &.display-message {
             .activity {
                 transform: translateY(40px);
             }
 
-            .error-message {
+            .activity-message {
                 opacity: 1;
                 visibility: visible;
             }
