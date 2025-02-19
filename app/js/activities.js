@@ -4026,8 +4026,7 @@ befriend.activities = {
                         befriend.activities.setView();
                     }
                 } catch(e) {
-                    console.error(e);
-                    let message = e.response?.error;
+                    let message = e.response?.data?.error;
 
                     if(message) {
                         befriend.activities.displayActivity.toggleMessage(true, message, false);
