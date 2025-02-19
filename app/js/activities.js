@@ -3865,7 +3865,7 @@ befriend.activities = {
             popupEl.innerHTML = popupHtml;
 
             let infoIcon = befriend.modals.createInfo(`
-                Cancelling too often can prevent you from sending or receiving activity invitations temporarily.
+                Frequent cancellations may affect your matching priority as well as prevent you from sending or receiving activity invitations temporarily.
             `);
 
             popupEl.querySelector('.cancel-activity').insertAdjacentElement('afterbegin', infoIcon);
