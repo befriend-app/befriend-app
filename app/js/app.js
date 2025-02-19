@@ -345,6 +345,8 @@ window['befriend'] = {
         let view_name = befriend.navigationClassMap[view];
 
         let viewEl = befriend.els.views.querySelector(`.${view_name}`);
+        let prevViewEl = befriend.els.views.querySelector('.view.active');
+
         let navEl = Array.from(nav_items).find(item => item.getAttribute('data-nav') === view);
 
         removeElsClass(nav_items, 'active');
@@ -387,9 +389,12 @@ window['befriend'] = {
                 });
             }
         } else if (view === 'activities') {
-            removeClassEl('show', befriend.els.activityNotificationView);
-            removeClassEl('show', befriend.els.currentActivityView);
-            addClassEl('show', befriend.els.mainActivitiesView);
+            //navigate back to main activities view if current and previous views are the same
+            if(prevViewEl === viewEl) {
+                removeClassEl('show', befriend.els.activityNotificationView);
+                removeClassEl('show', befriend.els.currentActivityView);
+                addClassEl('show', befriend.els.mainActivitiesView);
+            }
         } else if (view === 'filters') {
             requestAnimationFrame(function () {
                 befriend.filters.updateSectionHeights(true);
