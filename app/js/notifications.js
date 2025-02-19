@@ -24,7 +24,9 @@ befriend.notifications = {
         },
     },
     messages: {
+        cancelled: 'Activity cancelled',
         unavailable: 'Unavailable: max spots reached',
+        past: 'This activity is in the past'
     },
     setDeviceToken: async function (token, force_update) {
         //save on server if new device token
@@ -170,9 +172,11 @@ befriend.notifications = {
 
              view_el.innerHTML = html;
 
-             //if notification is in the past
-            if(timeNow(true) > activity_data.activity.activity_end) {
-                befriend.notifications.showUnavailable('This activity is in the past', true);
+             //if notification is cancelled or in the past
+            if(activity_data.activity.cancelled_at) {
+                befriend.notifications.showUnavailable(befriend.notifications.messages.cancelled);
+            } else if(timeNow(true) > activity_data.activity.activity_end) {
+                befriend.notifications.showUnavailable(befriend.activities.messages.past, true);
             }
 
              //show view
@@ -516,7 +520,7 @@ befriend.notifications = {
     showNotificationBar: function () {
 
     },
-    updateAvailableSpots: function (activity_token, spots_available) {
+    updateAvailableSpots: function (activity_token, spots_available, activity_cancelled_at) {
         if(!isNumeric(spots_available)) {
             return;
         }
@@ -529,6 +533,10 @@ befriend.notifications = {
         }
 
         notificationObj.activity.spots_available = spots_available;
+
+        if(activity_cancelled_at) {
+            notificationObj.activity.cancelled_at = activity_cancelled_at;
+        }
 
         //update main view with latest spots data
         befriend.activities.setView();
@@ -553,7 +561,9 @@ befriend.notifications = {
         addClassEl('fade-out', currentEl);
         addClassEl('fade-in', newEl);
 
-        if(spots_available <= 0 && !notification.accepted_at) {
+        if(notificationObj.activity.cancelled_at) {
+            befriend.notifications.showUnavailable(befriend.notifications.messages.cancelled);
+        } else if(spots_available <= 0 && !notification.accepted_at) {
             befriend.notifications.showUnavailable(befriend.notifications.messages.unavailable);
         }
 

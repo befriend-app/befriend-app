@@ -115,6 +115,7 @@
                     color: white;
                     border-radius: 12px;
                     height: fit-content;
+                    margin-bottom: auto;
 
                     &.mode-partner {
                         background-color: $color_green;
@@ -203,7 +204,7 @@
 
             .accepted, .available, .status-tag {
                 $ptb: 4px;
-                $plr: 8px;
+                $plr: 10px;
 
                 display: flex;
                 margin-left: auto;
@@ -220,13 +221,22 @@
                     }
                 }
 
-                &.unavailable, &.cancelled {
+                &.cancelled {
                     border-color: transparent;
 
                     .label {
                         background-color: darken($color_red, 20%);
                         color: white;
                         border-radius: $tag_br;
+                    }
+                }
+
+                &.unavailable {
+                    border-color: transparent;
+
+                    .label {
+                        background-color: darken($color_red, 20%);
+                        color: white;
                     }
                 }
 
@@ -269,7 +279,7 @@
                 }
             }
 
-            .accepted {
+            .accepted, .available {
                 .qty {
                     border: 1px solid lighten(black, 80%);
                     border-left-color: transparent;

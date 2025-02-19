@@ -443,7 +443,7 @@ window['befriend'] = {
         console.log(message);
 
         if (message.namespace === 'notifications') {
-            befriend.notifications.updateAvailableSpots(message.data?.activity_token, message.data?.spots?.available);
+            befriend.notifications.updateAvailableSpots(message.data?.activity_token, message.data?.spots?.available, message.data?.activity_cancelled_at);
         } else if(message.namespace === 'activities') {
             befriend.activities.displayActivity.updateData(message.data);
         }

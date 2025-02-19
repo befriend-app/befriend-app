@@ -517,7 +517,7 @@ befriend.activities = {
 
         setInterval(function () {
             //update main activities view
-            befriend.activities.setView();
+            // befriend.activities.setView();
 
             let activitiesViewEl = befriend.els.views.querySelector(`.view-activities`);
 
@@ -526,7 +526,7 @@ befriend.activities = {
                 //todo
                 // befriend.activities.displayActivity.display(befriend.activities.displayActivity.currentToken, true, true);
             }
-        }, 2 * 1000);
+        }, 60 * 1000);
     },
     getDurationStr: function(minutes) {
         let duration_str = `${minutes} minutes`;
