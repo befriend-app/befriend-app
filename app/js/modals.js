@@ -17,216 +17,64 @@ befriend.modals = {
             document.body.style.overflow = '';
         },
     },
-    activity: {
-        showCancel: async function () {
-            function closePopup() {
-                removeClassEl('active', overlay);
+    createInfo: function (content, position = 'top-right') {
+        let wrapper = document.createElement('div');
+        addClassEl('info-wrapper', wrapper);
 
-                setTimeout(function () {
-                    popupEl.remove();
-                }, 300);
-            }
+        let infoIcon = document.createElement('div');
+        infoIcon.className = 'info-icon';
 
-            let class_name = 'cancel-activity-popup-overlay';
+        infoIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 458.6667 458.6667">
+            <path d="M245.3333,208c0-8.8363-7.1637-16-16-16s-16,7.1637-16,16v128c0,8.8363,7.1637,16,16,16s16-7.1637,16-16v-128Z"/>
+            <path d="M229.3333,0C102.6761,0,0,102.6761,0,229.3333s102.6761,229.3333,229.3333,229.3333,229.3333-102.6752,229.3333-229.3333S355.9915,0,229.3333,0ZM32,229.3333c0-108.9841,88.3492-197.3333,197.3333-197.3333s197.3333,88.3492,197.3333,197.3333-88.3499,197.3333-197.3333,197.3333S32,338.3168,32,229.3333Z"/>
+            <path d="M250.6667,144c0,11.782-9.5509,21.3333-21.3333,21.3333s-21.3333-9.5514-21.3333-21.3333,9.5509-21.3333,21.3333-21.3333,21.3333,9.5514,21.3333,21.3333Z"/>
+        </svg>`;
 
-            let popupHtml =
-                `<div class="${class_name}">
-                    <div class="cancel-activity-popup">
-                        <div class="popup-header">
-                            <div class="title">Test</div>
-                            <div class="sub">Filter Importance</div>
-                        </div>
-                        
-                        <div class="popup-actions">
-                            <button class="cancel-btn">Cancel</button>
-                            <button class="save-btn">Save</button>
-                        </div>
-                    </div>
-                </div>`;
+        const contentEl = document.createElement('div');
+        contentEl.className = `info-content ${position}`;
+        contentEl.innerHTML = content;
 
-            let popupEl = document.createElement('div');
-            popupEl.innerHTML = popupHtml;
-            document.body.appendChild(popupEl);
+        wrapper.appendChild(infoIcon);
+        wrapper.appendChild(contentEl);
 
-            let overlay = popupEl.querySelector(class_name);
+        let isVisible = false;
 
-            void overlay.offsetWidth;
+        const showModal = () => {
+            contentEl.style.opacity = '1';
+            contentEl.style.visibility = 'visible';
+            isVisible = true;
+        };
 
-            await rafAwait();
+        const hideModal = () => {
+            contentEl.style.opacity = '0';
+            contentEl.style.visibility = 'hidden';
+            isVisible = false;
+        };
 
-            addClassEl('active', overlay);
+        infoIcon.addEventListener('click', (e) => {
+            e.stopPropagation();
 
-            const cancelBtn = popupEl.querySelector('.cancel-btn');
-            const saveBtn = popupEl.querySelector('.save-btn');
-
-            cancelBtn.addEventListener('click', closePopup);
-
-            saveBtn.addEventListener('click', () => {
-            });
-
-            overlay.addEventListener('click', (e) => {
-                if (e.target === overlay) {
-                    closePopup();
-                }
-            });
-
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape') {
-                    closePopup();
-                }
-            });
-        }
-    },
-    filters: {
-        showImportance: function (sectionToken, item, name, currentValue = 7) {
-            let importanceRef = befriend.filters.importance;
-
-            const popupHtml = `
-            <div class="importance-popup-overlay">
-                <div class="importance-popup">
-                    <div class="popup-header">
-                        <div class="title">${name}</div>
-                        <div class="sub">Filter Importance</div>
-                    </div>
-                    
-                    <div class="importance-slider">
-                        <div class="slider-container">
-                            <div class="slider-track"></div>
-                            <div class="slider-range"></div>
-                            <div class="thumb">
-                                <span class="thumb-value"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="popup-actions">
-                        <button class="cancel-btn">Cancel</button>
-                        <button class="save-btn">Save</button>
-                    </div>
-                </div>
-            </div>`;
-
-            const popupEl = document.createElement('div');
-            popupEl.innerHTML = popupHtml;
-            document.body.appendChild(popupEl);
-
-            const overlay = popupEl.querySelector('.importance-popup-overlay');
-            void overlay.offsetWidth;
-            requestAnimationFrame(() => addClassEl('active', overlay));
-
-            const container = popupEl.querySelector('.slider-container');
-            const range = popupEl.querySelector('.slider-range');
-            const thumb = popupEl.querySelector('.thumb');
-            let isDragging = false;
-            let startY, startTop;
-
-            const setPosition = (value) => {
-                const percent = (value - importanceRef.min) / (importanceRef.max - importanceRef.min);
-                const height = container.offsetHeight;
-                const position = height - percent * height;
-                thumb.style.top = `${position}px`;
-                range.style.height = `${height - position}px`;
-                thumb.querySelector('.thumb-value').textContent = Math.round(value);
-            };
-
-            const getValueFromPosition = (position) => {
-                const height = container.offsetHeight;
-                const percent = 1 - position / height;
-
-                return Math.min(
-                    Math.max(percent * (importanceRef.max - importanceRef.min) + importanceRef.min, importanceRef.min),
-                    importanceRef.max,
-                );
-            };
-
-            function handleStart(e) {
-                isDragging = true;
-                startY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
-                startTop = parseFloat(thumb.style.top) || 0;
-                e.preventDefault();
-            }
-
-            function handleMove(e) {
-                if (!isDragging) return;
-                const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
-                const dy = clientY - startY;
-                const newTop = Math.min(Math.max(0, startTop + dy), container.offsetHeight);
-                const value = getValueFromPosition(newTop);
-                setPosition(value);
-            }
-
-            function handleEnd(e) {
-                isDragging = false;
-
-                let importancePopup = document.querySelector('.importance-popup-overlay');
-
-                if (importancePopup && !e.target.closest('.importance-popup')) {
-                    fireClick(importancePopup.querySelector('.cancel-btn'));
-                }
-            }
-
-            if(isTouchDevice()) {
-                // Touch events
-                thumb.addEventListener('touchstart', handleStart);
-                document.addEventListener('touchmove', handleMove);
-                document.addEventListener('touchend', handleEnd);
+            if (isVisible) {
+                hideModal();
             } else {
-                // Mouse events
-                thumb.addEventListener('mousedown', handleStart);
-                document.addEventListener('mousemove', handleMove);
-                document.addEventListener('mouseup', handleEnd);
+                showModal();
             }
+        });
 
-            // Click track to set value
-            container.addEventListener('click', (e) => {
-                if (e.target === thumb) return;
-                const rect = container.getBoundingClientRect();
-                const clickPosition = e.clientY - rect.top;
-                const value = getValueFromPosition(clickPosition);
-                setPosition(value);
-            });
+        document.addEventListener('click', (e) => {
+            if (isVisible) {
+                e.preventDefault();
+                e.stopPropagation();
 
-            // Set initial position
-            setPosition(currentValue);
+                hideModal();
+            }
+        });
 
-            const closePopup = () => {
-                removeClassEl('active', overlay);
-                setTimeout(() => popupEl.remove(), 300);
-            };
+        contentEl.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
 
-            const cancelBtn = popupEl.querySelector('.cancel-btn');
-            const saveBtn = popupEl.querySelector('.save-btn');
-
-            cancelBtn.addEventListener('click', closePopup);
-
-            saveBtn.addEventListener('click', () => {
-                const value = parseInt(thumb.querySelector('.thumb-value').textContent);
-
-                let importanceValues = importanceRef.values;
-
-                if (!(sectionToken in importanceValues)) {
-                    importanceValues[sectionToken] = {};
-                }
-
-                let prevValue = importanceValues[sectionToken][item.token];
-
-                importanceValues[sectionToken][item.token] = value;
-                befriend.filters.importance.updateIndicator(sectionToken, item.token, value);
-                befriend.filters.importance.saveValue(sectionToken, item, value, prevValue);
-                closePopup();
-            });
-
-            overlay.addEventListener('click', (e) => {
-                if (e.target === overlay) {
-                    closePopup();
-                }
-            });
-
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape') {
-                    closePopup();
-                }
-            });
-        },
+        return wrapper;
     },
     events: {
         init: function () {

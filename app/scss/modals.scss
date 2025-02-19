@@ -25,10 +25,20 @@
             transform: scale(1);
             opacity: 1;
         }
+
+        .cancel-activity {
+            transform: translateY(0);
+        }
+    }
+
+    &.transition-out {
+        .cancel-activity {
+            transform: translateY(0);
+        }
     }
 }
 
-.importance-popup, .cancel-activity-popup {
+.importance-popup {
     background-color: white;
     border-radius: 12px;
     padding: 20px;
@@ -148,6 +158,183 @@
                 &:hover {
                     background-color: darken($brand_color_b, 3%);
                 }
+            }
+        }
+    }
+}
+
+.cancel-activity {
+    $height: 150px;
+    $message_height: 200px;
+
+    position: fixed;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: $height;
+    padding: 0 20px;
+    padding-bottom: var(--sab);
+    background-color: white;
+    transform: translateY($height);
+    transition: all 300ms;
+
+    &.with-message {
+        height: $message_height;
+        transform: translateY($message_height);
+    }
+
+    .heading {
+        font-size: 18px;
+        font-weight: 500;
+        width: 100vw;
+        display: flex;
+        justify-content: center;
+        padding-top: 20px;
+    }
+
+    .sub-heading {
+        padding-top: 15px;
+        font-weight: 300;
+        font-size: 15px;
+        text-align: center;
+    }
+
+    .creator-message {
+        max-width: 240px;
+        margin-left: auto;
+        margin-right: auto;
+        font-weight: 500;
+        font-size: 12px;
+        padding: 0 20px;
+        padding-top: 15px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .info-wrapper {
+        position: absolute;
+        top: 10px;
+        right: calc(#{$info_icon_dim} + 20px);
+    }
+
+    .actions {
+        $gap_lr: 16px;
+        display: flex;
+        gap: 0 $gap_lr;
+        bottom: calc(0 + var(--sab));
+        justify-content: center;
+        width: calc(90vw - #{$gap_lr});
+        max-width: calc(460px - #{$gap_lr});;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: auto;
+
+        .button {
+            width: 50%;
+            padding: 8px 0;
+            font-size: 16px;
+            text-align: center;
+            border-radius: 20px;
+
+            &.discard {
+                background-color: darken($color_lightgray, 0%);
+                color: black;
+            }
+
+            &.cancel {
+                background-color: darken($color_red, 25%);
+                color: white;
+            }
+        }
+    }
+}
+
+.info-wrapper {
+    $caret_size: 12px;
+    position: relative;
+    display: inline-block;
+
+    .info-icon {
+        width: $info_icon_dim;
+        height: $info_icon_dim;
+        cursor: pointer;
+
+        svg {
+            width: 100%;
+            height: 100%;
+            fill: #666;
+            transition: fill 0.2s ease;
+        }
+
+        &:hover svg {
+            fill: #333;
+        }
+    }
+
+    .info-content {
+        position: absolute;
+        background: white;
+        border-radius: 4px;
+        padding: 12px;
+        width: max-content;
+        min-width: 100px;
+        max-width: 200px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.2s ease, visibility 0.2s ease;
+        z-index: 1000;
+        font-size: 13px;
+
+        &::after {
+            content: '';
+            position: absolute;
+            width: $caret_size;
+            height: $caret_size;
+            background: white;
+            transform: rotate(45deg);
+            border-right: 1px solid rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        &.top-right {
+            bottom: calc(100% + $caret_size);
+            right: calc(-1 * ($info_icon_dim / 2));
+
+            &::after {
+                bottom: calc($caret_size/-2);
+                right: $caret_size;
+            }
+        }
+
+        &.top-left {
+            bottom: calc(100% + 12px);
+            left: calc(-1 * ($info_icon_dim / 2));
+
+            &::after {
+                bottom: calc($caret_size/-2);
+                left: $caret_size;
+            }
+        }
+
+        &.bottom-right {
+            top: calc(100% + $caret_size);
+            right: calc(-1 * ($info_icon_dim / 2));
+
+            &::after {
+                top: calc($caret_size/-2);
+                right: $caret_size;
+            }
+        }
+
+        &.bottom-left {
+            top: calc(100% + $caret_size);
+            left: calc(-1 * ($info_icon_dim / 2));
+
+            &::after {
+                top: calc($caret_size/-2);
+                left: $caret_size;
             }
         }
     }

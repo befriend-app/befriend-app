@@ -363,8 +363,12 @@ befriend.activities = {
             const start = activity.data.activity_start;
             const end = activity.data.activity_end;
 
-            //move activity to past section if cancelled
+            //move activity to past section if cancelled or unfulfilled
             let setPast = false;
+
+            if('is_fulfilled' in activity.data && !activity.data.is_fulfilled) {
+                setPast = true;
+            }
 
             if(activity.is_creator) {
                 if(activity.cancelled_at) {
@@ -377,15 +381,12 @@ befriend.activities = {
                 }
             }
 
-            //if I created the activity and then I cancelled it, move to past
-            //if I didn't create the activity but I cancelled my participation, move to past
-
             // add to corresponding section
             if (currentTime >= start && currentTime <= end && !setPast) {
                 activities_organized.current = activity;
             } else if (start > currentTime && !setPast) {
                 activities_organized.upcoming.push(activity);
-            } else if (end < currentTime || !setPast) {
+            } else if (end < currentTime || setPast) {
                 activities_organized.past.push(activity);
             }
         }
@@ -3137,8 +3138,17 @@ befriend.activities = {
                    cancel_button = `<div class="button cancel">Cancel</div>`
                 }
 
-                if(timeNow(true) < activity.activity_start || timeNow(true) - activity.activity_end > 3600 * 24 * 7) {
-                    //do not show report button if the activity time hasn't started or is a week after activity
+                let participants = [];
+
+                for (let [person_token, person] of Object.entries(activity.data?.persons || {})) {
+                    if(person_token !== befriend.getPersonToken()) {
+                        participants.push(person);
+                    }
+                }
+
+                if(participants.length <= 0 || timeNow(true) < activity.activity_start || timeNow(true) - activity.activity_end > 3600 * 24 * 7) {
+                    //do not show report button if there are zero participants,
+                    //the activity time hasn't started, or is a week after activity
                 } else {
                     report_button = `<div class="button report">Report</div>`;
                 }
@@ -3801,6 +3811,129 @@ befriend.activities = {
             befriend.activities.displayActivity.events.onPersonNav();
             befriend.activities.displayActivity.events.onMatchingPersonNav();
         },
+        showCancel: async function () {
+            function closePopup() {
+                addClassEl('transition-out', overlay);
+                removeClassEl('active', overlay);
+
+                setTimeout(function () {
+                    popupEl.remove();
+                }, 300);
+            }
+
+            let class_name = 'cancel-activity-popup-overlay';
+
+            let creator_message = '';
+
+            let activity = befriend.activities.displayActivity.getActivity();
+
+            if(activity?.is_creator) {
+                let activityParticipants = [];
+
+                for (let [person_token, person] of Object.entries(activity.data?.persons || {})) {
+                    if(person_token === befriend.getPersonToken()) {
+                        continue;
+                    }
+
+                    if(!person.cancelled) {
+                        activityParticipants.push(person);
+                    }
+                }
+
+                if(activityParticipants.length >= 2) {
+                    creator_message = `<div class="creator-message">This activity would remain active for the existing participants.</div>`;
+                }
+            }
+
+            let popupHtml =
+                `<div class="${class_name}">
+                    <div class="cancel-activity ${creator_message ? 'with-message' : ''}">
+                        <div class="heading">Cancel Activity</div>
+                        
+                        <div class="sub-heading">Are you sure you wish to cancel?</div>
+                        
+                        ${creator_message}
+                        
+                        <div class="actions">
+                            <div class="button discard">Go Back</div>
+                            <div class="button cancel">Yes, Cancel</div>
+                        </div>
+                    </div>
+                </div>`;
+
+            let popupEl = document.createElement('div');
+            popupEl.innerHTML = popupHtml;
+
+            let infoIcon = befriend.modals.createInfo(`
+                Cancelling too often can prevent you from sending or receiving activity invitations temporarily.
+            `);
+
+            popupEl.querySelector('.cancel-activity').insertAdjacentElement('afterbegin', infoIcon);
+
+            document.body.appendChild(popupEl);
+
+            let discardEl = popupEl.querySelector('.button.discard');
+            let cancelEl = popupEl.querySelector('.button.cancel');
+
+            let overlay = popupEl.querySelector(`.${class_name}`);
+
+            void overlay.offsetWidth;
+
+            await rafAwait();
+
+            addClassEl('active', overlay);
+
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    closePopup();
+                }
+            });
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    closePopup();
+                }
+            });
+
+            discardEl.addEventListener('click', (e) => {
+                e.preventDefault();
+                closePopup();
+            });
+
+            cancelEl.addEventListener('click', async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                let activity = befriend.activities.displayActivity.getActivity();
+                let activity_token = befriend.activities.displayActivity.currentToken;
+
+                try {
+                    let r;
+                    let needsData = true;
+
+                    //person cancelling activity created on 3rd-party network
+                    if(activity.data?.access?.token) {
+                        try {
+                            r = await befriend.networks.put(activity.data?.access.domain, `activities/networks/${activity_token}/cancel`, {
+                                access_token: activity.data?.access.token,
+                                person_token: befriend.getPersonToken()
+                            });
+
+                            needsData = false;
+                        } catch(e) {
+                            console.error(e);
+                        }
+                    }
+
+                    if(needsData) {
+                        r = await befriend.auth.put(`/activities/${activity_token}/cancel`);
+                    }
+
+                } catch(e) {
+                    console.error(e);
+                }
+            });
+        },
         updateData: function (data) {
             if(!data.activity_token) {
                 return;
@@ -4006,6 +4139,10 @@ befriend.activities = {
             onCancel: function () {
                 let el = befriend.els.currentActivityView.querySelector('.button.cancel');
 
+                if(!el) {
+                    return;
+                }
+
                 if(el._listener) {
                     return;
                 }
@@ -4016,7 +4153,7 @@ befriend.activities = {
                     e.preventDefault();
                     e.stopPropagation();
 
-                    befriend.modals.activity.showCancel(befriend.activities.displayActivity.currentToken);
+                    befriend.activities.displayActivity.showCancel(befriend.activities.displayActivity.currentToken);
                 });
             },
             onPersonNav: function () {
