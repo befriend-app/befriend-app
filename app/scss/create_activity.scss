@@ -907,7 +907,7 @@ html.#{$class_create_activity_shown} {
     opacity: 0;
     transition: all 200ms;
     z-index: 1000;
-    right: 15px;
+    left: 15px;
     margin-top: -1px;
 
     &.show {

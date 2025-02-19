@@ -236,6 +236,10 @@
             font-size: 16px;
             text-align: center;
             border-radius: 20px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
             &.discard {
                 background-color: darken($color_lightgray, 0%);
@@ -246,6 +250,35 @@
                 background-color: darken($color_red, 25%);
                 color: white;
             }
+        }
+    }
+}
+
+#cancel-activity-spinner {
+    $dim: 16px;
+    width: $dim;
+    height: $dim;
+    border: 2px solid white;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+    position: absolute;
+    opacity: 0;
+    transition: all 200ms;
+    z-index: 1000;
+    left: 15px;
+
+    &.show {
+        opacity: 1;
+    }
+
+    @keyframes rotation {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
         }
     }
 }

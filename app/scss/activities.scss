@@ -464,7 +464,7 @@
             transform: translateY(-.5px);
         }
 
-        .max-recipients {
+        .max-recipients, .error-message {
             width: 100vw;
             display: flex;
             border: .5px solid lighten(black, 60%);
@@ -490,6 +490,83 @@
                 opacity: 1;
                 visibility: visible;
             }
+        }
+
+        .error-message {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            width: 100vw;
+
+            .message {
+                width: calc(100vw - 60px);
+            }
+
+            .close {
+                width: 30px;
+                height: 30px;
+                position: absolute;
+                transition: all 300ms;
+                right: 20px;
+                cursor: pointer;
+                @include flex-center-col;
+
+                svg {
+                    height: 22px;
+                    fill: white;
+                }
+
+                .message {
+                    font-size: 13px;
+                    color: white;
+                    margin: auto;
+                    position: relative;
+                    width: fit-content;
+                    max-width: 90%;
+                    height: 0;
+                    overflow-y: hidden;
+                    transition:
+                            opacity 300ms ease,
+                            height 300ms ease;
+                }
+
+                .inner {
+                    width: fit-content;
+                    max-width: 100%;
+                    padding: 3px 15px;
+                    border-radius: 6px;
+                }
+
+                .close {
+                    position: absolute;
+                    width: 20px;
+                    height: 20px;
+                    transition:
+                            opacity 300ms ease,
+                            transform 300ms ease;
+                    z-index: 2;
+                    top: -8px;
+                    opacity: 0;
+                    @include flex-center-col;
+
+                    /* Position relative to the inner element */
+                    &::before {
+                        content: '';
+                        position: absolute;
+                        top: 0;
+                        right: 0;
+                        bottom: 0;
+                        left: 0;
+                    }
+
+                    svg {
+                        height: 17px;
+                        background: white;
+                        border-radius: 50%;
+                    }
+                }
+            }
+
         }
 
         .accept-decline {
@@ -587,6 +664,11 @@
         .activity, .notification {
             width: inherit;
             overflow: hidden;
+        }
+
+        .activity {
+            transition: transform 300ms;
+            transform: translateY(0);
         }
 
         .invite {
@@ -814,6 +896,7 @@
                     //border: 1px solid darken($color_red, 20%);
                     background-color: darken($color_red, 25%);
                     color: white;
+                    display: flex;
                 }
 
                 &.report {
@@ -1547,6 +1630,17 @@
 
         &.show {
             display: flex;
+        }
+
+        &.display-error-message {
+            .activity {
+                transform: translateY(40px);
+            }
+
+            .error-message {
+                opacity: 1;
+                visibility: visible;
+            }
         }
 
         .persons-nav {

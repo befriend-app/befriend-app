@@ -521,8 +521,14 @@ befriend.activities = {
         //update activities view every minute
 
         setInterval(function () {
-            // befriend.activities.setView();
-        }, 1000 * 60);
+            //update main activities view
+            befriend.activities.setView();
+
+            //update current activity view if active
+            if(elHasClass(befriend.els.currentActivityView, 'show')) {
+                befriend.activities.displayActivity.display(befriend.activities.displayActivity.currentToken, true, true);
+            }
+        }, 60 * 1000);
     },
     getDurationStr: function(minutes) {
         let duration_str = `${minutes} minutes`;
@@ -2958,6 +2964,8 @@ befriend.activities = {
                     befriend.preventNavigation(true);
                 }
 
+                befriend.activities.displayActivity.toggleErrorMessage(false);
+
                 removeClassEl('show', befriend.els.mainActivitiesView);
                 removeClassEl('show', befriend.els.activityNotificationView);
                 addClassEl('show', befriend.els.currentActivityView);
@@ -3770,31 +3778,57 @@ befriend.activities = {
 
             let matching_html = this.html.matching.getMatching(activity);
 
-            return `<div class="activity">
-                    <div class="top-row">
-                        <div class="back-button">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 416.001 351.9995"><path id="Left_Arrow" d="M400.001,159.9995H54.625L187.313,27.3115c6.252-6.252,6.252-16.376,0-22.624s-16.376-6.252-22.624,0L4.689,164.6875c-6.252,6.252-6.252,16.376,0,22.624l160,160c3.124,3.124,7.22,4.688,11.312,4.688s8.188-1.564,11.312-4.688c6.252-6.252,6.252-16.376,0-22.624L54.625,191.9995h345.376c8.836,0,16-7.164,16-16s-7.164-16-16-16Z"></path></svg>
+            return `<div class="error-message">
+                        <div class="message"></div>
+                        <div class="close">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 448"><g><path d="M303.9838,167.36l-57.44,56.64,57.44,56.64c6.4507,6.0393,6.7841,16.1645.7448,22.6151-.2401.2564-.4885.5048-.7448.7448-3.0195,2.995-7.1071,4.6646-11.36,4.64-4.1974-.0177-8.2198-1.6841-11.2-4.64l-57.44-57.44-56.64,57.44c-2.9802,2.9559-7.0026,4.6223-11.2,4.64-4.2529.0246-8.3405-1.645-11.36-4.64-6.2036-6.2406-6.2036-16.3194,0-22.56l56.64-57.44-56.64-56.64c-5.7478-6.7118-4.9663-16.8122,1.7454-22.56,5.99-5.1297,14.8245-5.1297,20.8146,0l56.64,56.64,56.64-56.64c6.2298-6.4507,16.5093-6.6298,22.96-.4s6.6298,16.5093.4,22.96ZM382.3838,382.4c-87.4819,87.473-229.3109,87.4658-316.7838-.0161-87.473-87.4819-87.4658-229.3109.0162-316.7838,87.4756-87.4667,229.2921-87.4667,316.7677,0,87.4819,87.473,87.4891,229.3019.0161,316.7838l-.0161.0161ZM359.8238,88.16c-75.1107-74.8504-196.6782-74.6393-271.5286.4714-74.8504,75.1107-74.6393,196.6782.4714,271.5286,74.9264,74.6667,196.1308,74.6667,271.0572,0,75.1107-74.8504,75.3218-196.4179.4714-271.5286-.1569-.1574-.314-.3145-.4714-.4714Z"/></g></svg>
                         </div>
-                        
-                        <h2>Activity</h2>
-                        
-                        <div class="date">${date}</div>
                     </div>
                     
-                    ${invite_html}
-                    
-                    <div class="activity-wrapper">
-                        ${overview_html}
+                    <div class="activity">
+                        <div class="top-row">
+                            <div class="back-button">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 416.001 351.9995"><path id="Left_Arrow" d="M400.001,159.9995H54.625L187.313,27.3115c6.252-6.252,6.252-16.376,0-22.624s-16.376-6.252-22.624,0L4.689,164.6875c-6.252,6.252-6.252,16.376,0,22.624l160,160c3.124,3.124,7.22,4.688,11.312,4.688s8.188-1.564,11.312-4.688c6.252-6.252,6.252-16.376,0-22.624L54.625,191.9995h345.376c8.836,0,16-7.164,16-16s-7.164-16-16-16Z"></path></svg>
+                            </div>
+                            
+                            <h2>Activity</h2>
+                            
+                            <div class="date">${date}</div>
+                        </div>
                         
-                        <div class="sections-wrapper">
-                            <div class="sections">
-                                ${who_html}
-                                ${place_html}
-                                ${matching_html}
+                        ${invite_html}
+                        
+                        <div class="activity-wrapper">
+                            ${overview_html}
+                            
+                            <div class="sections-wrapper">
+                                <div class="sections">
+                                    ${who_html}
+                                    ${place_html}
+                                    ${matching_html}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>`;
+                    </div>`;
+        },
+        toggleErrorMessage: function (show, message) {
+            let cls = 'display-error-message';
+
+            let error_el = befriend.els.currentActivityView.querySelector('.error-message');
+
+            if(!error_el) {
+                return;
+            }
+
+            if(message) {
+                error_el.querySelector('.message').innerHTML = message;
+            }
+
+            if(show) {
+                addClassEl(cls, befriend.els.currentActivityView);
+            } else {
+                removeClassEl(cls, befriend.els.currentActivityView);
+            }
         },
         setHtml: function (activity_data) {
             let view_el = befriend.els.currentActivityView.querySelector('.container');
@@ -3805,6 +3839,7 @@ befriend.activities = {
 
             befriend.activities.displayActivity.events.onBack();
             befriend.activities.displayActivity.events.onCancel();
+            befriend.activities.displayActivity.events.onCloseMessage();
             befriend.activities.displayActivity.events.onViewImage();
             befriend.activities.displayActivity.events.onMapsNavigate();
             befriend.activities.displayActivity.events.onReport();
@@ -3855,8 +3890,13 @@ befriend.activities = {
                         ${creator_message}
                         
                         <div class="actions">
-                            <div class="button discard">Go Back</div>
-                            <div class="button cancel">Yes, Cancel</div>
+                            <div class="button discard">
+                                <div class="text">Go Back</div>
+                            </div>
+                            <div class="button cancel">
+                                <div id="cancel-activity-spinner"></div>
+                                <div class="text">Yes, Cancel</div>
+                            </div>
                         </div>
                     </div>
                 </div>`;
@@ -3904,8 +3944,18 @@ befriend.activities = {
                 e.preventDefault();
                 e.stopPropagation();
 
+                if(this._ip) {
+                    return;
+                }
+
+                this._ip = true;
+
                 let activity = befriend.activities.displayActivity.getActivity();
                 let activity_token = befriend.activities.displayActivity.currentToken;
+
+                let spinnerEl = document.getElementById('cancel-activity-spinner');
+
+                addClassEl('show', spinnerEl);
 
                 try {
                     let r;
@@ -3929,9 +3979,14 @@ befriend.activities = {
                         r = await befriend.auth.put(`/activities/${activity_token}/cancel`);
                     }
 
+                    debugger;
                 } catch(e) {
                     console.error(e);
                 }
+
+                removeClassEl('show', spinnerEl);
+
+                this._ip = false;
             });
         },
         updateData: function (data) {
@@ -4154,6 +4209,22 @@ befriend.activities = {
                     e.stopPropagation();
 
                     befriend.activities.displayActivity.showCancel(befriend.activities.displayActivity.currentToken);
+                });
+            },
+            onCloseMessage: function () {
+                let el = befriend.els.currentActivityView.querySelector('.close');
+
+                if(el._listener) {
+                    return;
+                }
+
+                el._listener = true;
+
+                el.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    befriend.activities.displayActivity.toggleErrorMessage(false);
                 });
             },
             onPersonNav: function () {
