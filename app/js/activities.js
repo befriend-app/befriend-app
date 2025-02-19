@@ -171,11 +171,17 @@ befriend.activities = {
             let statusTag = false;
 
             if(is_notification) {
-                //todo if activity cancelled
+                let isCancelled = activity.activity.cancelled_at;
                 let isDeclined = activity.declined_at || activity.notification?.declined_at;
                 let isPast = timeNow(true) > activity_data.activity_end;
 
-                if(isDeclined) {
+                if(isCancelled) {
+                    statusTag = true;
+
+                    available_html = `<div class="status-tag cancelled">
+                                <div class="label">Cancelled</div>
+                            </div>`;
+                } else if(isDeclined) {
                     statusTag = true;
 
                     available_html = `<div class="available declined">
@@ -185,7 +191,7 @@ befriend.activities = {
                     statusTag = true;
 
                     available_html = `<div class="available ended">
-                                <div class="label">Ended</div>
+                                <div class="label">Past</div>
                             </div>`;
                 } else {
                     available_html = `<div class="available ${available_qty <= 0 ? 'unavailable' : ''}">
