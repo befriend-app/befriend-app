@@ -427,6 +427,7 @@ befriend.me = {
         return new Promise(async (resolve, reject) => {
             try {
                 befriend.toggleSpinner(true);
+
                 let r = await befriend.auth.post('/me/sections', { key });
 
                 befriend.me.data.sections.active[key] = r.data;
