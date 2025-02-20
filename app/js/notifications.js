@@ -24,6 +24,8 @@ befriend.notifications = {
         },
     },
     messages: {
+        going: `You're going!`,
+        declined: 'You declined this invitation',
         cancelled: 'Activity cancelled',
         unavailable: 'Unavailable: max spots reached',
         past: 'This activity is in the past'
@@ -172,9 +174,13 @@ befriend.notifications = {
 
              view_el.innerHTML = html;
 
-             //if notification is cancelled or in the past
-            if(activity_data.activity.cancelled_at) {
+             //set header
+            if(activity_data.notification.declined_at) {
+                befriend.notifications.showDeclined();
+            } else if(activity_data.activity.cancelled_at) {
                 befriend.notifications.showUnavailable(befriend.notifications.messages.cancelled);
+            } else if(activity_data.notification.accepted_at) {
+
             } else if(timeNow(true) > activity_data.activity.activity_end) {
                 befriend.notifications.showUnavailable(befriend.activities.messages.past, true);
             }
@@ -193,6 +199,20 @@ befriend.notifications = {
         } catch(e) {
             console.error(e);
         }
+    },
+    showAccepted: function () {
+        let accept_el = befriend.els.activityNotificationView.querySelector('.button.decline');
+        let parent_el = accept_el.closest('.accept-decline');
+
+        accept_el.querySelector('.text').innerHTML = befriend.notifications.messages.going;
+
+        addClassEl('accepted', parent_el);
+    },
+    showDeclined: function () {
+        let decline_el = befriend.els.activityNotificationView.querySelector('.button.decline');
+        let parent_el = decline_el.closest('.accept-decline');
+        decline_el.querySelector('.text').innerHTML = befriend.notifications.messages.declined;
+        addClassEl('declined', parent_el);
     },
     getViewHtml: function (notification) {
         function getInvite() {
@@ -255,7 +275,7 @@ befriend.notifications = {
                                         <div class="title">Available</div>
                                         <div class="text">
                                             <div class="new"></div>
-                                            <div class="current">${notification.activity?.persons_qty}</div>
+                                            <div class="current">${notification.activity?.spots_available}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -736,9 +756,7 @@ befriend.notifications = {
                         if(responseData.success) {
                             currentNotification.notification.accepted_at = timeNow();
 
-                            accept_el.querySelector('.text').innerHTML = `You're going!`;
-
-                            addClassEl('accepted', parent_el);
+                            befriend.notifications.showAccepted();
 
                             befriend.notifications.updateAvailableSpots(activity_token, responseData.activity.data.spots_available);
 
@@ -767,8 +785,6 @@ befriend.notifications = {
         },
         onDecline: function () {
             let decline_el = befriend.els.activityNotificationView.querySelector('.button.decline');
-
-            let parent_el = decline_el.closest('.accept-decline');
 
             if(decline_el._listener) {
                 return;
@@ -819,8 +835,8 @@ befriend.notifications = {
 
                         if(responseData.success) {
                             currentNotification.notification.declined_at = timeNow();
-                            decline_el.querySelector('.text').innerHTML = 'You declined this invitation';
-                            addClassEl('declined', parent_el);
+
+                            befriend.notifications.showDeclined();
 
                             befriend.activities.setView();
                         }
