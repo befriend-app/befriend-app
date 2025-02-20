@@ -410,6 +410,10 @@
             }
 
             .past-activities {
+                .no-items {
+                    padding-left: 0 !important;
+                }
+
                 .container {
                     //max-height: 100vh !important;
                     max-height: initial !important;
