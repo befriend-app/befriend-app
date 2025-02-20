@@ -2937,9 +2937,12 @@ befriend.activities = {
                         let r;
                         let needsData = true;
 
+                        let prevAccess = activity_data.access;
+
                         if(activity_data.access?.token) {
                             try {
-                                r = await befriend.networks.get(activity_data.access.domain, `activities/networks/${activity_token}/${activity_data.access.token}`, {
+                                r = await befriend.networks.get(activity_data.access.domain, `activities/networks/${activity_token}`, {
+                                    access_token: activity_data.access.token,
                                     person_token: befriend.getPersonToken()
                                 });
 
@@ -2954,6 +2957,10 @@ befriend.activities = {
                         }
 
                         activity_data = befriend.activities.data.all[activity_token] = r.data;
+
+                        if(prevAccess) {
+                            activity_data.access = prevAccess;
+                        }
 
                         activity_data.enriched = true;
                     } catch(e) {
@@ -3126,6 +3133,8 @@ befriend.activities = {
                     mode_icon_html = `<div class="icon">${selected_mode.icon}</div>`;
                 }
 
+                let accepted_qty = isNumeric(activity.spots?.accepted) ? activity.spots.accepted : activity.persons_qty - activity.spots_available;
+
                 return  `<div class="overview">
                                 <div class="friends-mode">
                                     <div class="mode sub-section">
@@ -3150,7 +3159,7 @@ befriend.activities = {
                                         <div class="title">Accepted</div>
                                         <div class="text">
                                             <div class="new"></div>
-                                            <div class="current">${activity?.persons_qty - activity.spots_available}</div>
+                                            <div class="current">${accepted_qty}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -3978,9 +3987,16 @@ befriend.activities = {
                     return;
                 }
 
+                let activity = befriend.activities.displayActivity.getActivity();
+
+                if(!activity) {
+                    return;
+                }
+
                 this._ip = true;
 
-                let activity = befriend.activities.displayActivity.getActivity();
+                activity.cancellation_ip = true;
+
                 let activity_token = befriend.activities.displayActivity.currentToken;
 
                 let spinnerEl = document.getElementById('cancel-activity-spinner');
@@ -3989,23 +4005,16 @@ befriend.activities = {
 
                 try {
                     let r;
-                    let needsData = true;
+
+                    console.log(activity.access);
 
                     //person cancelling activity created on 3rd-party network
-                    if(activity.data?.access?.token) {
-                        try {
-                            r = await befriend.networks.put(activity.data?.access.domain, `activities/networks/${activity_token}/cancel`, {
-                                access_token: activity.data?.access.token,
-                                person_token: befriend.getPersonToken()
-                            });
-
-                            needsData = false;
-                        } catch(e) {
-                            console.error(e);
-                        }
-                    }
-
-                    if(needsData) {
+                    if(activity.access?.token) {
+                        r = await befriend.networks.put(activity.access.domain, `activities/networks/cancel/${activity_token}`, {
+                            access_token: activity.access.token,
+                            person_token: befriend.getPersonToken()
+                        });
+                    } else {
                         r = await befriend.auth.put(`/activities/${activity_token}/cancel`);
                     }
 
@@ -4014,6 +4023,8 @@ befriend.activities = {
                     if(r.status === 202) {
                         //update activity data
                         activity.cancelled_at = r.data.cancelled_at;
+
+                        activity.data.spots = r.data.spots;
 
                         if(r.data.activity_cancelled_at) {
                             activity.data.cancelled_at = r.data.activity_cancelled_at;
@@ -4036,6 +4047,8 @@ befriend.activities = {
 
                     if(message) {
                         befriend.activities.displayActivity.toggleMessage(true, message, false);
+                    } else {
+                        befriend.activities.displayActivity.toggleMessage(true, 'Error cancelling activity', false);
                     }
                 }
 
@@ -4044,6 +4057,8 @@ befriend.activities = {
                 closePopup();
 
                 this._ip = false;
+
+                activity.cancellation_ip = false;
             });
         },
         updateData: function (data) {
@@ -4085,6 +4100,10 @@ befriend.activities = {
 
             if(data.activity_cancelled_at) {
                 activity.data.cancelled_at = data.activity_cancelled_at;
+            }
+
+            if(activity.cancellation_ip) {
+                return;
             }
 
             //update main view on data update

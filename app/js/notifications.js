@@ -104,8 +104,9 @@ befriend.notifications = {
                 if(notification.access?.token) {
                     let r = await befriend.networks.get(
                         notification.access.domain,
-                        `activities/networks/notifications/${notification.activity_token}/${notification.access.token}`,
+                        `activities/networks/notifications/${notification.activity_token}`,
                         {
+                            access_token: notification.access.token,
                             person_token: befriend.getPersonToken()
                         }
                     );
@@ -694,7 +695,6 @@ befriend.notifications = {
         },
         onAccept: function () {
             let accept_el = befriend.els.activityNotificationView.querySelector('.button.accept');
-            let parent_el = accept_el.closest('.accept-decline');
 
             if(accept_el._listener) {
                 return;
@@ -732,8 +732,9 @@ befriend.notifications = {
                         if(currentNotification.access?.token) { //3rd-party network
                             let r = await befriend.networks.put(
                                 currentNotification.access.domain,
-                                `activities/networks/notifications/accept/${activity.activity_token}/${currentNotification.access.token}`,
+                                `activities/networks/notifications/accept/${activity.activity_token}`,
                                 {
+                                    access_token: currentNotification.access.token,
                                     person_token: befriend.getPersonToken(),
                                     first_name: befriend.me.data?.me?.first_name || null,
                                     image_url: befriend.me.data?.me?.image_url || null,
@@ -763,7 +764,7 @@ befriend.notifications = {
                             setTimeout(function () {
                                 befriend.activities.displayActivity.display(activity_token, true, true);
                                 befriend.activities.displayActivity.transition(befriend.els.activityNotificationView, befriend.els.currentActivityView);
-                            }, 1000);
+                            }, 600);
                         } else {
                             befriend.notifications.showUnavailable(responseData.data.error);
                         }
@@ -821,8 +822,9 @@ befriend.notifications = {
                         if(currentNotification.access?.token) { //3rd-party network
                             let r = await befriend.networks.put(
                                 currentNotification.access.domain,
-                                `activities/networks/notifications/decline/${activity.activity_token}/${currentNotification.access.token}`,
+                                `activities/networks/notifications/decline/${activity.activity_token}`,
                                 {
+                                    access_token: currentNotification.access.token,
                                     person_token: befriend.getPersonToken()
                                 }
                             );
