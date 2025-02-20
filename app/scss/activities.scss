@@ -225,7 +225,7 @@
                     border-color: transparent;
 
                     .label {
-                        background-color: darken($color_red, 20%);
+                        background-color: $cancelled_color;
                         color: white;
                         border-radius: $tag_br;
                     }
@@ -235,7 +235,7 @@
                     border-color: transparent;
 
                     .label {
-                        background-color: darken($color_red, 20%);
+                        background-color: darken($color_red, 22.5%);
                         color: white;
                     }
                 }
@@ -917,8 +917,7 @@
                 border-radius: 6px;
 
                 &.cancel {
-                    //border: 1px solid darken($color_red, 20%);
-                    background-color: darken($color_red, 25%);
+                    background-color: $cancelled_color;
                     color: white;
                     display: flex;
                 }
@@ -939,7 +938,7 @@
             font-weight: 500;
 
             &.cancelled {
-                background-color: darken($color_red, 20%);
+                background-color: $cancelled_color;
                 color: white;
             }
 

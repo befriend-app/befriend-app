@@ -4083,6 +4083,10 @@ befriend.activities = {
                 activity.data.is_unfulfilled = data.is_unfulfilled;
             }
 
+            if(data.activity_cancelled_at) {
+                activity.data.cancelled_at = data.activity_cancelled_at;
+            }
+
             //update main view on data update
             befriend.activities.setView();
 
