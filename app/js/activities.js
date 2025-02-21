@@ -4139,6 +4139,13 @@ befriend.activities = {
             this.updateSpotsAccepted(activity_token);
             this.updateWho(activity_token);
             this.updateMatching(activity_token);
+
+            let isCancelled = befriend.activities.data.isCancelled(activity_token);
+
+            if(isCancelled) {
+                //update entire view
+                befriend.activities.displayActivity.display(activity_token, true, true);
+            }
         },
         updateSpotsAccepted: function (activity_token) {
             let activity = befriend.activities.data.all[activity_token];
