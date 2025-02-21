@@ -237,6 +237,10 @@ befriend.activities = {
 
                     let person = activity_data.persons[person_token];
 
+                    if(person.cancelled_at) {
+                        continue;
+                    }
+
                     if(person?.image_url) {
                         faces_html += `<div class="face" style="background-image: url(${person.image_url})"></div>`;
                     }
@@ -3293,10 +3297,16 @@ befriend.activities = {
                 let defaultSet = false;
                 let unknown_person_int = 1;
 
+                console.log(persons);
+
                 for(let person_token in persons) {
                     let person = persons[person_token];
 
                     if(person_token === befriend.getPersonToken()) {
+                        continue;
+                    }
+
+                    if(person.cancelled_at) {
                         continue;
                     }
 
@@ -3749,6 +3759,10 @@ befriend.activities = {
                                 continue;
                             }
 
+                            if(person.cancelled_at) {
+                                continue;
+                            }
+
                             persons_nav_html += `<div class="person-nav ${i === 0 ? 'active' : ''}" data-person-token="${person_token}">
                                     <div class="image" style="background-image: url(${person.image_url})"></div>
                                     <div class="name">${person.first_name || `Person ${unknown_person_int++}`}</div>
@@ -3771,6 +3785,11 @@ befriend.activities = {
                     }
 
                     let persons_nav = this.getPersonNav(activity);
+
+                    if(!persons_nav) {
+                        return '';
+                    }
+
                     let content = this.getContent(default_person_matching);
 
                     html = `<div class="persons-nav">
@@ -4195,16 +4214,20 @@ befriend.activities = {
             let place_el = befriend.els.currentActivityView.querySelector('.section.place');
 
             if(matching_el) {
-                let prev_selected_person = matching_el.querySelector('.person-nav.active');
+                if(!html) {
+                    matching_el.parentNode.removeChild(matching_el);
+                } else {
+                    let prev_selected_person = matching_el.querySelector('.person-nav.active');
 
-                let el = document.createElement('div');
+                    let el = document.createElement('div');
 
-                el.innerHTML = html;
+                    el.innerHTML = html;
 
-                matching_el.innerHTML = el.querySelector('.matching').innerHTML;
+                    matching_el.innerHTML = el.querySelector('.matching').innerHTML;
 
-                if(prev_selected_person) {
-                    befriend.activities.displayActivity.selectMatchingPersonNav(prev_selected_person.getAttribute('data-person-token'));
+                    if(prev_selected_person) {
+                        befriend.activities.displayActivity.selectMatchingPersonNav(prev_selected_person.getAttribute('data-person-token'));
+                    }
                 }
             } else {
                 place_el.insertAdjacentHTML('afterend', html);
