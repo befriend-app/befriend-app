@@ -2888,6 +2888,7 @@ befriend.activities = {
             notifications_sent: 'Notifications sent to matches.',
             no_matches: 'No matches accepted this activity.',
             cancelled: 'This activity was cancelled.',
+            unfulfilled: 'This activity was unfulfilled.',
             error: 'Error cancelling activity'
         },
         getActivity: function () {
@@ -3343,6 +3344,10 @@ befriend.activities = {
 
                     if(befriend.activities.data.isCancelled(activity.activity_token)) {
                         message = befriend.activities.displayActivity.messages.cancelled;
+                    }
+
+                    if(befriend.activities.data.isUnfulfilled(activity.activity_token)) {
+                        message = befriend.activities.displayActivity.messages.unfulfilled;
                     }
 
                     html = `<div class="no-persons">${message}</div>`
@@ -3903,6 +3908,8 @@ befriend.activities = {
             } else {
                 removeClassEl(cls, befriend.els.currentActivityView);
             }
+
+            befriend.styles.displayActivity.updateSectionsHeight();
         },
         setHtml: function (activity_data) {
             let view_el = befriend.els.currentActivityView.querySelector('.container');
@@ -4129,8 +4136,8 @@ befriend.activities = {
                 activity.data.persons = data.persons;
             }
 
-            if(typeof data.is_unfulfilled !== 'undefined') {
-                activity.data.is_unfulfilled = data.is_unfulfilled;
+            if('is_fulfilled' in data) {
+                activity.data.is_fulfilled = data.is_fulfilled;
             }
 
             if(data.activity_cancelled_at) {
@@ -4145,9 +4152,9 @@ befriend.activities = {
             befriend.activities.setView();
 
             //update displayed activity view with new data
-            this.updateView(data.activity_token, data.activity_cancelled_at);
+            this.updateView(data.activity_token, data.activity_cancelled_at, data.is_fulfilled);
         },
-        updateView: async function (activity_token, cancelled_at = null) {
+        updateView: async function (activity_token, cancelled_at = null, is_fulfilled) {
             if(activity_token !== this.currentToken) {
                 return;
             }
@@ -4157,18 +4164,22 @@ befriend.activities = {
             this.updateMatching(activity_token);
 
             let isCancelled = befriend.activities.data.isCancelled(activity_token);
+            let isUnfulfilled = befriend.activities.data.isUnfulfilled(activity_token);
 
-            if(isCancelled) {
-                //update entire view
+            if(isCancelled || isUnfulfilled) {
                 try {
                     await befriend.activities.displayActivity.display(activity_token, true, true);
-
-                    if(cancelled_at) {
-                        befriend.activities.displayActivity.toggleMessage(true, befriend.activities.displayActivity.messages.cancelled, false);
-                    }
                 } catch(e) {
-
+                    console.error(e);
                 }
+            }
+
+            if(cancelled_at) {
+                befriend.activities.displayActivity.toggleMessage(true, befriend.activities.displayActivity.messages.cancelled, false);
+            }
+
+            if(!is_fulfilled && (typeof is_fulfilled === 'boolean' || isNumeric(is_fulfilled))) {
+
             }
         },
         updateSpotsAccepted: function (activity_token) {

@@ -275,8 +275,8 @@ function lastArrItem(els) {
     return els[els.length - 1];
 }
 
-function isNumeric(obj) {
-    return !isNaN(parseFloat(obj)) && isFinite(obj);
+function isNumeric(val) {
+    return !isNaN(parseFloat(val)) && isFinite(val);
 }
 
 function isZIPFormat(str) {
