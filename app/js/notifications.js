@@ -586,8 +586,12 @@ befriend.notifications = {
 
         if(notificationObj.activity.cancelled_at) {
             befriend.notifications.showUnavailable(befriend.notifications.messages.cancelled);
-        } else if(spots_available <= 0 && !notification.accepted_at) {
-            befriend.notifications.showUnavailable(befriend.notifications.messages.unavailable);
+        } else if(!notification.accepted_at && !notification.declined_at) {
+            if(spots_available <= 0) {
+                befriend.notifications.showUnavailable(befriend.notifications.messages.unavailable);
+            } else {
+                befriend.notifications.showAcceptDecline();
+            }
         }
 
         setTimeout(async () => {
@@ -629,6 +633,17 @@ befriend.notifications = {
 
         addClassEl('show', max_recipients_el);
         addClassEl('hide', accept_decline_el);
+    },
+    showAcceptDecline: function () {
+        let max_recipients_el = befriend.els.activityNotificationView.querySelector('.max-recipients');
+        let accept_decline_el = befriend.els.activityNotificationView.querySelector('.accept-decline');
+
+        if(!max_recipients_el || !accept_decline_el) {
+            return;
+        }
+
+        removeClassEl('show', max_recipients_el);
+        removeClassEl('hide', accept_decline_el);
     },
     events: {
         init: function () {
