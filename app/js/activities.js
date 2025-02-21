@@ -3863,7 +3863,7 @@ befriend.activities = {
                         </div>
                     </div>`;
         },
-        toggleMessage: function (show, message, is_success) {
+        toggleMessage: async function (show, message, is_success) {
             let cls = 'display-message';
 
             let message_el = befriend.els.currentActivityView.querySelector('.activity-message');
@@ -3875,12 +3875,24 @@ befriend.activities = {
             if(is_success) {
                 addClassEl('success', message_el);
             } else {
-                removeClassEl('success', message_el);
+                if(!show && elHasClass(message_el, 'success')) {
+                    setTimeout(function () {
+                        removeClassEl('success', message_el);
+                    }, 300);
+                } else {
+                    removeClassEl('success', message_el);
+                }
             }
 
             if(message) {
                 message_el.querySelector('.message').innerHTML = message;
             }
+
+            addClassEl('no-transition', message_el);
+
+            await rafAwait();
+
+            removeClassEl('no-transition', message_el);
 
             if(show) {
                 addClassEl(cls, befriend.els.currentActivityView);
