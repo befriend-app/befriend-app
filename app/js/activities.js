@@ -2884,6 +2884,12 @@ befriend.activities = {
     },
     displayActivity: {
         currentToken: null,
+        messages: {
+            notifications_sent: 'Notifications sent to matches.',
+            no_matches: 'No matches accepted this activity.',
+            cancelled: 'This activity was cancelled.',
+            error: 'Error cancelling activity'
+        },
         getActivity: function () {
             return befriend.activities.data.all[this.currentToken] || null;
         },
@@ -3297,8 +3303,6 @@ befriend.activities = {
                 let defaultSet = false;
                 let unknown_person_int = 1;
 
-                console.log(persons);
-
                 for(let person_token in persons) {
                     let person = persons[person_token];
 
@@ -3331,14 +3335,14 @@ befriend.activities = {
                                 ${person_html}
                             </div>`;
                 } else {
-                    let message = `Notifications sent to matches.`;
+                    let message = befriend.activities.displayActivity.messages.notifications_sent;
 
                     if(timeNow(true) > activity.activity_end) {
-                        message = 'No matches accepted this activity.';
+                        message = befriend.activities.displayActivity.messages.no_matches;
                     }
 
                     if(befriend.activities.data.isCancelled(activity.activity_token)) {
-                        message = 'This activity was cancelled.';
+                        message = befriend.activities.displayActivity.messages.cancelled;
                     }
 
                     html = `<div class="no-persons">${message}</div>`
@@ -4079,7 +4083,7 @@ befriend.activities = {
                     if(message) {
                         befriend.activities.displayActivity.toggleMessage(true, message, false);
                     } else {
-                        befriend.activities.displayActivity.toggleMessage(true, 'Error cancelling activity', false);
+                        befriend.activities.displayActivity.toggleMessage(true, befriend.activities.displayActivity.messages.error, false);
                     }
                 }
 
@@ -4141,9 +4145,9 @@ befriend.activities = {
             befriend.activities.setView();
 
             //update displayed activity view with new data
-            this.updateView(data.activity_token);
+            this.updateView(data.activity_token, data.activity_cancelled_at);
         },
-        updateView: function (activity_token) {
+        updateView: async function (activity_token, cancelled_at = null) {
             if(activity_token !== this.currentToken) {
                 return;
             }
@@ -4156,7 +4160,15 @@ befriend.activities = {
 
             if(isCancelled) {
                 //update entire view
-                befriend.activities.displayActivity.display(activity_token, true, true);
+                try {
+                    await befriend.activities.displayActivity.display(activity_token, true, true);
+
+                    if(cancelled_at) {
+                        befriend.activities.displayActivity.toggleMessage(true, befriend.activities.displayActivity.messages.cancelled, false);
+                    }
+                } catch(e) {
+
+                }
             }
         },
         updateSpotsAccepted: function (activity_token) {

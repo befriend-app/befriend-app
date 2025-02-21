@@ -299,7 +299,8 @@
                 flex-wrap: wrap;
                 gap: 10px $gap_lr;
                 margin-top: calc($accepted_available_label_h + 12px);
-                max-width: calc($dim * 3 + $gap_lr * 2 + 10px);
+                width: calc($dim * 3 + $gap_lr * 2 + 10px);
+
                 margin-left: auto;
                 justify-content: end;
 
