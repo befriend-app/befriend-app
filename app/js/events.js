@@ -35,6 +35,19 @@ befriend.events = {
 
             if (befriend.activities.createActivity.isShown()) {
                 //do nothing
+            } else if (befriend.activities.displayActivity.isShown()) {
+                //hide check in error
+                let checkInEl = befriend.els.currentActivityView.querySelector('.check-in');
+
+                if(checkInEl) {
+                    let checkInError = checkInEl.querySelector('.error');
+
+                    if(elHasClass(checkInError, 'show')) {
+                        if(!e.target.closest('.error')) {
+                            removeClassEl('show', checkInError);
+                        }
+                    }
+                }
             } else if (befriend.places.activity.isPlacesShown()) {
                 //hide places to bottom
                 if (!e.target.closest('#places')) {

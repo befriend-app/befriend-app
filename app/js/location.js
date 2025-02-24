@@ -52,7 +52,7 @@ befriend.location = {
                 befriend.maps.updateLocationIf();
                 befriend.location.saveLocationIf();
 
-                resolve();
+                resolve(befriend.location.device);
             }
 
             function geoLocationError(err) {

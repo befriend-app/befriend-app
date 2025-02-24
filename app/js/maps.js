@@ -335,6 +335,7 @@ befriend.maps = {
         let lat_diff = befriend.location.prev.map
             ? Math.abs(currentMapCoords.lat - befriend.location.prev.map.lat)
             : null;
+
         let lon_diff = befriend.location.prev.map
             ? Math.abs(currentMapCoords.lon - befriend.location.prev.map.lon)
             : null;

@@ -3119,6 +3119,9 @@ befriend.activities = {
                 console.error(e);
             }
         },
+        isShown: function() {
+            return elHasClass('activities', 'active') && elHasClass(befriend.els.currentActivityView, 'show');
+        },
         html: {
             getInvite: function (activity) {
                 let isCancelled = befriend.activities.data.isCancelled(activity.activity_token);
@@ -3997,7 +4000,11 @@ befriend.activities = {
                 for(let pt in activity.data.persons) {
                     let p = activity.data.persons[pt];
 
-                    if(!latestAcceptance > p.accepted_at > latestAcceptance) {
+                    if(p.is_creator) {
+                        continue;
+                    }
+
+                    if(!latestAcceptance || p.accepted_at > latestAcceptance) {
                         latestAcceptance = p.accepted_at;
                     }
                 }
@@ -4065,6 +4072,7 @@ befriend.activities = {
 
             befriend.activities.displayActivity.events.onBack();
             befriend.activities.displayActivity.events.onCancel();
+            befriend.activities.displayActivity.events.onCheckIn();
             befriend.activities.displayActivity.events.onCloseMessage();
             befriend.activities.displayActivity.events.onViewImage();
             befriend.activities.displayActivity.events.onMapsNavigate();
@@ -4499,6 +4507,68 @@ befriend.activities = {
                     e.stopPropagation();
 
                     befriend.activities.displayActivity.showCancel(befriend.activities.displayActivity.currentToken);
+                });
+            },
+            onCheckIn: function () {
+                let checkInEl = befriend.els.currentActivityView.querySelector('.check-in');
+
+                if(!checkInEl) {
+                    return;
+                }
+
+                let checkInButtonEl = checkInEl.querySelector('.button');
+
+                if(checkInButtonEl._listener) {
+                    return;
+                }
+
+                checkInButtonEl._listener = true;
+
+                checkInButtonEl.addEventListener('click', async function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    if(this._ip) {
+                        return;
+                    }
+
+                    let checkInErrorEl = checkInEl.querySelector('.error');
+
+                    removeClassEl('show', checkInErrorEl);
+
+                    this._ip = true;
+
+                    let activityToken = befriend.activities.displayActivity.currentToken;
+
+                    let errorMessage = null;
+
+                    try {
+                        let currentLocation = await befriend.location.getLocation();
+
+                        let r = await befriend.auth.post(`/activities/${activityToken}/check-in`, {
+                            location: currentLocation
+                        });
+
+                        if(r.status === 201) {
+
+                        } else {
+                            errorMessage = r.data.error || 'Error checking in for activity';
+                        }
+                    } catch(e) {
+                        if(e?.response?.data?.error) {
+                            errorMessage = e.response.data.error;
+                        } else {
+                            console.error(e);
+                            errorMessage = 'Error checking in for activity';
+                        }
+                    }
+
+                    if(errorMessage) {
+                        checkInErrorEl.innerHTML = errorMessage;
+                        addClassEl('show', checkInErrorEl);
+                    }
+
+                    this._ip = false;
                 });
             },
             onCloseMessage: function () {
