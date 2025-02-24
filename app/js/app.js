@@ -209,6 +209,18 @@ window['befriend'] = {
                 }
             });
         },
+        post: function (domain, route, data = {}) {
+            return new Promise(async (resolve, reject) => {
+                try {
+                    let r = await axios.post(joinPaths(domain, route), data);
+
+                    resolve(r);
+                } catch (e) {
+                    console.error(e);
+                    return reject(e);
+                }
+            });
+        },
         put: function (domain, route, data = {}) {
             return new Promise(async (resolve, reject) => {
                 try {

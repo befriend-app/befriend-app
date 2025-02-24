@@ -3983,14 +3983,14 @@ befriend.activities = {
                 let activity = befriend.activities.data.getActivity(activity_token);
 
                 if(!activity || !activity.data?.persons) {
-                    return;
+                    return this.toggleCheckIn(false);
                 }
 
                 //do not show check-in if it's too early
                 let checkInStart = activity.activity_start - (befriend.activities.data.rules?.checkIn?.minsBefore || 30) * 60;
 
                 if(timeNow(true) < checkInStart) {
-                    return;
+                    return this.toggleCheckIn(false);
                 }
 
                 let checkInEnd = activity.activity_start + (befriend.activities.data.rules?.checkIn?.minsAfter || 20) * 60;
@@ -4000,7 +4000,7 @@ befriend.activities = {
                 for(let pt in activity.data.persons) {
                     let p = activity.data.persons[pt];
 
-                    if(p.is_creator) {
+                    if(p.is_creator || p.cancelled_at) {
                         continue;
                     }
 
@@ -4020,19 +4020,19 @@ befriend.activities = {
 
                 //do not show check-in if it's past the end of check-in time
                 if(timeNow(true) > checkInEnd) {
-                    return;
+                    return this.toggleCheckIn(false);
                 }
 
                 //do not allow check-in if activity cancelled
                 if(activity.data?.cancelled_at) {
-                    return;
+                    return this.toggleCheckIn(false);
                 }
 
                 //do not show check-in if person already cancelled their participation
                 let myParticipation = activity.data.persons?.[befriend.getPersonToken()];
 
                 if(!myParticipation || myParticipation?.cancelled_at) {
-                    return;
+                    return this.toggleCheckIn(false);
                 }
             }
 
@@ -4539,15 +4539,34 @@ befriend.activities = {
                     this._ip = true;
 
                     let activityToken = befriend.activities.displayActivity.currentToken;
+                    let activity = befriend.activities.data.getActivity(activityToken);
+
+                    if(!activity) {
+                        this._ip = false;
+                        return;
+                    }
 
                     let errorMessage = null;
 
                     try {
                         let currentLocation = await befriend.location.getLocation();
 
-                        let r = await befriend.auth.post(`/activities/${activityToken}/check-in`, {
-                            location: currentLocation
-                        });
+                        let r;
+
+                        //check-in to activity created on 3rd-party network
+                        if(activity.access?.token) {
+                            r = await befriend.networks.post(activity.access.domain, `activities/networks/check-in/${activityToken}`, {
+                                access_token: activity.access.token,
+                                person_token: befriend.getPersonToken(),
+                                location: currentLocation
+                            });
+                        } else {
+                            r = await befriend.auth.post(`/activities/${activityToken}/check-in`, {
+                                location: currentLocation
+                            });
+                        }
+
+                        let message = r.data?.message;
 
                         if(r.status === 201) {
 
