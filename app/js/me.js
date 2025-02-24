@@ -324,7 +324,8 @@ befriend.me = {
 
                 befriend.user.network = data.network;
 
-                befriend.activities.data.setData(data.activities);
+                befriend.activities.data.setData(data.activities.activities);
+                befriend.activities.data.setRules(data.activities.rules);
                 befriend.notifications.data.setData(data.notifications);
 
                 befriend.me.data.me = data.me;

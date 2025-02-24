@@ -3,10 +3,14 @@ befriend.activities = {
         draft: null,
         current: null,
         all: null,
+        rules: null,
         setData: function (data) {
             befriend.activities.data.all = data;
 
             befriend.friends.updateMaxSelectableFriends();
+        },
+        setRules: function (rules) {
+            befriend.activities.data.rules = rules;
         },
         updateActivity: function (activity) {
             if(!befriend.activities.data.all) {
@@ -70,6 +74,23 @@ befriend.activities = {
             }
 
             befriend.activities.setView();
+
+            resolve();
+        });
+    },
+    getRules: function() {
+        return new Promise(async (resolve, reject) => {
+            if(befriend.activities.data.rules) {
+                return resolve();
+            }
+
+            try {
+                 let r = await befriend.api.get(`/activities/rules`);
+
+                 befriend.activities.data.setRules(r.data);
+            } catch(e) {
+                console.error(e);
+            }
 
             resolve();
         });
@@ -524,17 +545,15 @@ befriend.activities = {
     },
     updateViewInterval: function () {
         //update activities view every minute
-
         setInterval(function () {
             //update main activities view
-            // befriend.activities.setView();
+            befriend.activities.setView();
 
             let activitiesViewEl = befriend.els.views.querySelector(`.view-activities`);
 
             //update current activity view if active
             if(elHasClass(activitiesViewEl, 'active') && elHasClass(befriend.els.currentActivityView, 'show')) {
-                //todo
-                // befriend.activities.displayActivity.display(befriend.activities.displayActivity.currentToken, true, true);
+                befriend.activities.displayActivity.display(befriend.activities.displayActivity.currentToken, true, true);
             }
         }, 60 * 1000);
     },
@@ -1612,6 +1631,12 @@ befriend.activities = {
             }
         },
         display: async function() {
+            try {
+                await befriend.activities.getRules();
+            } catch(e) {
+
+            }
+
             befriend.when.selected.createActivity = structuredClone(befriend.when.selected.main);
             befriend.activities.createActivity.setHtml();
 
@@ -2942,6 +2967,13 @@ befriend.activities = {
 
                 this.currentToken = activity_token;
 
+                //get activity rules if needed
+                try {
+                    await befriend.activities.getRules();
+                } catch(e) {
+
+                }
+
                 if(!activity_data.enriched && !skip_enrich) {
                     try {
                         //get activity data from own network or 3rd-party network
@@ -3079,6 +3111,8 @@ befriend.activities = {
                 }
 
                 await rafAwait();
+
+                befriend.activities.displayActivity.toggleCheckIn(true, activity_token, true);
 
                 befriend.styles.displayActivity.updateSectionsHeight();
             } catch(e) {
@@ -3839,7 +3873,19 @@ befriend.activities = {
 
             let matching_html = this.html.matching.getMatching(activity);
 
-            return `<div class="activity-message">
+            return `<div class="check-in">
+                        <div class="button">
+                            <div class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 401.0168 401"><path d="M160.44,401c-2,0-4.01-.71-5.61-2.12-1.57-1.38-39-34.44-77.02-82.36C26.18,251.44,0,193.07,0,143.01,0,64.15,71.97,0,160.44,0c46.06,0,89.94,17.67,120.41,48.47,3.3,3.34,3.27,8.72-.07,12.02s-8.72,3.27-12.02-.07c-27.29-27.6-66.77-43.42-108.32-43.42-79.09,0-143.44,56.53-143.44,126.01,0,98.37,116.42,212.76,143.49,238.02,11.88-10.9,40.83-38.59,69.46-74.5,33.73-42.31,73.94-105.03,73.94-163.52,0-4.69,3.81-8.5,8.5-8.5s8.5,3.81,8.5,8.5c0,50.97-26.18,109.62-77.83,174.35-38.04,47.67-75.48,80.21-77.06,81.58-1.59,1.37-3.58,2.06-5.56,2.06h0Z"/><path d="M188.37,197.95c-2.01,0-4.03-.71-5.63-2.14l-85.85-76c-3.52-3.11-3.84-8.48-.73-12s8.48-3.84,12-.73l80.22,71.01L386.88,2.37c3.52-3.11,8.89-2.78,12,.73,3.11,3.52,2.79,8.89-.73,12l-204.15,180.71c-1.61,1.42-3.62,2.14-5.63,2.14Z"/></svg>
+                            </div>
+                            
+                            <div class="text">Check-In</div>
+                        </div>
+                        
+                        <div class="error"></div>
+                    </div>
+                    
+                    <div class="activity-message">
                         <div class="message"></div>
                         <div class="close">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 448"><g><path d="M303.9838,167.36l-57.44,56.64,57.44,56.64c6.4507,6.0393,6.7841,16.1645.7448,22.6151-.2401.2564-.4885.5048-.7448.7448-3.0195,2.995-7.1071,4.6646-11.36,4.64-4.1974-.0177-8.2198-1.6841-11.2-4.64l-57.44-57.44-56.64,57.44c-2.9802,2.9559-7.0026,4.6223-11.2,4.64-4.2529.0246-8.3405-1.645-11.36-4.64-6.2036-6.2406-6.2036-16.3194,0-22.56l56.64-57.44-56.64-56.64c-5.7478-6.7118-4.9663-16.8122,1.7454-22.56,5.99-5.1297,14.8245-5.1297,20.8146,0l56.64,56.64,56.64-56.64c6.2298-6.4507,16.5093-6.6298,22.96-.4s6.6298,16.5093.4,22.96ZM382.3838,382.4c-87.4819,87.473-229.3109,87.4658-316.7838-.0161-87.473-87.4819-87.4658-229.3109.0162-316.7838,87.4756-87.4667,229.2921-87.4667,316.7677,0,87.4819,87.473,87.4891,229.3019.0161,316.7838l-.0161.0161ZM359.8238,88.16c-75.1107-74.8504-196.6782-74.6393-271.5286.4714-74.8504,75.1107-74.6393,196.6782.4714,271.5286,74.9264,74.6667,196.1308,74.6667,271.0572,0,75.1107-74.8504,75.3218-196.4179.4714-271.5286-.1569-.1574-.314-.3145-.4714-.4714Z"/></g></svg>
@@ -3904,12 +3950,81 @@ befriend.activities = {
             removeClassEl('no-transition', message_el);
 
             if(show) {
+                this.toggleCheckIn(false);
                 addClassEl(cls, befriend.els.currentActivityView);
             } else {
                 removeClassEl(cls, befriend.els.currentActivityView);
             }
 
-            befriend.styles.displayActivity.updateSectionsHeight();
+            let messageBox = message_el.getBoundingClientRect();
+
+            let addHeight = 0;
+
+            if(!show) {
+                addHeight = messageBox.height;
+            }
+
+            befriend.styles.displayActivity.updateSectionsHeight(addHeight);
+        },
+        toggleCheckIn: async function (show, activity_token = null, no_transition) {
+            let cls = 'display-check-in';
+
+            let check_in_el = befriend.els.currentActivityView.querySelector('.check-in');
+
+            if(!check_in_el) {
+                return;
+            }
+
+            //if activity token provided, validate time and active status
+            if(show && activity_token) {
+                let activity = befriend.activities.data.getActivity(activity_token);
+
+                if(!activity) {
+                    return;
+                }
+
+                //current time is greater than activity end
+                if(timeNow(true) > activity.data.activity_end) {
+                    return;
+                }
+
+                if(activity.data?.cancelled_at) {
+                    return;
+                }
+
+                let myParticipation = activity.data.persons?.[befriend.getPersonToken()];
+
+                if(!myParticipation || myParticipation?.cancelled_at) {
+                    return;
+                }
+            }
+
+            if(no_transition) {
+                addClassEl('no-transition', befriend.els.currentActivityView);
+
+                setTimeout(function () {
+                    removeClassEl('no-transition', befriend.els.currentActivityView);
+                }, 300);
+            } else {
+                removeClassEl('no-transition', befriend.els.currentActivityView);
+            }
+
+            if(show) {
+                this.toggleMessage(false);
+                addClassEl(cls, befriend.els.currentActivityView);
+            } else {
+                removeClassEl(cls, befriend.els.currentActivityView);
+            }
+
+            let messageBox = check_in_el.getBoundingClientRect();
+
+            let addHeight = 0;
+
+            if(!show) {
+                addHeight = messageBox.height;
+            }
+
+            befriend.styles.displayActivity.updateSectionsHeight(addHeight);
         },
         setHtml: function (activity_data) {
             let view_el = befriend.els.currentActivityView.querySelector('.container');

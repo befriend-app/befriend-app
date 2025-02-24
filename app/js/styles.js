@@ -126,7 +126,7 @@ befriend.styles = {
         },
     },
     displayActivity: {
-        updateSectionsHeight: async function() {
+        updateSectionsHeight: async function(addHeight = 0) {
             let view = befriend.els.currentActivityView;
 
             let sections_wrapper_el = view.querySelector('.sections-wrapper');
@@ -135,7 +135,7 @@ befriend.styles = {
 
             let footer_box = befriend.els.footer.getBoundingClientRect();
 
-            sections_wrapper_el.style.height = `${footer_box.top - sections_box.top}px`;
+            sections_wrapper_el.style.height = `${footer_box.top - sections_box.top + addHeight}px`;
         },
     },
     notifications: {

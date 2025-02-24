@@ -507,6 +507,48 @@
             }
         }
 
+        .check-in {
+            width: 100vw;
+            display: flex;
+            border: .5px solid lighten(black, 60%);
+            position: fixed;
+            height: $max_recipients_h;
+            left: 0;
+            top: calc(var(--view-top));
+            z-index: 12;
+            text-align: center;
+            background-color: $brand_color_b;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 200ms;
+            justify-content: center;
+            align-items: center;
+
+            .button {
+                display: flex;
+                gap: 0 10px;
+                align-items: center;
+                justify-content: center;
+                background-color: $brand_color_a;
+                padding: 6px 18px;
+                height: fit-content;
+                color: white;
+                border-radius: 8px;
+                font-size: 13px;
+                font-weight: 600;
+                text-transform: uppercase;
+            }
+
+            .icon {
+                @include flex-center-col;
+            }
+
+            svg {
+                height: 20px;
+                fill: white;
+            }
+        }
+
         .activity-message {
             display: flex;
             flex-direction: row;
@@ -1692,6 +1734,27 @@
 
             .sections {
                 padding-bottom: 60px;
+            }
+        }
+
+        &.display-check-in {
+            .activity {
+                transform: translateY(40px);
+            }
+
+            .check-in {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            .sections {
+                padding-bottom: 60px;
+            }
+
+            &.no-transition {
+                .check-in, .activity {
+                    transition: none !important;
+                }
             }
         }
 
