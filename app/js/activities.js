@@ -3975,23 +3975,53 @@ befriend.activities = {
                 return;
             }
 
-            //if activity token provided, validate time and active status
+            //if activity token provided, validate before showing check-in
             if(show && activity_token) {
                 let activity = befriend.activities.data.getActivity(activity_token);
 
-                if(!activity) {
+                if(!activity || !activity.data?.persons) {
                     return;
                 }
 
-                //current time is greater than activity end
-                if(timeNow(true) > activity.data.activity_end) {
+                //do not show check-in if it's too early
+                let checkInStart = activity.activity_start - (befriend.activities.data.rules?.checkIn?.minsBefore || 30) * 60;
+
+                if(timeNow(true) < checkInStart) {
                     return;
                 }
 
+                let checkInEnd = activity.activity_start + (befriend.activities.data.rules?.checkIn?.minsAfter || 20) * 60;
+
+                let latestAcceptance = null;
+
+                for(let pt in activity.data.persons) {
+                    let p = activity.data.persons[pt];
+
+                    if(!latestAcceptance > p.accepted_at > latestAcceptance) {
+                        latestAcceptance = p.accepted_at;
+                    }
+                }
+
+                //if the latest invitation was accepted after activity start time, use the later time for check-in end
+                if(latestAcceptance) {
+                    latestAcceptance /= 1000; //ms to sec
+
+                    if(latestAcceptance > activity.activity_start) {
+                        checkInEnd = latestAcceptance + (befriend.activities.data.rules?.checkIn?.minsAfter || 20) * 60;
+                    }
+                }
+
+                //do not show check-in if it's past the end of check-in time
+                if(timeNow(true) > checkInEnd) {
+                    return;
+                }
+
+                //do not allow check-in if activity cancelled
                 if(activity.data?.cancelled_at) {
                     return;
                 }
 
+                //do not show check-in if person already cancelled their participation
                 let myParticipation = activity.data.persons?.[befriend.getPersonToken()];
 
                 if(!myParticipation || myParticipation?.cancelled_at) {
