@@ -680,6 +680,13 @@ befriend.notifications = {
                 befriend.plugins.notifications.onNotificationReceived(function (notification) {
                     console.log('Received notification:', notification);
 
+                    //skip handling of duplicate notification
+                    let activityToken = notification.activity_token || notification.notification?.activity_token;
+
+                    if(activityToken in befriend.notifications.data.all || activityToken in befriend.activities.data.all) {
+                        return;
+                    }
+
                     if (notification?.type === 'click') {
                         befriend.notifications.fetchActivity(notification.notification, true);
                     } else {
