@@ -567,12 +567,38 @@ befriend.html = {
                     
                     <div id="reviews-overlay">
                         <div class="reviews-popup-overlay">
-                            <div class="reviews">
-                                <div class="heading">Review Activities</div>
+                        <div class="reviews">
+                            <div class="close-button"></div>
+                            <div class="heading">Activity Review</div>
+                            
+                            <div class="arrows">
+                                <div id="reviews-prev-arrow" class="navigation-arrow">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M15 6l-6 6 6 6"></path>
+                                    </svg>
+                                </div>
                                 
-                                <div class="activities"></div>
+                                <div id="reviews-next-arrow" class="navigation-arrow">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M9 6l6 6-6 6"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            
+                            <div class="activities-container">
+                                <!-- Activity slides will be dynamically inserted here -->
+                            </div>
+                            
+                            <div class="slide-indicators">
+                                
+                            </div>
+                            
+                            <div class="actions">
+                                <div class="button discard">Later</div>
+                                <div class="button submit">Submit Review</div>
                             </div>
                         </div>
+</div>
                     </div>
                     
                     <div id="person-image-modal" class="modal-overlay" >

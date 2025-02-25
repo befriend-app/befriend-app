@@ -18,7 +18,7 @@ befriend.reviews = {
             removeClassEl('active', overlayEl);
 
             setTimeout(function() {
-                removeClassEl('active', overlayEl);
+                removeClassEl('transition-out', overlayEl);
             }, befriend.variables.reviews_transition_ms);
         } else {
             addClassEl('active', overlayEl);
@@ -68,38 +68,112 @@ befriend.reviews = {
 
         return null;
     },
-    display: function (activity_token = null) {
-        if(!activity_token) {
-            let mostRecentActivity = this.getMostRecentFinishedActivity();
-
-            if(!mostRecentActivity) {
-                return;
-            }
-
-            activity_token = mostRecentActivity.activity_token;
-        }
-
-        let activitiesEl = document.getElementById('reviews-overlay').querySelector('.activities');
-
-        let activities = this.getActivities();
+    display: function (activity_token = null, skipTransition = false) {
+        const activities = this.getActivities();
 
         if(!activities.length) {
             return;
         }
+
+        let initialIndex = 0;
+
+        if (activity_token) {
+            const activityIndex = activities.findIndex(a => a.activity_token === activity_token);
+
+            if (activityIndex !== -1) {
+                initialIndex = activityIndex;
+            }
+        }
+
+        this.current.index = initialIndex;
+
+        let activitiesContainerEl = document.getElementById('reviews-overlay').querySelector('.activities-container');
+        let arrowsEl = document.getElementById('reviews-overlay').querySelector('.arrows');
 
         let activities_html = ``;
 
         for(let activity of activities) {
             let html = this.getHtml(activity);
 
-            activities_html += html;
+            activities_html += `<div class="activity-slide">${html}</div>`;
         }
 
-        activitiesEl.innerHTML = activities_html;
+        activitiesContainerEl.innerHTML = activities_html;
+
+        const showArrows = activities.length > 1;
+        const prevArrow = document.getElementById('reviews-prev-arrow');
+        const nextArrow = document.getElementById('reviews-next-arrow');
+
+        if(showArrows) {
+            addClassEl('show', arrowsEl);
+        } else {
+            removeClassEl('show', arrowsEl);
+        }
+
+        prevArrow.classList.toggle('disabled', initialIndex === 0);
+        nextArrow.classList.toggle('disabled', initialIndex === activities.length - 1);
+
+        if (skipTransition) {
+            addClassEl('no-transition', activitiesContainerEl);
+
+            this.goToSlide(initialIndex);
+            void activitiesContainerEl.offsetWidth;
+
+            setTimeout(() => {
+                removeClassEl('no-transition', activitiesContainerEl);
+            }, 50);
+        } else {
+            this.goToSlide(initialIndex);
+        }
 
         befriend.reviews.toggleOverlay(true);
 
         befriend.reviews.events.init();
+    },
+    goToSlide: function(index) {
+        const containerEl = document.getElementById('reviews-overlay').querySelector('.activities-container');
+
+        if (index < 0) {
+            index = 0;
+        }
+
+        if (index >= this.activities.length) {
+            index = this.activities.length - 1;
+        }
+
+        this.current.index = index;
+        this.current.activity_token = this.activities[index].activity_token;
+
+        containerEl.style.transform = `translateX(-${index * 100}%)`;
+
+        const prevArrow = document.getElementById('reviews-prev-arrow');
+        const nextArrow = document.getElementById('reviews-next-arrow');
+
+        if (prevArrow) {
+            prevArrow.classList.toggle('disabled', index === 0);
+        }
+
+        if (nextArrow) {
+            nextArrow.classList.toggle('disabled', index === this.activities.length - 1);
+        }
+
+        const indicators = document.querySelectorAll('.slide-indicator');
+
+        if (indicators.length) {
+            indicators.forEach((indicator, i) => {
+                indicator.classList.toggle('active', i === index);
+            });
+        }
+    },
+    nextSlide: function() {
+        if (this.current.index < this.activities.length - 1) {
+            this.goToSlide(this.current.index + 1);
+        }
+    },
+    prevSlide: function() {
+        if (this.current.index > 0) {
+            this.goToSlide(this.current.index - 1);
+        }
     },
     getHtml: function (activity) {
         return activity.activity_token;
@@ -107,18 +181,10 @@ befriend.reviews = {
     events: {
         init: function () {
             this.onClose();
-            this.onNavigate();
+            this.onArrows();
+            this.onIndicators();
         },
         onClose: function () {
-            function closeOverlay() {
-                addClassEl('transition-out', overlayEl);
-                removeClassEl('active', overlayEl);
-
-                setTimeout(function() {
-                    removeClassEl('transition-out', overlayEl);
-                }, befriend.variables.reviews_transition_ms || 300);
-            }
-
             let overlayEl = document.getElementById('reviews-overlay');
 
             if(overlayEl._close_listener) {
@@ -129,18 +195,110 @@ befriend.reviews = {
 
             overlayEl.addEventListener('click', (e) => {
                 if (!e.target.closest('.reviews')) {
-                    closeOverlay();
+                    befriend.reviews.toggleOverlay(false);
                 }
             });
 
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
-                    closeOverlay();
+                    befriend.reviews.toggleOverlay(false);
                 }
             });
         },
-        onNavigate: function () {
+        onArrows: function () {
+            const prevArrow = document.getElementById('reviews-prev-arrow');
+            const nextArrow = document.getElementById('reviews-next-arrow');
 
+            if(prevArrow._listener) {
+                return;
+            }
+
+            prevArrow._listener = true;
+
+            prevArrow.addEventListener('click', (e) => {
+                e.stopPropagation();
+
+                if(!elHasClass(prevArrow, 'disabled')) {
+                    befriend.reviews.prevSlide();
+                }
+            });
+
+            nextArrow.addEventListener('click', (e) => {
+                e.stopPropagation();
+
+                if(!elHasClass(nextArrow, 'disabled')) {
+                    befriend.reviews.nextSlide();
+                }
+            });
+
+            const container = document.querySelector('.activities-container');
+
+            let startX, moveX, isDragging = false;
+            const threshold = 50;
+
+            container.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+                isDragging = true;
+            });
+
+            container.addEventListener('touchmove', (e) => {
+                if (!isDragging) {
+                    return;
+                }
+
+                moveX = e.touches[0].clientX;
+
+                e.preventDefault();
+            });
+
+            container.addEventListener('touchend', (e) => {
+                if (!isDragging) {
+                    return;
+                }
+
+                isDragging = false;
+
+                const diff = startX - moveX;
+
+                if (Math.abs(diff) > threshold) {
+                    if (diff > 0) {
+                        befriend.reviews.nextSlide();
+                    } else {
+                        // Swipe right, go to previous slide
+                        befriend.reviews.prevSlide();
+                    }
+                }
+            });
+
+            container.addEventListener('wheel', (e) => {
+                e.preventDefault();
+            }, { passive: false });
+        },
+        onIndicators: function () {
+            const activities = befriend.reviews.activities;
+
+            if (activities.length > 1) {
+                const indicatorsContainer = document.querySelector('.slide-indicators');
+
+                indicatorsContainer.innerHTML = '';
+
+                for (let i = 0; i < activities.length; i++) {
+                    const indicator = document.createElement('div');
+
+                    addClassEl(indicator, 'slide-indicator');
+
+                    if(i === befriend.reviews.current.index) {
+                        addClassEl('active', indicator);
+                    }
+
+                    indicator.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        befriend.reviews.goToSlide(i);
+                    });
+
+                    indicatorsContainer.appendChild(indicator);
+                }
+            }
         }
     }
 };

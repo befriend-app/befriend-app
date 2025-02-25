@@ -15,11 +15,6 @@
         transform: translateY($height);
         transition: all $reviews_transition_ms;
 
-        &.with-message {
-            height: $message_height;
-            transform: translateY($message_height);
-        }
-
         .heading {
             font-size: 18px;
             font-weight: 500;
@@ -27,66 +22,6 @@
             display: flex;
             justify-content: center;
             padding-top: 20px;
-        }
-
-        .sub-heading {
-            padding-top: 15px;
-            font-weight: 300;
-            font-size: 15px;
-            text-align: center;
-        }
-
-        .creator-message {
-            max-width: 240px;
-            margin-left: auto;
-            margin-right: auto;
-            font-weight: 500;
-            font-size: 12px;
-            padding: 0 20px;
-            padding-top: 15px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .info-wrapper {
-            position: absolute;
-            top: 10px;
-            right: calc(#{$info_icon_dim} + 20px);
-        }
-
-        .actions {
-            $gap_lr: 16px;
-            display: flex;
-            gap: 0 $gap_lr;
-            bottom: calc(0 + var(--sab));
-            justify-content: center;
-            width: calc(90vw - #{$gap_lr});
-            max-width: calc(460px - #{$gap_lr});;
-            margin-left: auto;
-            margin-right: auto;
-            margin-top: auto;
-
-            .button {
-                width: 50%;
-                padding: 8px 0;
-                font-size: 16px;
-                text-align: center;
-                border-radius: 20px;
-                position: relative;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-
-                &.discard {
-                    background-color: darken($color_lightgray, 0%);
-                    color: black;
-                }
-
-                &.cancel {
-                    background-color: darken($color_red, 25%);
-                    color: white;
-                }
-            }
         }
     }
 
@@ -110,8 +45,105 @@
         pointer-events: none;
     }
 
+    .activities-container {
+        display: flex;
+        width: 100vw;
+        height: auto;
+        position: relative;
+        transition: transform $reviews_transition_ms ease;
+        flex: 1;
+
+        &.no-transition {
+            transition: none;
+        }
+
+        .activity-slide {
+            min-width: 100vw;
+            width: 100vw;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            overflow-y: hidden;
+            overflow-x: hidden;
+            padding: 0;
+        }
+    }
+
+    .navigation-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 50%;
+        cursor: pointer;
+        z-index: 10;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: opacity 0.3s ease, background-color 0.3s ease;
+
+        &.disabled {
+            opacity: 0.3;
+            cursor: default;
+        }
+
+        svg {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: #333;
+            stroke-width: 2;
+        }
+
+        &:hover:not(.disabled) {
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        &#reviews-prev-arrow {
+            left: 10px;
+        }
+
+        &#reviews-next-arrow {
+            right: 10px;
+        }
+    }
+
+    .slide-indicators {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 30px;
+        gap: 8px;
+        margin-top: auto;
+        margin-bottom: 10px;
+
+        .slide-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #ddd;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+
+            &.active {
+                background-color: #666;
+                transform: scale(1.2);
+            }
+
+            &:hover:not(.active) {
+                background-color: #bbb;
+            }
+        }
+    }
+
     &.no-transition {
-        .reviews-popup-overlay {
+        .reviews-popup-overlay, .reviews, .activities-container {
             transition: none !important;
         }
     }
