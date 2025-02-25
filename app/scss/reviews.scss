@@ -108,25 +108,29 @@
                 opacity $reviews_transition_ms;
 
         pointer-events: none;
+    }
 
-        &.no-transition {
+    &.no-transition {
+        .reviews-popup-overlay {
             transition: none !important;
         }
+    }
 
-        &.active {
+    &.active {
+        .reviews-popup-overlay {
             background-color: rgba(0, 0, 0, 0.5);
             opacity: 1;
             pointer-events: all;
-
-            .reviews {
-                transform: translateY(0);
-            }
         }
 
-        &.transition-out {
-            .reviews {
-                transform: translateY(0);
-            }
+        .reviews {
+            transform: translateY(0);
+        }
+    }
+
+    &.transition-out {
+        .reviews {
+            transform: translateY(0);
         }
     }
 }

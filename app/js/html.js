@@ -565,6 +565,16 @@ befriend.html = {
                     
                     <div id="overlay"></div>
                     
+                    <div id="reviews-overlay">
+                        <div class="reviews-popup-overlay">
+                            <div class="reviews">
+                                <div class="heading">Review Activities</div>
+                                
+                                <div class="activities"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div id="person-image-modal" class="modal-overlay" >
                         <div class="modal-content">
                             <img>
