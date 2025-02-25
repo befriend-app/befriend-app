@@ -545,7 +545,7 @@ befriend.activities = {
     },
     updateViewInterval: function () {
         //update activities view every minute
-        setInterval(function () {
+        setInterval(async function () {
             //update main activities view
             befriend.activities.setView();
 
@@ -553,7 +553,30 @@ befriend.activities = {
 
             //update current activity view if active
             if(elHasClass(activitiesViewEl, 'active') && elHasClass(befriend.els.currentActivityView, 'show')) {
-                befriend.activities.displayActivity.display(befriend.activities.displayActivity.currentToken, true, true);
+                let prevData = {};
+
+                if(elHasClass(befriend.els.currentActivityView, 'display-check-in')) {
+                    let errorEl = befriend.els.currentActivityView.querySelector('.check-in .error');
+
+                    if(errorEl && elHasClass(errorEl, 'show')) {
+                        prevData.checkIn = {
+                            error: errorEl.innerHTML
+                        }
+                    }
+                } else if(elHasClass(befriend.els.currentActivityView, 'display-message')) {
+                    let activityMessageEl = befriend.els.currentActivityView.querySelector('.activity-message');
+
+                    prevData.message = {
+                        message: activityMessageEl.querySelector('.message').innerHTML,
+                        classList: activityMessageEl.classList
+                    }
+                }
+
+                try {
+                    await befriend.activities.displayActivity.display(befriend.activities.displayActivity.currentToken, true, true, Object.keys(prevData).length ? prevData : null);
+                } catch(e) {
+
+                }
             }
         }, 60 * 1000);
     },
@@ -2957,8 +2980,11 @@ befriend.activities = {
                 await rafAwait();
             }, duration);
         },
-        display: async function (activity_token, no_transition, skip_enrich) {
+        display: async function (activity_token, no_transition, skip_enrich, prev_data = null) {
             try {
+                let prevScroll, prevWhoToken, prevMatchingToken, prevTopHeight = 0;
+                let prevActivityToken = this.currentToken;
+
                 let activity_data = befriend.activities.data.all[activity_token];
 
                 if(!activity_data) {
@@ -2966,6 +2992,21 @@ befriend.activities = {
                 }
 
                 this.currentToken = activity_token;
+
+                if(prevActivityToken === activity_token) {
+                    prevScroll = befriend.els.currentActivityView.querySelector('.sections-wrapper')?.scrollTop;
+
+                    prevWhoToken = befriend.els.currentActivityView.querySelector('.who.section')
+                        .querySelector('.person-nav.active')?.getAttribute('data-person-token');
+                    prevMatchingToken = befriend.els.currentActivityView.querySelector('.matching.section')
+                        ?.querySelector('.person-nav.active')?.getAttribute('data-person-token');
+
+                    if(elHasClass(befriend.els.currentActivityView, 'display-message')) {
+                        prevTopHeight = befriend.els.currentActivityView.querySelector('.activity-message')?.getBoundingClientRect()?.height;
+                    } else if(elHasClass(befriend.els.currentActivityView, 'display-check-in')) {
+                        prevTopHeight = befriend.els.currentActivityView.querySelector('.check-in')?.getBoundingClientRect()?.height;
+                    }
+                }
 
                 //get activity rules if needed
                 try {
@@ -3011,14 +3052,16 @@ befriend.activities = {
                     }
                 }
 
-                this.setHtml(activity_data);
+                this.setHtml(activity_data, prev_data);
 
                 if(!no_transition) {
                     //prevent navigation
                     befriend.preventNavigation(true);
                 }
 
-                befriend.activities.displayActivity.toggleMessage(false);
+                if(!prev_data?.message) {
+                    befriend.activities.displayActivity.toggleMessage(false, null, null);
+                }
 
                 removeClassEl('show', befriend.els.mainActivitiesView);
                 removeClassEl('show', befriend.els.activityNotificationView);
@@ -3114,7 +3157,21 @@ befriend.activities = {
 
                 befriend.activities.displayActivity.toggleCheckIn(true, activity_token, true);
 
-                befriend.styles.displayActivity.updateSectionsHeight();
+                befriend.styles.displayActivity.updateSectionsHeight(prevTopHeight ? prevTopHeight : 0);
+
+                //set ui to previous state
+                if(prevScroll) {
+                    befriend.els.currentActivityView.querySelector('.sections-wrapper')
+                        .scrollTop = prevScroll;
+                }
+
+                if(prevWhoToken) {
+                    befriend.activities.displayActivity.selectPersonNav(prevWhoToken);
+                }
+
+                if(prevMatchingToken) {
+                    befriend.activities.displayActivity.selectMatchingPersonNav(prevMatchingToken);
+                }
             } catch(e) {
                 console.error(e);
             }
@@ -3854,7 +3911,7 @@ befriend.activities = {
                 }
             },
         },
-        getViewHtml(activity_data) {
+        getViewHtml(activity_data, prevData = null) {
             let activity = activity_data.data;
 
             if(!activity) {
@@ -3876,6 +3933,27 @@ befriend.activities = {
 
             let matching_html = this.html.matching.getMatching(activity);
 
+            let activityMessageCls = new Set();
+
+            activityMessageCls.add('activity-message');
+
+            let prevCheckInError = prevData?.checkIn?.error || '';
+            let prevMessage = prevData?.message?.message || '';
+
+            if(prevCheckInError) {
+                addClassEl('display-check-in', befriend.els.currentActivityView);
+            } else if(prevMessage) {
+                addClassEl('display-message', befriend.els.currentActivityView);
+
+                if(prevData?.message?.classList) {
+                    for(let cls of prevData.message.classList) {
+                        activityMessageCls.add(cls);
+                    }
+                }
+            }
+
+            let activityMessageClsStr = Array.from(activityMessageCls).join(' ');
+
             return `<div class="check-in">
                         <div class="button">
                             <div class="icon">
@@ -3885,11 +3963,11 @@ befriend.activities = {
                             <div class="text">Check-In</div>
                         </div>
                         
-                        <div class="error"></div>
+                        <div class="error ${prevCheckInError ? 'show' : ''}">${prevCheckInError}</div>
                     </div>
                     
-                    <div class="activity-message">
-                        <div class="message"></div>
+                    <div class="${activityMessageClsStr}">
+                        <div class="message">${prevMessage}</div>
                         <div class="close">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 448"><g><path d="M303.9838,167.36l-57.44,56.64,57.44,56.64c6.4507,6.0393,6.7841,16.1645.7448,22.6151-.2401.2564-.4885.5048-.7448.7448-3.0195,2.995-7.1071,4.6646-11.36,4.64-4.1974-.0177-8.2198-1.6841-11.2-4.64l-57.44-57.44-56.64,57.44c-2.9802,2.9559-7.0026,4.6223-11.2,4.64-4.2529.0246-8.3405-1.645-11.36-4.64-6.2036-6.2406-6.2036-16.3194,0-22.56l56.64-57.44-56.64-56.64c-5.7478-6.7118-4.9663-16.8122,1.7454-22.56,5.99-5.1297,14.8245-5.1297,20.8146,0l56.64,56.64,56.64-56.64c6.2298-6.4507,16.5093-6.6298,22.96-.4s6.6298,16.5093.4,22.96ZM382.3838,382.4c-87.4819,87.473-229.3109,87.4658-316.7838-.0161-87.473-87.4819-87.4658-229.3109.0162-316.7838,87.4756-87.4667,229.2921-87.4667,316.7677,0,87.4819,87.473,87.4891,229.3019.0161,316.7838l-.0161.0161ZM359.8238,88.16c-75.1107-74.8504-196.6782-74.6393-271.5286.4714-74.8504,75.1107-74.6393,196.6782.4714,271.5286,74.9264,74.6667,196.1308,74.6667,271.0572,0,75.1107-74.8504,75.3218-196.4179.4714-271.5286-.1569-.1574-.314-.3145-.4714-.4714Z"/></g></svg>
                         </div>
@@ -4063,10 +4141,10 @@ befriend.activities = {
 
             befriend.styles.displayActivity.updateSectionsHeight(addHeight);
         },
-        setHtml: function (activity_data) {
+        setHtml: function (activity_data, prevData = null) {
             let view_el = befriend.els.currentActivityView.querySelector('.container');
 
-            view_el.innerHTML = this.getViewHtml(activity_data);
+            view_el.innerHTML = this.getViewHtml(activity_data, prevData);
 
             befriend.styles.displayActivity.updateSectionsHeight();
 
@@ -4233,7 +4311,17 @@ befriend.activities = {
                         }
 
                         //update main view
-                        befriend.activities.displayActivity.toggleMessage(true, message, true);
+                        await befriend.activities.displayActivity.toggleMessage(true, message, true);
+
+                        let addHeight = 0;
+
+                        if(elHasClass(befriend.els.currentActivityView, 'display-message')) {
+                            addHeight = befriend.els.currentActivityView.querySelector('.activity-message')?.getBoundingClientRect()?.height;
+                        } else if(elHasClass(befriend.els.currentActivityView, 'display-check-in')) {
+                            addHeight = befriend.els.currentActivityView.querySelector('.check-in')?.getBoundingClientRect()?.height;
+                        }
+
+                        befriend.styles.displayActivity.updateSectionsHeight(addHeight);
 
                         befriend.activities.setView();
                     }
@@ -4329,10 +4417,6 @@ befriend.activities = {
 
             if(cancelled_at) {
                 befriend.activities.displayActivity.toggleMessage(true, befriend.activities.displayActivity.messages.cancelled, false);
-            }
-
-            if(!is_fulfilled && (typeof is_fulfilled === 'boolean' || isNumeric(is_fulfilled))) {
-
             }
         },
         updateSpotsAccepted: function (activity_token) {

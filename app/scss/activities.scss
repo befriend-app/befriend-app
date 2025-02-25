@@ -549,6 +549,7 @@
             }
 
             .error {
+                max-width: 300px;
                 opacity: 0;
                 visibility: hidden;
                 background-color: $color_red;
