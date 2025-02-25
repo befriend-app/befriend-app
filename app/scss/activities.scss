@@ -578,6 +578,11 @@
             }
 
             &.success {
+                background-color: lighten($color_green, 0%);
+                color: white;
+            }
+
+            &.cancelled {
                 background-color: lighten($color_lightgray, 10%);
                 color: black;
 
@@ -1768,11 +1773,11 @@
             .sections {
                 padding-bottom: 60px;
             }
+        }
 
-            &.no-transition {
-                .check-in, .activity {
-                    transition: none !important;
-                }
+        &.no-transition {
+            .check-in, .activity {
+                transition: none !important;
             }
         }
 

@@ -553,27 +553,8 @@ befriend.activities = {
 
             //update current activity view if active
             if(elHasClass(activitiesViewEl, 'active') && elHasClass(befriend.els.currentActivityView, 'show')) {
-                let prevData = {};
-
-                if(elHasClass(befriend.els.currentActivityView, 'display-check-in')) {
-                    let errorEl = befriend.els.currentActivityView.querySelector('.check-in .error');
-
-                    if(errorEl && elHasClass(errorEl, 'show')) {
-                        prevData.checkIn = {
-                            error: errorEl.innerHTML
-                        }
-                    }
-                } else if(elHasClass(befriend.els.currentActivityView, 'display-message')) {
-                    let activityMessageEl = befriend.els.currentActivityView.querySelector('.activity-message');
-
-                    prevData.message = {
-                        message: activityMessageEl.querySelector('.message').innerHTML,
-                        classList: activityMessageEl.classList
-                    }
-                }
-
                 try {
-                    await befriend.activities.displayActivity.display(befriend.activities.displayActivity.currentToken, true, true, Object.keys(prevData).length ? prevData : null);
+                    await befriend.activities.displayActivity.display(befriend.activities.displayActivity.currentToken, true, true);
                 } catch(e) {
 
                 }
@@ -2980,9 +2961,9 @@ befriend.activities = {
                 await rafAwait();
             }, duration);
         },
-        display: async function (activity_token, no_transition, skip_enrich, prev_data = null) {
+        display: async function (activity_token, no_transition, skip_enrich, cancelled_at = null) {
             try {
-                let prevScroll, prevWhoToken, prevMatchingToken, prevTopHeight = 0;
+                let prevScroll, prevWhoToken, prevMatchingToken, prevTopHeight = 0, prevData = {};
                 let prevActivityToken = this.currentToken;
 
                 let activity_data = befriend.activities.data.all[activity_token];
@@ -3005,6 +2986,23 @@ befriend.activities = {
                         prevTopHeight = befriend.els.currentActivityView.querySelector('.activity-message')?.getBoundingClientRect()?.height;
                     } else if(elHasClass(befriend.els.currentActivityView, 'display-check-in')) {
                         prevTopHeight = befriend.els.currentActivityView.querySelector('.check-in')?.getBoundingClientRect()?.height;
+                    }
+
+                    if(elHasClass(befriend.els.currentActivityView, 'display-check-in')) {
+                        let errorEl = befriend.els.currentActivityView.querySelector('.check-in .error');
+
+                        if(errorEl && elHasClass(errorEl, 'show')) {
+                            prevData.checkIn = {
+                                error: errorEl.innerHTML
+                            }
+                        }
+                    } else if(elHasClass(befriend.els.currentActivityView, 'display-message')) {
+                        let activityMessageEl = befriend.els.currentActivityView.querySelector('.activity-message');
+
+                        prevData.message = {
+                            message: activityMessageEl.querySelector('.message').innerHTML,
+                            classList: activityMessageEl.classList
+                        }
                     }
                 }
 
@@ -3052,14 +3050,14 @@ befriend.activities = {
                     }
                 }
 
-                this.setHtml(activity_data, prev_data);
+                this.setHtml(activity_data, prevData);
 
                 if(!no_transition) {
                     //prevent navigation
                     befriend.preventNavigation(true);
                 }
 
-                if(!prev_data?.message) {
+                if(!prevData?.message) {
                     befriend.activities.displayActivity.toggleMessage(false, null, null);
                 }
 
@@ -3171,6 +3169,15 @@ befriend.activities = {
 
                 if(prevMatchingToken) {
                     befriend.activities.displayActivity.selectMatchingPersonNav(prevMatchingToken);
+                }
+
+                if(cancelled_at) {
+                    await befriend.activities.displayActivity.toggleMessage(true, befriend.activities.displayActivity.messages.cancelled, false, true);
+
+                    let height = befriend.els.currentActivityView.querySelector('.activity-message')?.getBoundingClientRect()?.height;
+
+                    befriend.styles.displayActivity.updateSectionsHeight(height || 0);
+
                 }
             } catch(e) {
                 console.error(e);
@@ -3999,8 +4006,16 @@ befriend.activities = {
                         </div>
                     </div>`;
         },
-        toggleMessage: async function (show, message, is_success) {
-            let cls = 'display-message';
+        toggleMessage: async function (show, message, is_success, is_cancel) {
+            console.log("toggle message", {
+                show, is_success, is_cancel
+            });
+
+            let classes = {
+                display: 'display-message',
+                success: 'success',
+                cancel: 'cancelled',
+            }
 
             let message_el = befriend.els.currentActivityView.querySelector('.activity-message');
 
@@ -4009,14 +4024,26 @@ befriend.activities = {
             }
 
             if(is_success) {
-                addClassEl('success', message_el);
+                addClassEl(classes.success, message_el);
             } else {
-                if(!show && elHasClass(message_el, 'success')) {
+                if(!show && elHasClass(message_el, classes.success)) {
                     setTimeout(function () {
-                        removeClassEl('success', message_el);
+                        removeClassEl(classes.success, message_el);
                     }, 300);
                 } else {
-                    removeClassEl('success', message_el);
+                    removeClassEl(classes.success, message_el);
+                }
+            }
+
+            if(is_cancel) {
+                addClassEl(classes.cancel, message_el);
+            } else {
+                if(!show && elHasClass(message_el, classes.cancel)) {
+                    setTimeout(function () {
+                        removeClassEl(classes.cancel, message_el);
+                    }, 300);
+                } else {
+                    removeClassEl(classes.cancel, message_el);
                 }
             }
 
@@ -4032,9 +4059,9 @@ befriend.activities = {
 
             if(show) {
                 this.toggleCheckIn(false);
-                addClassEl(cls, befriend.els.currentActivityView);
+                addClassEl(classes.display, befriend.els.currentActivityView);
             } else {
-                removeClassEl(cls, befriend.els.currentActivityView);
+                removeClassEl(classes.display, befriend.els.currentActivityView);
             }
 
             let messageBox = message_el.getBoundingClientRect();
@@ -4047,7 +4074,14 @@ befriend.activities = {
 
             befriend.styles.displayActivity.updateSectionsHeight(addHeight);
         },
+        isMessageShown: function () {
+            return elHasClass(befriend.els.currentActivityView, 'display-message');
+        },
         toggleCheckIn: async function (show, activity_token = null, no_transition) {
+            console.log("toggle check-in", {
+                show, no_transition
+            });
+
             let cls = 'display-check-in';
 
             let check_in_el = befriend.els.currentActivityView.querySelector('.check-in');
@@ -4064,10 +4098,25 @@ befriend.activities = {
                     return this.toggleCheckIn(false);
                 }
 
+                let myParticipation = activity.data.persons?.[befriend.getPersonToken()];
+
+                //do not show if no object, person already checked-in, or person cancelled
+                if(!myParticipation || myParticipation.arrived_at || myParticipation.cancelled_at) {
+                    if(this.isMessageShown()) {
+                        return;
+                    }
+
+                    return this.toggleCheckIn(false);
+                }
+
                 //do not show check-in if it's too early
                 let checkInStart = activity.activity_start - (befriend.activities.data.rules?.checkIn?.minsBefore || 30) * 60;
 
                 if(timeNow(true) < checkInStart) {
+                    if(this.isMessageShown()) {
+                        return;
+                    }
+
                     return this.toggleCheckIn(false);
                 }
 
@@ -4098,18 +4147,19 @@ befriend.activities = {
 
                 //do not show check-in if it's past the end of check-in time
                 if(timeNow(true) > checkInEnd) {
+                    if(this.isMessageShown()) {
+                        return;
+                    }
+
                     return this.toggleCheckIn(false);
                 }
 
                 //do not allow check-in if activity cancelled
                 if(activity.data?.cancelled_at) {
-                    return this.toggleCheckIn(false);
-                }
+                    if(this.isMessageShown()) {
+                        return;
+                    }
 
-                //do not show check-in if person already cancelled their participation
-                let myParticipation = activity.data.persons?.[befriend.getPersonToken()];
-
-                if(!myParticipation || myParticipation?.cancelled_at) {
                     return this.toggleCheckIn(false);
                 }
             }
@@ -4311,7 +4361,10 @@ befriend.activities = {
                         }
 
                         //update main view
-                        await befriend.activities.displayActivity.toggleMessage(true, message, true);
+                        befriend.activities.setView();
+
+                        //show message
+                        await befriend.activities.displayActivity.toggleMessage(true, message, false, true);
 
                         let addHeight = 0;
 
@@ -4385,7 +4438,7 @@ befriend.activities = {
                 activity.data.cancelled_at = data.activity_cancelled_at;
             }
 
-            if(activity.cancellation_ip) {
+            if(activity.cancellation_ip || activity.check_in_ip) {
                 return;
             }
 
@@ -4393,30 +4446,8 @@ befriend.activities = {
             befriend.activities.setView();
 
             //update displayed activity view with new data
-            this.updateView(data.activity_token, data.activity_cancelled_at, data.is_fulfilled);
-        },
-        updateView: async function (activity_token, cancelled_at = null, is_fulfilled) {
-            if(activity_token !== this.currentToken) {
-                return;
-            }
-
-            this.updateSpotsAccepted(activity_token);
-            this.updateWho(activity_token);
-            this.updateMatching(activity_token);
-
-            let isCancelled = befriend.activities.data.isCancelled(activity_token);
-            let isUnfulfilled = befriend.activities.data.isUnfulfilled(activity_token);
-
-            if(isCancelled || isUnfulfilled) {
-                try {
-                    await befriend.activities.displayActivity.display(activity_token, true, true);
-                } catch(e) {
-                    console.error(e);
-                }
-            }
-
-            if(cancelled_at) {
-                befriend.activities.displayActivity.toggleMessage(true, befriend.activities.displayActivity.messages.cancelled, false);
+            if(data.activity_token === befriend.activities.displayActivity.currentToken) {
+                befriend.activities.displayActivity.display(data.activity_token, true, true, data.activity_cancelled_at);
             }
         },
         updateSpotsAccepted: function (activity_token) {
@@ -4537,6 +4568,11 @@ befriend.activities = {
             let activity = befriend.activities.displayActivity.getActivity();
 
             let section_el = befriend.els.currentActivityView.querySelector('.section.matching');
+
+            if(!section_el) {
+                return;
+            }
+
             let matching_nav_els = section_el.getElementsByClassName('person-nav');
             let matching_content_el = section_el.querySelector('.matching-content');
 
@@ -4630,12 +4666,15 @@ befriend.activities = {
                         return;
                     }
 
+                    activity.check_in_ip = true;
+
                     let errorMessage = null;
 
                     try {
                         let currentLocation = await befriend.location.getLocation();
 
                         let r;
+
 
                         //check-in to activity created on 3rd-party network
                         if(activity.access?.token) {
@@ -4653,7 +4692,11 @@ befriend.activities = {
                         let message = r.data?.message;
 
                         if(r.status === 201) {
+                            addClassEl('no-transition', befriend.els.currentActivityView);
 
+                            await befriend.activities.displayActivity.toggleMessage(true, message, true);
+
+                            removeClassEl('no-transition', befriend.els.currentActivityView);
                         } else {
                             errorMessage = r.data.error || 'Error checking in for activity';
                         }
@@ -4670,6 +4713,8 @@ befriend.activities = {
                         checkInErrorEl.innerHTML = errorMessage;
                         addClassEl('show', checkInErrorEl);
                     }
+
+                    activity.check_in_ip = false;
 
                     this._ip = false;
                 });
