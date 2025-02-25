@@ -157,12 +157,27 @@ befriend.reviews = {
             nextArrow.classList.toggle('disabled', index === this.activities.length - 1);
         }
 
-        const indicators = document.querySelectorAll('.slide-indicator');
+        const indicatorsContainer = document.getElementById('reviews-overlay').querySelector('.slide-indicators');
+        const innerContainer = indicatorsContainer.querySelector('.slide-indicators-inner');
 
-        if (indicators.length) {
+        if (innerContainer) {
+            const indicators = innerContainer.querySelectorAll('.slide-indicator');
+
+            if(!indicators.length) {
+                return;
+            }
+
             indicators.forEach((indicator, i) => {
-                indicator.classList.toggle('active', i === index);
+                if (i === index) {
+                    addClassEl('active', indicator);
+                } else {
+                    removeClassEl('active', indicator);
+                }
             });
+
+            setTimeout(() => {
+                befriend.reviews.centerActiveIndicator();
+            }, 10);
         }
     },
     nextSlide: function() {
@@ -177,6 +192,37 @@ befriend.reviews = {
     },
     getHtml: function (activity) {
         return activity.activity_token;
+    },
+    centerActiveIndicator: function() {
+        const indicatorsContainer = document.getElementById('reviews-overlay').querySelector('.slide-indicators');
+        const innerContainer = indicatorsContainer.querySelector('.slide-indicators-inner');
+
+        if(!innerContainer) {
+            return;
+        }
+
+        const activeIndicator = innerContainer.querySelector('.slide-indicator.active');
+
+        if (!activeIndicator) {
+            return;
+        }
+
+        const indicatorWidth = befriend.variables.reviews_indicator_dim;
+        const indicatorGap = befriend.variables.reviews_indicator_gap;
+        const activeIndex = Array.from(innerContainer.querySelectorAll('.slide-indicator'))
+            .findIndex(indicator => elHasClass(indicator, 'active'));
+
+        const containerBox = indicatorsContainer.getBoundingClientRect();
+        const containerWidth = indicatorsContainer.offsetWidth;
+        const containerCenter = containerWidth / 2 - indicatorWidth / 2;
+
+        const activeIndicatorCenter = (activeIndex * (indicatorWidth + indicatorGap)) + (indicatorWidth / 2);
+
+        const targetScrollLeft = activeIndicatorCenter - containerCenter + containerBox.left / 2;
+
+        requestAnimationFrame(() => {
+            indicatorsContainer.scrollLeft = Math.max(0, targetScrollLeft);
+        });
     },
     events: {
         init: function () {
@@ -281,16 +327,19 @@ befriend.reviews = {
             const activities = befriend.reviews.activities;
 
             if (activities.length > 1) {
+                console.log("on indicators");
                 const indicatorsContainer = document.querySelector('.slide-indicators');
-
                 indicatorsContainer.innerHTML = '';
+
+                const innerContainer = document.createElement('div');
+                addClassEl('slide-indicators-inner', innerContainer);
+                indicatorsContainer.appendChild(innerContainer);
 
                 for (let i = 0; i < activities.length; i++) {
                     const indicator = document.createElement('div');
+                    addClassEl('slide-indicator', indicator);
 
-                    addClassEl(indicator, 'slide-indicator');
-
-                    if(i === befriend.reviews.current.index) {
+                    if (i === befriend.reviews.current.index) {
                         addClassEl('active', indicator);
                     }
 
@@ -299,8 +348,12 @@ befriend.reviews = {
                         befriend.reviews.goToSlide(i);
                     });
 
-                    indicatorsContainer.appendChild(indicator);
+                    innerContainer.appendChild(indicator);
                 }
+
+                setTimeout(() => {
+                    befriend.reviews.centerActiveIndicator();
+                }, 100);
             }
         }
     }

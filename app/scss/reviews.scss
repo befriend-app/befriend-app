@@ -115,21 +115,40 @@
 
     .slide-indicators {
         display: flex;
-        justify-content: center;
-        align-items: center;
         width: 100%;
+        max-width: 80vw;
+        margin: 0 auto;
         height: 30px;
-        gap: 8px;
         margin-top: auto;
         margin-bottom: 10px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        padding: 0 10px;
+        scroll-behavior: smooth;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+
+        .slide-indicators-inner {
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+            gap: 0 $reviews_indicator_gap;
+            padding: 0 10px;
+            margin: auto;
+        }
 
         .slide-indicator {
-            width: 8px;
-            height: 8px;
+            width: $reviews_indicator_dim;
+            height: $reviews_indicator_dim;
+            min-width: $reviews_indicator_dim;
             border-radius: 50%;
             background-color: #ddd;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.3s ease;
+            transition: all 0.3s ease; /* Ensure all properties transition smoothly */
 
             &.active {
                 background-color: #666;
