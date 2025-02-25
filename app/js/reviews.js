@@ -42,9 +42,34 @@ befriend.reviews = {
 
         //filter by activity finished, cancelled
         for(let activity of activities) {
+            if(!activity.data.persons) {
+                continue;
+            }
+
             let isCancelled = befriend.activities.data.isCancelled(activity.activity_token);
 
             if(isCancelled) {
+                continue;
+            }
+
+            //ensure activity had at least one person other than me
+            let activeParticipants = [];
+
+            for(let person_token in activity.data.persons) {
+                if(person_token === befriend.getPersonToken()) {
+                    continue;
+                }
+
+                let person = activity.data.persons[person_token];
+
+                if(person.cancelled_at) {
+                    continue;
+                }
+
+                activeParticipants.push(person);
+            }
+
+            if(!activeParticipants.length) {
                 continue;
             }
 
