@@ -3153,7 +3153,9 @@ befriend.activities = {
 
                 await rafAwait();
 
-                befriend.activities.displayActivity.toggleCheckIn(true, activity_token, true);
+                if(!prevData.message) {
+                    befriend.activities.displayActivity.toggleCheckIn(true, activity_token, true);
+                }
 
                 befriend.styles.displayActivity.updateSectionsHeight(prevTopHeight ? prevTopHeight : 0);
 
@@ -4413,7 +4415,8 @@ befriend.activities = {
             }
 
             if(!befriend.activities.data.all[data.activity_token]) {
-                befriend.activities.data.all[data.activity_token] = {};
+                return;
+                // befriend.activities.data.all[data.activity_token] = {};
             }
 
             let activity = befriend.activities.data.all[data.activity_token];
@@ -4675,7 +4678,6 @@ befriend.activities = {
 
                         let r;
 
-
                         //check-in to activity created on 3rd-party network
                         if(activity.access?.token) {
                             r = await befriend.networks.post(activity.access.domain, `activities/networks/check-in/${activityToken}`, {
@@ -4692,6 +4694,13 @@ befriend.activities = {
                         let message = r.data?.message;
 
                         if(r.status === 201) {
+                            activity.arrived_at = r.data.arrived_at;
+                            let myParticipation = activity.data?.persons?.[befriend.getPersonToken()];
+
+                            if(myParticipation) {
+                                myParticipation.arrived_at = r.data.arrived_at;
+                            }
+
                             addClassEl('no-transition', befriend.els.currentActivityView);
 
                             await befriend.activities.displayActivity.toggleMessage(true, message, true);
