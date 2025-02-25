@@ -69,6 +69,7 @@ befriend.activities = {
 
             try {
                 befriend.activities.activityTypes.setColors();
+
                 await befriend.activities.activityTypes.setActivityTypes();
             } catch (e) {
                 console.error(e);
@@ -3189,7 +3190,7 @@ befriend.activities = {
         isShown: function() {
             return elHasClass('activities', 'active') && elHasClass(befriend.els.currentActivityView, 'show');
         },
-        isCheckedIn: function (activity_token) {
+        isCheckedIn: function (activity_token, person_token) {
             let activity = befriend.activities.data.getActivity(activity_token);
 
             if(!activity) {
@@ -3202,22 +3203,23 @@ befriend.activities = {
                 return false;
             }
 
-            let myParticipation = activity.data?.persons?.[befriend.getPersonToken()];
+            let personParticipation = activity.data?.persons?.[person_token];
 
-            return !!myParticipation?.arrived_at;
+            return !!personParticipation?.arrived_at;
         },
         html: {
             getCheckedIn: function (activity_token) {
-                let isCheckedIn = befriend.activities.displayActivity.isCheckedIn(activity_token);
+                let isCheckedIn = befriend.activities.displayActivity.isCheckedIn(activity_token, befriend.getPersonToken());
 
                 if(!isCheckedIn) {
                     return '';
                 }
 
                 return `<div class="checked-in">
-                            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 388.2985 512"><path d="M364.678,101.207l-.042-.079C331.794,39.849,266.532,1.1,194.318,0h-.334C121.771,1.1,56.508,39.849,23.624,101.207,5.0585,136.0368-2.8413,175.5618.91,214.852c3.14,34.193,14.782,70.549,34.6,108.059,35.454,67.089,91.327,128.303,140.915,180.419l.253.257c3.687,3.63,9.463,8.413,17.283,8.413h.381c7.818,0,13.6-4.783,17.283-8.413l.253-.257c49.587-52.115,105.46-113.33,140.91-180.419,19.822-37.51,31.464-73.866,34.6-108.059,3.7523-39.2898-4.146-78.8148-22.71-113.645h0ZM333.337,312.632c-34.109,64.548-88.72,124.368-137.262,175.391-.6017.6008-1.2446,1.1588-1.924,1.67-.6792-.5115-1.3221-1.0695-1.924-1.67-48.542-51.023-103.153-110.843-137.262-175.391C15.289,237.551,11.408,171.741,43.057,111.52,72.103,57.325,129.986,23.035,194.151,22c64.149,1.032,122.019,35.3,151.072,89.476,31.672,60.293,27.782,126.089-11.886,201.156h0Z"/><path d="M194.151,57.9c-76.3,0-138.375,62.075-138.375,138.375s62.075,138.374,138.375,138.374,138.376-62.075,138.376-138.375S270.451,57.9,194.151,57.9ZM194.151,312.65c-64.2727,0-116.376-52.1033-116.376-116.376s52.1033-116.376,116.376-116.376c64.2727,0,116.376,52.1033,116.376,116.376-.0728,64.2424-52.1336,116.3028-116.376,116.375v.001Z"/><path d="M255.783,143.953l-84.326,84.326-38.937-38.937c-4.2962-4.2959-11.2616-4.2957-15.5575.0005-4.296,4.2962-4.2957,11.2616.0005,15.5575h0l54.494,54.494,99.882-99.882c4.296-4.2957,4.2962-11.2606.0005-15.5565-4.2957-4.2959-11.2605-4.2962-15.5565-.0005v-.002Z"/></svg></div>
-                            <div class="text">Checked In</div>
-
+                            <div class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 401.0168 401"><path d="M160.44,401c-2,0-4.01-.71-5.61-2.12-1.57-1.38-39-34.44-77.02-82.36C26.18,251.44,0,193.07,0,143.01,0,64.15,71.97,0,160.44,0c46.06,0,89.94,17.67,120.41,48.47,3.3,3.34,3.27,8.72-.07,12.02s-8.72,3.27-12.02-.07c-27.29-27.6-66.77-43.42-108.32-43.42-79.09,0-143.44,56.53-143.44,126.01,0,98.37,116.42,212.76,143.49,238.02,11.88-10.9,40.83-38.59,69.46-74.5,33.73-42.31,73.94-105.03,73.94-163.52,0-4.69,3.81-8.5,8.5-8.5s8.5,3.81,8.5,8.5c0,50.97-26.18,109.62-77.83,174.35-38.04,47.67-75.48,80.21-77.06,81.58-1.59,1.37-3.58,2.06-5.56,2.06h0Z"/><path d="M188.37,197.95c-2.01,0-4.03-.71-5.63-2.14l-85.85-76c-3.52-3.11-3.84-8.48-.73-12s8.48-3.84,12-.73l80.22,71.01L386.88,2.37c3.52-3.11,8.89-2.78,12,.73,3.11,3.52,2.79,8.89-.73,12l-204.15,180.71c-1.61,1.42-3.62,2.14-5.63,2.14Z"/></svg>
+                            </div>
+                            <div class="text"></div>
                         </div>`;
             },
             getInvite: function (activity) {
@@ -3498,6 +3500,20 @@ befriend.activities = {
                         </div>`;
             },
             getWhoPerson: function (activity, person_token) {
+                let checked_in_html = '';
+
+                let isCheckedIn = befriend.activities.displayActivity.isCheckedIn(activity.activity_token, person_token);
+
+                if(isCheckedIn) {
+                    checked_in_html = `<div class="person-checked-in">
+                            <div class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 401.0168 401"><path d="M160.44,401c-2,0-4.01-.71-5.61-2.12-1.57-1.38-39-34.44-77.02-82.36C26.18,251.44,0,193.07,0,143.01,0,64.15,71.97,0,160.44,0c46.06,0,89.94,17.67,120.41,48.47,3.3,3.34,3.27,8.72-.07,12.02s-8.72,3.27-12.02-.07c-27.29-27.6-66.77-43.42-108.32-43.42-79.09,0-143.44,56.53-143.44,126.01,0,98.37,116.42,212.76,143.49,238.02,11.88-10.9,40.83-38.59,69.46-74.5,33.73-42.31,73.94-105.03,73.94-163.52,0-4.69,3.81-8.5,8.5-8.5s8.5,3.81,8.5,8.5c0,50.97-26.18,109.62-77.83,174.35-38.04,47.67-75.48,80.21-77.06,81.58-1.59,1.37-3.58,2.06-5.56,2.06h0Z"/><path d="M188.37,197.95c-2.01,0-4.03-.71-5.63-2.14l-85.85-76c-3.52-3.11-3.84-8.48-.73-12s8.48-3.84,12-.73l80.22,71.01L386.88,2.37c3.52-3.11,8.89-2.78,12,.73,3.11,3.52,2.79,8.89-.73,12l-204.15,180.71c-1.61,1.42-3.62,2.14-5.63,2.14Z"/></svg>
+                            </div>
+
+                            <div class="text">Checked-In</div>
+                        </div>`;
+                }
+
                 let age = null;
                 let gender_name = null;
 
@@ -3625,7 +3641,8 @@ befriend.activities = {
                                     </div>`
                 }
 
-                return `${tags_html}
+                return `${checked_in_html}
+                        ${tags_html}
                         ${about_html}
                         ${reviews_html}
                         ${network_html}
@@ -3635,22 +3652,22 @@ befriend.activities = {
             matching: {
                 getItemTags: function (item) {
                     let tags_html = '';
-                
+
                     let match_types = item.match?.types;
-                
+
                     if(!match_types) {
                         return '';
                     }
-                
+
                     const heart_svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 439.9961">
                                                         <path class="outline" d="M240,422.9023c-29.3828-16.2148-224-129.4961-224-282.9023,0-66.0547,54.1992-124,116-124,41.8672.0742,80.4609,22.6602,101.0312,59.1289,1.5391,2.3516,4.1602,3.7656,6.9688,3.7656s5.4297-1.4141,6.9688-3.7656c20.5703-36.4688,59.1641-59.0547,101.0312-59.1289,61.8008,0,116,57.9453,116,124,0,153.4062-194.6172,266.6875-224,282.9023Z"></path>
                                                     </svg>`;
-                
+
                     const myPos = item.match?.mine?.favorite?.position;
                     const theirPos = item.match?.theirs?.favorite?.position;
                     const myImportance = item.match?.mine?.importance;
                     const theirImportance = item.match?.theirs?.importance;
-                
+
                     if(match_types.their_filter) {
                         let importance = ``;
                 
@@ -4107,11 +4124,7 @@ befriend.activities = {
 
             let messageBox = message_el.getBoundingClientRect();
 
-            let addHeight = 0;
-
-            if(!show) {
-                addHeight = messageBox.height;
-            }
+            let addHeight = messageBox.height;
 
             befriend.styles.displayActivity.updateSectionsHeight(addHeight);
         },
@@ -4141,8 +4154,8 @@ befriend.activities = {
 
                 let myParticipation = activity.data.persons?.[befriend.getPersonToken()];
 
-                //do not show if no object, person already checked-in, or person cancelled
-                if(!myParticipation || myParticipation.arrived_at || myParticipation.cancelled_at) {
+                //do not show if no object, person already checked-in, or cancelled
+                if(!myParticipation || myParticipation.arrived_at || befriend.activities.data.isCancelled(activity_token)) {
                     if(this.isMessageShown()) {
                         return;
                     }
