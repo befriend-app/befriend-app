@@ -233,39 +233,42 @@ befriend.reviews = {
 
             const container = document.querySelector('.activities-container');
 
-            let startX, moveX, isDragging = false;
+            let startX, moveX;
+            let initialTransform;
             const threshold = 50;
 
             container.addEventListener('touchstart', (e) => {
                 startX = e.touches[0].clientX;
-                isDragging = true;
+
+                const style = window.getComputedStyle(container);
+                const matrix = new DOMMatrix(style.transform);
+                initialTransform = matrix.m41;
+
+                addClassEl('no-transition', container);
             });
 
             container.addEventListener('touchmove', (e) => {
-                if (!isDragging) {
-                    return;
-                }
-
                 moveX = e.touches[0].clientX;
 
-                e.preventDefault();
+                const diff = moveX - startX;
+
+                container.style.transform = `translateX(${initialTransform + diff}px)`;
             });
 
             container.addEventListener('touchend', (e) => {
-                if (!isDragging) {
-                    return;
-                }
+                removeClassEl('no-transition', container);
 
-                isDragging = false;
+                const diff = moveX - startX;
 
-                const diff = startX - moveX;
-
-                if (Math.abs(diff) > threshold) {
-                    if (diff > 0) {
+                if (Math.abs(diff) < threshold) {
+                    befriend.reviews.goToSlide(befriend.reviews.current.index);
+                } else {
+                    if (diff < 0 && befriend.reviews.current.index < befriend.reviews.activities.length - 1) {
                         befriend.reviews.nextSlide();
-                    } else {
-                        // Swipe right, go to previous slide
+                    } else if (diff > 0 && befriend.reviews.current.index > 0) {
                         befriend.reviews.prevSlide();
+                    } else {
+                        befriend.reviews.goToSlide(befriend.reviews.current.index);
                     }
                 }
             });

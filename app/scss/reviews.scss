@@ -54,7 +54,7 @@
         flex: 1;
 
         &.no-transition {
-            transition: none;
+            transition: none !important;
         }
 
         .activity-slide {
