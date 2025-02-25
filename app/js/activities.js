@@ -64,6 +64,7 @@ befriend.activities = {
 
         return new Promise(async (resolve, reject) => {
             befriend.activities.createActivity.setDurations();
+
             befriend.activities.updateViewInterval();
 
             try {
@@ -3188,7 +3189,37 @@ befriend.activities = {
         isShown: function() {
             return elHasClass('activities', 'active') && elHasClass(befriend.els.currentActivityView, 'show');
         },
+        isCheckedIn: function (activity_token) {
+            let activity = befriend.activities.data.getActivity(activity_token);
+
+            if(!activity) {
+                return false;
+            }
+
+            let isCancelled = befriend.activities.data.isCancelled(activity_token);
+
+            if(isCancelled) {
+                return false;
+            }
+
+            let myParticipation = activity.data?.persons?.[befriend.getPersonToken()];
+
+            return !!myParticipation?.arrived_at;
+        },
         html: {
+            getCheckedIn: function (activity_token) {
+                let isCheckedIn = befriend.activities.displayActivity.isCheckedIn(activity_token);
+
+                if(!isCheckedIn) {
+                    return '';
+                }
+
+                return `<div class="checked-in">
+                            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 388.2985 512"><path d="M364.678,101.207l-.042-.079C331.794,39.849,266.532,1.1,194.318,0h-.334C121.771,1.1,56.508,39.849,23.624,101.207,5.0585,136.0368-2.8413,175.5618.91,214.852c3.14,34.193,14.782,70.549,34.6,108.059,35.454,67.089,91.327,128.303,140.915,180.419l.253.257c3.687,3.63,9.463,8.413,17.283,8.413h.381c7.818,0,13.6-4.783,17.283-8.413l.253-.257c49.587-52.115,105.46-113.33,140.91-180.419,19.822-37.51,31.464-73.866,34.6-108.059,3.7523-39.2898-4.146-78.8148-22.71-113.645h0ZM333.337,312.632c-34.109,64.548-88.72,124.368-137.262,175.391-.6017.6008-1.2446,1.1588-1.924,1.67-.6792-.5115-1.3221-1.0695-1.924-1.67-48.542-51.023-103.153-110.843-137.262-175.391C15.289,237.551,11.408,171.741,43.057,111.52,72.103,57.325,129.986,23.035,194.151,22c64.149,1.032,122.019,35.3,151.072,89.476,31.672,60.293,27.782,126.089-11.886,201.156h0Z"/><path d="M194.151,57.9c-76.3,0-138.375,62.075-138.375,138.375s62.075,138.374,138.375,138.374,138.376-62.075,138.376-138.375S270.451,57.9,194.151,57.9ZM194.151,312.65c-64.2727,0-116.376-52.1033-116.376-116.376s52.1033-116.376,116.376-116.376c64.2727,0,116.376,52.1033,116.376,116.376-.0728,64.2424-52.1336,116.3028-116.376,116.375v.001Z"/><path d="M255.783,143.953l-84.326,84.326-38.937-38.937c-4.2962-4.2959-11.2616-4.2957-15.5575.0005-4.296,4.2962-4.2957,11.2616.0005,15.5575h0l54.494,54.494,99.882-99.882c4.296-4.2957,4.2962-11.2606.0005-15.5565-4.2957-4.2959-11.2605-4.2962-15.5565-.0005v-.002Z"/></svg></div>
+                            <div class="text">Checked In</div>
+
+                        </div>`;
+            },
             getInvite: function (activity) {
                 let isCancelled = befriend.activities.data.isCancelled(activity.activity_token);
                 let isUnfulfilled = befriend.activities.data.isUnfulfilled(activity.activity_token);
@@ -3209,23 +3240,25 @@ befriend.activities = {
                 let activity_type = befriend.activities.activityTypes.lookup.byToken[activity.activity_type_token];
 
                 return `<div class="invite">
-                                <div class="image">
-                                    ${activity_type?.image}
-                                </div>
-                                
-                                <div class="name-duration">
-                                    <div class="name">
-                                        ${activity_type?.notification} @ ${activity?.human_time}
+                                <div class="content">
+                                    <div class="image">
+                                        ${activity_type?.image}
                                     </div>
                                     
-                                    <div class="duration">
-                                        ${befriend.activities.getDurationStr(activity.activity_duration_min)}
+                                    <div class="name-duration">
+                                        <div class="name">
+                                            ${activity_type?.notification} @ ${activity?.human_time}
+                                        </div>
+                                        
+                                        <div class="duration">
+                                            ${befriend.activities.getDurationStr(activity.activity_duration_min)}
+                                        </div>
+                                        
+                                        ${action_buttons_html}
+                                        
+                                        ${tag_html}
+                                        
                                     </div>
-                                    
-                                    ${action_buttons_html}
-                                    
-                                    ${tag_html}
-                                    
                                 </div>
                             </div>`;
             },
@@ -3928,9 +3961,11 @@ befriend.activities = {
                 return '';
             }
 
-            console.log(activity);
+            // console.log(activity);
 
             let date = this.html.getDate(activity);
+
+            let checked_in_html = this.html.getCheckedIn(activity.activity_token);
 
             let invite_html = this.html.getInvite(activity);
 
@@ -3988,7 +4023,11 @@ befriend.activities = {
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 416.001 351.9995"><path id="Left_Arrow" d="M400.001,159.9995H54.625L187.313,27.3115c6.252-6.252,6.252-16.376,0-22.624s-16.376-6.252-22.624,0L4.689,164.6875c-6.252,6.252-6.252,16.376,0,22.624l160,160c3.124,3.124,7.22,4.688,11.312,4.688s8.188-1.564,11.312-4.688c6.252-6.252,6.252-16.376,0-22.624L54.625,191.9995h345.376c8.836,0,16-7.164,16-16s-7.164-16-16-16Z"></path></svg>
                             </div>
                             
-                            <h2>Activity</h2>
+                            <div class="activity-headline">
+                                <h2>Activity</h2>
+                                ${checked_in_html}
+                            </div>
+                            
                             
                             <div class="date">${date}</div>
                         </div>
@@ -4009,9 +4048,9 @@ befriend.activities = {
                     </div>`;
         },
         toggleMessage: async function (show, message, is_success, is_cancel) {
-            console.log("toggle message", {
-                show, is_success, is_cancel
-            });
+            // console.log("toggle message", {
+            //     show, is_success, is_cancel
+            // });
 
             let classes = {
                 display: 'display-message',
@@ -4080,9 +4119,9 @@ befriend.activities = {
             return elHasClass(befriend.els.currentActivityView, 'display-message');
         },
         toggleCheckIn: async function (show, activity_token = null, no_transition) {
-            console.log("toggle check-in", {
-                show, no_transition
-            });
+            // console.log("toggle check-in", {
+            //     show, no_transition
+            // });
 
             let cls = 'display-check-in';
 
@@ -4704,6 +4743,14 @@ befriend.activities = {
                             addClassEl('no-transition', befriend.els.currentActivityView);
 
                             await befriend.activities.displayActivity.toggleMessage(true, message, true);
+
+                            let checked_in_html = befriend.activities.displayActivity.html.getCheckedIn(activityToken);
+
+                            let activityHeadlineEl = befriend.els.currentActivityView.querySelector('.activity-headline');
+
+                            if(activityHeadlineEl && !activityHeadlineEl.querySelector('.checked-in')) {
+                                activityHeadlineEl.insertAdjacentHTML('beforeend', checked_in_html);
+                            }
 
                             removeClassEl('no-transition', befriend.els.currentActivityView);
                         } else {

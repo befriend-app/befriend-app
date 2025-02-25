@@ -7,6 +7,7 @@
     $section_padding_tb: 12px;
     $section_br: 10px;
     $overview_padding_tb: 15px;
+    $message_h: 43px;
 
     .main-view {
         display: none;
@@ -451,8 +452,6 @@
     }
 
     .notification-view, .current-activity-view {
-        $max_recipients_h: 43px;
-
         display: none;
         padding: 0 $padding_lr;
         padding-top: calc(#{$activity_accept_decline_h});
@@ -464,12 +463,21 @@
         .top-row {
             display: flex;
             align-items: center;
-            margin-top: calc(#{$max_recipients_h} + 17px);
+            margin-top: calc(#{$message_h} + 17px);
+            padding: $overview_padding_tb 0;
         }
 
         h2 {
             font-weight: 500;
             margin-left: 15px;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+        .activity-headline {
+            display: flex;
+            gap: 0 10px;
+            align-items: center;
         }
 
         .date {
@@ -484,7 +492,7 @@
             display: flex;
             border: .5px solid lighten(black, 60%);
             position: fixed;
-            height: $max_recipients_h;
+            height: $message_h;
             left: 0;
             top: calc(var(--view-top));
             z-index: 12;
@@ -512,7 +520,7 @@
             display: flex;
             border: .5px solid lighten(black, 60%);
             position: fixed;
-            height: $max_recipients_h;
+            height: $message_h;
             left: 0;
             top: calc(var(--view-top));
             z-index: 12;
@@ -567,11 +575,36 @@
             }
         }
 
+        .checked-in {
+            display: flex;
+            align-items: center;
+            width: fit-content;
+            background-color: $brand_color_b;
+            padding: 4px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            gap: 0 8px;
+            border-radius: 8px;
+            border: .5px solid lighten(black, 20%);
+            transform: translateY(1px);
+            margin-left: 3px;
+
+            .icon {
+                @include flex-center-col;
+            }
+
+            svg {
+                height: 16px;
+            }
+        }
+
         .activity-message {
             display: flex;
             flex-direction: row;
             justify-content: center;
             width: 100vw;
+            font-size: 15px;
+            font-weight: 500;
 
             .message {
                 width: calc(100vw - 60px);
@@ -977,7 +1010,7 @@
             margin-bottom: 0;
             position: absolute;
             right: 0;
-            bottom: 6px;
+            bottom: 0;
 
             .button {
                 padding: 4px 12px;
@@ -1738,8 +1771,20 @@
 
     .current-activity-view {
         display: none;
-
         padding-top: 0;
+
+        .invite {
+            flex-direction: column;
+            align-items: initial;
+
+            .content {
+                display: flex;
+                width: 100%;
+                gap: 0 8px;
+                align-items: center;
+                position: relative;
+            }
+        }
 
         &.show {
             display: flex;
