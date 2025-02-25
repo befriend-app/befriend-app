@@ -6,22 +6,22 @@ befriend.reviews = {
         activity_token: null,
         person_token: null,
     },
-    toggleOverlay: async function(show = true) {
+    toggleOverlay: async function(show) {
         let overlayEl = document.getElementById('reviews-overlay');
 
         if(show && elHasClass(overlayEl, 'active')) {
             return;
         }
 
-        if (!show) {
+        if (show) {
+            addClassEl('active', overlayEl);
+        } else {
             addClassEl('transition-out', overlayEl);
             removeClassEl('active', overlayEl);
 
             setTimeout(function() {
                 removeClassEl('transition-out', overlayEl);
             }, befriend.variables.reviews_transition_ms);
-        } else {
-            addClassEl('active', overlayEl);
         }
     },
     getActivities: function () {
@@ -58,15 +58,6 @@ befriend.reviews = {
         this.activities = activitiesFiltered;
 
         return activitiesFiltered;
-    },
-    getMostRecentFinishedActivity: function () {
-        let activities = this.getActivities();
-
-        if(activities.length) {
-            return activities[0];
-        }
-
-        return null;
     },
     display: function (activity_token = null, skipTransition = false) {
         const activities = this.getActivities();

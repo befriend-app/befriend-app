@@ -71,12 +71,23 @@
         }
     }
 
+    .arrows {
+        display: none;
+        position: absolute;
+        height: calc(100% - var(--sab));
+        width: 100vw;
+
+        &.show {
+            display: flex;
+        }
+    }
+
     .navigation-arrow {
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        width: 40px;
-        height: 40px;
+        width: $reviews_arrow_dim;
+        height: $reviews_arrow_dim;
         display: flex;
         align-items: center;
         justify-content: center;

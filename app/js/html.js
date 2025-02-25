@@ -569,7 +569,7 @@ befriend.html = {
                         <div class="reviews-popup-overlay">
                         <div class="reviews">
                             <div class="close-button"></div>
-                            <div class="heading">Activities Review</div>
+                            <div class="heading">Review Activities</div>
                             
                             <div class="arrows">
                                 <div id="reviews-prev-arrow" class="navigation-arrow">
