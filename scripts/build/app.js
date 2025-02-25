@@ -49,6 +49,7 @@ let js_files = {
         'location.js',
         'html.js',
         'styles.js',
+        'reviews.js',
         'helpers.js',
         'modals.js',
         'events.js',

@@ -587,8 +587,8 @@
             //border: .5px solid lighten(black, 20%);
             transform: translateY(1px);
             margin-left: 3px;
-            background-color: lighten($color_green, 0%);
-            color: white;
+            background-color: lighten($brand_color_a, 0%);
+            color: $brand_color_a_text;
 
             .icon {
                 @include flex-center-col;
@@ -596,7 +596,7 @@
 
             svg {
                 height: 16px;
-                fill: white;
+                fill: $brand_color_a_text;
             }
         }
 
@@ -1193,8 +1193,9 @@
                 }
 
                 .new-member {
-                    color: white;
-                    background-color: $brand_color_a;
+                    color: $brand_color_b_text;
+                    background-color: $brand_color_b;
+                    border: .5px solid darken($brand_color_a, 20%);
                 }
             }
 

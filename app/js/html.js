@@ -563,10 +563,6 @@ befriend.html = {
                         </div>
                     </div>
                     
-                    <div id="cancel-activity">
-                    
-                    </div>
-                    
                     <div id="overlay"></div>
                     
                     <div id="person-image-modal" class="modal-overlay" >

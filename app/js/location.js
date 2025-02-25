@@ -50,6 +50,7 @@ befriend.location = {
                 }
 
                 befriend.maps.updateLocationIf();
+
                 befriend.location.saveLocationIf();
 
                 resolve(befriend.location.device);
