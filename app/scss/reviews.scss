@@ -1,4 +1,7 @@
 #reviews-overlay {
+    $reviews_h: 80vh;
+    $reviews_max_h: 600px;
+
     &.no-transition {
         .reviews-popup-overlay, .reviews, .activities-container {
             transition: none !important;
@@ -44,20 +47,18 @@
     }
 
     .reviews {
-        $height: 500px;
-        $message_height: 200px;
-
         position: fixed;
         left: 0;
         bottom: 0;
         display: flex;
         flex-direction: column;
         width: 100vw;
-        height: $height;
+        height: $reviews_h;
+        max-height: $reviews_max_h;
         padding: 0;
         padding-bottom: var(--sab);
         background-color: white;
-        transform: translateY($height);
+        transform: translateY(100%);
         transition: all $reviews_transition_ms;
 
         .heading {
@@ -91,6 +92,14 @@
         pointer-events: none;
     }
 
+    .review-content-scrollable {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
     .activities-container {
         display: flex;
         width: 100vw;
@@ -98,12 +107,14 @@
         position: relative;
         transition: transform $reviews_transition_ms ease;
         flex: 1;
+        //overflow-y: scroll;
 
         &.no-transition {
             transition: none !important;
         }
 
         .activity-slide {
+            $subtract_h: 100px;
             min-width: 100vw;
             width: 100vw;
             flex-shrink: 0;
@@ -114,6 +125,8 @@
             overflow-y: hidden;
             overflow-x: hidden;
             padding: 0;
+            height: calc($reviews_h - $subtract_h);
+            max-height: calc($reviews_max_h - $subtract_h);
         }
     }
 
@@ -222,11 +235,11 @@
 
         display: flex;
         flex-direction: column;
-        height: 100%;
+        height: auto;
         max-width: 600px;
         width: 90vw;
         margin: 0 auto;
-        overflow-y: auto;
+        overflow-y: visible;
         overflow-x: hidden;
 
         .review-header {
@@ -306,7 +319,7 @@
             display: flex;
             flex-direction: column;
             gap: 25px;
-            overflow-y: auto;
+            overflow-y: visible;
 
             .section-heading {
                 font-size: 16px;
@@ -557,6 +570,9 @@
 
     .review-card-wrapper {
         padding: 20px 10px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
     }
 
     .review-error {

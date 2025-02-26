@@ -312,56 +312,57 @@ befriend.reviews = {
         return `
             <div class="review-card" data-activity-token="${activity.activity_token}">
                 <div class="review-card-wrapper">
-                    <div class="review-header">
-                        <div class="activity-info">
-                            <div class="activity-details">
-                                <div class="activity-meta">
-                                    <div class="activity-date">${date}</div>
-                                    <div class="activity-time">${timeString}</div>
-                                </div>
-                                
-                                <div class="icon-name">
-                                    <div class="activity-icon">
-                                        ${activityImage}
+                    <div class="review-content-scrollable">
+                        <div class="review-header">
+                            <div class="activity-info">
+                                <div class="activity-details">
+                                    <div class="activity-meta">
+                                        <div class="activity-date">${date}</div>
+                                        <div class="activity-time">${timeString}</div>
                                     </div>
                                     
-                                    <div class="name-location">
-                                        <div class="activity-name">${activityName}</div>
-                                        <div class="activity-location">@ ${activityData.location_name}</div>
+                                    <div class="icon-name">
+                                        <div class="activity-icon">
+                                            ${activityImage}
+                                        </div>
+                                        
+                                        <div class="name-location">
+                                            <div class="activity-name">${activityName}</div>
+                                            <div class="activity-location">@ ${activityData.location_name}</div>
+                                        </div>
                                     </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        
+                        <div class="review-content">
+                            <div class="persons-section">
+                                <div class="section-heading">Rate Your Experience With</div>
+                                <div class="persons-nav">
+                                    ${personsNav}
                                 </div>
                             </div>
                             
-                        </div>
-                    </div>
-                    
-                    <div class="review-content">
-                        <div class="persons-section">
-                            <div class="section-heading">Rate Your Experience With</div>
-                            <div class="persons-nav">
-                                ${personsNav}
+                            <div class="ratings-section">
+                                <div class="section-heading">Rating Categories</div>
+                                <div class="ratings-container">
+                                    ${ratingsHtml}
+                                </div>
                             </div>
-                        </div>
-                        
-                        <div class="ratings-section">
-                            <div class="section-heading">Rating Categories</div>
-                            <div class="ratings-container">
-                                ${ratingsHtml}
+                            
+                            <div class="review-comments">
+                                <div class="section-heading">Additional Comments (Optional)</div>
+                                <textarea class="review-comment-field" placeholder="Share your thoughts about this experience..."></textarea>
                             </div>
-                        </div>
-                        
-                        <div class="review-comments">
-                            <div class="section-heading">Additional Comments (Optional)</div>
-                            <textarea class="review-comment-field" placeholder="Share your thoughts about this experience..."></textarea>
-                        </div>
-                        
-                        <div class="review-actions">
-                            <button class="review-submit-btn">Submit Review</button>
-                            <button class="review-skip-btn">Skip</button>
+                            
+                            <div class="review-actions">
+                                <button class="review-submit-btn">Submit Review</button>
+                                <button class="review-skip-btn">Skip</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
             </div>
         `;
     },
@@ -737,9 +738,10 @@ befriend.reviews = {
 
             const container = overlayEl.querySelector('.activities-container');
 
-            let startX, moveX;
+            let startX, startY, moveX, moveY;
             let initialTransform;
             const threshold = 50;
+            let isHorizontalSwipe = null;
 
             container.addEventListener('touchstart', (e) => {
                 let target = e.target;
@@ -750,15 +752,19 @@ befriend.reviews = {
                 }
 
                 startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
 
                 const style = window.getComputedStyle(container);
                 const matrix = new DOMMatrix(style.transform);
                 initialTransform = matrix.m41;
 
                 addClassEl('no-transition', container);
+                isHorizontalSwipe = null; // Reset direction detection
             });
 
             container.addEventListener('touchmove', (e) => {
+                if (!startX || !startY) return;
+
                 let target = e.target;
 
                 if(target.closest('.stars-container') || target.closest('.sliders-control')) {
@@ -766,28 +772,45 @@ befriend.reviews = {
                 }
 
                 moveX = e.touches[0].clientX;
+                moveY = e.touches[0].clientY;
 
-                const diff = moveX - startX;
+                const diffX = moveX - startX;
+                const diffY = moveY - startY;
 
-                container.style.transform = `translateX(${initialTransform + diff}px)`;
+                if (isHorizontalSwipe === null) {
+                    isHorizontalSwipe = Math.abs(diffX) > Math.abs(diffY);
+                }
+
+                if (isHorizontalSwipe) {
+                    e.preventDefault();
+                    container.style.transform = `translateX(${initialTransform + diffX}px)`;
+                }
             });
 
             container.addEventListener('touchend', (e) => {
                 removeClassEl('no-transition', container);
 
-                const diff = moveX - startX;
+                if (isHorizontalSwipe && startX && moveX) {
+                    const diff = moveX - startX;
 
-                if (Math.abs(diff) < threshold) {
-                    befriend.reviews.goToSlide(befriend.reviews.current.index);
-                } else {
-                    if (diff < 0 && befriend.reviews.current.index < befriend.reviews.activities.length - 1) {
-                        befriend.reviews.nextSlide();
-                    } else if (diff > 0 && befriend.reviews.current.index > 0) {
-                        befriend.reviews.prevSlide();
-                    } else {
+                    if (Math.abs(diff) < threshold) {
                         befriend.reviews.goToSlide(befriend.reviews.current.index);
+                    } else {
+                        if (diff < 0 && befriend.reviews.current.index < befriend.reviews.activities.length - 1) {
+                            befriend.reviews.nextSlide();
+                        } else if (diff > 0 && befriend.reviews.current.index > 0) {
+                            befriend.reviews.prevSlide();
+                        } else {
+                            befriend.reviews.goToSlide(befriend.reviews.current.index);
+                        }
                     }
                 }
+
+                startX = null;
+                startY = null;
+                moveX = null;
+                moveY = null;
+                isHorizontalSwipe = null;
             });
 
             container.addEventListener('wheel', (e) => {
