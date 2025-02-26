@@ -1,6 +1,6 @@
 #reviews-overlay {
-    $reviews_h: 80vh;
-    $reviews_max_h: 600px;
+    $reviews_h: calc(100vh - 200px);
+    $reviews_max_h: 700px;
 
     &.no-transition {
         .reviews-popup-overlay, .reviews, .activities-container {
@@ -243,7 +243,7 @@
         overflow-x: hidden;
 
         .review-header {
-            margin-bottom: 20px;
+            margin-bottom: 10px;
 
             .activity-info {
                 display: flex;
@@ -318,13 +318,13 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 25px;
+            gap: 12px;
             overflow-y: visible;
 
             .section-heading {
-                font-size: 16px;
+                font-size: 13px;
                 font-weight: 500;
-                margin-bottom: 15px;
+                margin-bottom: 5px;
                 color: #333;
             }
 
@@ -333,7 +333,7 @@
                     display: flex;
                     gap: 15px;
                     overflow-x: auto;
-                    padding: 5px 2px;
+                    padding: 0;
 
                     &::-webkit-scrollbar {
                         height: 4px;
@@ -345,23 +345,26 @@
                     }
 
                     .person-nav {
+                        $dim: 40px;
                         display: flex;
                         flex-direction: column;
                         align-items: center;
-                        min-width: 70px;
+                        width: fit-content;
                         padding: 8px;
                         border-radius: 10px;
                         cursor: pointer;
-                        transition: all 0.2s ease;
+                        transition: background-color 0.2s ease, border 0.2s ease;
+                        border: .5px solid $color_lightgray;
 
                         &.active {
-                            background-color: $brand_color_b;
-                            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                            background-color: transparentize($brand_color_b, .5);
+                            border-color: darken($brand_color_a, 25%);
+                            //box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
                         }
 
                         .image {
-                            width: 55px;
-                            height: 55px;
+                            width: $dim;
+                            height: $dim;
                             border-radius: 50%;
                             background-size: cover;
                             background-position: center;
@@ -380,15 +383,45 @@
             .ratings-section {
                 .ratings-container {
                     display: flex;
-                    flex-direction: column;
-                    gap: 20px;
+                    flex-wrap: wrap;
+                    gap: 10px 0;
+                    justify-content: space-between;
                 }
 
                 .rating-option {
-                    padding: 15px;
+                    padding: 10px 10px;
+                    padding-bottom: 5px;
                     border-radius: 10px;
                     background-color: rgba(0, 0, 0, 0.02);
                     border: 1px solid #eee;
+                    position: relative;
+                    display: flex;
+                    flex-direction: column;
+                    margin-bottom: 15px;
+                    flex-basis: calc(50% - 30px);
+
+                    &.no-rating {
+                        .rating-display {
+                            height: unset !important;
+                            //border-color: transparent !important;
+                            //border-radius: initial !important;
+                            border-radius: 6px !important;
+                            width: fit-content !important;
+                            padding: 2px 8px;
+
+                            .value {
+                                text-align: center;
+                                line-height: 14px;
+                                font-size: 9px !important;
+                                font-weight: 300;
+                            }
+                        }
+
+                        .clear-rating-btn {
+                            opacity: 0;
+                            visibility: hidden;
+                        }
+                    }
 
                     .rating-name {
                         display: flex;
@@ -397,7 +430,7 @@
                         position: relative;
 
                         .name {
-                            font-size: 15px;
+                            font-size: 14px;
                             font-weight: 500;
                         }
 
@@ -412,6 +445,8 @@
                             position: absolute;
                             right: 0;
                             background-color: white;
+                            transform: translate(5px, -4px);
+                            //transition: all 200ms;
 
                             .value {
                                 font-size: 12px;
@@ -422,7 +457,7 @@
 
                     .stars {
                         display: flex;
-                        gap: 10px;
+                        gap: 10px 5px;
                         flex-direction: column;
                     }
 
@@ -433,8 +468,9 @@
                     }
 
                     .star-container {
-                        width: 25px;
-                        height: 25px;
+                        $dim: 22px;
+                        width: $dim;
+                        height: $dim;
                         cursor: pointer;
                         position: relative;
 
@@ -459,7 +495,7 @@
                     .range-container {
                         position: relative;
                         width: 100%;
-                        padding: 10px 0;
+                        padding: 0 0;
                     }
 
                     .sliders-control {
@@ -569,7 +605,7 @@
     }
 
     .review-card-wrapper {
-        padding: 20px 10px;
+        padding: 20px 0;
         flex: 1;
         display: flex;
         flex-direction: column;
@@ -580,6 +616,43 @@
         padding: 30px;
         color: #666;
         font-size: 16px;
+    }
+
+    .name-clear {
+        display: flex;
+        //flex-direction: column;
+        align-items: center;
+        gap: 5px 5px;
+    }
+
+    .clear-rating-btn {
+        transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+        opacity: 1;
+        visibility: visible;
+        //position: absolute;
+        top: 20px;
+
+        .button {
+            background-color: transparentize($color_lightgray, .7);
+            color: lighten(black, 20%);
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 0 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 9px;
+            font-weight: 600;
+            @include flex-center-col;
+
+            svg {
+                height: 12px;
+            }
+
+            &:hover {
+                background-color: #f5f5f5;
+                //color: #555;
+            }
+        }
     }
 }
 

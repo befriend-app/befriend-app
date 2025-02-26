@@ -273,9 +273,18 @@ befriend.reviews = {
             ratingsHtml += `
                 <div class="rating-option review-${key}" data-rating-type="${key}">
                     <div class="rating-name">
-                        <div class="name">${rating.name}</div>
+                        <div class="name-clear">
+                            <div class="name">${rating.name}</div>
+
+                            <div class="clear-rating-btn">
+                                <div class="button">
+                                    Clear
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="rating-display">
-                            <div class="value">0.0</div>
+                            <div class="value">Not Rated</div>
                         </div>
                     </div>
                     
@@ -338,14 +347,12 @@ befriend.reviews = {
                         
                         <div class="review-content">
                             <div class="persons-section">
-                                <div class="section-heading">Rate Your Experience With</div>
                                 <div class="persons-nav">
                                     ${personsNav}
                                 </div>
                             </div>
                             
                             <div class="ratings-section">
-                                <div class="section-heading">Rating Categories</div>
                                 <div class="ratings-container">
                                     ${ratingsHtml}
                                 </div>
@@ -465,12 +472,14 @@ befriend.reviews = {
                     const type = option.getAttribute('data-rating-type');
                     const stars = option.querySelectorAll('.star-container');
                     const display = option.querySelector('.rating-display');
+                    const clearBtn = option.querySelector('.clear-rating-btn .button');
 
                     const container = option.querySelector('.sliders-control');
                     const range = option.querySelector('.slider-range');
                     const thumb = option.querySelector('.thumb');
                     let isDragging = false;
                     let startX, startLeft;
+                    let hasRating = false;
 
                     function setPosition(value) {
                         if (typeof value !== 'number' || isNaN(value)) {
@@ -491,6 +500,10 @@ befriend.reviews = {
                     }
 
                     const updateRating = async (rating) => {
+                        hasRating = true;
+
+                        removeClassEl('no-rating', option);
+
                         rating = Math.max(0, Math.min(5, rating));
 
                         for (let i = 0; i < stars.length; i++) {
@@ -516,6 +529,30 @@ befriend.reviews = {
 
                         befriend.reviews.saveRating(activityToken, personToken, type, rating);
                     };
+
+                    const clearRating = () => {
+                        hasRating = false;
+                        display.querySelector('.value').innerHTML = 'Not Rated';
+
+                        stars.forEach(star => {
+                            const fill = star.querySelector('.fill');
+                            fill.style.fill = 'transparent';
+                            fill.style.removeProperty('clip-path');
+                        });
+
+                        thumb.style.left = '0px';
+                        range.style.width = '0px';
+
+                        befriend.reviews.saveRating(activityToken, personToken, type, null);
+
+                        addClassEl('no-rating', option);
+                    };
+
+                    clearBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        clearRating();
+                    });
 
                     function handleStart(e) {
                         isDragging = true;
@@ -625,8 +662,13 @@ befriend.reviews = {
 
                     container.addEventListener('click', handleTrackClick);
 
+                    stars.forEach(star => {
+                        const fill = star.querySelector('.fill');
+                        fill.style.fill = 'transparent';
+                    });
+
                     requestAnimationFrame(() => {
-                        updateRating(0);
+                        clearRating();
                     });
                 }
 
@@ -637,23 +679,19 @@ befriend.reviews = {
                         e.preventDefault();
                         const personToken = nav.getAttribute('data-person-token');
 
-                        // Update active class
                         personNavs.forEach(n => removeClassEl('active', n));
                         addClassEl('active', nav);
 
-                        // Update current person
                         befriend.reviews.current.person_token = personToken;
 
-                        // Reset ratings for new person
                         ratingOptions.forEach(option => {
-                            const type = option.getAttribute('data-rating-type');
+                            const clearBtn = option.querySelector('.clear-rating-btn button');
                             const display = option.querySelector('.rating-display');
                             const stars = option.querySelectorAll('.star-container');
                             const range = option.querySelector('.slider-range');
                             const thumb = option.querySelector('.thumb');
 
-                            // Reset to zero or load saved ratings for this person
-                            display.querySelector('.value').innerHTML = '0.0';
+                            display.querySelector('.value').innerHTML = 'Not Rated';
                             stars.forEach(star => {
                                 const fill = star.querySelector('.fill');
                                 fill.style.fill = 'transparent';
@@ -661,6 +699,9 @@ befriend.reviews = {
                             });
                             thumb.style.left = '0px';
                             range.style.width = '0px';
+
+                            clearBtn.style.opacity = '0';
+                            clearBtn.style.visibility = 'hidden';
                         });
                     });
                 }
