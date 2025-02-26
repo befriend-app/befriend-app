@@ -304,9 +304,6 @@ befriend.activities = {
                                         <div class="time">${time_string}</div>
                                     </div>
                                 </div>
-                                
-                                <div class="location">${activity_data.location_name}</div>
-                                <div class="address">${activity_data.location_address}, ${activity_data.location_locality}, ${activity_data.location_region}</div>
                             </div>
                             
                             <div class="right-col ${statusTag ? 'w-tag' : ''} ${is_past && !statusTag ? 'no-tag' : ''}">
@@ -318,6 +315,11 @@ befriend.activities = {
                                 
                                 <div class="faces">${faces_html}</div>
                             </div>
+                        </div>
+                        
+                        <div class="location-address">
+                            <div class="location">${activity_data.location_name}</div>
+                            <div class="address">${activity_data.location_address}, ${activity_data.location_locality}, ${activity_data.location_region}</div>
                         </div>
                     </div>
                 </div>

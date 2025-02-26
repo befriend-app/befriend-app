@@ -1,15 +1,60 @@
 #reviews-overlay {
+    &.no-transition {
+        .reviews-popup-overlay, .reviews, .activities-container {
+            transition: none !important;
+        }
+    }
+
+    &.active {
+        .reviews-popup-overlay {
+            background-color: rgba(0, 0, 0, 0.5);
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .reviews {
+            transform: translateY(0);
+        }
+    }
+
+    &.transition-out {
+        .reviews {
+            transform: translateY(0);
+        }
+    }
+
+    .close {
+        $dim: 32px;
+        $br: 8px;
+        $ptb: 6px;
+        position: absolute;
+        top: calc($dim * -1 - ($ptb * 2) - 1px);
+        left: 0;
+        padding: $ptb 12px;
+        border-top-right-radius: $br;
+        background-color: rgba(255, 255, 255, .9);
+        border: .5px solid lighten(black, 50%);
+        box-sizing: border-box;
+        @include flex-center-col;
+
+        svg {
+            @include flex-center-col;
+            height: $dim;
+        }
+    }
+
     .reviews {
-        $height: 150px;
+        $height: 500px;
         $message_height: 200px;
 
         position: fixed;
+        left: 0;
         bottom: 0;
         display: flex;
         flex-direction: column;
         width: 100vw;
         height: $height;
-        padding: 0 20px;
+        padding: 0;
         padding-bottom: var(--sab);
         background-color: white;
         transform: translateY($height);
@@ -21,7 +66,8 @@
             width: 100vw;
             display: flex;
             justify-content: center;
-            padding-top: 20px;
+            padding: 20px 0;
+            border-bottom: .5px solid lighten(black, 70%);
         }
     }
 
@@ -74,7 +120,6 @@
     .arrows {
         display: none;
         position: absolute;
-        height: calc(100% - var(--sab));
         width: 100vw;
 
         &.show {
@@ -84,8 +129,7 @@
 
     .navigation-arrow {
         position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
+        top: 13px;
         width: $reviews_arrow_dim;
         height: $reviews_arrow_dim;
         display: flex;
@@ -104,8 +148,9 @@
         }
 
         svg {
-            width: 20px;
-            height: 20px;
+            $p: .8;
+            width: $reviews_arrow_dim * $p;
+            height: $reviews_arrow_dim * $p;
             fill: none;
             stroke: #333;
             stroke-width: 2;
@@ -116,11 +161,11 @@
         }
 
         &#reviews-prev-arrow {
-            left: 10px;
+            left: 5px;
         }
 
         &#reviews-next-arrow {
-            right: 10px;
+            right: 5px;
         }
     }
 
@@ -172,28 +217,353 @@
         }
     }
 
-    &.no-transition {
-        .reviews-popup-overlay, .reviews, .activities-container {
-            transition: none !important;
+    .review-card {
+        $padding: 15px;
+
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        max-width: 600px;
+        width: 90vw;
+        margin: 0 auto;
+        overflow-y: auto;
+        overflow-x: hidden;
+
+        .review-header {
+            margin-bottom: 20px;
+
+            .activity-info {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                padding: 10px 20px;
+                background-color: rgba(0, 0, 0, 0.03);
+                border-radius: 12px;
+                gap: 15px 0;
+                border: 1px solid darken($brand_color_a, 15%);
+
+                .activity-details {
+                    display: flex;
+                    flex-direction: column;
+                    position: relative;
+                }
+
+                .activity-icon {
+                    $dim: 36px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    svg {
+                        height: $dim;
+                        width: $dim;
+                    }
+                }
+
+                .name-location {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 2px 6px;
+                    font-size: 16px;
+                    font-weight: 500;
+                }
+
+                .icon-name {
+                    display: flex;
+                    gap: 0 14px;
+                    align-items: center;
+                }
+
+                .activity-meta {
+                    display: flex;
+                    gap: 2px 15px;
+                    color: lighten(black, 20%);
+                    align-items: center;
+                    //width: fit-content;
+                    //border-bottom: 1px solid darken($brand_color_a, 10%);
+                    padding-bottom: 5px;
+                }
+
+                .activity-date {
+                    font-size: 18px;
+                    font-weight: 500;
+                }
+
+                .activity-time {
+                    font-size: 16px;
+                    //transform: translateY(1.2px);
+                }
+
+                .activity-location {
+                    font-weight: 400;
+                    font-size: 15px;
+                }
+            }
+        }
+
+        .review-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            overflow-y: auto;
+
+            .section-heading {
+                font-size: 16px;
+                font-weight: 500;
+                margin-bottom: 15px;
+                color: #333;
+            }
+
+            .persons-section {
+                .persons-nav {
+                    display: flex;
+                    gap: 15px;
+                    overflow-x: auto;
+                    padding: 5px 2px;
+
+                    &::-webkit-scrollbar {
+                        height: 4px;
+                    }
+
+                    &::-webkit-scrollbar-thumb {
+                        background-color: rgba(0, 0, 0, 0.2);
+                        border-radius: 4px;
+                    }
+
+                    .person-nav {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        min-width: 70px;
+                        padding: 8px;
+                        border-radius: 10px;
+                        cursor: pointer;
+                        transition: all 0.2s ease;
+
+                        &.active {
+                            background-color: $brand_color_b;
+                            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                        }
+
+                        .image {
+                            width: 55px;
+                            height: 55px;
+                            border-radius: 50%;
+                            background-size: cover;
+                            background-position: center;
+                            border: 1px solid #eee;
+                        }
+
+                        .name {
+                            margin-top: 8px;
+                            font-size: 14px;
+                            text-align: center;
+                        }
+                    }
+                }
+            }
+
+            .ratings-section {
+                .ratings-container {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
+                }
+
+                .rating-option {
+                    padding: 15px;
+                    border-radius: 10px;
+                    background-color: rgba(0, 0, 0, 0.02);
+                    border: 1px solid #eee;
+
+                    .rating-name {
+                        display: flex;
+                        align-items: center;
+                        margin-bottom: 10px;
+                        position: relative;
+
+                        .name {
+                            font-size: 15px;
+                            font-weight: 500;
+                        }
+
+                        .rating-display {
+                            width: 27px;
+                            height: 27px;
+                            border-radius: 50%;
+                            border: 1px solid #ddd;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            position: absolute;
+                            right: 0;
+                            background-color: white;
+
+                            .value {
+                                font-size: 12px;
+                                font-weight: 500;
+                            }
+                        }
+                    }
+
+                    .stars {
+                        display: flex;
+                        gap: 10px;
+                        flex-direction: column;
+                    }
+
+                    .stars-container {
+                        display: flex;
+                        gap: 8px;
+                        width: fit-content;
+                    }
+
+                    .star-container {
+                        width: 25px;
+                        height: 25px;
+                        cursor: pointer;
+                        position: relative;
+
+                        svg {
+                            position: absolute;
+                            width: 100%;
+                            height: 100%;
+
+                            &.outline {
+                                stroke: $brand_color_a;
+                                stroke-width: 1.5px;
+                                fill: transparent;
+                            }
+
+                            &.fill {
+                                //fill: $brand_color_a;
+                                transition: all 0.2s ease;
+                            }
+                        }
+                    }
+
+                    .range-container {
+                        position: relative;
+                        width: 100%;
+                        padding: 10px 0;
+                    }
+
+                    .sliders-control {
+                        position: relative;
+                        height: 20px;
+                    }
+
+                    .slider-track {
+                        position: absolute;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        width: 100%;
+                        height: 4px;
+                        background-color: #eee;
+                        border-radius: 4px;
+                    }
+
+                    .slider-range {
+                        position: absolute;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        height: 4px;
+                        background-color: $brand_color_a;
+                        border-radius: 4px;
+                    }
+
+                    .thumb {
+                        position: absolute;
+                        top: 50%;
+                        transform: translate(-50%, -50%);
+                        width: 20px;
+                        height: 20px;
+                        background-color: $brand_color_a;
+                        border-radius: 50%;
+                        cursor: pointer;
+
+                        .thumb-inner {
+                            width: 10px;
+                            height: 10px;
+                            background-color: white;
+                            border-radius: 50%;
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                        }
+                    }
+                }
+            }
+
+            .review-comments {
+                display: none;
+
+                textarea.review-comment-field {
+                    width: 100%;
+                    height: 100px;
+                    padding: 12px;
+                    border-radius: 10px;
+                    border: 1px solid #ddd;
+                    resize: none;
+                    font-family: inherit;
+                    font-size: 14px;
+
+                    &:focus {
+                        outline: none;
+                        border-color: $brand_color_a;
+                    }
+                }
+            }
+
+            .review-actions {
+                display: flex;
+                gap: 15px;
+                margin-top: 10px;
+
+                button {
+                    padding: 12px 20px;
+                    border-radius: 8px;
+                    border: none;
+                    font-size: 15px;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+
+                    &.review-submit-btn {
+                        background-color: $brand_color_a;
+                        color: white;
+                        flex: 2;
+
+                        &:hover {
+                            background-color: darken($brand_color_a, 5%);
+                        }
+                    }
+
+                    &.review-skip-btn {
+                        background-color: #eee;
+                        color: #666;
+                        flex: 1;
+
+                        &:hover {
+                            background-color: darken(#eee, 5%);
+                        }
+                    }
+                }
+            }
         }
     }
 
-    &.active {
-        .reviews-popup-overlay {
-            background-color: rgba(0, 0, 0, 0.5);
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .reviews {
-            transform: translateY(0);
-        }
+    .review-card-wrapper {
+        padding: 20px 10px;
     }
 
-    &.transition-out {
-        .reviews {
-            transform: translateY(0);
-        }
+    .review-error {
+        text-align: center;
+        padding: 30px;
+        color: #666;
+        font-size: 16px;
     }
 }
 

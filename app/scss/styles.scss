@@ -131,3 +131,7 @@ html.#{$class_available_me_sections} {
 .dni {
     display: none !important;
 }
+
+.no-scroll {
+    overflow: hidden;
+}
