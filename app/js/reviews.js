@@ -656,6 +656,11 @@ befriend.reviews = {
                             rating = Math.max(min, Math.min(max, rating));
 
                             let personRatings = befriend.reviews.getPersonRatings(activityToken, personToken);
+
+                            if(rating === personRatings[type]) {
+                                return;
+                            }
+
                             personRatings[type] = rating;
                         } else {
                             clearRating(personToken);
