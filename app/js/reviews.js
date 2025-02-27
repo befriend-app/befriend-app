@@ -441,7 +441,13 @@ befriend.reviews = {
         });
     },
     saveRating: function(activityToken, personToken, type, rating, skip_server) {
-        let savedEl = document.getElementById('reviews-overlay').querySelector('.saved-message');
+        let reviewCard = document.querySelector(`.review-card[data-activity-token="${activityToken}"]`);
+
+        if (!reviewCard) {
+            return;
+        }
+
+        let savedEl = reviewCard.querySelector('.saved-message');
 
         if (!this._debounceTimers) {
             this._debounceTimers = {};
