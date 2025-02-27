@@ -1,30 +1,11 @@
 befriend.reviews = {
     debug: true,
+    data: {},
     activities: [],
     current: {
         index: 0,
         activity_token: null,
         person_token: null,
-    },
-    toggleOverlay: async function(show) {
-        let overlayEl = document.getElementById('reviews-overlay');
-
-        if(show && elHasClass(overlayEl, 'active')) {
-            return;
-        }
-
-        if (show) {
-            addClassEl('active', overlayEl);
-            addClassEl('no-scroll', document.body);
-        } else {
-            addClassEl('transition-out', overlayEl);
-            removeClassEl('active', overlayEl);
-            removeClassEl('no-scroll', document.body);
-
-            setTimeout(function() {
-                removeClassEl('transition-out', overlayEl);
-            }, befriend.variables.reviews_transition_ms);
-        }
     },
     getActivities: function () {
         let activities = befriend.activities.data.all;
@@ -86,8 +67,73 @@ befriend.reviews = {
 
         return activitiesFiltered;
     },
+    toggleOverlay: async function(show) {
+        let overlayEl = document.getElementById('reviews-overlay');
+
+        if(show && elHasClass(overlayEl, 'active')) {
+            return;
+        }
+
+        if (show) {
+            addClassEl('active', overlayEl);
+            addClassEl('no-scroll', document.body);
+        } else {
+            addClassEl('transition-out', overlayEl);
+            removeClassEl('active', overlayEl);
+            removeClassEl('no-scroll', document.body);
+
+            setTimeout(function() {
+                removeClassEl('transition-out', overlayEl);
+            }, befriend.variables.reviews_transition_ms);
+        }
+    },
+    toggleNoShow: function(activityToken, personToken, isNoShow) {
+        let ratings = this.getPersonRatings(activityToken, personToken);
+
+        ratings.noShow = isNoShow;
+
+        let reviewCard = document.querySelector(`.review-card[data-activity-token="${activityToken}"]`);
+
+        if (!reviewCard) {
+            return;
+        }
+
+        let noShowBtn = reviewCard.querySelector('.no-show-section .button');
+        let ratingsSection = reviewCard.querySelector('.ratings-section');
+
+        if (isNoShow) {
+            addClassEl('active', noShowBtn);
+            addClassEl('disabled', ratingsSection);
+
+            this.clearAllRatings(activityToken, personToken);
+        } else {
+            removeClassEl('active', noShowBtn);
+            removeClassEl('disabled', ratingsSection);
+        }
+
+        this.saveNoShowStatus(activityToken, personToken, isNoShow);
+    },
+    saveNoShowStatus: function(activityToken, personToken, isNoShow) {
+        if (!this._debounceTimers) {
+            this._debounceTimers = {};
+        }
+
+        let key = `noshow_${activityToken}_${personToken}`;
+
+        if (this._debounceTimers[key]) {
+            clearTimeout(this._debounceTimers[key]);
+        }
+
+        this._debounceTimers[key] = setTimeout(async () => {
+            try {
+                //todo server
+            } catch (e) {
+                console.error(`Error saving no-show status:`, e);
+            }
+        }, 500);
+    },
     display: function (activity_token = null, skipTransition = false) {
-        const activities = this.getActivities();
+        let activities = this.getActivities();
 
         if(!activities.length) {
             return;
@@ -96,7 +142,7 @@ befriend.reviews = {
         let initialIndex = 0;
 
         if (activity_token) {
-            const activityIndex = activities.findIndex(a => a.activity_token === activity_token);
+            let activityIndex = activities.findIndex(a => a.activity_token === activity_token);
 
             if (activityIndex !== -1) {
                 initialIndex = activityIndex;
@@ -118,9 +164,9 @@ befriend.reviews = {
 
         activitiesContainerEl.innerHTML = activities_html;
 
-        const showArrows = activities.length > 1;
-        const prevArrow = document.getElementById('reviews-prev-arrow');
-        const nextArrow = document.getElementById('reviews-next-arrow');
+        let showArrows = activities.length > 1;
+        let prevArrow = document.getElementById('reviews-prev-arrow');
+        let nextArrow = document.getElementById('reviews-next-arrow');
 
         if(showArrows) {
             addClassEl('show', arrowsEl);
@@ -144,12 +190,12 @@ befriend.reviews = {
             this.goToSlide(initialIndex);
         }
 
-        befriend.reviews.toggleOverlay(true);
-
         befriend.reviews.events.init();
+
+        befriend.reviews.toggleOverlay(true);
     },
     goToSlide: function(index) {
-        const containerEl = document.getElementById('reviews-overlay').querySelector('.activities-container');
+        let containerEl = document.getElementById('reviews-overlay').querySelector('.activities-container');
 
         if (index < 0) {
             index = 0;
@@ -162,10 +208,12 @@ befriend.reviews = {
         this.current.index = index;
         this.current.activity_token = this.activities[index].activity_token;
 
+        befriend.reviews.selectDefaultPerson();
+
         containerEl.style.transform = `translateX(-${index * 100}%)`;
 
-        const prevArrow = document.getElementById('reviews-prev-arrow');
-        const nextArrow = document.getElementById('reviews-next-arrow');
+        let prevArrow = document.getElementById('reviews-prev-arrow');
+        let nextArrow = document.getElementById('reviews-next-arrow');
 
         if (prevArrow) {
             prevArrow.classList.toggle('disabled', index === 0);
@@ -175,11 +223,11 @@ befriend.reviews = {
             nextArrow.classList.toggle('disabled', index === this.activities.length - 1);
         }
 
-        const indicatorsContainer = document.getElementById('reviews-overlay').querySelector('.slide-indicators');
-        const innerContainer = indicatorsContainer.querySelector('.slide-indicators-inner');
+        let indicatorsContainer = document.getElementById('reviews-overlay').querySelector('.slide-indicators');
+        let innerContainer = indicatorsContainer.querySelector('.slide-indicators-inner');
 
         if (innerContainer) {
-            const indicators = innerContainer.querySelectorAll('.slide-indicator');
+            let indicators = innerContainer.querySelectorAll('.slide-indicator');
 
             if(!indicators.length) {
                 return;
@@ -213,7 +261,7 @@ befriend.reviews = {
             return '<div class="review-error">Activity data not available</div>';
         }
 
-        const activityData = activity.data;
+        let activityData = activity.data;
         let date = befriend.activities.displayActivity.html.getDate(activityData);
 
         let activityType = befriend.activities.activityTypes.lookup.byToken[activityData.activity_type_token];
@@ -252,8 +300,6 @@ befriend.reviews = {
                     token: personToken,
                     data: person
                 };
-
-                this.current.person_token = personToken;
             }
 
             personsNav += `
@@ -272,22 +318,22 @@ befriend.reviews = {
         for (let [key, rating] of Object.entries(befriend.filters.reviews.ratings)) {
             ratingsHtml += `
                 <div class="rating-option review-${key}" data-rating-type="${key}">
+                    <div class="clear-rating-btn">
+                        <div class="button">
+                            Clear
+                        </div>
+                    </div>
+                            
                     <div class="rating-name">
                         <div class="name-clear">
                             <div class="name">${rating.name}</div>
-
-                            <div class="clear-rating-btn">
-                                <div class="button">
-                                    Clear
-                                </div>
-                            </div>
                         </div>
 
                         <div class="rating-display">
                             <div class="value">Not Rated</div>
                         </div>
                     </div>
-                    
+                   
                     <div class="stars">
                         <div class="stars-container">
                             ${Array(5)
@@ -302,16 +348,6 @@ befriend.reviews = {
                                     </svg>
                                 </div>
                             `).join('')}
-                        </div>
-                        
-                        <div class="range-container">
-                            <div class="sliders-control">
-                                <div class="slider-track"></div>
-                                <div class="slider-range"></div>
-                                <div class="thumb">
-                                    <span class="thumb-inner"></span>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -352,20 +388,20 @@ befriend.reviews = {
                                 </div>
                             </div>
                             
+                            <div class="no-show-section">
+                                <div class="button">No Show <span class="q">?</span></div>
+                            </div>
+                            
                             <div class="ratings-section">
                                 <div class="ratings-container">
                                     ${ratingsHtml}
                                 </div>
                             </div>
                             
-                            <div class="review-comments">
-                                <div class="section-heading">Additional Comments (Optional)</div>
-                                <textarea class="review-comment-field" placeholder="Share your thoughts about this experience..."></textarea>
-                            </div>
-                            
-                            <div class="review-actions">
-                                <button class="review-submit-btn">Submit Review</button>
-                                <button class="review-skip-btn">Skip</button>
+                            <div class="saved-message">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512.0006 376.0036"><path d="M504.5025,7.4985c-9.997-9.998-26.205-9.998-36.204,0L161.5945,314.2055l-117.892-117.892c-9.997-9.998-26.205-9.997-36.204,0-9.998,9.997-9.998,26.205,0,36.203l135.994,135.992c9.994,9.997,26.214,9.99,36.204,0L504.5025,43.7025c9.998-9.997,9.997-26.206,0-36.204Z"/></svg>
+                                
+                                <div class="text">Saved</div>
                             </div>
                         </div>
                     </div>
@@ -374,352 +410,185 @@ befriend.reviews = {
         `;
     },
     centerActiveIndicator: function() {
-        const indicatorsContainer = document.getElementById('reviews-overlay').querySelector('.slide-indicators');
-        const innerContainer = indicatorsContainer.querySelector('.slide-indicators-inner');
+        let indicatorsContainer = document.getElementById('reviews-overlay').querySelector('.slide-indicators');
+        let innerContainer = indicatorsContainer.querySelector('.slide-indicators-inner');
 
         if(!innerContainer) {
             return;
         }
 
-        const activeIndicator = innerContainer.querySelector('.slide-indicator.active');
+        let activeIndicator = innerContainer.querySelector('.slide-indicator.active');
 
         if (!activeIndicator) {
             return;
         }
 
-        const indicatorWidth = befriend.variables.reviews_indicator_dim;
-        const indicatorGap = befriend.variables.reviews_indicator_gap;
-        const activeIndex = Array.from(innerContainer.querySelectorAll('.slide-indicator'))
+        let indicatorWidth = befriend.variables.reviews_indicator_dim;
+        let indicatorGap = befriend.variables.reviews_indicator_gap;
+        let activeIndex = Array.from(innerContainer.querySelectorAll('.slide-indicator'))
             .findIndex(indicator => elHasClass(indicator, 'active'));
 
-        const containerBox = indicatorsContainer.getBoundingClientRect();
-        const containerWidth = indicatorsContainer.offsetWidth;
-        const containerCenter = containerWidth / 2 - indicatorWidth / 2;
+        let containerBox = indicatorsContainer.getBoundingClientRect();
+        let containerWidth = indicatorsContainer.offsetWidth;
+        let containerCenter = containerWidth / 2 - indicatorWidth / 2;
 
-        const activeIndicatorCenter = (activeIndex * (indicatorWidth + indicatorGap)) + (indicatorWidth / 2);
+        let activeIndicatorCenter = (activeIndex * (indicatorWidth + indicatorGap)) + (indicatorWidth / 2);
 
-        const targetScrollLeft = activeIndicatorCenter - containerCenter + containerBox.left / 2;
+        let targetScrollLeft = activeIndicatorCenter - containerCenter + containerBox.left / 2;
 
         requestAnimationFrame(() => {
             indicatorsContainer.scrollLeft = Math.max(0, targetScrollLeft);
         });
     },
-    saveRating: function(activityToken, personToken, type, rating) {
+    saveRating: function(activityToken, personToken, type, rating, skip_server) {
+        let savedEl = document.getElementById('reviews-overlay').querySelector('.saved-message');
+
         if (!this._debounceTimers) {
             this._debounceTimers = {};
         }
 
-        const key = `${activityToken}_${personToken}_${type}`;
+        let key_server = `${activityToken}_${personToken}_${type}`;
 
-        if (this._debounceTimers[key]) {
-            clearTimeout(this._debounceTimers[key]);
+        if (this._debounceTimers[key_server]) {
+            clearTimeout(this._debounceTimers[key_server]);
         }
 
-        this._debounceTimers[key] = setTimeout(async () => {
+        clearTimeout(savedEl._timeout);
+
+        this._debounceTimers[key_server] = setTimeout(async () => {
             try {
-                console.log(`Saving rating: ${type} = ${rating} for person ${personToken} in activity ${activityToken}`);
+                //todo server
+                addClassEl('show', savedEl);
+
+                savedEl._timeout = setTimeout(function () {
+                    removeClassEl('show', savedEl);
+                }, 3000);
             } catch (e) {
                 console.error(`Error saving ${type} rating:`, e);
             }
-        }, 500);
+        }, 200);
     },
-    submitReview: function(activityToken, personToken, comments) {
-        console.log(`Submitting review for person ${personToken} in activity ${activityToken}`);
-        console.log(`Comments: ${comments}`);
+    getPersonRatings: function (activityToken, personToken) {
+        if(!befriend.reviews.data[activityToken]) {
+            befriend.reviews.data[activityToken] = {};
+        }
 
-        // Move to next slide or close if last
-        if (this.current.index < this.activities.length - 1) {
-            this.nextSlide();
+        if (!befriend.reviews.data[activityToken][personToken]) {
+            befriend.reviews.data[activityToken][personToken] = {};
+        }
+
+        return befriend.reviews.data[activityToken][personToken];
+    },
+    displayRatings: function(activityToken, personToken) {
+        let reviewCard = document.querySelector(`.review-card[data-activity-token="${activityToken}"]`);
+
+        if (!reviewCard) {
+            return;
+        }
+
+        let personRatings = this.getPersonRatings(activityToken, personToken);
+        let ratingOptions = reviewCard.querySelectorAll('.rating-option');
+
+        let noShowBtn = reviewCard.querySelector('.no-show-section .button');
+        let ratingsSection = reviewCard.querySelector('.ratings-section');
+
+        if (personRatings.noShow) {
+            addClassEl('active', noShowBtn);
+            addClassEl('disabled', ratingsSection);
         } else {
-            this.toggleOverlay(false);
+            removeClassEl('active', noShowBtn);
+            removeClassEl('disabled', ratingsSection);
+        }
+
+        for (let option of Array.from(ratingOptions)) {
+            let type = option.getAttribute('data-rating-type');
+            let rating = personRatings[type];
+            let stars = option.querySelectorAll('.star-container');
+
+            if (rating) {
+                removeClassEl('no-rating', option);
+
+                for (let i = 0; i < stars.length; i++) {
+                    let fill = stars[i].querySelector('.fill');
+
+                    if (i < rating) {
+                        fill.style.fill = befriend.variables.brand_color_a;
+                        fill.style.removeProperty('clip-path');
+                    } else {
+                        fill.style.fill = 'transparent';
+                        fill.style.removeProperty('clip-path');
+                    }
+                }
+            } else {
+                addClassEl('no-rating', option);
+
+                stars.forEach(star => {
+                    let fill = star.querySelector('.fill');
+                    fill.style.fill = 'transparent';
+                    fill.style.removeProperty('clip-path');
+                });
+            }
+        }
+
+        return { reviewCard, ratingOptions };
+    },
+    clearAllRatings: function(activityToken, personToken) {
+        let reviewCard = document.querySelector(`.review-card[data-activity-token="${activityToken}"]`);
+
+        if (!reviewCard) {
+            return;
+        }
+
+        let ratingOptions = reviewCard.querySelectorAll('.rating-option');
+        let personRatings = this.getPersonRatings(activityToken, personToken);
+
+        for (let option of Array.from(ratingOptions)) {
+            let type = option.getAttribute('data-rating-type');
+            let stars = option.querySelectorAll('.star-container');
+
+            stars.forEach(star => {
+                let fill = star.querySelector('.fill');
+                fill.style.fill = 'transparent';
+                fill.style.removeProperty('clip-path');
+            });
+
+            delete personRatings[type];
+
+            addClassEl('no-rating', option);
         }
     },
-    skipReview: function(activityToken, personToken) {
-        console.log(`Skipping review for person ${personToken} in activity ${activityToken}`);
+    selectDefaultPerson: function() {
+        let activityToken = this.current.activity_token;
 
-        // Move to next slide or close if last
-        if (this.current.index < this.activities.length - 1) {
-            this.nextSlide();
-        } else {
-            this.toggleOverlay(false);
+        let reviewCard = document.querySelector(`.review-card[data-activity-token="${activityToken}"]`);
+
+        if (!reviewCard) {
+            return;
         }
+
+        let personsNavEl = reviewCard.querySelector('.person-nav.active');
+
+        if(personsNavEl) {
+            this.current.person_token = personsNavEl.getAttribute('data-person-token');
+            return;
+        }
+
+        let personsNavEls = reviewCard.getElementsByClassName('person-nav');
+
+        if(!personsNavEls.length) {
+            return;
+        }
+
+        this.current.person_token = personsNavEls[0].getAttribute('data-person-token');
     },
     events: {
         init: function () {
-            this.onRatings();
             this.onClose();
+            this.onRatings();
+            this.onPersonNav();
+            this.onNoShow();
             this.onArrows();
             this.onIndicators();
-        },
-        onRatings: function() {
-            const reviewCards = document.getElementById('reviews-overlay').getElementsByClassName('review-card');
-            const precision = 10;
-            const min = 0;
-            const max = 5;
-
-            for(let card of Array.from(reviewCards)) {
-                if(card._listener) {
-                    return;
-                }
-
-                card._listener = true;
-
-                const ratingOptions = card.querySelectorAll('.rating-option');
-                const activityToken = card.getAttribute('data-activity-token');
-                const personToken = befriend.reviews.current.person_token;
-
-                for(let option of Array.from(ratingOptions)) {
-                    const type = option.getAttribute('data-rating-type');
-                    const stars = option.querySelectorAll('.star-container');
-                    const display = option.querySelector('.rating-display');
-                    const clearBtn = option.querySelector('.clear-rating-btn .button');
-
-                    const container = option.querySelector('.sliders-control');
-                    const range = option.querySelector('.slider-range');
-                    const thumb = option.querySelector('.thumb');
-                    let isDragging = false;
-                    let startX, startLeft;
-                    let hasRating = false;
-
-                    function setPosition(value) {
-                        if (typeof value !== 'number' || isNaN(value)) {
-                            value = 0;
-                        }
-                        const percent = value / max;
-                        const width = container.getBoundingClientRect().width;
-                        const position = percent * width;
-                        thumb.style.left = `${position}px`;
-                        range.style.width = `${position}px`;
-                    }
-
-                    function getValueFromPosition(position) {
-                        const width = container.getBoundingClientRect().width;
-                        const percent = position / width;
-                        const value = percent * max;
-                        return Math.min(Math.max(value, min), max);
-                    }
-
-                    const updateRating = async (rating) => {
-                        hasRating = true;
-
-                        removeClassEl('no-rating', option);
-
-                        rating = Math.max(0, Math.min(5, rating));
-
-                        for (let i = 0; i < stars.length; i++) {
-                            const fill = stars[i].querySelector('.fill');
-                            const fillPercentage = Math.max(0, Math.min(100, (rating - i) * 100));
-
-                            if (fillPercentage <= 0) {
-                                fill.style.fill = 'transparent';
-                                // fill.style.removeProperty('clip-path');
-                            } else if (fillPercentage >= 100) {
-                                fill.style.fill = befriend.variables.brand_color_a;
-                                fill.style.removeProperty('clip-path');
-                            } else {
-                                fill.style.clipPath = `polygon(0 0, ${fillPercentage}% 0, ${fillPercentage}% 100%, 0 100%)`;
-
-                                fill.style.fill = befriend.variables.brand_color_a;
-                            }
-                        }
-
-                        setPosition(rating);
-
-                        display.querySelector('.value').innerHTML = rating.toFixed(1);
-
-                        befriend.reviews.saveRating(activityToken, personToken, type, rating);
-                    };
-
-                    const clearRating = () => {
-                        hasRating = false;
-                        display.querySelector('.value').innerHTML = 'Not Rated';
-
-                        stars.forEach(star => {
-                            const fill = star.querySelector('.fill');
-                            fill.style.fill = 'transparent';
-                            fill.style.removeProperty('clip-path');
-                        });
-
-                        thumb.style.left = '0px';
-                        range.style.width = '0px';
-
-                        befriend.reviews.saveRating(activityToken, personToken, type, null);
-
-                        addClassEl('no-rating', option);
-                    };
-
-                    clearBtn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        clearRating();
-                    });
-
-                    function handleStart(e) {
-                        isDragging = true;
-                        startX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
-                        const thumbRect = thumb.getBoundingClientRect();
-                        const containerRect = container.getBoundingClientRect();
-                        startLeft = thumbRect.left - containerRect.left;
-                        e.preventDefault();
-                    }
-
-                    function handleMove(e) {
-                        if (!isDragging) {
-                            return;
-                        }
-
-                        const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
-                        const containerRect = container.getBoundingClientRect();
-                        const position = clientX - containerRect.left;
-                        const value = getValueFromPosition(position);
-                        const roundedValue = Math.round(value * precision) / precision; // Round to nearest 0.1
-                        updateRating(roundedValue);
-                    }
-
-                    function handleEnd() {
-                        isDragging = false;
-                    }
-
-                    function handleTrackClick(e) {
-                        if (isDragging) {
-                            return;
-                        }
-
-                        const rect = container.getBoundingClientRect();
-                        const clickPosition = e.clientX - rect.left;
-                        const value = getValueFromPosition(clickPosition);
-                        const roundedValue = Math.round(value * precision) / precision;
-                        updateRating(roundedValue);
-                    }
-
-                    for (let i = 0; i < stars.length; i++) {
-                        const star = stars[i];
-
-                        star.addEventListener('click', (e) => {
-                            const rect = star.getBoundingClientRect();
-                            const x = e.clientX - rect.left;
-                            const width = rect.width;
-                            const percentage = Math.max(0, Math.min(1, x / width));
-                            const rating = i + percentage;
-                            updateRating(rating);
-                        });
-                    }
-
-                    const starsContainer = option.querySelector('.stars-container');
-
-                    starsContainer.addEventListener('touchstart', function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        const startTouch = e.touches[0];
-                        const containerRect = starsContainer.getBoundingClientRect();
-
-                        let isDragging = true;
-
-                        const getRatingFromPosition = (posX) => {
-                            const boundedX = Math.max(0, Math.min(containerRect.width, posX));
-                            return Math.max(0, Math.min(5, (boundedX / containerRect.width) * 5));
-                        };
-
-                        const startRating = getRatingFromPosition(startTouch.clientX - containerRect.left);
-                        updateRating(startRating);
-
-                        const onTouchMove = (event) => {
-                            if (!isDragging) {
-                                return;
-                            }
-
-                            event.preventDefault();
-                            event.stopPropagation();
-
-                            const touch = event.touches[0];
-                            const currentX = touch.clientX - containerRect.left;
-
-                            const newRating = getRatingFromPosition(currentX);
-
-                            requestAnimationFrame(() => {
-                                updateRating(newRating);
-                            });
-                        };
-
-                        const onTouchEnd = () => {
-                            isDragging = false;
-                            document.removeEventListener('touchmove', onTouchMove);
-                            document.removeEventListener('touchend', onTouchEnd);
-                        };
-
-                        document.addEventListener('touchmove', onTouchMove, { passive: false });
-                        document.addEventListener('touchend', onTouchEnd);
-                    }, { passive: false });
-
-                    thumb.addEventListener('mousedown', handleStart);
-                    document.addEventListener('mousemove', handleMove);
-                    document.addEventListener('mouseup', handleEnd);
-
-                    thumb.addEventListener('touchstart', handleStart);
-                    document.addEventListener('touchmove', handleMove);
-                    document.addEventListener('touchend', handleEnd);
-
-                    container.addEventListener('click', handleTrackClick);
-
-                    stars.forEach(star => {
-                        const fill = star.querySelector('.fill');
-                        fill.style.fill = 'transparent';
-                    });
-
-                    requestAnimationFrame(() => {
-                        clearRating();
-                    });
-                }
-
-                const personNavs = card.querySelectorAll('.persons-nav .person-nav');
-
-                for(let nav of Array.from(personNavs)) {
-                    nav.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        const personToken = nav.getAttribute('data-person-token');
-
-                        personNavs.forEach(n => removeClassEl('active', n));
-                        addClassEl('active', nav);
-
-                        befriend.reviews.current.person_token = personToken;
-
-                        ratingOptions.forEach(option => {
-                            const clearBtn = option.querySelector('.clear-rating-btn button');
-                            const display = option.querySelector('.rating-display');
-                            const stars = option.querySelectorAll('.star-container');
-                            const range = option.querySelector('.slider-range');
-                            const thumb = option.querySelector('.thumb');
-
-                            display.querySelector('.value').innerHTML = 'Not Rated';
-                            stars.forEach(star => {
-                                const fill = star.querySelector('.fill');
-                                fill.style.fill = 'transparent';
-                                fill.style.removeProperty('clip-path');
-                            });
-                            thumb.style.left = '0px';
-                            range.style.width = '0px';
-
-                            clearBtn.style.opacity = '0';
-                            clearBtn.style.visibility = 'hidden';
-                        });
-                    });
-                }
-
-                const submitBtn = card.querySelector('.review-submit-btn');
-                const skipBtn = card.querySelector('.review-skip-btn');
-
-                submitBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const comments = card.querySelector('.review-comment-field').value;
-                    befriend.reviews.submitReview(activityToken, personToken, comments);
-                });
-
-                skipBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    befriend.reviews.skipReview(activityToken, personToken);
-                });
-            }
         },
         onClose: function () {
             let overlayEl = document.getElementById('reviews-overlay');
@@ -749,11 +618,208 @@ befriend.reviews = {
                 befriend.reviews.toggleOverlay(false);
             });
         },
+        onRatings: function() {
+            let reviewCards = document.getElementById('reviews-overlay').getElementsByClassName('review-card');
+            let min = 1;
+            let max = 5;
+
+            for(let card of Array.from(reviewCards)) {
+                let ratingOptions = card.querySelectorAll('.rating-option');
+                let activityToken = card.getAttribute('data-activity-token');
+                let personToken = befriend.reviews.current.person_token;
+
+                befriend.reviews.displayRatings(activityToken, personToken);
+
+                for(let option of Array.from(ratingOptions)) {
+                    let type = option.getAttribute('data-rating-type');
+                    let stars = option.querySelectorAll('.star-container');
+                    let clearBtn = option.querySelector('.clear-rating-btn .button');
+
+                    let updateRating = async (personToken, rating) => {
+                        let personRatings = befriend.reviews.getPersonRatings(activityToken, personToken);
+
+                        if (personRatings.noShow) {
+                            return;
+                        }
+
+                        rating = Math.round(rating);
+
+                        removeClassEl('no-rating', option);
+
+                        if (rating > 0) {
+                            rating = Math.max(min, Math.min(max, rating));
+
+                            let personRatings = befriend.reviews.getPersonRatings(activityToken, personToken);
+                            personRatings[type] = rating;
+                        } else {
+                            clearRating(personToken);
+                            return;
+                        }
+
+                        for (let i = 0; i < stars.length; i++) {
+                            let fill = stars[i].querySelector('.fill');
+
+                            if (i < rating) {
+                                fill.style.fill = befriend.variables.brand_color_a;
+                                fill.style.removeProperty('clip-path');
+                            } else {
+                                fill.style.fill = 'transparent';
+                                fill.style.removeProperty('clip-path');
+                            }
+                        }
+
+                        befriend.reviews.saveRating(activityToken, personToken, type, rating);
+                    };
+
+                    let clearRating = (personToken, onLoad) => {
+                        let personRatings = befriend.reviews.getPersonRatings(activityToken, personToken);
+
+                        if (personRatings.noShow) {
+                            return;
+                        }
+
+                        stars.forEach(star => {
+                            let fill = star.querySelector('.fill');
+                            fill.style.fill = 'transparent';
+                            fill.style.removeProperty('clip-path');
+                        });
+
+                        delete personRatings[type];
+
+                        if(!onLoad) {
+                            befriend.reviews.saveRating(activityToken, personToken, type, null);
+                        }
+
+                        addClassEl('no-rating', option);
+                    };
+
+                    clearBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        clearRating(befriend.reviews.current.person_token);
+                    });
+
+                    for (let i = 0; i < stars.length; i++) {
+                        let star = stars[i];
+
+                        star.addEventListener('click', (e) => {
+                            let rating = i + 1;
+                            updateRating(befriend.reviews.current.person_token, rating);
+                        });
+                    }
+
+                    let starsContainer = option.querySelector('.stars-container');
+
+                    starsContainer.addEventListener('touchstart', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        let startTouch = e.touches[0];
+                        let containerRect = starsContainer.getBoundingClientRect();
+                        let starWidth = containerRect.width / 5;
+
+                        let isDragging = true;
+
+                        let getRatingFromPosition = (posX) => {
+                            let boundedX = Math.max(0, Math.min(containerRect.width, posX));
+                            return Math.ceil(boundedX / starWidth);
+                        };
+
+                        let startRating = getRatingFromPosition(startTouch.clientX - containerRect.left);
+
+                        updateRating(befriend.reviews.current.person_token, startRating);
+
+                        let onTouchMove = (event) => {
+                            if (!isDragging) {
+                                return;
+                            }
+
+                            event.preventDefault();
+                            event.stopPropagation();
+
+                            let touch = event.touches[0];
+                            let currentX = touch.clientX - containerRect.left;
+
+                            let newRating = getRatingFromPosition(currentX);
+
+                            requestAnimationFrame(() => {
+                                updateRating(befriend.reviews.current.person_token, newRating);
+                            });
+                        };
+
+                        let onTouchEnd = () => {
+                            isDragging = false;
+                            document.removeEventListener('touchmove', onTouchMove);
+                            document.removeEventListener('touchend', onTouchEnd);
+                        };
+
+                        document.addEventListener('touchmove', onTouchMove, { passive: false });
+                        document.addEventListener('touchend', onTouchEnd);
+                    }, { passive: false });
+                }
+            }
+        },
+        onPersonNav: function () {
+            let personsNavEls = document.getElementById('reviews-overlay')
+                .querySelectorAll('.person-nav');
+
+            for(let nav of Array.from(personsNavEls)) {
+                if(nav._listener) {
+                    continue;
+                }
+
+                nav._listener = true;
+
+                nav.addEventListener('click', async function (e) {
+                    e.preventDefault();
+
+                    let newPersonToken = nav.getAttribute('data-person-token');
+
+                    befriend.reviews.current.person_token = newPersonToken;
+
+                    let navs = nav.parentElement.getElementsByClassName('person-nav');
+
+                    for(let el of Array.from(navs)) {
+                        removeClassEl('active', el);
+                    }
+
+                    addClassEl('active', nav);
+
+                    befriend.reviews.displayRatings(befriend.reviews.current.activity_token, newPersonToken);
+                });
+            }
+        },
+        onNoShow: function() {
+            let reviewCards = document.getElementById('reviews-overlay').getElementsByClassName('review-card');
+
+            for(let card of Array.from(reviewCards)) {
+                let noShowBtn = card.querySelector('.no-show-section .button');
+                let activityToken = card.getAttribute('data-activity-token');
+
+                if(noShowBtn._listener) {
+                    continue;
+                }
+
+                noShowBtn._listener = true;
+
+                noShowBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    let personToken = befriend.reviews.current.person_token;
+                    let personRatings = befriend.reviews.getPersonRatings(activityToken, personToken);
+
+                    let isCurrentlyNoShow = personRatings.noShow || false;
+                    
+                    befriend.reviews.toggleNoShow(activityToken, personToken, !isCurrentlyNoShow);
+                });
+            }
+        },
         onArrows: function () {
             let overlayEl = document.getElementById('reviews-overlay');
 
-            const prevArrow = document.getElementById('reviews-prev-arrow');
-            const nextArrow = document.getElementById('reviews-next-arrow');
+            let prevArrow = document.getElementById('reviews-prev-arrow');
+            let nextArrow = document.getElementById('reviews-next-arrow');
 
             if(prevArrow._listener) {
                 return;
@@ -777,11 +843,11 @@ befriend.reviews = {
                 }
             });
 
-            const container = overlayEl.querySelector('.activities-container');
+            let container = overlayEl.querySelector('.activities-container');
 
             let startX, startY, moveX, moveY;
             let initialTransform;
-            const threshold = 50;
+            let threshold = 50;
             let isHorizontalSwipe = null;
 
             container.addEventListener('touchstart', (e) => {
@@ -795,8 +861,8 @@ befriend.reviews = {
                 startX = e.touches[0].clientX;
                 startY = e.touches[0].clientY;
 
-                const style = window.getComputedStyle(container);
-                const matrix = new DOMMatrix(style.transform);
+                let style = window.getComputedStyle(container);
+                let matrix = new DOMMatrix(style.transform);
                 initialTransform = matrix.m41;
 
                 addClassEl('no-transition', container);
@@ -815,8 +881,8 @@ befriend.reviews = {
                 moveX = e.touches[0].clientX;
                 moveY = e.touches[0].clientY;
 
-                const diffX = moveX - startX;
-                const diffY = moveY - startY;
+                let diffX = moveX - startX;
+                let diffY = moveY - startY;
 
                 if (isHorizontalSwipe === null) {
                     isHorizontalSwipe = Math.abs(diffX) > Math.abs(diffY);
@@ -832,7 +898,7 @@ befriend.reviews = {
                 removeClassEl('no-transition', container);
 
                 if (isHorizontalSwipe && startX && moveX) {
-                    const diff = moveX - startX;
+                    let diff = moveX - startX;
 
                     if (Math.abs(diff) < threshold) {
                         befriend.reviews.goToSlide(befriend.reviews.current.index);
@@ -859,19 +925,19 @@ befriend.reviews = {
             }, { passive: false });
         },
         onIndicators: function () {
-            const activities = befriend.reviews.activities;
+            let activities = befriend.reviews.activities;
 
             if (activities.length > 1) {
                 console.log("on indicators");
-                const indicatorsContainer = document.querySelector('.slide-indicators');
+                let indicatorsContainer = document.querySelector('.slide-indicators');
                 indicatorsContainer.innerHTML = '';
 
-                const innerContainer = document.createElement('div');
+                let innerContainer = document.createElement('div');
                 addClassEl('slide-indicators-inner', innerContainer);
                 indicatorsContainer.appendChild(innerContainer);
 
                 for (let i = 0; i < activities.length; i++) {
-                    const indicator = document.createElement('div');
+                    let indicator = document.createElement('div');
                     addClassEl('slide-indicator', indicator);
 
                     if (i === befriend.reviews.current.index) {
