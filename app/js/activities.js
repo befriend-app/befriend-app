@@ -4385,8 +4385,6 @@ befriend.activities = {
                 try {
                     let r;
 
-                    console.log(activity.access);
-
                     //person cancelling activity created on 3rd-party network
                     if(activity.access?.token) {
                         r = await befriend.networks.put(activity.access.domain, `activities/networks/cancel/${activity_token}`, {

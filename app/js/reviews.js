@@ -111,9 +111,18 @@ befriend.reviews = {
             removeClassEl('disabled', ratingsSection);
         }
 
-        this.saveNoShowStatus(activityToken, personToken, isNoShow);
+        this.saveNoShow(activityToken, personToken, isNoShow);
     },
-    saveNoShowStatus: function(activityToken, personToken, isNoShow) {
+    saveNoShow: function(activityToken, personToken, isNoShow) {
+        let activity = befriend.activities.data.getActivity(activityToken);
+        let reviewCard = document.querySelector(`.review-card[data-activity-token="${activityToken}"]`);
+
+        if (!activity || !reviewCard) {
+            return;
+        }
+
+        let savedEl = reviewCard.querySelector('.saved-message');
+
         if (!this._debounceTimers) {
             this._debounceTimers = {};
         }
@@ -126,11 +135,35 @@ befriend.reviews = {
 
         this._debounceTimers[key] = setTimeout(async () => {
             try {
-                //todo server
+                let r;
+
+                let activity = befriend.activities.data.getActivity(activityToken);
+
+                if(activity.access?.token) {
+                    r = await befriend.networks.put(activity.access.domain, `/activities/networks/reviews/${activityToken}`, {
+                        access_token: activity.access.token,
+                        person_token: befriend.getPersonToken(),
+                        person_to_token: personToken,
+                        no_show: isNoShow
+                    });
+                } else {
+                    r = await befriend.auth.put(`/activities/${activityToken}/reviews`, {
+                        person_to_token: personToken,
+                        no_show: isNoShow
+                    });
+                }
+
+                if(r.status === 202) {
+                    addClassEl('show', savedEl);
+
+                    savedEl._timeout = setTimeout(function () {
+                        removeClassEl('show', savedEl);
+                    }, 3000);
+                }
             } catch (e) {
-                console.error(`Error saving no-show status:`, e);
+                console.error(`Error saving no show:`, e);
             }
-        }, 500);
+        }, 200);
     },
     display: function (activity_token = null, skipTransition = false) {
         let activities = this.getActivities();
@@ -440,10 +473,11 @@ befriend.reviews = {
             indicatorsContainer.scrollLeft = Math.max(0, targetScrollLeft);
         });
     },
-    saveRating: function(activityToken, personToken, type, rating, skip_server) {
+    saveRating: function(activityToken, personToken, type, rating) {
+        let activity = befriend.activities.data.getActivity(activityToken);
         let reviewCard = document.querySelector(`.review-card[data-activity-token="${activityToken}"]`);
 
-        if (!reviewCard) {
+        if (!activity || !reviewCard) {
             return;
         }
 
@@ -463,12 +497,37 @@ befriend.reviews = {
 
         this._debounceTimers[key_server] = setTimeout(async () => {
             try {
-                //todo server
-                addClassEl('show', savedEl);
+                let r;
 
-                savedEl._timeout = setTimeout(function () {
-                    removeClassEl('show', savedEl);
-                }, 3000);
+                let activity = befriend.activities.data.getActivity(activityToken);
+
+                if(activity.access?.token) {
+                    r = await befriend.networks.put(activity.access.domain, `/activities/networks/reviews/${activityToken}`, {
+                        access_token: activity.access.token,
+                        person_token: befriend.getPersonToken(),
+                        person_to_token: personToken,
+                        review: {
+                            type,
+                            rating
+                        }
+                    });
+                } else {
+                    r = await befriend.auth.put(`/activities/${activityToken}/reviews`, {
+                        person_to_token: personToken,
+                        review: {
+                            type,
+                            rating
+                        }
+                    });
+                }
+
+                if(r.status === 202) {
+                    addClassEl('show', savedEl);
+
+                    savedEl._timeout = setTimeout(function () {
+                        removeClassEl('show', savedEl);
+                    }, 3000);
+                }
             } catch (e) {
                 console.error(`Error saving ${type} rating:`, e);
             }
