@@ -7,6 +7,31 @@ befriend.reviews = {
         activity_token: null,
         person_token: null,
     },
+    setReviews: function (reviews) {
+        for(let activity_token in reviews) {
+            let activity = reviews[activity_token];
+
+            if(!this.data[activity_token]) {
+                this.data[activity_token] = {}
+            }
+
+            for(let person_token in activity) {
+                if(!this.data[activity_token][person_token]) {
+                    this.data[activity_token][person_token] = {};
+                }
+
+                let data = activity[person_token];
+
+                if(data.no_show) {
+                    this.data[activity_token][person_token].noShow = data.no_show;
+                }
+
+                for(let type in data.ratings) {
+                    this.data[activity_token][person_token][type] = data.ratings[type];
+                }
+            }
+        }
+    },
     getActivities: function () {
         let activities = befriend.activities.data.all;
 
@@ -132,6 +157,8 @@ befriend.reviews = {
         if (this._debounceTimers[key]) {
             clearTimeout(this._debounceTimers[key]);
         }
+
+        clearTimeout(savedEl._timeout);
 
         this._debounceTimers[key] = setTimeout(async () => {
             try {
