@@ -327,7 +327,8 @@ befriend.me = {
                 befriend.activities.data.setData(data.activities.activities);
                 befriend.activities.data.setRules(data.activities.rules);
                 befriend.notifications.data.setData(data.notifications);
-                befriend.reviews.setReviews(data.reviews);
+                befriend.reviews.setReviews(data.reviews.reviews);
+                befriend.reviews.period = data.reviews.period;
 
                 befriend.me.data.me = data.me;
                 befriend.me.data.genders = data.genders;

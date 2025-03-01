@@ -3439,6 +3439,7 @@ befriend.activities = {
 
                 let html = '';
                 let persons_nav_html = '';
+                let buttons_html = '';
                 let person_html = '';
 
                 let defaultSet = false;
@@ -3467,11 +3468,23 @@ befriend.activities = {
                     defaultSet = true;
                 }
 
+                if(activity.is_reviewable) {
+                    buttons_html += `<div class="person-button review">Review</div>`;
+                }
+
+                if(buttons_html) {
+                    buttons_html = `<div class="buttons">${buttons_html}</div>`;
+                }
+
                 if(persons_nav_html) {
-                    html = `<div class="persons-nav">
-                                ${persons_nav_html}
-                            </div>
+                    html = `<div class="persons-nav-buttons ${buttons_html ? 'has-buttons' : ''}">
+                                <div class="persons-nav">
+                                    ${persons_nav_html}
+                                </div>
                                 
+                                ${buttons_html}
+                            </div>
+                            
                             <div class="person">
                                 ${person_html}
                             </div>`;
@@ -4262,6 +4275,7 @@ befriend.activities = {
             befriend.activities.displayActivity.events.onMapsNavigate();
             befriend.activities.displayActivity.events.onReport();
             befriend.activities.displayActivity.events.onPersonNav();
+            befriend.activities.displayActivity.events.onReview();
             befriend.activities.displayActivity.events.onMatchingPersonNav();
         },
         showCancel: async function () {
@@ -4829,6 +4843,31 @@ befriend.activities = {
                         befriend.activities.displayActivity.selectPersonNav(person_token);
                     });
                 }
+            },
+            onReview: function () {
+                let el = befriend.els.currentActivityView.querySelector('.person-button.review')
+
+                if(el._listener) {
+                    return;
+                }
+
+                el._listener = true;
+
+                el.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    let activity_token = befriend.activities.displayActivity.currentToken;
+                    let person_selected = befriend.els.currentActivityView.querySelector(`.person-nav.active`);
+
+                    let person_token = null;
+
+                    if(person_selected) {
+                        person_token = person_selected.getAttribute('data-person-token');
+                    }
+
+                    befriend.reviews.showReviewActivities(activity_token, person_token, true);
+                });
             },
             onMatchingPersonNav: function() {
                 let person_nav_els = befriend.els.currentActivityView.querySelectorAll('.matching .person-nav');

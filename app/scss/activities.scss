@@ -1196,9 +1196,9 @@
                 }
 
                 .new-member {
-                    color: $brand_color_b_text;
-                    background-color: $brand_color_b;
-                    border: .5px solid darken($brand_color_a, 20%);
+                    //color: $brand_color_b_text;
+                    //background-color: $brand_color_b;
+                    border: .5px solid darken($brand_color_a, 10%);
                 }
             }
 
@@ -1209,7 +1209,7 @@
                 }
 
                 &.super {
-                    background-color: #3498DB;
+                    background-color: darken($brand_color_a, 5%);
                     color: white;
                     border: .5px solid darken($brand_color_a, 20%);
                 }
@@ -1433,6 +1433,32 @@
                             text-decoration: none;
                             color: #0080ea;
                         }
+                    }
+                }
+            }
+
+            .buttons {
+                margin-left: auto;
+
+                .person-button {
+                    font-size: 12px;
+                    font-weight: 500;
+                    text-transform: uppercase;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    padding: 3px 15px;
+                    background: lighten($color_lightgray, 12%);
+                    text-decoration: none;
+                    color: darken($brand_color_a, 25%);
+                    gap: 0 10px;
+                    border-radius: 6px;
+                    box-sizing: border-box;
+                    border: .5px solid darken($brand_color_a, 25%);
+
+                    &.review {
+                        //background-color: $brand_color_a;
+                        //color: $brand_color_a_text;
                     }
                 }
             }
@@ -1844,9 +1870,14 @@
             }
         }
 
+        .persons-nav-buttons {
+            display: flex;
+        }
+
         .persons-nav {
             display: flex;
-            gap: 0 10px;
+            flex-wrap: wrap;
+            gap: 5px 10px;
 
             .person-nav {
                 width: fit-content;

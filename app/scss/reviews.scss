@@ -16,13 +16,14 @@
         }
 
         .reviews {
-            transform: translateY(0);
+            transform: translate3d(0, 0, 0);
         }
     }
 
     &.transition-out {
-        .reviews {
-            transform: translateY(0);
+        .reviews, .reviews-popup-overlay {
+            transition: none !important;
+            display: none !important;
         }
     }
 
@@ -58,8 +59,10 @@
         padding: 0;
         padding-bottom: var(--sab);
         background-color: white;
-        transform: translateY(100%);
-        transition: all $reviews_transition_ms;
+        transform: translate3d(0, calc(100% + 60px), 0);
+        transition: transform $reviews_transition_ms cubic-bezier(0.33, 1, 0.68, 1);
+        z-index: 2000;
+        will-change: transform;
 
         .heading {
             font-size: 18px;

@@ -2,10 +2,38 @@ befriend.reviews = {
     debug: true,
     data: {},
     activities: [],
+    period: 7 * 24 * 3600, //amount of time past activity end time reviews are allowed
     current: {
         index: 0,
         activity_token: null,
         person_token: null,
+    },
+    init: function () {
+        this.updateInterval();
+    },
+    updateInterval: function () {
+        function isReviewable(activity) {
+            let reviewThreshold = timeNow(true) - befriend.reviews.period;
+
+            return timeNow(true) > activity.activity_end && activity.activity_end > reviewThreshold;
+        }
+
+        //update is_reviewable property on activity periodically
+        setInterval(function () {
+            if(!befriend.activities.data.all) {
+                return;
+            }
+
+            for(let activity_token in befriend.activities.data.all) {
+                let activity = befriend.activities.data.all[activity_token];
+
+                if(!activity.data) {
+                    continue;
+                }
+
+                activity.data.is_reviewable = isReviewable(activity);
+            }
+        }, 5 * 60 * 1000);
     },
     setReviews: function (reviews) {
         for(let activity_token in reviews) {
@@ -32,7 +60,7 @@ befriend.reviews = {
             }
         }
     },
-    getActivities: function () {
+    getActivities: function (force_activity_token = null) {
         let activities = befriend.activities.data.all;
 
         if(!activities) {
@@ -46,15 +74,11 @@ befriend.reviews = {
             return b.data.activity_start - a.data.activity_start;
         });
 
-        activities = activities.filter(a => a.data.is_reviewable);
-
-        console.log(activities);
-
         let activitiesFiltered = [];
 
         //filter by activity finished, cancelled
         for(let activity of activities) {
-            if(!activity.data.persons) {
+            if(!activity.data.is_reviewable || !activity.data.persons) {
                 continue;
             }
 
@@ -62,6 +86,27 @@ befriend.reviews = {
 
             if(isCancelled) {
                 continue;
+            }
+
+            //do not include activities that were already reviewed for every person
+            if(!force_activity_token || activity.activity_token !== force_activity_token) {
+                let existingRatings = this.data[activity.activity_token];
+
+                if(Object.keys(existingRatings || {}).length) {
+                    const allFinished = Object.values(existingRatings).every(data => {
+                        if (data.noShow) {
+                            return true;
+                        }
+
+                        return Object.keys(befriend.filters.reviews.ratings).every(key =>
+                            isNumeric(data[key])
+                        );
+                    });
+
+                    if (allFinished) {
+                        continue;
+                    }
+                }
             }
 
             //ensure activity had at least one person other than me
@@ -95,6 +140,68 @@ befriend.reviews = {
         this.activities = activitiesFiltered;
 
         return activitiesFiltered;
+    },
+    showReviewActivities: function (activity_token = null, person_token = null, skipTransition = false) {
+        let activities = this.getActivities(activity_token);
+
+        if(!activities.length) {
+            return;
+        }
+
+        let initialIndex = 0;
+
+        if (activity_token) {
+            let activityIndex = activities.findIndex(a => a.activity_token === activity_token);
+
+            if (activityIndex !== -1) {
+                initialIndex = activityIndex;
+            }
+        }
+
+        this.current.index = initialIndex;
+
+        let activitiesContainerEl = document.getElementById('reviews-overlay').querySelector('.activities-container');
+        let arrowsEl = document.getElementById('reviews-overlay').querySelector('.arrows');
+
+        let activities_html = ``;
+
+        for(let activity of activities) {
+            let html = this.getHtml(activity);
+
+            activities_html += `<div class="activity-slide">${html}</div>`;
+        }
+
+        activitiesContainerEl.innerHTML = activities_html;
+
+        let showArrows = activities.length > 1;
+        let prevArrow = document.getElementById('reviews-prev-arrow');
+        let nextArrow = document.getElementById('reviews-next-arrow');
+
+        if(showArrows) {
+            addClassEl('show', arrowsEl);
+        } else {
+            removeClassEl('show', arrowsEl);
+        }
+
+        prevArrow.classList.toggle('disabled', initialIndex === 0);
+        nextArrow.classList.toggle('disabled', initialIndex === activities.length - 1);
+
+        if (skipTransition) {
+            addClassEl('no-transition', activitiesContainerEl);
+
+            this.goToSlide(initialIndex);
+            void activitiesContainerEl.offsetWidth;
+
+            setTimeout(() => {
+                removeClassEl('no-transition', activitiesContainerEl);
+            }, 50);
+        } else {
+            this.goToSlide(initialIndex);
+        }
+
+        befriend.reviews.events.init();
+
+        befriend.reviews.toggleOverlay(true);
     },
     toggleOverlay: async function(show) {
         let overlayEl = document.getElementById('reviews-overlay');
@@ -195,68 +302,6 @@ befriend.reviews = {
                 console.error(`Error saving no show:`, e);
             }
         }, 200);
-    },
-    display: function (activity_token = null, skipTransition = false) {
-        let activities = this.getActivities();
-
-        if(!activities.length) {
-            return;
-        }
-
-        let initialIndex = 0;
-
-        if (activity_token) {
-            let activityIndex = activities.findIndex(a => a.activity_token === activity_token);
-
-            if (activityIndex !== -1) {
-                initialIndex = activityIndex;
-            }
-        }
-
-        this.current.index = initialIndex;
-
-        let activitiesContainerEl = document.getElementById('reviews-overlay').querySelector('.activities-container');
-        let arrowsEl = document.getElementById('reviews-overlay').querySelector('.arrows');
-
-        let activities_html = ``;
-
-        for(let activity of activities) {
-            let html = this.getHtml(activity);
-
-            activities_html += `<div class="activity-slide">${html}</div>`;
-        }
-
-        activitiesContainerEl.innerHTML = activities_html;
-
-        let showArrows = activities.length > 1;
-        let prevArrow = document.getElementById('reviews-prev-arrow');
-        let nextArrow = document.getElementById('reviews-next-arrow');
-
-        if(showArrows) {
-            addClassEl('show', arrowsEl);
-        } else {
-            removeClassEl('show', arrowsEl);
-        }
-
-        prevArrow.classList.toggle('disabled', initialIndex === 0);
-        nextArrow.classList.toggle('disabled', initialIndex === activities.length - 1);
-
-        if (skipTransition) {
-            addClassEl('no-transition', activitiesContainerEl);
-
-            this.goToSlide(initialIndex);
-            void activitiesContainerEl.offsetWidth;
-
-            setTimeout(() => {
-                removeClassEl('no-transition', activitiesContainerEl);
-            }, 50);
-        } else {
-            this.goToSlide(initialIndex);
-        }
-
-        befriend.reviews.events.init();
-
-        befriend.reviews.toggleOverlay(true);
     },
     goToSlide: function(index) {
         let containerEl = document.getElementById('reviews-overlay').querySelector('.activities-container');
