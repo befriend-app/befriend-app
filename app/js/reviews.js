@@ -50,12 +50,8 @@ befriend.reviews = {
 
                 let data = activity[person_token];
 
-                if(data.no_show) {
-                    this.data[activity_token][person_token].noShow = data.no_show;
-                }
-
-                for(let type in data.ratings) {
-                    this.data[activity_token][person_token][type] = data.ratings[type];
+                for(let key in data) {
+                    this.data[activity_token][person_token][key] = data[key];
                 }
             }
         }
@@ -78,18 +74,12 @@ befriend.reviews = {
 
         //filter by activity finished, cancelled
         for(let activity of activities) {
-            if(!activity.data.is_reviewable || !activity.data.persons) {
-                continue;
-            }
-
-            let isCancelled = befriend.activities.data.isCancelled(activity.activity_token);
-
-            if(isCancelled) {
-                continue;
-            }
-
-            //do not include activities that were already reviewed for every person
             if(!force_activity_token || activity.activity_token !== force_activity_token) {
+                if(!activity.data.is_reviewable || !activity.data.persons) {
+                    continue;
+                }
+
+                //do not include activities that were already reviewed for every person
                 let existingRatings = this.data[activity.activity_token];
 
                 if(Object.keys(existingRatings || {}).length) {
@@ -107,39 +97,58 @@ befriend.reviews = {
                         continue;
                     }
                 }
-            }
 
-            //ensure activity had at least one person other than me
-            let activeParticipants = [];
+                let isValid = befriend.reviews.activityValid(activity.activity_token);
 
-            for(let person_token in activity.data.persons) {
-                if(person_token === befriend.getPersonToken()) {
+                if(!isValid) {
                     continue;
                 }
 
-                let person = activity.data.persons[person_token];
-
-                if(person.cancelled_at) {
+                if(timeNow(true) < activity.activity_end && !this.debug) {
                     continue;
                 }
-
-                activeParticipants.push(person);
-            }
-
-            if(!activeParticipants.length) {
-                continue;
-            }
-
-            if(timeNow(true) < activity.activity_end && !this.debug) {
-                continue;
             }
 
             activitiesFiltered.push(activity);
         }
 
+        console.log(activitiesFiltered);
+
         this.activities = activitiesFiltered;
 
         return activitiesFiltered;
+    },
+    activityValid: function (activity_token) {
+        let activity = befriend.activities.data.getActivity(activity_token);
+
+        if(!activity) {
+            return false;
+        }
+
+        let isCancelled = befriend.activities.data.isCancelled(activity.activity_token);
+
+        if(isCancelled) {
+            return false;
+        }
+
+        //ensure activity had at least one person other than me
+        let activeParticipants = [];
+
+        for(let person_token in activity.data.persons) {
+            if(person_token === befriend.getPersonToken()) {
+                continue;
+            }
+
+            let person = activity.data.persons[person_token];
+
+            if(person.cancelled_at) {
+                continue;
+            }
+
+            activeParticipants.push(person);
+        }
+
+        return !!activeParticipants.length;
     },
     showReviewActivities: function (activity_token = null, person_token = null, skipTransition = false) {
         let activities = this.getActivities(activity_token);

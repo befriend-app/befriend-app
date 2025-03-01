@@ -347,7 +347,7 @@ window['befriend'] = {
                     // fireClick(activity);
                 }
 
-                // befriend.reviews.showReviewActivities();
+                befriend.reviews.showReviewActivities();
 
             }, 50);
 

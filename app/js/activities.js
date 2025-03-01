@@ -3048,6 +3048,10 @@ befriend.activities = {
                             activity_data.access = prevAccess;
                         }
 
+                        if(activity_data.data?.reviews) {
+                            befriend.reviews.data[activity_token] = activity_data.data.reviews;
+                        }
+
                         activity_data.enriched = true;
                     } catch(e) {
                         console.error(e);
@@ -3468,7 +3472,9 @@ befriend.activities = {
                     defaultSet = true;
                 }
 
-                if(activity.is_reviewable) {
+                let isValidForReviewing = befriend.reviews.activityValid(activity.activity_token);
+
+                if(isValidForReviewing) {
                     buttons_html += `<div class="person-button review">Review</div>`;
                 }
 
@@ -4845,7 +4851,11 @@ befriend.activities = {
                 }
             },
             onReview: function () {
-                let el = befriend.els.currentActivityView.querySelector('.person-button.review')
+                let el = befriend.els.currentActivityView.querySelector('.person-button.review');
+
+                if(!el) {
+                    return;
+                }
 
                 if(el._listener) {
                     return;
