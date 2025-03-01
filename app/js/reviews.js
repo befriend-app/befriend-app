@@ -795,6 +795,12 @@ befriend.reviews = {
                     let clearBtn = option.querySelector('.clear-rating-btn .button');
 
                     let updateRating = async (personToken, rating) => {
+                        let activity = befriend.activities.data.getActivity(activityToken);
+
+                        if(!activity.data.is_reviewable) {
+                            return;
+                        }
+
                         let personRatings = befriend.reviews.getPersonRatings(activityToken, personToken);
 
                         if (personRatings.noShow) {
@@ -969,6 +975,12 @@ befriend.reviews = {
                 noShowBtn.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
+
+                    let activity = befriend.activities.data.getActivity(activityToken);
+
+                    if(!activity.data.is_reviewable) {
+                        return;
+                    }
 
                     let personToken = befriend.reviews.current.person_token;
                     let personRatings = befriend.reviews.getPersonRatings(activityToken, personToken);
