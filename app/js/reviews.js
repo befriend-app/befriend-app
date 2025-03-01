@@ -46,6 +46,10 @@ befriend.reviews = {
             return b.data.activity_start - a.data.activity_start;
         });
 
+        activities = activities.filter(a => a.data.is_reviewable);
+
+        console.log(activities);
+
         let activitiesFiltered = [];
 
         //filter by activity finished, cancelled
