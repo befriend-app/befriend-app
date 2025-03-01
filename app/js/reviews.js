@@ -166,7 +166,7 @@ befriend.reviews = {
         let activities_html = ``;
 
         for(let activity of activities) {
-            let html = this.getHtml(activity);
+            let html = this.getHtml(activity, person_token);
 
             activities_html += `<div class="activity-slide">${html}</div>`;
         }
@@ -365,7 +365,7 @@ befriend.reviews = {
             this.goToSlide(this.current.index - 1);
         }
     },
-    getHtml: function (activity) {
+    getHtml: function (activity, person_token = null) {
         if (!activity || !activity.data) {
             return '<div class="review-error">Activity data not available</div>';
         }
@@ -386,6 +386,8 @@ befriend.reviews = {
         let defaultPerson = null;
         let personInt = 0;
 
+        let personParamExists = person_token && person_token in activityData.persons && !activityData.persons[person_token].cancelled_at;
+
         for (let personToken in activityData.persons) {
             if (personToken === befriend.getPersonToken()) {
                 continue;
@@ -404,7 +406,14 @@ befriend.reviews = {
                 data: person
             });
 
-            if (!defaultPerson) {
+            if(personParamExists) {
+                if(personToken === person_token) {
+                    defaultPerson = {
+                        token: personToken,
+                        data: person
+                    };
+                }
+            } else if (!defaultPerson) {
                 defaultPerson = {
                     token: personToken,
                     data: person
