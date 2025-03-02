@@ -236,7 +236,7 @@ befriend.reviews = {
             let count_html = '';
 
             if(with_count) {
-                count_html = `<div class="count">${person.reviews.count} review${person.reviews.count !== 1 ? 's' : ''}</div>`;
+                count_html = `<div class="count">${person.reviews.count || 0} review${person.reviews.count !== 1 ? 's' : ''}</div>`;
             }
 
             return `${count_html}
