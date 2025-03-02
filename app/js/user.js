@@ -3,9 +3,6 @@ befriend.user = {
         key: 'user.json',
         data: {},
     },
-    device: {
-        token: null,
-    },
     person: {
         token: null,
     },
@@ -28,7 +25,7 @@ befriend.user = {
             }
 
             if (localData.device && localData.device.token) {
-                befriend.user.device.token = localData.device.token;
+                befriend.device.token = localData.device.token;
             }
 
             if(localData.activities?.person?.mode) {
@@ -83,20 +80,6 @@ befriend.user = {
             befriend.user.local.key,
             JSON.stringify(befriend.user.local.data),
         );
-    },
-    sameDeviceToken: function (token) {
-        let data = befriend.user.getLocal();
-
-        if(!data.device || data.device.token !== token) {
-            return false;
-        }
-
-        return true;
-    },
-    setDeviceToken: function (token) {
-        befriend.user.device.token = token;
-
-        befriend.user.setLocal('device.token', token);
     },
     setPersonToken: function (token) {
         befriend.user.person.token = token;

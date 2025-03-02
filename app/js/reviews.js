@@ -1,5 +1,5 @@
 befriend.reviews = {
-    debug: true,
+    debug: true, //todo set false
     data: {},
     activities: [],
     period: 7 * 24 * 3600, //amount of time past activity end time reviews are allowed

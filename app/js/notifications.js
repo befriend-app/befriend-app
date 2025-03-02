@@ -30,60 +30,6 @@ befriend.notifications = {
         unavailable: 'Unavailable: max spots reached',
         past: 'This activity is in the past'
     },
-    setDeviceToken: async function (token, force_update) {
-        //save on server if new device token
-        if (!befriend.user.sameDeviceToken(token) || force_update) {
-            let platform = null;
-
-            if (is_ios) {
-                platform = 'ios';
-            } else if (is_android) {
-                platform = 'android';
-            }
-
-            try {
-                let r = await befriend.auth.post(`/devices`, {
-                    device_token: token,
-                    platform: platform,
-                });
-
-                befriend.user.setDeviceToken(token);
-            } catch (e) {
-                console.error(e);
-            }
-        }
-    },
-    init: function () {
-        return new Promise(async (resolve, reject) => {
-            try {
-                await befriend.notifications.getDeviceToken();
-
-                resolve();
-            } catch (e) {
-                console.error(e);
-                return reject();
-            }
-        });
-    },
-    getDeviceToken: async function (force_update) {
-        return new Promise(async (resolve, reject) => {
-            try {
-                befriend.plugins.notifications.registerForPushNotifications(
-                    function (token) {
-                        befriend.notifications.setDeviceToken(token, force_update);
-                        resolve();
-                    },
-                    function (err) {
-                        console.error(err);
-                        reject(err);
-                    },
-                );
-            } catch (e) {
-                console.error(e);
-                return reject();
-            }
-        });
-    },
     fetchActivity: function (notification, auto_back) {
         return new Promise(async (resolve, reject) => {
             if(!notification?.activity_token) {

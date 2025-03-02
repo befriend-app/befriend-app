@@ -27,6 +27,7 @@ window['befriend'] = {
     events: null,
     user: null,
     location: null,
+    device: null,
     activities: null,
     modes: null,
     filters: null,
@@ -276,9 +277,9 @@ window['befriend'] = {
                 console.error(e);
             }
 
-            //notifications
+            //device
             try {
-                await befriend.notifications.init();
+                await befriend.device.init();
             } catch (e) {
                 console.error(e);
             }
