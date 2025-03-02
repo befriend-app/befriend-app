@@ -14,6 +14,235 @@ befriend.reviews = {
 
         this.showIfNew();
     },
+    html: {
+        reviewsOverlay: function (activity, person_token = null) {
+            if (!activity || !activity.data) {
+                return '<div class="review-error">Activity data not available</div>';
+            }
+
+            let activityData = activity.data;
+
+            let date = befriend.activities.displayActivity.html.getDate(activityData);
+
+            let activityType = befriend.activities.activityTypes.lookup.byToken[activityData.activity_type_token];
+            let activityImage = activityType?.image || '';
+            let activityName = activityType?.notification || 'Activity';
+
+            let startTime = dayjs(activityData.activity_start * 1000).format('h:mm a').toLowerCase();
+            let endTime = dayjs(activityData.activity_end * 1000).format('h:mm a').toLowerCase();
+            let timeString = `${startTime} - ${endTime}`;
+
+            let participants = [];
+            let personsNav = '';
+            let defaultPerson = null;
+            let personInt = 0;
+
+            let personParamExists = person_token && person_token in activityData.persons && !activityData.persons[person_token].cancelled_at;
+
+            for (let personToken in activityData.persons) {
+                if (personToken === befriend.getPersonToken()) {
+                    continue;
+                }
+
+                let person = activityData.persons[personToken];
+
+                if (person.cancelled_at) {
+                    continue;
+                }
+
+                personInt++;
+
+                participants.push({
+                    token: personToken,
+                    data: person
+                });
+
+                if(personParamExists) {
+                    if(personToken === person_token) {
+                        defaultPerson = {
+                            token: personToken,
+                            data: person
+                        };
+                    }
+                } else if (!defaultPerson) {
+                    defaultPerson = {
+                        token: personToken,
+                        data: person
+                    };
+                }
+
+                personsNav += `
+                <div class="person-nav ${defaultPerson && personToken === defaultPerson.token ? 'active' : ''}" data-person-token="${personToken}">
+                    <div class="image" style="background-image: url(${person.image_url || ''})"></div>
+                    <div class="name">${person.first_name || `Person ${personInt}`}</div>
+                </div>
+            `;
+            }
+
+            if (participants.length === 0) {
+                return '<div class="review-error">No participants to review</div>';
+            }
+
+            let ratingsHtml = '';
+
+            for (let [key, rating] of Object.entries(befriend.filters.reviews.ratings)) {
+                ratingsHtml += `
+                <div class="rating-option review-${key}" data-rating-type="${key}">
+                    <div class="clear-rating-btn">
+                        <div class="button">
+                            Clear
+                        </div>
+                    </div>
+                            
+                    <div class="rating-name">
+                        <div class="name-clear">
+                            <div class="name">${rating.name}</div>
+                        </div>
+
+                        <div class="rating-display">
+                            <div class="value">Not Rated</div>
+                        </div>
+                    </div>
+                   
+                    <div class="stars">
+                        <div class="stars-container">
+                            ${Array(5)
+                    .fill()
+                    .map(() => `
+                                <div class="star-container">
+                                    <svg class="outline" viewBox="0 0 24 24">
+                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                    </svg>
+                                    <svg class="fill" viewBox="0 0 24 24">
+                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                    </svg>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+            }
+
+            return `
+            <div class="review-card" data-activity-token="${activity.activity_token}">
+                <div class="review-card-wrapper">
+                    <div class="review-content-scrollable">
+                        <div class="review-header">
+                            <div class="activity-info">
+                                <div class="activity-details">
+                                    <div class="activity-meta">
+                                        <div class="activity-date">${date}</div>
+                                        <div class="activity-time">${timeString}</div>
+                                    </div>
+                                    
+                                    <div class="icon-name">
+                                        <div class="activity-icon">
+                                            ${activityImage}
+                                        </div>
+                                        
+                                        <div class="name-location">
+                                            <div class="activity-name">${activityName}</div>
+                                            <div class="activity-location">@ ${activityData.location_name}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        
+                        <div class="review-content">
+                            <div class="persons-section">
+                                <div class="persons-nav">
+                                    ${personsNav}
+                                </div>
+                            </div>
+                            
+                            <div class="no-show-section">
+                                <div class="button">No Show <span class="q">?</span></div>
+                            </div>
+                            
+                            <div class="ratings-section">
+                                <div class="ratings-container">
+                                    ${ratingsHtml}
+                                </div>
+                            </div>
+                            
+                            <div class="saved-message">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512.0006 376.0036"><path d="M504.5025,7.4985c-9.997-9.998-26.205-9.998-36.204,0L161.5945,314.2055l-117.892-117.892c-9.997-9.998-26.205-9.997-36.204,0-9.998,9.997-9.998,26.205,0,36.203l135.994,135.992c9.994,9.997,26.214,9.99,36.204,0L504.5025,43.7025c9.998-9.997,9.997-26.206,0-36.204Z"/></svg>
+                                
+                                <div class="text">Saved</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        },
+        personReviews: function (person, with_count) {
+            const reviews = person.reviews;
+
+            if (!reviews) {
+                return '';
+            }
+
+            const ratings = [
+                { name: 'Safety', current_rating: isNumeric(reviews.safety) ? parseFloat(reviews.safety) : null },
+                { name: 'Trust', current_rating: isNumeric(reviews.trust) ? parseFloat(reviews.trust) : null },
+                { name: 'Timeliness', current_rating: isNumeric(reviews.timeliness) ? parseFloat(reviews.timeliness) : null },
+                { name: 'Friendliness', current_rating: isNumeric(reviews.friendliness) ? parseFloat(reviews.friendliness) : null },
+                { name: 'Fun', current_rating: isNumeric(reviews.fun) ? parseFloat(reviews.fun) : null }
+            ];
+
+            let reviews_html = '';
+
+            for(let rating of ratings) {
+                reviews_html += `
+                    <div class="review ${rating.current_rating === null ? 'no-rating' : ''}">
+                        <div class="name">
+                            ${rating.name}
+                        </div>
+                        
+                        <div class="rating-display">
+                            <div class="value">${rating.current_rating ? rating.current_rating.toFixed(1) : 'No rating'}</div>
+                        </div>
+                        
+                        <div class="stars">
+                            <div class="stars-container">
+                                ${Array(5)
+                            .fill()
+                            .map((_, i) => {
+                                const fillPercentage = Math.max(0, Math.min(100, (rating.current_rating - i) * 100));
+                                const fillStyle = fillPercentage === 0 ? 'fill: transparent;' :
+                                    fillPercentage === 100 ? `fill: ${befriend.variables.brand_color_a};` :
+                                        `fill: ${befriend.variables.brand_color_a}; clip-path: polygon(0 0, ${fillPercentage}% 0, ${fillPercentage}% 100%, 0 100%);`;
+                                
+                                return `
+                                        <div class="star-container">
+                                            <svg class="outline" viewBox="0 0 24 24">
+                                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                            </svg>
+                                            <svg class="fill" viewBox="0 0 24 24" style="${fillStyle}">
+                                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                            </svg>
+                                        </div>
+                                    `}).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            let count_html = '';
+
+            if(with_count) {
+                count_html = `<div class="count">${person.reviews.count} review${person.reviews.count !== 1 ? 's' : ''}</div>`;
+            }
+
+            return `${count_html}
+                <div class="reviews-container">${reviews_html}</div>`
+        },
+    },
     updateInterval: function () {
         function isReviewable(activity) {
             let reviewThreshold = timeNow(true) - befriend.reviews.period;
@@ -106,10 +335,6 @@ befriend.reviews = {
                 if(!isValid) {
                     continue;
                 }
-
-                if(timeNow(true) < activity.activity_end && !this.debug) {
-                    continue;
-                }
             }
 
             activitiesFiltered.push(activity);
@@ -126,6 +351,12 @@ befriend.reviews = {
             return false;
         }
 
+        //allow reviewing only after official end time of activity
+        if(timeNow(true) < activity.activity_end && !this.debug) {
+            return false;
+        }
+
+        //do not allow reviewing if person cancelled participation or entire activity was cancelled
         let isCancelled = befriend.activities.data.isCancelled(activity.activity_token);
 
         if(isCancelled) {
@@ -176,7 +407,7 @@ befriend.reviews = {
         let activities_html = ``;
 
         for(let activity of activities) {
-            let html = this.getHtml(activity, person_token);
+            let html = this.html.reviewsOverlay(activity, person_token);
 
             activities_html += `<div class="activity-slide">${html}</div>`;
         }
@@ -374,168 +605,6 @@ befriend.reviews = {
         if (this.current.index > 0) {
             this.goToSlide(this.current.index - 1);
         }
-    },
-    getHtml: function (activity, person_token = null) {
-        if (!activity || !activity.data) {
-            return '<div class="review-error">Activity data not available</div>';
-        }
-
-        let activityData = activity.data;
-        let date = befriend.activities.displayActivity.html.getDate(activityData);
-
-        let activityType = befriend.activities.activityTypes.lookup.byToken[activityData.activity_type_token];
-        let activityImage = activityType?.image || '';
-        let activityName = activityType?.notification || 'Activity';
-
-        let startTime = dayjs(activityData.activity_start * 1000).format('h:mm a').toLowerCase();
-        let endTime = dayjs(activityData.activity_end * 1000).format('h:mm a').toLowerCase();
-        let timeString = `${startTime} - ${endTime}`;
-
-        let participants = [];
-        let personsNav = '';
-        let defaultPerson = null;
-        let personInt = 0;
-
-        let personParamExists = person_token && person_token in activityData.persons && !activityData.persons[person_token].cancelled_at;
-
-        for (let personToken in activityData.persons) {
-            if (personToken === befriend.getPersonToken()) {
-                continue;
-            }
-
-            let person = activityData.persons[personToken];
-
-            if (person.cancelled_at) {
-                continue;
-            }
-
-            personInt++;
-
-            participants.push({
-                token: personToken,
-                data: person
-            });
-
-            if(personParamExists) {
-                if(personToken === person_token) {
-                    defaultPerson = {
-                        token: personToken,
-                        data: person
-                    };
-                }
-            } else if (!defaultPerson) {
-                defaultPerson = {
-                    token: personToken,
-                    data: person
-                };
-            }
-
-            personsNav += `
-                <div class="person-nav ${defaultPerson && personToken === defaultPerson.token ? 'active' : ''}" data-person-token="${personToken}">
-                    <div class="image" style="background-image: url(${person.image_url || ''})"></div>
-                    <div class="name">${person.first_name || `Person ${personInt}`}</div>
-                </div>
-            `;
-        }
-
-        if (participants.length === 0) {
-            return '<div class="review-error">No participants to review</div>';
-        }
-
-        let ratingsHtml = '';
-        for (let [key, rating] of Object.entries(befriend.filters.reviews.ratings)) {
-            ratingsHtml += `
-                <div class="rating-option review-${key}" data-rating-type="${key}">
-                    <div class="clear-rating-btn">
-                        <div class="button">
-                            Clear
-                        </div>
-                    </div>
-                            
-                    <div class="rating-name">
-                        <div class="name-clear">
-                            <div class="name">${rating.name}</div>
-                        </div>
-
-                        <div class="rating-display">
-                            <div class="value">Not Rated</div>
-                        </div>
-                    </div>
-                   
-                    <div class="stars">
-                        <div class="stars-container">
-                            ${Array(5)
-                .fill()
-                .map(() => `
-                                <div class="star-container">
-                                    <svg class="outline" viewBox="0 0 24 24">
-                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                                    </svg>
-                                    <svg class="fill" viewBox="0 0 24 24">
-                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                                    </svg>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        return `
-            <div class="review-card" data-activity-token="${activity.activity_token}">
-                <div class="review-card-wrapper">
-                    <div class="review-content-scrollable">
-                        <div class="review-header">
-                            <div class="activity-info">
-                                <div class="activity-details">
-                                    <div class="activity-meta">
-                                        <div class="activity-date">${date}</div>
-                                        <div class="activity-time">${timeString}</div>
-                                    </div>
-                                    
-                                    <div class="icon-name">
-                                        <div class="activity-icon">
-                                            ${activityImage}
-                                        </div>
-                                        
-                                        <div class="name-location">
-                                            <div class="activity-name">${activityName}</div>
-                                            <div class="activity-location">@ ${activityData.location_name}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                            </div>
-                        </div>
-                        
-                        <div class="review-content">
-                            <div class="persons-section">
-                                <div class="persons-nav">
-                                    ${personsNav}
-                                </div>
-                            </div>
-                            
-                            <div class="no-show-section">
-                                <div class="button">No Show <span class="q">?</span></div>
-                            </div>
-                            
-                            <div class="ratings-section">
-                                <div class="ratings-container">
-                                    ${ratingsHtml}
-                                </div>
-                            </div>
-                            
-                            <div class="saved-message">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512.0006 376.0036"><path d="M504.5025,7.4985c-9.997-9.998-26.205-9.998-36.204,0L161.5945,314.2055l-117.892-117.892c-9.997-9.998-26.205-9.997-36.204,0-9.998,9.997-9.998,26.205,0,36.203l135.994,135.992c9.994,9.997,26.214,9.99,36.204,0L504.5025,43.7025c9.998-9.997,9.997-26.206,0-36.204Z"/></svg>
-                                
-                                <div class="text">Saved</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
     },
     centerActiveIndicator: function() {
         let indicatorsContainer = document.getElementById('reviews-overlay').querySelector('.slide-indicators');

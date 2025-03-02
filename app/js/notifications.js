@@ -255,7 +255,7 @@ befriend.notifications = {
         }
 
         function getWho() {
-            let reviews_html = befriend.user.getReviewsHtml(notification.person, true);
+            let reviews_html = befriend.reviews.html.personReviews(notification.person, true);
 
             let match_type_html = '';
 

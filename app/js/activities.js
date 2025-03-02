@@ -3591,7 +3591,7 @@ befriend.activities = {
                             </div>
                         </div>`;
 
-                let reviews_html = `<div class="reviews">${befriend.user.getReviewsHtml(person, true)}</div>`;
+                let reviews_html = `<div class="reviews">${befriend.reviews.html.personReviews(person, true)}</div>`;
 
                 let partner_kids_html = '';
 
