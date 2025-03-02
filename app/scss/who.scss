@@ -1,5 +1,5 @@
 #who {
-    padding-top: 20px !important;
+    padding-top: 15px !important;
     padding-bottom: 25px !important;
 
     .friend-options {
@@ -67,9 +67,9 @@
             top: 50%;
             width: $filter_range_dim;
             height: $filter_range_dim;
-            background-color: white;
-            border: 2.5px solid $brand_color_a;
-            border-radius: 50%;
+            background-color: $brand_color_b;
+            border: 1px solid $brand_color_a;
+            border-radius: 8px;
             cursor: pointer;
             transform: translate(-50%, -50%);
         }

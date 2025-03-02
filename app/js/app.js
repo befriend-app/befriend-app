@@ -338,7 +338,7 @@ window['befriend'] = {
 
             //todo remove
             setTimeout(function () {
-                befriend.navigateToView('activities');
+                // befriend.navigateToView('activities');
 
                 //show first activity
                 let activity = befriend.els.mainActivitiesView.querySelector('.activity');
@@ -347,7 +347,7 @@ window['befriend'] = {
                     // fireClick(activity);
                 }
 
-                befriend.reviews.showReviewActivities();
+                // befriend.reviews.showReviewActivities();
 
             }, 50);
 
