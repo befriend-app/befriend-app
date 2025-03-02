@@ -318,8 +318,6 @@ window['befriend'] = {
                 console.error(e);
             }
 
-            befriend.reviews.init();
-
             //app events
             try {
                 await befriend.events.init();
@@ -333,6 +331,8 @@ window['befriend'] = {
             } catch (e) {
                 console.error(e);
             }
+
+            befriend.reviews.init();
 
             befriend.init_finished = true;
 

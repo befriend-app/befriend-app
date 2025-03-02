@@ -400,6 +400,8 @@ befriend.events = {
 
             //update location and map on re-opening app
             befriend.location.getLocation();
+
+            befriend.reviews.showIfNew();
         }
 
         document.addEventListener('pause', onPause, false);

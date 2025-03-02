@@ -8,8 +8,11 @@ befriend.reviews = {
         activity_token: null,
         person_token: null,
     },
+    lastNewActivityToken: null,
     init: function () {
         this.updateInterval();
+
+        this.showIfNew();
     },
     updateInterval: function () {
         function isReviewable(activity) {
@@ -111,8 +114,6 @@ befriend.reviews = {
 
             activitiesFiltered.push(activity);
         }
-
-        console.log(activitiesFiltered);
 
         this.activities = activitiesFiltered;
 
@@ -739,6 +740,21 @@ befriend.reviews = {
         }
 
         this.current.person_token = personsNavEls[0].getAttribute('data-person-token');
+    },
+    showIfNew: function () {
+        let activities = this.getActivities();
+
+        if(!activities.length) {
+            return;
+        }
+
+        let most_recent_activity = activities[0];
+
+        if(!this.lastNewActivityToken || this.lastNewActivityToken !== most_recent_activity.activity_token) {
+            this.showReviewActivities();
+
+            befriend.user.setLocal('reviews.lastNewActivityToken', most_recent_activity.activity_token);
+        }
     },
     events: {
         init: function () {

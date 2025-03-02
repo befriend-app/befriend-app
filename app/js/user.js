@@ -49,6 +49,10 @@ befriend.user = {
                 befriend.notifications.data.removed = localData.notifications.removed;
             }
 
+            if(localData.reviews?.lastNewActivityToken) {
+                befriend.reviews.lastNewActivityToken = localData.reviews.lastNewActivityToken;
+            }
+
             resolve();
         });
     },
