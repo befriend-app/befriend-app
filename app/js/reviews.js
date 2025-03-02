@@ -11,7 +11,6 @@ befriend.reviews = {
     lastNewActivityToken: null,
     init: function () {
         this.updateInterval();
-
         this.showIfNew();
     },
     html: {
@@ -245,6 +244,10 @@ befriend.reviews = {
     },
     updateInterval: function () {
         function isReviewable(activity) {
+            if(befriend.reviews.debug) {
+                return true;
+            }
+
             let reviewThreshold = timeNow(true) - befriend.reviews.period;
 
             return timeNow(true) > activity.activity_end && activity.activity_end > reviewThreshold;
@@ -265,7 +268,7 @@ befriend.reviews = {
 
                 activity.data.is_reviewable = isReviewable(activity);
             }
-        }, 5 * 60 * 1000);
+        }, 60 * 1000);
     },
     setReviews: function (reviews) {
         for(let activity_token in reviews) {
@@ -533,6 +536,8 @@ befriend.reviews = {
                 }
 
                 if(r.status === 202) {
+                    befriend.activities.data.updateReviews(personToken, r.data);
+
                     addClassEl('show', savedEl);
 
                     savedEl._timeout = setTimeout(function () {
@@ -686,6 +691,8 @@ befriend.reviews = {
                 }
 
                 if(r.status === 202) {
+                    befriend.activities.data.updateReviews(personToken, r.data);
+
                     addClassEl('show', savedEl);
 
                     savedEl._timeout = setTimeout(function () {
@@ -821,7 +828,6 @@ befriend.reviews = {
 
         if(!this.lastNewActivityToken || this.lastNewActivityToken !== most_recent_activity.activity_token) {
             this.showReviewActivities();
-
             befriend.user.setLocal('reviews.lastNewActivityToken', most_recent_activity.activity_token);
         }
     },
@@ -1217,6 +1223,6 @@ befriend.reviews = {
                     befriend.reviews.centerActiveIndicator();
                 }, 100);
             }
-        },
+        }
     }
 };

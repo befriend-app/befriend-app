@@ -19,6 +19,20 @@ befriend.activities = {
 
             befriend.activities.data.all[activity.activity_token] = activity;
         },
+        updateReviews: function (person_token, reviews_data) {
+            if(befriend.activities.data.all) {
+                for(let [token, activity] of Object.entries(befriend.activities.data.all)) {
+                    if(activity.data?.persons?.[person_token]) {
+                        activity.data.persons[person_token].reviews = reviews_data;
+                    }
+                }
+            }
+
+            //update current display
+            if(befriend.activities.displayActivity.isShown()) {
+                befriend.activities.displayActivity.display(befriend.activities.displayActivity.currentToken, true, true);
+            }
+        },
         getActivity: function (activity_token) {
             return befriend.activities.data.all[activity_token];
         },
@@ -558,7 +572,7 @@ befriend.activities = {
             //update current activity view if active
             if(elHasClass(activitiesViewEl, 'active') && elHasClass(befriend.els.currentActivityView, 'show')) {
                 try {
-                    await befriend.activities.displayActivity.display(befriend.activities.displayActivity.currentToken, true, true);
+                    // await befriend.activities.displayActivity.display(befriend.activities.displayActivity.currentToken, true, true);
                 } catch(e) {
 
                 }
