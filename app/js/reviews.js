@@ -536,7 +536,9 @@ befriend.reviews = {
                 }
 
                 if(r.status === 202) {
-                    befriend.activities.data.updateReviews(personToken, r.data);
+                    if(r.data) {
+                        befriend.activities.data.updateReviews(personToken, r.data);
+                    }
 
                     addClassEl('show', savedEl);
 
@@ -691,7 +693,9 @@ befriend.reviews = {
                 }
 
                 if(r.status === 202) {
-                    befriend.activities.data.updateReviews(personToken, r.data);
+                    if(r.data) {
+                        befriend.activities.data.updateReviews(personToken, r.data);
+                    }
 
                     addClassEl('show', savedEl);
 
