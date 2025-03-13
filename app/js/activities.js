@@ -608,12 +608,13 @@ befriend.activities = {
         let address = `${activity.location_address}, ${activity.location_locality}, ${activity.location_region}`;
         let placeName = activity.name || activity.location_name || "";
 
-        let encodedPlaceAndAddress = encodeURIComponent(placeName + " " + address);
         let encodedAddress = encodeURIComponent(address);
+        let encodedPlaceName = encodeURIComponent(placeName);
+        let encodedPlaceAndAddress = encodeURIComponent(placeName + " " + address);
 
         let googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedPlaceAndAddress}`;
 
-        let appleMapsUrl = `maps://maps.apple.com/?address=${encodedAddress}&ll=${latitude},${longitude}`;
+        let appleMapsUrl = `maps://maps.apple.com/?q=${encodedPlaceName}&address=${encodedAddress}&ll=${latitude},${longitude}`;
 
         return `
                     <div class="navigation-buttons">
