@@ -679,3 +679,19 @@ function saveObjectToDisk(obj, schemaName, customDir) {
         }
     });
 }
+
+function getDistanceStr(location_1, location_2) {
+    let distance_km = calculateDistance(
+        location_1,
+        location_2,
+        true
+    );
+
+    let distance_miles = distance_km * kms_per_mile;
+
+    if(useKM()) {
+        return `${formatRound(distance_km)} km`;
+    }
+
+    return `${formatRound(distance_miles)} m`;
+}

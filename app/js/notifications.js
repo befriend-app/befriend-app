@@ -383,7 +383,7 @@ befriend.notifications = {
                 distance_str = `${formatRound(distance_miles)} m`;
             }
 
-            let navigation_buttons = befriend.activities.displayActivity.html.getNavigation(notification.activity);
+            let navigation_buttons = befriend.activities.getNavigation(notification.activity);
 
             return `<div class="place section">
                                 <div class="label">Place</div> 

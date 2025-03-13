@@ -273,21 +273,27 @@ html.#{$class_create_activity_shown} {
                 .info {
                     padding-top: 6px;
                     font-size: 14px;
+                    position: relative;
                 }
 
                 &.place {
                     .place-name {
-                        font-size: 15px;
+                        font-size: 14px;
+                        max-width: calc(100% - 90px);
                         //font-weight: 500;
                     }
 
                     .info {
                         font-size: 12px;
+                        line-height: 20px;
                     }
 
                     .location {
-                        margin-top: 4px;
                         font-size: 13px;
+                    }
+
+                    .distance {
+                        font-weight: 600;
                     }
                 }
 
@@ -716,6 +722,52 @@ html.#{$class_create_activity_shown} {
             }
             80%, 100% {
                 transform: translate(-50%, -50%) scale($scale_min);
+            }
+        }
+    }
+
+    .navigation-buttons {
+        $section_padding_tb: 10px;
+        $section_padding_lr: 15px;
+        display: flex;
+        gap: 6px 6px;
+        position: absolute;
+        top: calc($section_padding_tb / 2);
+        right: calc($section_padding_lr / 2);
+
+        .nav-button {
+            $dim: 27px;
+            width: $dim * 1.2;
+            height: $dim * 1.2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 0;
+            border: .5px solid lighten(black, 25%);
+            background: lighten($color_lightgray, 12%);
+            text-decoration: none;
+            color: black;
+            gap: 0 10px;
+            border-radius: 6px;
+            box-sizing: border-box;
+
+            .image {
+                height: $dim;
+            }
+
+            .text {
+                font-size: 14px;
+                font-weight: 500;
+                display: none;
+            }
+
+            &.apple-maps {
+                .image {
+                    background-size: contain;
+                    background-repeat: no-repeat;
+
+                    width: $dim;
+                }
             }
         }
     }
