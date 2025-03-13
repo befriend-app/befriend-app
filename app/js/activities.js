@@ -606,10 +606,12 @@ befriend.activities = {
         let latitude = activity.location_lat;
         let longitude = activity.location_lon;
         let address = `${activity.location_address}, ${activity.location_locality}, ${activity.location_region}`;
+        let placeName = activity.name || activity.location_name || "";
 
+        let encodedPlaceAndAddress = encodeURIComponent(placeName + " " + address);
         let encodedAddress = encodeURIComponent(address);
 
-        let googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+        let googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedPlaceAndAddress}`;
 
         let appleMapsUrl = `maps://maps.apple.com/?address=${encodedAddress}&ll=${latitude},${longitude}`;
 
