@@ -1,5 +1,5 @@
 befriend.reviews = {
-    debug: true, //todo set false
+    debug: false,
     data: {},
     activities: [],
     period: 7 * 24 * 3600, //amount of time past activity end time reviews are allowed
@@ -243,16 +243,6 @@ befriend.reviews = {
         },
     },
     updateInterval: function () {
-        function isReviewable(activity) {
-            if(befriend.reviews.debug) {
-                return true;
-            }
-
-            let reviewThreshold = timeNow(true) - befriend.reviews.period;
-
-            return timeNow(true) > activity.activity_end && activity.activity_end > reviewThreshold;
-        }
-
         //update is_reviewable property on activity periodically
         setInterval(function () {
             if(!befriend.activities.data.all) {
@@ -266,9 +256,18 @@ befriend.reviews = {
                     continue;
                 }
 
-                activity.data.is_reviewable = isReviewable(activity);
+                activity.data.is_reviewable = befriend.reviews.isReviewable(activity);
             }
         }, 60 * 1000);
+    },
+    isReviewable: function (activity) {
+        if(befriend.reviews.debug) {
+            return true;
+        }
+
+        let reviewThreshold = timeNow(true) - befriend.reviews.period;
+
+        return timeNow(true) > activity.activity_end && activity.activity_end > reviewThreshold;
     },
     setReviews: function (reviews) {
         for(let activity_token in reviews) {
@@ -726,10 +725,13 @@ befriend.reviews = {
             return;
         }
 
+        let activity = befriend.activities.data.getActivity(activityToken);
+
         let personRatings = this.getPersonRatings(activityToken, personToken);
         let ratingOptions = reviewCard.querySelectorAll('.rating-option');
 
-        let noShowBtn = reviewCard.querySelector('.no-show-section .button');
+        let noShowSection = reviewCard.querySelector('.no-show-section');
+        let noShowBtn = noShowSection.querySelector('.button');
         let ratingsSection = reviewCard.querySelector('.ratings-section');
 
         if (personRatings.noShow) {
@@ -738,6 +740,12 @@ befriend.reviews = {
         } else {
             removeClassEl('active', noShowBtn);
             removeClassEl('disabled', ratingsSection);
+
+            if(!this.isReviewable(activity)) {
+                addClassEl('dni', noShowSection);
+            } else {
+                removeClassEl('dni', noShowSection);
+            }
         }
 
         for (let option of Array.from(ratingOptions)) {
