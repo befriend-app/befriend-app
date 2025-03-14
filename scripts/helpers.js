@@ -75,7 +75,7 @@ module.exports = {
         return date.toISOString().slice(0, 10) + ' ' + date.toISOString().substring(11, 19);
     },
     devPort: function () {
-        return parseInt(process.env.DEV_PORT || 3001);
+        return parseInt(process.env.DEV_PORT || 3010);
     },
     execCmd: function (cmd) {
         return new Promise(async (resolve, reject) => {
