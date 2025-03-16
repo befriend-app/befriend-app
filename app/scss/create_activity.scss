@@ -354,6 +354,7 @@ html.#{$class_create_activity_shown} {
                         right: 0;
                         top: 38px;
                         cursor: pointer;
+                        z-index: 2;
                     }
 
                     .active-filters {
