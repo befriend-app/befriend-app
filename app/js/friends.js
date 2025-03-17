@@ -6,7 +6,6 @@ befriend.friends = {
         default: 2,
         max: 10
     },
-    defaultMax: 2,
     maxMax: 10,
     type: {
         is_new: true,
@@ -37,7 +36,7 @@ befriend.friends = {
                 }
             }
 
-            befriend.friends.max.current = Math.min(activities_count + 2, befriend.friends.max.max);
+            befriend.friends.max.current = Math.min(activities_count + befriend.friends.max.default, befriend.friends.max.max);
         } else {
             befriend.friends.max.current = befriend.friends.max.default;
         }
