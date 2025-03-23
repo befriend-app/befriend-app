@@ -36,6 +36,8 @@ befriend.notifications = {
                 return resolve();
             }
 
+            befriend.maps.needsResize = true;
+
             if(auto_back) {
                 befriend.activities.createActivity.backButton();
             }
