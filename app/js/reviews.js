@@ -521,12 +521,27 @@ befriend.reviews = {
                 let activity = befriend.activities.data.getActivity(activityToken);
 
                 if(activity.access?.token) {
-                    r = await befriend.networks.put(activity.access.domain, `/activities/networks/reviews/${activityToken}`, {
-                        access_token: activity.access.token,
-                        person_token: befriend.getPersonToken(),
-                        person_to_token: personToken,
-                        no_show: isNoShow
-                    });
+                    //update no show on originating network
+                    try {
+                        r = await befriend.networks.put(activity.access.domain, `/activities/networks/reviews/${activityToken}`, {
+                            access_token: activity.access.token,
+                            person_token: befriend.getPersonToken(),
+                            person_to_token: personToken,
+                            no_show: isNoShow
+                        });
+                    } catch(e) {
+                        console.error(e);
+                    }
+
+                    //update no show on own network
+                    try {
+                        let r2 = await befriend.auth.put(`/activities/${activityToken}/reviews`, {
+                            person_to_token: personToken,
+                            no_show: isNoShow
+                        });
+                    } catch(e) {
+                        console.error(e);
+                    }
                 } else {
                     r = await befriend.auth.put(`/activities/${activityToken}/reviews`, {
                         person_to_token: personToken,
@@ -672,15 +687,33 @@ befriend.reviews = {
                 let activity = befriend.activities.data.getActivity(activityToken);
 
                 if(activity.access?.token) {
-                    r = await befriend.networks.put(activity.access.domain, `/activities/networks/reviews/${activityToken}`, {
-                        access_token: activity.access.token,
-                        person_token: befriend.getPersonToken(),
-                        person_to_token: personToken,
-                        review: {
-                            type,
-                            rating
-                        }
-                    });
+                    //update review on originating network
+                    try {
+                        r = await befriend.networks.put(activity.access.domain, `/activities/networks/reviews/${activityToken}`, {
+                            access_token: activity.access.token,
+                            person_token: befriend.getPersonToken(),
+                            person_to_token: personToken,
+                            review: {
+                                type,
+                                rating
+                            }
+                        });
+                    } catch(e) {
+                        console.error(e);
+                    }
+
+                    //update review on own network
+                    try {
+                        let r2 = await befriend.auth.put(`/activities/${activityToken}/reviews`, {
+                            person_to_token: personToken,
+                            review: {
+                                type,
+                                rating
+                            }
+                        });
+                    } catch(e) {
+                        console.error(e);
+                    }
                 } else {
                     r = await befriend.auth.put(`/activities/${activityToken}/reviews`, {
                         person_to_token: personToken,

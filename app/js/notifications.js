@@ -48,7 +48,7 @@ befriend.notifications = {
             //get activity data
             try {
                 let activityData;
-
+2
                 if(notification.access?.token) {
                     let r = await befriend.networks.get(
                         notification.access.domain,
