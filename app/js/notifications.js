@@ -1,4 +1,7 @@
 befriend.notifications = {
+    timing: {
+        lastShown: null
+    },
     data: {
         all: {},
         networks: {}, //store one-time data in local storage and merge with all
@@ -36,6 +39,8 @@ befriend.notifications = {
                 return resolve();
             }
 
+            befriend.notifications.timing.lastShown = timeNow();
+
             befriend.maps.needsResize = true;
 
             if(auto_back) {
@@ -44,6 +49,9 @@ befriend.notifications = {
 
             //navigate to activities view
             befriend.navigateToView('activities', true, true);
+
+            //hide reviews overlay if shown
+            befriend.reviews.toggleOverlay(false);
 
             //get activity data
             try {

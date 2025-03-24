@@ -1823,6 +1823,10 @@
         display: none;
         padding-top: 0;
 
+        .top-row {
+            margin-top: 0;
+        }
+
         .invite {
             flex-direction: column;
             align-items: initial;
@@ -1841,8 +1845,12 @@
         }
 
         &.display-message {
+            .top-row {
+                margin-top: $message_h;
+            }
+
             .activity {
-                transform: translateY(40px);
+                //transform: translateY(40px);
             }
 
             .activity-message {
@@ -1856,6 +1864,10 @@
         }
 
         &.display-check-in {
+            .top-row {
+                margin-top: $message_h;
+            }
+
             .activity {
                 //transform: translateY(40px);
             }

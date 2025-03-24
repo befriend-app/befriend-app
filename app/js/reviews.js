@@ -242,6 +242,222 @@ befriend.reviews = {
                 <div class="reviews-container">${reviews_html}</div>`
         },
     },
+    toggleOverlay: async function(show) {
+        let overlayEl = document.getElementById('reviews-overlay');
+
+        if(show && elHasClass(overlayEl, 'active')) {
+            return;
+        }
+
+        if (show) {
+            addClassEl('active', overlayEl);
+            addClassEl('no-scroll', document.body);
+        } else {
+            addClassEl('transition-out', overlayEl);
+            removeClassEl('active', overlayEl);
+            removeClassEl('no-scroll', document.body);
+
+            setTimeout(function() {
+                removeClassEl('transition-out', overlayEl);
+            }, befriend.variables.reviews_transition_ms);
+        }
+    },
+    saveRating: function(activityToken, personToken, type, rating) {
+        let activity = befriend.activities.data.getActivity(activityToken);
+        let reviewCard = document.querySelector(`.review-card[data-activity-token="${activityToken}"]`);
+
+        if (!activity || !reviewCard) {
+            return;
+        }
+
+        let savedEl = reviewCard.querySelector('.saved-message');
+
+        if (!this._debounceTimers) {
+            this._debounceTimers = {};
+        }
+
+        let key_server = `${activityToken}_${personToken}_${type}`;
+
+        if (this._debounceTimers[key_server]) {
+            clearTimeout(this._debounceTimers[key_server]);
+        }
+
+        clearTimeout(savedEl._timeout);
+
+        this._debounceTimers[key_server] = setTimeout(async () => {
+            try {
+                let r;
+
+                let activity = befriend.activities.data.getActivity(activityToken);
+
+                if(activity.access?.token) {
+                    //update review on originating network
+                    try {
+                        r = await befriend.networks.put(activity.access.domain, `/activities/networks/reviews/${activityToken}`, {
+                            access_token: activity.access.token,
+                            person_token: befriend.getPersonToken(),
+                            person_to_token: personToken,
+                            review: {
+                                type,
+                                rating
+                            }
+                        });
+                    } catch(e) {
+                        console.error(e);
+                    }
+
+                    //update review on own network
+                    try {
+                        let r2 = await befriend.auth.put(`/activities/${activityToken}/reviews`, {
+                            person_to_token: personToken,
+                            review: {
+                                type,
+                                rating
+                            }
+                        });
+                    } catch(e) {
+                        console.error(e);
+                    }
+                } else {
+                    r = await befriend.auth.put(`/activities/${activityToken}/reviews`, {
+                        person_to_token: personToken,
+                        review: {
+                            type,
+                            rating
+                        }
+                    });
+                }
+
+                if(r.status === 202) {
+                    if(r.data) {
+                        befriend.activities.data.updateReviews(personToken, r.data);
+                    }
+
+                    addClassEl('show', savedEl);
+
+                    savedEl._timeout = setTimeout(function () {
+                        removeClassEl('show', savedEl);
+                    }, 3000);
+                }
+            } catch (e) {
+                console.error(`Error saving ${type} rating:`, e);
+            }
+        }, 200);
+    },
+    saveNoShow: function(activityToken, personToken, isNoShow) {
+        let activity = befriend.activities.data.getActivity(activityToken);
+        let reviewCard = document.querySelector(`.review-card[data-activity-token="${activityToken}"]`);
+
+        if (!activity || !reviewCard) {
+            return;
+        }
+
+        let savedEl = reviewCard.querySelector('.saved-message');
+
+        if (!this._debounceTimers) {
+            this._debounceTimers = {};
+        }
+
+        let key = `noshow_${activityToken}_${personToken}`;
+
+        if (this._debounceTimers[key]) {
+            clearTimeout(this._debounceTimers[key]);
+        }
+
+        clearTimeout(savedEl._timeout);
+
+        this._debounceTimers[key] = setTimeout(async () => {
+            try {
+                let r;
+
+                let activity = befriend.activities.data.getActivity(activityToken);
+
+                if(activity.access?.token) {
+                    //update no show on originating network
+                    try {
+                        r = await befriend.networks.put(activity.access.domain, `/activities/networks/reviews/${activityToken}`, {
+                            access_token: activity.access.token,
+                            person_token: befriend.getPersonToken(),
+                            person_to_token: personToken,
+                            no_show: isNoShow
+                        });
+                    } catch(e) {
+                        console.error(e);
+                    }
+
+                    //update no show on own network
+                    try {
+                        let r2 = await befriend.auth.put(`/activities/${activityToken}/reviews`, {
+                            person_to_token: personToken,
+                            no_show: isNoShow
+                        });
+                    } catch(e) {
+                        console.error(e);
+                    }
+                } else {
+                    r = await befriend.auth.put(`/activities/${activityToken}/reviews`, {
+                        person_to_token: personToken,
+                        no_show: isNoShow
+                    });
+                }
+
+                if(r.status === 202) {
+                    if(r.data) {
+                        befriend.activities.data.updateReviews(personToken, r.data);
+                    }
+
+                    addClassEl('show', savedEl);
+
+                    savedEl._timeout = setTimeout(function () {
+                        removeClassEl('show', savedEl);
+                    }, 3000);
+                }
+            } catch (e) {
+                console.error(`Error saving no show:`, e);
+            }
+        }, 200);
+    },
+    centerActiveIndicator: function() {
+        let indicatorsContainer = document.getElementById('reviews-overlay').querySelector('.slide-indicators');
+        let innerContainer = indicatorsContainer.querySelector('.slide-indicators-inner');
+
+        if(!innerContainer) {
+            return;
+        }
+
+        let activeIndicator = innerContainer.querySelector('.slide-indicator.active');
+
+        if (!activeIndicator) {
+            return;
+        }
+
+        let indicatorWidth = befriend.variables.reviews_indicator_dim;
+        let indicatorGap = befriend.variables.reviews_indicator_gap;
+        let activeIndex = Array.from(innerContainer.querySelectorAll('.slide-indicator'))
+            .findIndex(indicator => elHasClass(indicator, 'active'));
+
+        let containerBox = indicatorsContainer.getBoundingClientRect();
+        let containerWidth = indicatorsContainer.offsetWidth;
+        let containerCenter = containerWidth / 2 - indicatorWidth / 2;
+
+        let activeIndicatorCenter = (activeIndex * (indicatorWidth + indicatorGap)) + (indicatorWidth / 2);
+
+        let targetScrollLeft = activeIndicatorCenter - containerCenter + containerBox.left / 2;
+
+        requestAnimationFrame(() => {
+            indicatorsContainer.scrollLeft = Math.max(0, targetScrollLeft);
+        });
+    },
+    nextSlide: function() {
+        if (this.current.index < this.activities.length - 1) {
+            this.goToSlide(this.current.index + 1);
+        }
+    },
+    prevSlide: function() {
+        if (this.current.index > 0) {
+            this.goToSlide(this.current.index - 1);
+        }
+    },
     updateInterval: function () {
         //update is_reviewable property on activity periodically
         setInterval(function () {
@@ -446,26 +662,6 @@ befriend.reviews = {
 
         befriend.reviews.toggleOverlay(true);
     },
-    toggleOverlay: async function(show) {
-        let overlayEl = document.getElementById('reviews-overlay');
-
-        if(show && elHasClass(overlayEl, 'active')) {
-            return;
-        }
-
-        if (show) {
-            addClassEl('active', overlayEl);
-            addClassEl('no-scroll', document.body);
-        } else {
-            addClassEl('transition-out', overlayEl);
-            removeClassEl('active', overlayEl);
-            removeClassEl('no-scroll', document.body);
-
-            setTimeout(function() {
-                removeClassEl('transition-out', overlayEl);
-            }, befriend.variables.reviews_transition_ms);
-        }
-    },
     toggleNoShow: function(activityToken, personToken, isNoShow) {
         let ratings = this.getPersonRatings(activityToken, personToken);
 
@@ -491,79 +687,6 @@ befriend.reviews = {
         }
 
         this.saveNoShow(activityToken, personToken, isNoShow);
-    },
-    saveNoShow: function(activityToken, personToken, isNoShow) {
-        let activity = befriend.activities.data.getActivity(activityToken);
-        let reviewCard = document.querySelector(`.review-card[data-activity-token="${activityToken}"]`);
-
-        if (!activity || !reviewCard) {
-            return;
-        }
-
-        let savedEl = reviewCard.querySelector('.saved-message');
-
-        if (!this._debounceTimers) {
-            this._debounceTimers = {};
-        }
-
-        let key = `noshow_${activityToken}_${personToken}`;
-
-        if (this._debounceTimers[key]) {
-            clearTimeout(this._debounceTimers[key]);
-        }
-
-        clearTimeout(savedEl._timeout);
-
-        this._debounceTimers[key] = setTimeout(async () => {
-            try {
-                let r;
-
-                let activity = befriend.activities.data.getActivity(activityToken);
-
-                if(activity.access?.token) {
-                    //update no show on originating network
-                    try {
-                        r = await befriend.networks.put(activity.access.domain, `/activities/networks/reviews/${activityToken}`, {
-                            access_token: activity.access.token,
-                            person_token: befriend.getPersonToken(),
-                            person_to_token: personToken,
-                            no_show: isNoShow
-                        });
-                    } catch(e) {
-                        console.error(e);
-                    }
-
-                    //update no show on own network
-                    try {
-                        let r2 = await befriend.auth.put(`/activities/${activityToken}/reviews`, {
-                            person_to_token: personToken,
-                            no_show: isNoShow
-                        });
-                    } catch(e) {
-                        console.error(e);
-                    }
-                } else {
-                    r = await befriend.auth.put(`/activities/${activityToken}/reviews`, {
-                        person_to_token: personToken,
-                        no_show: isNoShow
-                    });
-                }
-
-                if(r.status === 202) {
-                    if(r.data) {
-                        befriend.activities.data.updateReviews(personToken, r.data);
-                    }
-
-                    addClassEl('show', savedEl);
-
-                    savedEl._timeout = setTimeout(function () {
-                        removeClassEl('show', savedEl);
-                    }, 3000);
-                }
-            } catch (e) {
-                console.error(`Error saving no show:`, e);
-            }
-        }, 200);
     },
     goToSlide: function(index) {
         let containerEl = document.getElementById('reviews-overlay').querySelector('.activities-container');
@@ -616,129 +739,6 @@ befriend.reviews = {
                 befriend.reviews.centerActiveIndicator();
             }, 10);
         }
-    },
-    nextSlide: function() {
-        if (this.current.index < this.activities.length - 1) {
-            this.goToSlide(this.current.index + 1);
-        }
-    },
-    prevSlide: function() {
-        if (this.current.index > 0) {
-            this.goToSlide(this.current.index - 1);
-        }
-    },
-    centerActiveIndicator: function() {
-        let indicatorsContainer = document.getElementById('reviews-overlay').querySelector('.slide-indicators');
-        let innerContainer = indicatorsContainer.querySelector('.slide-indicators-inner');
-
-        if(!innerContainer) {
-            return;
-        }
-
-        let activeIndicator = innerContainer.querySelector('.slide-indicator.active');
-
-        if (!activeIndicator) {
-            return;
-        }
-
-        let indicatorWidth = befriend.variables.reviews_indicator_dim;
-        let indicatorGap = befriend.variables.reviews_indicator_gap;
-        let activeIndex = Array.from(innerContainer.querySelectorAll('.slide-indicator'))
-            .findIndex(indicator => elHasClass(indicator, 'active'));
-
-        let containerBox = indicatorsContainer.getBoundingClientRect();
-        let containerWidth = indicatorsContainer.offsetWidth;
-        let containerCenter = containerWidth / 2 - indicatorWidth / 2;
-
-        let activeIndicatorCenter = (activeIndex * (indicatorWidth + indicatorGap)) + (indicatorWidth / 2);
-
-        let targetScrollLeft = activeIndicatorCenter - containerCenter + containerBox.left / 2;
-
-        requestAnimationFrame(() => {
-            indicatorsContainer.scrollLeft = Math.max(0, targetScrollLeft);
-        });
-    },
-    saveRating: function(activityToken, personToken, type, rating) {
-        let activity = befriend.activities.data.getActivity(activityToken);
-        let reviewCard = document.querySelector(`.review-card[data-activity-token="${activityToken}"]`);
-
-        if (!activity || !reviewCard) {
-            return;
-        }
-
-        let savedEl = reviewCard.querySelector('.saved-message');
-
-        if (!this._debounceTimers) {
-            this._debounceTimers = {};
-        }
-
-        let key_server = `${activityToken}_${personToken}_${type}`;
-
-        if (this._debounceTimers[key_server]) {
-            clearTimeout(this._debounceTimers[key_server]);
-        }
-
-        clearTimeout(savedEl._timeout);
-
-        this._debounceTimers[key_server] = setTimeout(async () => {
-            try {
-                let r;
-
-                let activity = befriend.activities.data.getActivity(activityToken);
-
-                if(activity.access?.token) {
-                    //update review on originating network
-                    try {
-                        r = await befriend.networks.put(activity.access.domain, `/activities/networks/reviews/${activityToken}`, {
-                            access_token: activity.access.token,
-                            person_token: befriend.getPersonToken(),
-                            person_to_token: personToken,
-                            review: {
-                                type,
-                                rating
-                            }
-                        });
-                    } catch(e) {
-                        console.error(e);
-                    }
-
-                    //update review on own network
-                    try {
-                        let r2 = await befriend.auth.put(`/activities/${activityToken}/reviews`, {
-                            person_to_token: personToken,
-                            review: {
-                                type,
-                                rating
-                            }
-                        });
-                    } catch(e) {
-                        console.error(e);
-                    }
-                } else {
-                    r = await befriend.auth.put(`/activities/${activityToken}/reviews`, {
-                        person_to_token: personToken,
-                        review: {
-                            type,
-                            rating
-                        }
-                    });
-                }
-
-                if(r.status === 202) {
-                    if(r.data) {
-                        befriend.activities.data.updateReviews(personToken, r.data);
-                    }
-
-                    addClassEl('show', savedEl);
-
-                    savedEl._timeout = setTimeout(function () {
-                        removeClassEl('show', savedEl);
-                    }, 3000);
-                }
-            } catch (e) {
-                console.error(`Error saving ${type} rating:`, e);
-            }
-        }, 200);
     },
     getPersonRatings: function (activityToken, personToken) {
         if(!befriend.reviews.data[activityToken]) {
@@ -863,6 +863,11 @@ befriend.reviews = {
         this.current.person_token = personsNavEls[0].getAttribute('data-person-token');
     },
     showIfNew: function () {
+        //do not show if notification view just shown
+        if(befriend.notifications.timing.lastShown && timeNow() - befriend.notifications.timing.lastShown < 1000) {
+            return;
+        }
+
         let activities = this.getActivities();
 
         if(!activities.length) {
