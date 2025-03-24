@@ -385,11 +385,11 @@ async function updateAssetIcons(assets_dir) {
 
     let files_dir = await listFilesDir(icons_dir);
 
-    for(let file of files_dir) {
-        if(file.includes('icon-')) {
+    for (let file of files_dir) {
+        if (file.includes('icon-')) {
             let res;
 
-            if(file.includes('@')) {
+            if (file.includes('@')) {
                 let split = file.replace('icon-', '').replace('.png', '').split('@');
                 let dim = parseInt(split[0]);
                 let x = parseInt(split[1].replace('x', ''));
@@ -403,7 +403,7 @@ async function updateAssetIcons(assets_dir) {
 
             try {
                 await createIcon(input_path, output_path, res);
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
         }

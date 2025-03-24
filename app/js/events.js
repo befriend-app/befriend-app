@@ -38,11 +38,11 @@ befriend.events = {
                 //hide check in error
                 let checkInEl = befriend.els.currentActivityView.querySelector('.check-in');
 
-                if(checkInEl) {
+                if (checkInEl) {
                     let checkInError = checkInEl.querySelector('.error');
 
-                    if(elHasClass(checkInError, 'show')) {
-                        if(!e.target.closest('.error')) {
+                    if (elHasClass(checkInError, 'show')) {
+                        if (!e.target.closest('.error')) {
                             removeClassEl('show', checkInError);
                         }
                     }

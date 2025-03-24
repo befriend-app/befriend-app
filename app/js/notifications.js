@@ -1,27 +1,27 @@
 befriend.notifications = {
     timing: {
-        lastShown: null
+        lastShown: null,
     },
     data: {
         all: {},
         networks: {}, //store one-time data in local storage and merge with all
         removed: {},
         current: null,
-        setData: function(data) {
+        setData: function (data) {
             befriend.notifications.data.all = data;
 
-            for(let activity_token in data) {
+            for (let activity_token in data) {
                 let notification = data[activity_token];
 
-                if(activity_token in this.networks) {
-                    if(!notification.person) {
+                if (activity_token in this.networks) {
+                    if (!notification.person) {
                         notification.person = {};
                     }
 
                     notification.person = {
                         ...notification.person,
                         ...this.networks[activity_token],
-                    }
+                    };
                 }
             }
         },
@@ -31,11 +31,11 @@ befriend.notifications = {
         declined: 'You declined this invitation',
         cancelled: 'Activity cancelled',
         unavailable: 'Unavailable: max spots reached',
-        past: 'This activity is in the past'
+        past: 'This activity is in the past',
     },
     fetchActivity: function (notification, auto_back) {
         return new Promise(async (resolve, reject) => {
-            if(!notification?.activity_token) {
+            if (!notification?.activity_token) {
                 return resolve();
             }
 
@@ -43,7 +43,7 @@ befriend.notifications = {
 
             befriend.maps.needsResize = true;
 
-            if(auto_back) {
+            if (auto_back) {
                 befriend.activities.createActivity.backButton();
             }
 
@@ -57,35 +57,42 @@ befriend.notifications = {
             try {
                 let activityData;
 
-                if(notification.access?.token) {
+                if (notification.access?.token) {
                     let r = await befriend.networks.get(
                         notification.access.domain,
                         `activities/networks/notifications/${notification.activity_token}`,
                         {
                             access_token: notification.access.token,
-                            person_token: befriend.getPersonToken()
-                        }
+                            person_token: befriend.getPersonToken(),
+                        },
                     );
 
                     activityData = r.data;
 
                     //save one-time data to local storage
-                    if(activityData.person?.first_name) {
+                    if (activityData.person?.first_name) {
                         befriend.notifications.data.networks[notification.activity_token] = {
                             first_name: activityData.person.first_name,
-                            image_url: activityData.person.image_url
-                        }
+                            image_url: activityData.person.image_url,
+                        };
 
-                        befriend.user.setLocal('notifications.networks', befriend.notifications.data.networks)
-                    } else if(notification.activity_token in befriend.notifications.data.networks) {
+                        befriend.user.setLocal(
+                            'notifications.networks',
+                            befriend.notifications.data.networks,
+                        );
+                    } else if (
+                        notification.activity_token in befriend.notifications.data.networks
+                    ) {
                         // merge with previously saved local storage information
                         activityData.person = {
                             ...activityData.person,
-                            ...befriend.notifications.data.networks[notification.activity_token]
-                        }
+                            ...befriend.notifications.data.networks[notification.activity_token],
+                        };
                     }
                 } else {
-                    let r = await befriend.auth.get(`/activities/${notification.activity_token}/notification`);
+                    let r = await befriend.auth.get(
+                        `/activities/${notification.activity_token}/notification`,
+                    );
 
                     activityData = r.data;
                 }
@@ -99,7 +106,7 @@ befriend.notifications = {
 
                 //show current notification view
                 befriend.notifications.showActivity(notification.activity_token, true);
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
 
@@ -107,19 +114,19 @@ befriend.notifications = {
         });
     },
     showActivity: async function (activity_token, skip_enrich) {
-        if(!activity_token) {
+        if (!activity_token) {
             return;
         }
 
         try {
             let activity_data = befriend.notifications.data.all[activity_token];
 
-            if(!activity_data) {
+            if (!activity_data) {
                 console.warn('No activity found');
-                return ;
+                return;
             }
 
-            if(!activity_data.enriched && !skip_enrich) {
+            if (!activity_data.enriched && !skip_enrich) {
                 return befriend.notifications.fetchActivity(activity_data);
             }
 
@@ -127,18 +134,17 @@ befriend.notifications = {
 
             let html = this.getViewHtml(activity_data);
 
-             let view_el = befriend.els.activityNotificationView.querySelector('.container');
+            let view_el = befriend.els.activityNotificationView.querySelector('.container');
 
-             view_el.innerHTML = html;
+            view_el.innerHTML = html;
 
-             //set header
-            if(activity_data.notification.declined_at) {
+            //set header
+            if (activity_data.notification.declined_at) {
                 befriend.notifications.showDeclined();
-            } else if(activity_data.activity.cancelled_at) {
+            } else if (activity_data.activity.cancelled_at) {
                 befriend.notifications.showUnavailable(befriend.notifications.messages.cancelled);
-            } else if(activity_data.notification.accepted_at) {
-
-            } else if(timeNow(true) > activity_data.activity.activity_end) {
+            } else if (activity_data.notification.accepted_at) {
+            } else if (timeNow(true) > activity_data.activity.activity_end) {
                 befriend.notifications.showUnavailable(befriend.notifications.messages.past, true);
             }
 
@@ -146,18 +152,18 @@ befriend.notifications = {
             let viewEl = befriend.els.views.querySelector('.view-activities');
             viewEl.scrollTop = prevScroll;
 
-             //show view
-             removeClassEl('show', befriend.els.mainActivitiesView);
-             removeClassEl('show', befriend.els.currentActivityView);
-             addClassEl('show', befriend.els.activityNotificationView);
+            //show view
+            removeClassEl('show', befriend.els.mainActivitiesView);
+            removeClassEl('show', befriend.els.currentActivityView);
+            addClassEl('show', befriend.els.activityNotificationView);
 
-             befriend.styles.notifications.updateSectionsHeight();
+            befriend.styles.notifications.updateSectionsHeight();
 
-             befriend.notifications.events.onBack();
-             befriend.notifications.events.onAccept();
-             befriend.notifications.events.onDecline();
-             befriend.notifications.events.onViewImage();
-        } catch(e) {
+            befriend.notifications.events.onBack();
+            befriend.notifications.events.onAccept();
+            befriend.notifications.events.onDecline();
+            befriend.notifications.events.onViewImage();
+        } catch (e) {
             console.error(e);
         }
     },
@@ -197,22 +203,24 @@ befriend.notifications = {
         function getOverview() {
             let friends_type = '';
 
-            if(notification.activity.is_new_friends && notification.activity.is_existing_friends) {
+            if (notification.activity.is_new_friends && notification.activity.is_existing_friends) {
                 friends_type = 'Both';
-            } else if(notification.activity.is_new_friends) {
+            } else if (notification.activity.is_new_friends) {
                 friends_type = 'New';
-            } else if(notification.activity.is_existing_friends) {
+            } else if (notification.activity.is_existing_friends) {
                 friends_type = 'Existing';
             }
 
-            let selected_mode = befriend.modes.options.find(mode => mode.id === notification.activity?.mode?.token);
+            let selected_mode = befriend.modes.options.find(
+                (mode) => mode.id === notification.activity?.mode?.token,
+            );
             let mode_icon_html = '';
 
-            if(selected_mode) {
+            if (selected_mode) {
                 mode_icon_html = `<div class="icon">${selected_mode.icon}</div>`;
             }
 
-           return  `<div class="overview">
+            return `<div class="overview">
                                 <div class="friends-mode">
                                     <div class="mode sub-section">
                                         <div class="title">Mode</div>
@@ -246,7 +254,7 @@ befriend.notifications = {
         function getNetwork() {
             let network = notification.network;
 
-            if(!network) {
+            if (!network) {
                 return '';
             }
 
@@ -273,15 +281,17 @@ befriend.notifications = {
 
             let match_type_html = '';
 
-            if(notification.matching?.total_score >= notification.matching?.thresholds?.ultra) {
-                match_type_html = `<div class="tag match-type ultra">Ultra match</div>`
-            } else if(notification.matching?.total_score >= notification.matching?.thresholds?.super) {
-                match_type_html = `<div class="tag match-type super">Super match</div>`
+            if (notification.matching?.total_score >= notification.matching?.thresholds?.ultra) {
+                match_type_html = `<div class="tag match-type ultra">Ultra match</div>`;
+            } else if (
+                notification.matching?.total_score >= notification.matching?.thresholds?.super
+            ) {
+                match_type_html = `<div class="tag match-type super">Super match</div>`;
             }
 
             let new_member_html = '';
 
-            if(notification.person.is_new) {
+            if (notification.person.is_new) {
                 new_member_html = `<div class="tag new-member">New member</div>`;
             }
 
@@ -289,27 +299,27 @@ befriend.notifications = {
 
             let mode = notification.activity.mode;
 
-            if(['mode-partner', 'mode-kids'].includes(mode?.token)) {
+            if (['mode-partner', 'mode-kids'].includes(mode?.token)) {
                 let title = '';
                 let content = '';
 
-                if(mode.token === 'mode-partner') {
+                if (mode.token === 'mode-partner') {
                     title = 'Partner';
 
-                    if(mode.partner?.gender?.name) {
+                    if (mode.partner?.gender?.name) {
                         content = `<div class="partner">${mode.partner.gender.name}</div>`;
                     }
-                } else if(mode.token === 'mode-kids') {
+                } else if (mode.token === 'mode-kids') {
                     title = 'Kids';
 
                     let kids_html = '';
 
-                    for(let k in (mode.kids || {})) {
+                    for (let k in mode.kids || {}) {
                         let kid = mode.kids[k];
 
                         let qty_html = '';
 
-                        if(kid.qty > 1) {
+                        if (kid.qty > 1) {
                             qty_html = `<div class="qty">${kid.qty}</div>`;
                         }
 
@@ -319,12 +329,12 @@ befriend.notifications = {
                              </div>`;
                     }
 
-                    if(kids_html) {
+                    if (kids_html) {
                         content = `<div class="kids">${kids_html}</div>`;
                     }
                 }
 
-                if(content) {
+                if (content) {
                     partner_kids_html = `<div class="partner-kids sub-section">
                                         <div class="sub-section-title">${title}</div>
                                         <div class="partner-kids-content">${content}</div>                    
@@ -382,16 +392,16 @@ befriend.notifications = {
                 befriend.location.device,
                 {
                     lat: notification.activity.location_lat,
-                    lon: notification.activity.location_lon
+                    lon: notification.activity.location_lon,
                 },
-                true
+                true,
             );
 
             let distance_miles = distance_km * kms_per_mile;
 
             let distance_str = '';
 
-            if(useKM()) {
+            if (useKM()) {
                 distance_str = `${formatRound(distance_km)} km`;
             } else {
                 distance_str = `${formatRound(distance_miles)} m`;
@@ -422,9 +432,9 @@ befriend.notifications = {
         function getDate() {
             let date = getFriendlyDateFromString(notification.activity.human_date);
 
-            if(isToday(notification.activity.activity_start)) {
+            if (isToday(notification.activity.activity_start)) {
                 date = 'Today';
-            } else if(isTomorrow(notification.activity.activity_start)) {
+            } else if (isTomorrow(notification.activity.activity_start)) {
                 date = 'Tomorrow';
             }
 
@@ -432,7 +442,9 @@ befriend.notifications = {
         }
 
         function getMatching() {
-            let html = befriend.activities.displayActivity.html.matching.getContent(notification.matching);
+            let html = befriend.activities.displayActivity.html.matching.getContent(
+                notification.matching,
+            );
 
             return `<div class="matching section">
                             <div class="label">Matching</div>
@@ -500,39 +512,39 @@ befriend.notifications = {
                     </div>
                 </div>`;
     },
-    showNotificationBar: function () {
-
-    },
+    showNotificationBar: function () {},
     updateAvailableSpots: function (activity_token, spots_available, activity_cancelled_at) {
-        if(!isNumeric(spots_available)) {
+        if (!isNumeric(spots_available)) {
             return;
         }
 
         let notificationObj = befriend.notifications.data.all[activity_token];
 
-        if(!notificationObj) {
+        if (!notificationObj) {
             console.warn('No activity notification found');
             return;
         }
 
         notificationObj.activity.spots_available = spots_available;
 
-        if(activity_cancelled_at) {
+        if (activity_cancelled_at) {
             notificationObj.activity.cancelled_at = activity_cancelled_at;
         }
 
         //update main view with latest spots data
         befriend.activities.setView();
 
-        if(notificationObj.acceptance_in_progress) {
+        if (notificationObj.acceptance_in_progress) {
             return;
         }
 
         let notification = notificationObj.notification;
 
-        const availablePersons = befriend.els.activityNotificationView.querySelector('.available-persons .text');
+        const availablePersons = befriend.els.activityNotificationView.querySelector(
+            '.available-persons .text',
+        );
 
-        if(!availablePersons) {
+        if (!availablePersons) {
             return;
         }
 
@@ -544,10 +556,10 @@ befriend.notifications = {
         addClassEl('fade-out', currentEl);
         addClassEl('fade-in', newEl);
 
-        if(notificationObj.activity.cancelled_at) {
+        if (notificationObj.activity.cancelled_at) {
             befriend.notifications.showUnavailable(befriend.notifications.messages.cancelled);
-        } else if(!notification.accepted_at && !notification.declined_at) {
-            if(spots_available <= 0) {
+        } else if (!notification.accepted_at && !notification.declined_at) {
+            if (spots_available <= 0) {
                 befriend.notifications.showUnavailable(befriend.notifications.messages.unavailable);
             } else {
                 befriend.notifications.showAcceptDecline();
@@ -574,18 +586,20 @@ befriend.notifications = {
         }, befriend.variables.notification_spots_transition_ms);
     },
     showUnavailable: function (message, is_past) {
-        let max_recipients_el = befriend.els.activityNotificationView.querySelector('.max-recipients');
-        let accept_decline_el = befriend.els.activityNotificationView.querySelector('.accept-decline');
+        let max_recipients_el =
+            befriend.els.activityNotificationView.querySelector('.max-recipients');
+        let accept_decline_el =
+            befriend.els.activityNotificationView.querySelector('.accept-decline');
 
-        if(!max_recipients_el || !accept_decline_el) {
+        if (!max_recipients_el || !accept_decline_el) {
             return;
         }
 
-        if(message) {
+        if (message) {
             max_recipients_el.innerHTML = message;
         }
 
-        if(is_past) {
+        if (is_past) {
             addClassEl('is-past', max_recipients_el);
         } else {
             removeClassEl('is-past', max_recipients_el);
@@ -595,10 +609,12 @@ befriend.notifications = {
         addClassEl('hide', accept_decline_el);
     },
     showAcceptDecline: function () {
-        let max_recipients_el = befriend.els.activityNotificationView.querySelector('.max-recipients');
-        let accept_decline_el = befriend.els.activityNotificationView.querySelector('.accept-decline');
+        let max_recipients_el =
+            befriend.els.activityNotificationView.querySelector('.max-recipients');
+        let accept_decline_el =
+            befriend.els.activityNotificationView.querySelector('.accept-decline');
 
-        if(!max_recipients_el || !accept_decline_el) {
+        if (!max_recipients_el || !accept_decline_el) {
             return;
         }
 
@@ -621,7 +637,7 @@ befriend.notifications = {
                     //wait for init to be finished
                     await befriend.initFinished();
 
-                    console.log("after init finished");
+                    console.log('after init finished');
 
                     befriend.notifications.fetchActivity(notification, false);
 
@@ -641,9 +657,13 @@ befriend.notifications = {
                     console.log('Received notification:', notification);
 
                     //skip handling of duplicate notification
-                    let activityToken = notification.activity_token || notification.notification?.activity_token;
+                    let activityToken =
+                        notification.activity_token || notification.notification?.activity_token;
 
-                    if(activityToken in befriend.notifications.data.all || activityToken in befriend.activities.data.all) {
+                    if (
+                        activityToken in befriend.notifications.data.all ||
+                        activityToken in befriend.activities.data.all
+                    ) {
                         return;
                     }
 
@@ -664,7 +684,7 @@ befriend.notifications = {
         onBack: function () {
             let el = befriend.els.activityNotificationView.querySelector('.back-button');
 
-            if(el._listener) {
+            if (el._listener) {
                 return;
             }
 
@@ -678,7 +698,7 @@ befriend.notifications = {
         onAccept: function () {
             let accept_el = befriend.els.activityNotificationView.querySelector('.button.accept');
 
-            if(accept_el._listener) {
+            if (accept_el._listener) {
                 return;
             }
 
@@ -692,11 +712,11 @@ befriend.notifications = {
 
                 let activity = currentNotification?.activity;
 
-                if(currentNotification.notification.accepted_at) {
+                if (currentNotification.notification.accepted_at) {
                     return;
                 }
 
-                if(this._ip) {
+                if (this._ip) {
                     return;
                 }
 
@@ -704,14 +724,15 @@ befriend.notifications = {
 
                 let activity_token = activity?.activity_token;
 
-                if(activity_token) {
+                if (activity_token) {
                     befriend.toggleSpinner(true);
                     currentNotification.acceptance_in_progress = true;
 
                     try {
                         let responseData;
 
-                        if(currentNotification.access?.token) { //3rd-party network
+                        if (currentNotification.access?.token) {
+                            //3rd-party network
                             let r = await befriend.networks.put(
                                 currentNotification.access.domain,
                                 `activities/networks/notifications/accept/${activity.activity_token}`,
@@ -720,12 +741,15 @@ befriend.notifications = {
                                     person_token: befriend.getPersonToken(),
                                     first_name: befriend.me.data?.me?.first_name || null,
                                     image_url: befriend.me.data?.me?.image_url || null,
-                                }
+                                },
                             );
 
                             responseData = r.data;
-                        } else { //own network
-                            let r = await befriend.auth.put(`/activities/${activity_token}/notification/accept`);
+                        } else {
+                            //own network
+                            let r = await befriend.auth.put(
+                                `/activities/${activity_token}/notification/accept`,
+                            );
                             responseData = r.data;
                         }
 
@@ -736,22 +760,32 @@ befriend.notifications = {
 
                         currentNotification.acceptance_in_progress = false;
 
-                        if(responseData.success) {
+                        if (responseData.success) {
                             currentNotification.notification.accepted_at = timeNow();
 
                             befriend.notifications.showAccepted();
 
-                            befriend.notifications.updateAvailableSpots(activity_token, responseData.activity.data.spots_available);
+                            befriend.notifications.updateAvailableSpots(
+                                activity_token,
+                                responseData.activity.data.spots_available,
+                            );
 
                             setTimeout(function () {
-                                befriend.activities.displayActivity.display(activity_token, true, true);
-                                befriend.activities.displayActivity.transition(befriend.els.activityNotificationView, befriend.els.currentActivityView);
+                                befriend.activities.displayActivity.display(
+                                    activity_token,
+                                    true,
+                                    true,
+                                );
+                                befriend.activities.displayActivity.transition(
+                                    befriend.els.activityNotificationView,
+                                    befriend.els.currentActivityView,
+                                );
                             }, 600);
                         } else {
                             befriend.notifications.showUnavailable(responseData.data.error);
                         }
-                    } catch(e) {
-                        if(e.response?.data?.error) {
+                    } catch (e) {
+                        if (e.response?.data?.error) {
                             befriend.notifications.showUnavailable(e.response.data.error);
                         } else {
                             console.error(e);
@@ -769,7 +803,7 @@ befriend.notifications = {
         onDecline: function () {
             let decline_el = befriend.els.activityNotificationView.querySelector('.button.decline');
 
-            if(decline_el._listener) {
+            if (decline_el._listener) {
                 return;
             }
 
@@ -783,11 +817,11 @@ befriend.notifications = {
                 let activity = currentNotification?.activity;
 
                 //already declined
-                if(currentNotification.notification.declined_at) {
+                if (currentNotification.notification.declined_at) {
                     return;
                 }
 
-                if(this._ip) {
+                if (this._ip) {
                     return;
                 }
 
@@ -795,37 +829,41 @@ befriend.notifications = {
 
                 let activity_token = activity?.activity_token;
 
-                if(activity_token) {
+                if (activity_token) {
                     try {
                         befriend.toggleSpinner(true);
 
                         let responseData;
 
-                        if(currentNotification.access?.token) { //3rd-party network
+                        if (currentNotification.access?.token) {
+                            //3rd-party network
                             let r = await befriend.networks.put(
                                 currentNotification.access.domain,
                                 `activities/networks/notifications/decline/${activity.activity_token}`,
                                 {
                                     access_token: currentNotification.access.token,
-                                    person_token: befriend.getPersonToken()
-                                }
+                                    person_token: befriend.getPersonToken(),
+                                },
                             );
 
                             responseData = r.data;
-                        } else { //own network
-                            let r = await befriend.auth.put(`/activities/${activity_token}/notification/decline`);
+                        } else {
+                            //own network
+                            let r = await befriend.auth.put(
+                                `/activities/${activity_token}/notification/decline`,
+                            );
                             responseData = r.data;
                         }
 
-                        if(responseData.success) {
+                        if (responseData.success) {
                             currentNotification.notification.declined_at = timeNow();
 
                             befriend.notifications.showDeclined();
 
                             befriend.activities.setView();
                         }
-                    } catch(e) {
-                        if(e.response?.data?.error) {
+                    } catch (e) {
+                        if (e.response?.data?.error) {
                             befriend.notifications.showUnavailable(e.response.data.error);
                         } else {
                             console.error(e);
@@ -839,9 +877,11 @@ befriend.notifications = {
             });
         },
         onViewImage: function () {
-            let image_el = befriend.els.activityNotificationView.querySelector('.who').querySelector('.image');
+            let image_el = befriend.els.activityNotificationView
+                .querySelector('.who')
+                .querySelector('.image');
 
-            if(image_el._listener) {
+            if (image_el._listener) {
                 return;
             }
 
@@ -853,7 +893,7 @@ befriend.notifications = {
 
                 let url = image_el.getAttribute('data-image-url');
 
-                befriend.modals.images.openModal(url)
+                befriend.modals.images.openModal(url);
             });
         },
     },

@@ -2,7 +2,7 @@ const earth_radius_km = 6371;
 const kms_per_mile = 1.60934;
 const meters_to_miles = 0.000621371192;
 
-String.prototype.capitalize = function() {
+String.prototype.capitalize = function () {
     return this.charAt(0).toUpperCase() + this.slice(1);
 };
 
@@ -187,8 +187,8 @@ function getFriendlyDateFromString(date_str) {
     let month = split[1];
     let day = split[2];
 
-    month = month.replace(/^0+/, '');      // '1'
-    day = day.replace(/^0+/, '');          // '12'
+    month = month.replace(/^0+/, ''); // '1'
+    day = day.replace(/^0+/, ''); // '12'
 
     return `${month}/${day}/${year}`;
 }
@@ -199,9 +199,11 @@ function isToday(timestamp) {
     const today = new Date();
 
     // Compare year, month, and day
-    return timestampDate.getFullYear() === today.getFullYear() &&
+    return (
+        timestampDate.getFullYear() === today.getFullYear() &&
         timestampDate.getMonth() === today.getMonth() &&
-        timestampDate.getDate() === today.getDate();
+        timestampDate.getDate() === today.getDate()
+    );
 }
 
 function isTomorrow(timestamp) {
@@ -209,9 +211,11 @@ function isTomorrow(timestamp) {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    return timestampDate.getFullYear() === tomorrow.getFullYear() &&
+    return (
+        timestampDate.getFullYear() === tomorrow.getFullYear() &&
         timestampDate.getMonth() === tomorrow.getMonth() &&
-        timestampDate.getDate() === tomorrow.getDate();
+        timestampDate.getDate() === tomorrow.getDate()
+    );
 }
 
 function generateToken(length) {
@@ -242,9 +246,9 @@ function calculateDistance(loc_1, loc_2, in_km) {
     const a =
         Math.sin(dLat / 2) * Math.sin(dLat / 2) +
         Math.cos((loc_1.lat * Math.PI) / 180) *
-        Math.cos((loc_1.lat * Math.PI) / 180) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
+            Math.cos((loc_1.lat * Math.PI) / 180) *
+            Math.sin(dLon / 2) *
+            Math.sin(dLon / 2);
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
@@ -591,13 +595,16 @@ function getFullDirectory(customDir) {
             return resolve('');
         }
 
-        befriend.plugins.fileSystem.getDataDirectory(function (baseDir) {
-            let fullPath = customDir ? joinPaths(baseDir, customDir) : baseDir;
+        befriend.plugins.fileSystem.getDataDirectory(
+            function (baseDir) {
+                let fullPath = customDir ? joinPaths(baseDir, customDir) : baseDir;
 
-            resolve(fullPath);
-        }, function (error) {
-            reject(error);
-        });
+                resolve(fullPath);
+            },
+            function (error) {
+                reject(error);
+            },
+        );
     });
 }
 
@@ -615,7 +622,7 @@ function getFileData(filename, customDir) {
             befriend.plugins.fileSystem.readFile(
                 path,
                 (data) => resolve(data),
-                (error) => reject(error)
+                (error) => reject(error),
             );
         } catch (error) {
             reject(error);
@@ -637,7 +644,7 @@ function saveFileData(filename, data, customDir) {
                 path,
                 data,
                 () => resolve(),
-                (error) => reject(error)
+                (error) => reject(error),
             );
         } catch (error) {
             reject(error);
@@ -657,7 +664,7 @@ function getObjectFromDisk(schemaName, customDir) {
             let data = await getFileData(filename, customDir);
 
             resolve(JSON.parse(data));
-        } catch(e) {
+        } catch (e) {
             console.error(e);
             reject(e);
         }
@@ -673,7 +680,7 @@ function saveObjectToDisk(obj, schemaName, customDir) {
             await saveFileData(filename, data, customDir);
 
             resolve();
-        } catch(e) {
+        } catch (e) {
             console.error(e);
             reject(e);
         }
@@ -681,15 +688,11 @@ function saveObjectToDisk(obj, schemaName, customDir) {
 }
 
 function getDistanceStr(location_1, location_2) {
-    let distance_km = calculateDistance(
-        location_1,
-        location_2,
-        true
-    );
+    let distance_km = calculateDistance(location_1, location_2, true);
 
     let distance_miles = distance_km * kms_per_mile;
 
-    if(useKM()) {
+    if (useKM()) {
         return `${formatRound(distance_km)} km`;
     }
 

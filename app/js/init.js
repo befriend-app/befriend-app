@@ -53,7 +53,7 @@ function loadCSS() {
         console.error(e);
     }
 
-    if(!window.launched_from_notification) {
+    if (!window.launched_from_notification) {
         removeClassEl('loading', document.body);
     }
 })();

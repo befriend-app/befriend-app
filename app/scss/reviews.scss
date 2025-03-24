@@ -4,7 +4,9 @@
     $review_ptb: 10px;
 
     &.no-transition {
-        .reviews-popup-overlay, .reviews, .activities-container {
+        .reviews-popup-overlay,
+        .reviews,
+        .activities-container {
             transition: none !important;
         }
     }
@@ -22,7 +24,8 @@
     }
 
     &.transition-out {
-        .reviews, .reviews-popup-overlay {
+        .reviews,
+        .reviews-popup-overlay {
             transition: none !important;
             display: none !important;
         }
@@ -37,8 +40,8 @@
         left: 0;
         padding: $ptb 12px;
         border-top-right-radius: $br;
-        background-color: rgba(255, 255, 255, .9);
-        border: .5px solid lighten(black, 50%);
+        background-color: rgba(255, 255, 255, 0.9);
+        border: 0.5px solid lighten(black, 50%);
         box-sizing: border-box;
         @include flex-center-col;
 
@@ -72,7 +75,7 @@
             display: flex;
             justify-content: center;
             padding: 20px 0;
-            border-bottom: .5px solid lighten(black, 70%);
+            border-bottom: 0.5px solid lighten(black, 70%);
         }
     }
 
@@ -90,8 +93,8 @@
         padding: 20px;
         opacity: 0;
         transition:
-                background-color $reviews_transition_ms,
-                opacity $reviews_transition_ms;
+            background-color $reviews_transition_ms,
+            opacity $reviews_transition_ms;
 
         pointer-events: none;
     }
@@ -157,7 +160,9 @@
         cursor: pointer;
         z-index: 10;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        transition: opacity 0.3s ease, background-color 0.3s ease;
+        transition:
+            opacity 0.3s ease,
+            background-color 0.3s ease;
 
         &.disabled {
             opacity: 0.3;
@@ -165,7 +170,7 @@
         }
 
         svg {
-            $p: .8;
+            $p: 0.8;
             width: $reviews_arrow_dim * $p;
             height: $reviews_arrow_dim * $p;
             fill: none;
@@ -355,11 +360,13 @@
                         padding: 8px;
                         border-radius: 10px;
                         cursor: pointer;
-                        transition: background-color 0.2s ease, border 0.2s ease;
-                        border: .5px solid $color_lightgray;
+                        transition:
+                            background-color 0.2s ease,
+                            border 0.2s ease;
+                        border: 0.5px solid $color_lightgray;
 
                         &.active {
-                            background-color: transparentize($brand_color_b, .5);
+                            background-color: transparentize($brand_color_b, 0.5);
                             border-color: darken($brand_color_a, 25%);
                             //box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
                         }
@@ -395,7 +402,7 @@
                     cursor: pointer;
                     transition: all 0.2s ease;
                     background-color: rgba(0, 0, 0, 0.03);
-                    border: .5px solid darken($brand_color_a, 20%);
+                    border: 0.5px solid darken($brand_color_a, 20%);
                     display: flex;
                     align-items: center;
                     position: relative;
@@ -484,7 +491,7 @@
                             border-radius: 6px;
                             width: fit-content;
                             padding: 3px 9px;
-                            border: .5px solid $color_lightgray;
+                            border: 0.5px solid $color_lightgray;
 
                             .value {
                                 text-align: center;
@@ -565,7 +572,7 @@
         display: flex;
         gap: 0 8px;
         align-items: center;
-        border: .5px solid darken($brand_color_a, 25%);
+        border: 0.5px solid darken($brand_color_a, 25%);
         opacity: 0;
         visibility: hidden;
         transition: all 400ms;
@@ -581,7 +588,6 @@
         }
 
         .text {
-
         }
     }
 
@@ -593,7 +599,9 @@
     }
 
     .clear-rating-btn {
-        transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+        transition:
+            opacity 0.2s ease-in-out,
+            visibility 0.2s ease-in-out;
         opacity: 1;
         visibility: visible;
         position: absolute;
@@ -602,7 +610,7 @@
         z-index: 2;
 
         .button {
-            background-color: transparentize($color_lightgray, .7);
+            background-color: transparentize($color_lightgray, 0.7);
             border: 1px solid #ddd;
             color: lighten(black, 40%);
             border-radius: 4px;
@@ -624,8 +632,6 @@
         }
     }
 }
-
-
 
 #reviews-spinner {
     $dim: 16px;
@@ -655,4 +661,3 @@
         }
     }
 }
-

@@ -1,7 +1,7 @@
 //colors
 $brand_color_a: #2d86c7;
 $brand_color_b: #e0f3fd;
-$brand_color_c: #FFCC80;
+$brand_color_c: #ffcc80;
 $brand_color_d: #ffb198;
 
 $brand_color_a_text: white;
@@ -18,7 +18,7 @@ $cancelled_color: darken($color_red, 25%);
 $color_lightgray: #d3d3d3;
 $color_gray: #00000079;
 
-$color_kids: #FFD700;
+$color_kids: #ffd700;
 
 $input_focus_color: lighten($brand_color_a, 10%);
 
@@ -71,7 +71,7 @@ $activity_transition_ms: 300ms;
 
 $footer_h: 56px;
 $footer_pt: 15px;
-$total_footer_h: $footer_h + $footer_pt * 2;;
+$total_footer_h: $footer_h + $footer_pt * 2;
 
 $view_spinner_dim: 60px;
 

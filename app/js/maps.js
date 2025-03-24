@@ -272,11 +272,7 @@ befriend.maps = {
         }
     },
     centerMap: function () {
-        befriend.maps.setMapCenter(
-            befriend.maps.maps.activities,
-            befriend.location.current,
-            14,
-        );
+        befriend.maps.setMapCenter(befriend.maps.maps.activities, befriend.location.current, 14);
 
         befriend.maps.maps.activities.resize();
     },
@@ -323,7 +319,10 @@ befriend.maps = {
         }
 
         //do not update map when places or create new activity is shown
-        if (befriend.places.activity.isPlacesShown() || befriend.activities.createActivity.isShown()) {
+        if (
+            befriend.places.activity.isPlacesShown() ||
+            befriend.activities.createActivity.isShown()
+        ) {
             return;
         }
 

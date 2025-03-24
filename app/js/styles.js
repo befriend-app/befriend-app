@@ -126,7 +126,7 @@ befriend.styles = {
         },
     },
     displayActivity: {
-        updateSectionsHeight: async function(addHeight = 0) {
+        updateSectionsHeight: async function (addHeight = 0) {
             return;
             let view = befriend.els.currentActivityView;
 
@@ -140,7 +140,7 @@ befriend.styles = {
         },
     },
     notifications: {
-        updateSectionsHeight: function() {
+        updateSectionsHeight: function () {
             return;
             const notificationView = befriend.els.activityNotificationView;
 

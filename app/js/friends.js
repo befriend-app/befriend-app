@@ -4,7 +4,7 @@ befriend.friends = {
     max: {
         current: 2,
         default: 2,
-        max: 10
+        max: 10,
     },
     maxMax: 10,
     type: {
@@ -25,18 +25,21 @@ befriend.friends = {
     },
     updateMaxSelectableFriends: function () {
         //increase quantity of selectable friends based on number of activities completed + 2
-        if(Object.keys(befriend.activities.data.all || {}).length) {
+        if (Object.keys(befriend.activities.data.all || {}).length) {
             let activities_count = 0;
 
-            for(let activity_token in befriend.activities.data.all) {
+            for (let activity_token in befriend.activities.data.all) {
                 let activity = befriend.activities.data.all[activity_token];
 
-                if(!activity.cancelled_at && timeNow(true) > activity.activity_end) {
+                if (!activity.cancelled_at && timeNow(true) > activity.activity_end) {
                     activities_count++;
                 }
             }
 
-            befriend.friends.max.current = Math.min(activities_count + befriend.friends.max.default, befriend.friends.max.max);
+            befriend.friends.max.current = Math.min(
+                activities_count + befriend.friends.max.default,
+                befriend.friends.max.max,
+            );
         } else {
             befriend.friends.max.current = befriend.friends.max.default;
         }
@@ -85,7 +88,9 @@ befriend.friends = {
                 let startX, startLeft;
 
                 function setPosition(value) {
-                    const percent = (value - befriend.friends.min) / (befriend.friends.max.current - befriend.friends.min);
+                    const percent =
+                        (value - befriend.friends.min) /
+                        (befriend.friends.max.current - befriend.friends.min);
                     const position = percent * container.offsetWidth;
                     thumb.style.left = `${position}px`;
                     range.style.width = `${position}px`;
@@ -97,10 +102,13 @@ befriend.friends = {
 
                     return Math.min(
                         Math.max(
-                            Math.round(percent * (befriend.friends.max.current - befriend.friends.min) + befriend.friends.min),
-                            befriend.friends.min
+                            Math.round(
+                                percent * (befriend.friends.max.current - befriend.friends.min) +
+                                    befriend.friends.min,
+                            ),
+                            befriend.friends.min,
                         ),
-                        befriend.friends.max.current
+                        befriend.friends.max.current,
                     );
                 }
 
@@ -138,11 +146,11 @@ befriend.friends = {
                     befriend.friends.setActivityFriendNum(value);
                 }
 
-                if(reset_position_only) {
+                if (reset_position_only) {
                     return setPosition(befriend.friends.activity_qty);
                 }
 
-                if(isTouchDevice()) {
+                if (isTouchDevice()) {
                     // Touch events
                     thumb.addEventListener('touchstart', handleStart);
                     document.addEventListener('touchmove', handleMove);

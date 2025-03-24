@@ -13,24 +13,28 @@ befriend.activities = {
             befriend.activities.data.rules = rules;
         },
         updateActivity: function (activity) {
-            if(!befriend.activities.data.all) {
+            if (!befriend.activities.data.all) {
                 befriend.activities.data.all = {};
             }
 
             befriend.activities.data.all[activity.activity_token] = activity;
         },
         updateReviews: function (person_token, reviews_data) {
-            if(befriend.activities.data.all) {
-                for(let [token, activity] of Object.entries(befriend.activities.data.all)) {
-                    if(activity.data?.persons?.[person_token]) {
+            if (befriend.activities.data.all) {
+                for (let [token, activity] of Object.entries(befriend.activities.data.all)) {
+                    if (activity.data?.persons?.[person_token]) {
                         activity.data.persons[person_token].reviews = reviews_data;
                     }
                 }
             }
 
             //update current display
-            if(befriend.activities.displayActivity.isShown()) {
-                befriend.activities.displayActivity.display(befriend.activities.displayActivity.currentToken, true, true);
+            if (befriend.activities.displayActivity.isShown()) {
+                befriend.activities.displayActivity.display(
+                    befriend.activities.displayActivity.currentToken,
+                    true,
+                    true,
+                );
             }
         },
         getActivity: function (activity_token) {
@@ -39,7 +43,7 @@ befriend.activities = {
         isUnfulfilled: function (activity_token) {
             let activity = this.getActivity(activity_token);
 
-            if(activity && 'is_fulfilled' in activity?.data && !activity.data.is_fulfilled) {
+            if (activity && 'is_fulfilled' in activity?.data && !activity.data.is_fulfilled) {
                 return true;
             }
 
@@ -49,13 +53,13 @@ befriend.activities = {
             let activity = this.getActivity(activity_token);
 
             return activity.data.cancelled_at || activity.cancelled_at;
-        }
+        },
     },
     draft: {
-        create: function(data) {
+        create: function (data) {
             befriend.activities.data.draft = data;
         },
-        update: function(key, value, update_match_counts) {
+        update: function (key, value, update_match_counts) {
             if (!key) {
                 return false;
             }
@@ -68,17 +72,17 @@ befriend.activities = {
 
             setNestedValue(draft, key, value);
 
-            if(befriend.activities.createActivity.isShown() && update_match_counts) {
+            if (befriend.activities.createActivity.isShown() && update_match_counts) {
                 befriend.activities.createActivity.getMatchCounts();
             }
-        }
+        },
     },
     scroll: {
         main: null,
         activities: {},
-        notifications: {}
+        notifications: {},
     },
-    init: function() {
+    init: function () {
         console.log('[init] Activities');
 
         return new Promise(async (resolve, reject) => {
@@ -99,17 +103,17 @@ befriend.activities = {
             resolve();
         });
     },
-    getRules: function() {
+    getRules: function () {
         return new Promise(async (resolve, reject) => {
-            if(befriend.activities.data.rules) {
+            if (befriend.activities.data.rules) {
                 return resolve();
             }
 
             try {
-                 let r = await befriend.api.get(`/activities/rules`);
+                let r = await befriend.api.get(`/activities/rules`);
 
-                 befriend.activities.data.setRules(r.data);
-            } catch(e) {
+                befriend.activities.data.setRules(r.data);
+            } catch (e) {
                 console.error(e);
             }
 
@@ -118,7 +122,7 @@ befriend.activities = {
     },
     setView: function () {
         function getModeHtml(activity) {
-            if(!activity.mode) {
+            if (!activity.mode) {
                 return '';
             }
 
@@ -126,18 +130,18 @@ befriend.activities = {
 
             let kids = '';
 
-            if(mode.token.includes('kids')) {
-                for(let k in (mode.kids || {})) {
+            if (mode.token.includes('kids')) {
+                for (let k in mode.kids || {}) {
                     let kid = mode.kids[k];
 
                     //do not show age if own activity
-                    if(activity.persons?.[befriend.getPersonToken()]?.is_creator) {
+                    if (activity.persons?.[befriend.getPersonToken()]?.is_creator) {
                         continue;
                     }
 
                     let qty_html = '';
 
-                    if(kid.qty > 1) {
+                    if (kid.qty > 1) {
                         qty_html = `<div class="qty">${kid.qty}</div>`;
                     }
 
@@ -159,31 +163,37 @@ befriend.activities = {
 
             let activity_data = activity?.data || activity?.activity;
 
-            if(!activity_data) {
+            if (!activity_data) {
                 console.warn('No data for activity');
                 return '';
             }
 
-            let accepted_qty = activity_data?.spots?.accepted ?? activity_data?.persons_qty - activity_data?.spots_available;
+            let accepted_qty =
+                activity_data?.spots?.accepted ??
+                activity_data?.persons_qty - activity_data?.spots_available;
             let available_qty = activity_data?.spots_available;
 
-            if(!isNumeric(accepted_qty)) {
+            if (!isNumeric(accepted_qty)) {
                 accepted_qty = 0;
             }
 
-            if(!isNumeric(available_qty)) {
+            if (!isNumeric(available_qty)) {
                 available_qty = 0;
             }
 
             let date = befriend.activities.displayActivity.html.getDate(activity_data);
 
-            let date_html = is_current || is_upcoming || is_notification ? '' : `<div class="date">${date}</div>`;
+            let date_html =
+                is_current || is_upcoming || is_notification
+                    ? ''
+                    : `<div class="date">${date}</div>`;
 
-            let mode_html = getModeHtml(activity_data)
+            let mode_html = getModeHtml(activity_data);
 
             let activity_type_token = activity_data?.activity_type_token;
 
-            let activity_type = befriend.activities.activityTypes.getActivityType(activity_type_token);
+            let activity_type =
+                befriend.activities.activityTypes.getActivityType(activity_type_token);
 
             let image = activity_type?.image;
 
@@ -201,7 +211,7 @@ befriend.activities = {
 
             let time_string = `${activity_start_human} - ${activity_end_human}`;
 
-            if(activity_start_human !== activity_data?.human_time) {
+            if (activity_start_human !== activity_data?.human_time) {
                 let tz = getTimezoneAbbreviation();
 
                 time_string += ` ${tz}`;
@@ -212,24 +222,24 @@ befriend.activities = {
             let tag_html = '';
             let statusTag = false;
 
-            if(is_notification) {
+            if (is_notification) {
                 let isCancelled = activity.activity.cancelled_at;
                 let isDeclined = activity.declined_at || activity.notification?.declined_at;
                 let isPast = timeNow(true) > activity_data.activity_end;
 
-                if(isCancelled) {
+                if (isCancelled) {
                     statusTag = true;
 
                     available_html = `<div class="status-tag cancelled">
                                 <div class="label">Cancelled</div>
                             </div>`;
-                } else if(isDeclined) {
+                } else if (isDeclined) {
                     statusTag = true;
 
                     available_html = `<div class="available declined">
                                 <div class="label">Declined</div>
                             </div>`;
-                } else if(isPast) {
+                } else if (isPast) {
                     statusTag = true;
 
                     available_html = `<div class="available ended">
@@ -241,22 +251,26 @@ befriend.activities = {
                                 <div class="qty">${available_qty}</div>
                             </div>`;
                 }
-            } else if(is_upcoming || is_current) {
+            } else if (is_upcoming || is_current) {
                 accepted_html = `<div class="accepted ${accepted_qty > 0 ? 'w-qty' : ''}">
                                 <div class="label">Accepted</div>
                                 <div class="qty">${accepted_qty}</div>
                             </div>`;
-            } else if(is_past) {
-                let isCancelled = befriend.activities.data.isCancelled(activity_data.activity_token);
-                let isUnfulfilled = befriend.activities.data.isUnfulfilled(activity_data.activity_token);
+            } else if (is_past) {
+                let isCancelled = befriend.activities.data.isCancelled(
+                    activity_data.activity_token,
+                );
+                let isUnfulfilled = befriend.activities.data.isUnfulfilled(
+                    activity_data.activity_token,
+                );
 
-                if(isCancelled) {
+                if (isCancelled) {
                     statusTag = true;
 
                     tag_html = `<div class="status-tag cancelled">
                                     <div class="label">Cancelled</div>
                                 </div>`;
-                } else if(isUnfulfilled) {
+                } else if (isUnfulfilled) {
                     statusTag = true;
 
                     tag_html = `<div class="status-tag unfulfilled">
@@ -267,23 +281,23 @@ befriend.activities = {
 
             let faces_html = ``;
 
-            if(is_notification) {
-                if(activity.person?.image_url) {
+            if (is_notification) {
+                if (activity.person?.image_url) {
                     faces_html = `<div class="face" style="background-image: url(${activity.person.image_url})"></div>`;
                 }
             } else {
-                for(let person_token in activity_data.persons) {
-                    if(person_token === befriend.getPersonToken()) {
+                for (let person_token in activity_data.persons) {
+                    if (person_token === befriend.getPersonToken()) {
                         continue;
                     }
 
                     let person = activity_data.persons[person_token];
 
-                    if(person.cancelled_at) {
+                    if (person.cancelled_at) {
                         continue;
                     }
 
-                    if(person?.image_url) {
+                    if (person?.image_url) {
                         faces_html += `<div class="face" style="background-image: url(${person.image_url})"></div>`;
                     }
                 }
@@ -291,14 +305,14 @@ befriend.activities = {
 
             let remove_html = '';
 
-            if(is_notification) {
+            if (is_notification) {
                 remove_html = `<div class="remove-container">
                                     <div class="remove">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 121.805 14.619">
                                             <path d="M7.308,14.619h107.188c4.037,0,7.309-3.272,7.309-7.31s-3.271-7.309-7.309-7.309H7.308C3.272.001,0,3.273,0,7.31s3.272,7.309,7.308,7.309Z"></path>
                                         </svg>
                                     </div>
-                                </div>`
+                                </div>`;
             }
 
             return `
@@ -362,29 +376,29 @@ befriend.activities = {
         -- removed by user action
          */
 
-        notifications = notifications.filter(notification =>
-            !befriend.activities.data.all[notification.activity_token] &&
-            !befriend.notifications.data.removed[notification.activity_token]
+        notifications = notifications.filter(
+            (notification) =>
+                !befriend.activities.data.all[notification.activity_token] &&
+                !befriend.notifications.data.removed[notification.activity_token],
         );
 
-        notifications = notifications.filter(notification => {
+        notifications = notifications.filter((notification) => {
             const notificationStart = notification.activity.activity_start;
             const notificationEnd = notification.activity.activity_end;
 
             for (const activity of activities) {
-                if(activity.cancelled_at) {
+                if (activity.cancelled_at) {
                     continue;
                 }
 
                 const activityStart = activity.data.activity_start;
                 const activityEnd = activity.data.activity_end;
 
-                const hasOverlap = (
+                const hasOverlap =
                     // Notification starts during activity
                     (notificationStart >= activityStart && notificationStart <= activityEnd) ||
                     // Notification ends during activity
-                    (notificationEnd >= activityStart && notificationEnd <= activityEnd)
-                );
+                    (notificationEnd >= activityStart && notificationEnd <= activityEnd);
 
                 if (hasOverlap) {
                     return false;
@@ -399,11 +413,19 @@ befriend.activities = {
             return a.created - b.created;
         });
 
-        let currentActivityEl = befriend.els.mainActivitiesView.querySelector('.current-activity .container');
-        let notificationsEl = befriend.els.mainActivitiesView.querySelector('.notifications .container');
+        let currentActivityEl = befriend.els.mainActivitiesView.querySelector(
+            '.current-activity .container',
+        );
+        let notificationsEl = befriend.els.mainActivitiesView.querySelector(
+            '.notifications .container',
+        );
 
-        let upcomingActivitiesEl = befriend.els.mainActivitiesView.querySelector('.upcoming-activities .container');
-        let pastActivitiesEl = befriend.els.mainActivitiesView.querySelector('.past-activities .container');
+        let upcomingActivitiesEl = befriend.els.mainActivitiesView.querySelector(
+            '.upcoming-activities .container',
+        );
+        let pastActivitiesEl = befriend.els.mainActivitiesView.querySelector(
+            '.past-activities .container',
+        );
 
         let currentActivityHtml = '';
         let notificationsHtml = '';
@@ -415,8 +437,8 @@ befriend.activities = {
         let activities_organized = {
             current: null,
             upcoming: [],
-            past: []
-        }
+            past: [],
+        };
 
         for (let activity of activities) {
             const start = activity.data.activity_start;
@@ -425,8 +447,10 @@ befriend.activities = {
             //move activity to past section if cancelled or unfulfilled
             let setPast = false;
 
-            if(befriend.activities.data.isUnfulfilled(activity.data.activity_token) ||
-                befriend.activities.data.isCancelled(activity.data.activity_token)) {
+            if (
+                befriend.activities.data.isUnfulfilled(activity.data.activity_token) ||
+                befriend.activities.data.isCancelled(activity.data.activity_token)
+            ) {
                 setPast = true;
             }
 
@@ -440,48 +464,48 @@ befriend.activities = {
             }
         }
 
-        if(!activities_organized.current) {
+        if (!activities_organized.current) {
             //move from upcoming to current
-            for(let activity of activities_organized.upcoming) {
-                if(activity.activity_start - currentTime < 600) {
+            for (let activity of activities_organized.upcoming) {
+                if (activity.activity_start - currentTime < 600) {
                     activities_organized.current = activity;
                     break;
                 }
             }
 
-            if(activities_organized.current) {
+            if (activities_organized.current) {
                 removeArrItem(activities_organized.upcoming, activities_organized.current);
             }
         }
 
-        if(activities_organized.current) {
+        if (activities_organized.current) {
             currentActivityHtml = getActivityHtml(activities_organized.current, {
-                is_current: true
+                is_current: true,
             });
         }
 
         //organize notifications
         let notification_dates = new Map();
 
-        for(let activity of notifications) {
+        for (let activity of notifications) {
             let activity_date = dayjs(activity.activity.activity_start * 1000);
 
             let isBeforeToday = activity_date.isBefore(dayjs(), 'day');
 
-            if(isBeforeToday) {
+            if (isBeforeToday) {
                 continue;
             }
 
             let date_str = befriend.activities.displayActivity.html.getDate(activity.activity);
 
-            if(!notification_dates.has(date_str)) {
+            if (!notification_dates.has(date_str)) {
                 notification_dates.set(date_str, []);
             }
 
             notification_dates.get(date_str).push(activity);
         }
 
-        for(let [date, activities] of notification_dates) {
+        for (let [date, activities] of notification_dates) {
             //sort activities by most recent for each date
             activities.sort(function (a, b) {
                 return b.created - a.created;
@@ -489,9 +513,9 @@ befriend.activities = {
 
             let dateActivitiesHtml = '';
 
-            for(let activity of activities) {
+            for (let activity of activities) {
                 dateActivitiesHtml += getActivityHtml(activity, {
-                    is_notification: true
+                    is_notification: true,
                 });
             }
 
@@ -506,25 +530,25 @@ befriend.activities = {
         let upcoming_activities = activities_organized.upcoming;
 
         upcoming_activities.sort(function (a, b) {
-           return a.activity_start - b.activity_start;
+            return a.activity_start - b.activity_start;
         });
 
-        for(let activity of upcoming_activities) {
+        for (let activity of upcoming_activities) {
             let date = befriend.activities.displayActivity.html.getDate(activity.data);
 
-            if(!upcoming_dates.has(date)) {
+            if (!upcoming_dates.has(date)) {
                 upcoming_dates.set(date, []);
             }
 
             upcoming_dates.get(date).push(activity);
         }
 
-        for(let [date, activities] of upcoming_dates) {
+        for (let [date, activities] of upcoming_dates) {
             let dateActivitiesHtml = '';
 
-            for(let activity of activities) {
+            for (let activity of activities) {
                 dateActivitiesHtml += getActivityHtml(activity, {
-                    is_upcoming: true
+                    is_upcoming: true,
                 });
             }
 
@@ -534,13 +558,13 @@ befriend.activities = {
                                        </div>`;
         }
 
-        for(let activity of activities_organized.past) {
+        for (let activity of activities_organized.past) {
             pastActivitiesHtml += getActivityHtml(activity, {
-                is_past: true
+                is_past: true,
             });
         }
 
-        if(!notificationsHtml) {
+        if (!notificationsHtml) {
             notificationsHtml = `<div class="no-items">No current notifications</div>`;
         }
 
@@ -557,7 +581,7 @@ befriend.activities = {
         upcomingActivitiesEl.innerHTML = upcomingActivitiesHtml;
         pastActivitiesEl.innerHTML = `<div class="activities">${pastActivitiesHtml}</div>`;
 
-        if(!currentActivityHtml) {
+        if (!currentActivityHtml) {
             addClassEl('dni', currentActivityEl.closest('.section'));
         } else {
             removeClassEl('dni', currentActivityEl.closest('.section'));
@@ -575,17 +599,18 @@ befriend.activities = {
             let activitiesViewEl = befriend.els.views.querySelector(`.view-activities`);
 
             //update current activity view if active
-            if(elHasClass(activitiesViewEl, 'active') && elHasClass(befriend.els.currentActivityView, 'show')) {
+            if (
+                elHasClass(activitiesViewEl, 'active') &&
+                elHasClass(befriend.els.currentActivityView, 'show')
+            ) {
                 try {
                     //todo
                     // await befriend.activities.displayActivity.display(befriend.activities.displayActivity.currentToken, true, true);
-                } catch(e) {
-
-                }
+                } catch (e) {}
             }
         }, 60 * 1000);
     },
-    getDurationStr: function(minutes) {
+    getDurationStr: function (minutes) {
         let duration_str = `${minutes} minutes`;
 
         if (minutes >= 60 && minutes < 120) {
@@ -612,11 +637,11 @@ befriend.activities = {
         let latitude = activity.location_lat;
         let longitude = activity.location_lon;
         let address = `${activity.location_address}, ${activity.location_locality}, ${activity.location_region}`;
-        let placeName = activity.name || activity.location_name || "";
+        let placeName = activity.name || activity.location_name || '';
 
         let encodedAddress = encodeURIComponent(address);
         let encodedPlaceName = encodeURIComponent(placeName);
-        let encodedPlaceAndAddress = encodeURIComponent(placeName + " " + address);
+        let encodedPlaceAndAddress = encodeURIComponent(placeName + ' ' + address);
 
         let googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedPlaceAndAddress}`;
 
@@ -629,12 +654,16 @@ befriend.activities = {
                             <div class="text">Google Maps</div>
                         </a>
                         
-                        ${is_ios ? `
+                        ${
+                            is_ios
+                                ? `
                             <a href="${appleMapsUrl}" target="_blank" class="nav-button apple-maps">
                                 <div class="image" style="background-image: url(data:image/png;base64,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)"></div>
                                 <div class="text">Apple Maps</div>
                             </a>
-                        ` : ''}
+                        `
+                                : ''
+                        }
                     </div>
                 `;
     },
@@ -642,7 +671,7 @@ befriend.activities = {
         data: null,
         lookup: {
             byId: {},
-            byToken: {}
+            byToken: {},
         },
         colors: [],
         selected: {
@@ -672,7 +701,7 @@ befriend.activities = {
         getActivityType: function (token) {
             return this.lookup.byToken[token];
         },
-        getActivityTypes: function() {
+        getActivityTypes: function () {
             return new Promise(async (resolve, reject) => {
                 try {
                     let r = await befriend.api.get('activity-types');
@@ -683,41 +712,44 @@ befriend.activities = {
                     console.error(e);
 
                     try {
-                         let localActivityTypes = await getObjectFromDisk('activity-types');
+                        let localActivityTypes = await getObjectFromDisk('activity-types');
 
-                         if(isObject(localActivityTypes)) {
-                             console.log('Using local activity types data');
-                             befriend.activities.activityTypes.data = localActivityTypes;
-                         }
-                    } catch(e) {
+                        if (isObject(localActivityTypes)) {
+                            console.log('Using local activity types data');
+                            befriend.activities.activityTypes.data = localActivityTypes;
+                        }
+                    } catch (e) {
                         console.error(e);
                     }
                 }
 
-                if(!befriend.activities.activityTypes.data) {
+                if (!befriend.activities.activityTypes.data) {
                     console.error('No activity type data');
                     return resolve();
                 }
 
-                for(let id_1 in befriend.activities.activityTypes.data) {
+                for (let id_1 in befriend.activities.activityTypes.data) {
                     let level_1 = befriend.activities.activityTypes.data[id_1];
 
                     befriend.activities.activityTypes.lookup.byId[id_1] = level_1;
                     befriend.activities.activityTypes.lookup.byToken[level_1.token] = level_1;
 
-                    if(Object.keys(level_1.sub || {}).length) {
-                        for(let id_2 in level_1.sub) {
+                    if (Object.keys(level_1.sub || {}).length) {
+                        for (let id_2 in level_1.sub) {
                             let level_2 = level_1.sub[id_2];
 
                             befriend.activities.activityTypes.lookup.byId[id_2] = level_2;
-                            befriend.activities.activityTypes.lookup.byToken[level_2.token] = level_2;
+                            befriend.activities.activityTypes.lookup.byToken[level_2.token] =
+                                level_2;
 
-                            if(Object.keys(level_2.sub || {}).length) {
-                                for(let id_3 in level_2.sub) {
+                            if (Object.keys(level_2.sub || {}).length) {
+                                for (let id_3 in level_2.sub) {
                                     let level_3 = level_2.sub[id_3];
 
                                     befriend.activities.activityTypes.lookup.byId[id_3] = level_3;
-                                    befriend.activities.activityTypes.lookup.byToken[level_3.token] = level_3;
+                                    befriend.activities.activityTypes.lookup.byToken[
+                                        level_3.token
+                                    ] = level_3;
                                 }
                             }
                         }
@@ -727,7 +759,7 @@ befriend.activities = {
                 resolve();
             });
         },
-        setActivityTypes: function() {
+        setActivityTypes: function () {
             return new Promise(async (resolve, reject) => {
                 try {
                     await befriend.activities.activityTypes.getActivityTypes();
@@ -824,11 +856,11 @@ befriend.activities = {
                 }
             });
         },
-        getCurrent: function() {
+        getCurrent: function () {
             let obj = befriend.activities.activityTypes.selected;
             return obj.level_3 || obj.level_2 || obj.level_1;
         },
-        updateLevelHeight: async function(level_num, skip_set_prev) {
+        updateLevelHeight: async function (level_num, skip_set_prev) {
             let level_el = befriend.els.activityTypes.querySelector(`.level_${level_num}.show`);
             if (!level_el) {
                 return;
@@ -886,7 +918,8 @@ befriend.activities = {
                             befriend.activities.activityTypes.selected.level_3 = null;
                         }
 
-                        let prev_level_2 = befriend.els.activityTypes.querySelector('.level_2.show');
+                        let prev_level_2 =
+                            befriend.els.activityTypes.querySelector('.level_2.show');
 
                         //do not proceed if no sub categories
                         if (!activity.sub || !Object.keys(activity.sub).length) {
@@ -929,12 +962,13 @@ befriend.activities = {
                                 activities_level_2.length = [];
                             }
 
-                            let activity = befriend.activities.activityTypes.data[parent_id].sub[level_2_id];
+                            let activity =
+                                befriend.activities.activityTypes.data[parent_id].sub[level_2_id];
 
                             let image_html = '';
 
                             if (activity.image) {
-                                if(!activity.token.endsWith('-any')) {
+                                if (!activity.token.endsWith('-any')) {
                                     image_html += `<div class="image">
                                         ${activity.image}
                                     </div>`;
@@ -998,7 +1032,8 @@ befriend.activities = {
 
                         let closest_level_2_el = this.closest('.level_2');
 
-                        let prev_height_level_2 = closest_level_2_el.getAttribute('data-prev-height');
+                        let prev_height_level_2 =
+                            closest_level_2_el.getAttribute('data-prev-height');
 
                         //remove activity selection and hide level 3 if same activity clicked
                         if (elHasClass(this, 'active')) {
@@ -1020,8 +1055,13 @@ befriend.activities = {
                             befriend.activities.activityTypes.selected.level_3 = null;
 
                             // only show places when there are no level 3 categories
-                            if (!level_2_activity.sub || !Object.keys(level_2_activity.sub).length) {
-                                befriend.places.activity.displayPlaces(befriend.activities.activityTypes.selected.level_2);
+                            if (
+                                !level_2_activity.sub ||
+                                !Object.keys(level_2_activity.sub).length
+                            ) {
+                                befriend.places.activity.displayPlaces(
+                                    befriend.activities.activityTypes.selected.level_2,
+                                );
 
                                 setTimeout(function () {
                                     removeClassEl('active', el);
@@ -1029,7 +1069,8 @@ befriend.activities = {
                             }
                         }
 
-                        let prev_level_3 = befriend.els.activityTypes.querySelector('.level_3.show');
+                        let prev_level_3 =
+                            befriend.els.activityTypes.querySelector('.level_3.show');
 
                         //do not proceed if no sub categories
                         if (!level_2_activity.sub || !Object.keys(level_2_activity.sub).length) {
@@ -1074,14 +1115,13 @@ befriend.activities = {
                             }
 
                             let activity =
-                                befriend.activities.activityTypes.data[parent_id].sub[level_2_id].sub[
-                                    level_3_id
-                                    ];
+                                befriend.activities.activityTypes.data[parent_id].sub[level_2_id]
+                                    .sub[level_3_id];
 
                             let image_html = '';
 
                             if (activity.image) {
-                                if(!activity.token.endsWith('-any')) {
+                                if (!activity.token.endsWith('-any')) {
                                     image_html += `<div class="image">
                                         ${activity.image}
                                     </div>`;
@@ -1146,7 +1186,9 @@ befriend.activities = {
                         let level_3_id = this.getAttribute('data-id');
 
                         let level_3_activity =
-                            befriend.activities.activityTypes.data[parent_id].sub[level_2_id].sub[level_3_id];
+                            befriend.activities.activityTypes.data[parent_id].sub[level_2_id].sub[
+                                level_3_id
+                            ];
 
                         //remove activity selection and hide level 3 if same activity clicked
                         if (elHasClass(this, 'active')) {
@@ -1159,7 +1201,9 @@ befriend.activities = {
                             addClassEl('active', this);
                             befriend.activities.activityTypes.selected.level_3 = level_3_activity;
 
-                            befriend.places.activity.displayPlaces(befriend.activities.activityTypes.selected.level_3);
+                            befriend.places.activity.displayPlaces(
+                                befriend.activities.activityTypes.selected.level_3,
+                            );
 
                             setTimeout(function () {
                                 removeClassEl('active', el);
@@ -1168,7 +1212,7 @@ befriend.activities = {
                     });
                 }
             },
-        }
+        },
     },
     createActivity: {
         data: {
@@ -1185,59 +1229,74 @@ befriend.activities = {
                     num: '15 - 60',
                     unit: 'minutes',
                     options: [
-                        [{num: 15, unit: 'min', minutes: 15}],
-                        [{num: 20, unit: 'min', minutes: 20}],
-                        [{num: 30, unit: 'min', minutes: 30}],
-                        [{num: 40, unit: 'min', minutes: 40}],
-                        [{num: 45, unit: 'min', minutes: 45}],
-                        [{num: 50, unit: 'min', minutes: 50}]
-                    ]
+                        [{ num: 15, unit: 'min', minutes: 15 }],
+                        [{ num: 20, unit: 'min', minutes: 20 }],
+                        [{ num: 30, unit: 'min', minutes: 30 }],
+                        [{ num: 40, unit: 'min', minutes: 40 }],
+                        [{ num: 45, unit: 'min', minutes: 45 }],
+                        [{ num: 50, unit: 'min', minutes: 50 }],
+                    ],
                 },
                 120: {
                     max: 120,
                     num: '1 - 2',
                     unit: 'hours',
                     options: [
-                        [{num: 1, unit: 'hr', minutes: 60}],
-                        [{num: 1, unit: 'hr', minutes: 70}, {num: 10, unit: 'min', minutes: 70}],
-                        [{num: 1, unit: 'hr', minutes: 80}, {num: 20, unit: 'min', minutes: 80}],
-                        [{num: 1, unit: 'hr', minutes: 90}, {num: 30, unit: 'min', minutes: 90}],
-                        [{num: 1, unit: 'hr', minutes: 100}, {num: 40, unit: 'min', minutes: 100}],
-                        [{num: 1, unit: 'hr', minutes: 110}, {num: 50, unit: 'min', minutes: 110}]
-                    ]
+                        [{ num: 1, unit: 'hr', minutes: 60 }],
+                        [
+                            { num: 1, unit: 'hr', minutes: 70 },
+                            { num: 10, unit: 'min', minutes: 70 },
+                        ],
+                        [
+                            { num: 1, unit: 'hr', minutes: 80 },
+                            { num: 20, unit: 'min', minutes: 80 },
+                        ],
+                        [
+                            { num: 1, unit: 'hr', minutes: 90 },
+                            { num: 30, unit: 'min', minutes: 90 },
+                        ],
+                        [
+                            { num: 1, unit: 'hr', minutes: 100 },
+                            { num: 40, unit: 'min', minutes: 100 },
+                        ],
+                        [
+                            { num: 1, unit: 'hr', minutes: 110 },
+                            { num: 50, unit: 'min', minutes: 110 },
+                        ],
+                    ],
                 },
                 240: {
                     max: 240,
                     num: '2 - 4',
                     unit: 'hours',
                     options: [
-                        [{num: 2, unit: 'hrs', minutes: 120}],
-                        [{num: 2.5, unit: 'hrs', minutes: 150}],
-                        [{num: 3, unit: 'hrs', minutes: 180}],
-                        [{num: 3.5, unit: 'hrs', minutes: 210}]
-                    ]
+                        [{ num: 2, unit: 'hrs', minutes: 120 }],
+                        [{ num: 2.5, unit: 'hrs', minutes: 150 }],
+                        [{ num: 3, unit: 'hrs', minutes: 180 }],
+                        [{ num: 3.5, unit: 'hrs', minutes: 210 }],
+                    ],
                 },
                 360: {
                     max: 360,
                     num: '4 - 6',
                     unit: 'hours',
                     options: [
-                        [{num: 4, unit: 'hrs', minutes: 240}],
-                        [{num: 4.5, unit: 'hrs', minutes: 270}],
-                        [{num: 5, unit: 'hrs', minutes: 300}],
-                        [{num: 5.5, unit: 'hrs', minutes: 330}],
-                        [{num: 6, unit: 'hrs', minutes: 360}]
-                    ]
-                }
-            }
+                        [{ num: 4, unit: 'hrs', minutes: 240 }],
+                        [{ num: 4.5, unit: 'hrs', minutes: 270 }],
+                        [{ num: 5, unit: 'hrs', minutes: 300 }],
+                        [{ num: 5.5, unit: 'hrs', minutes: 330 }],
+                        [{ num: 6, unit: 'hrs', minutes: 360 }],
+                    ],
+                },
+            },
         },
         person: {
-            mode: 'solo' // [solo, partner, kids]
+            mode: 'solo', // [solo, partner, kids]
         },
         travel: {
             mode: 'driving', // [driving, walking, bicycle]
             token: null,
-            times: null
+            times: null,
         },
         setHtml: function () {
             let place = befriend.places.selected.place;
@@ -1274,9 +1333,9 @@ befriend.activities = {
                 befriend.location.device,
                 {
                     lat: place.location_lat || place.lat,
-                    lon: place.location_lon || place.lon
+                    lon: place.location_lon || place.lon,
                 },
-                true
+                true,
             );
 
             //get navigation buttons
@@ -1309,7 +1368,9 @@ befriend.activities = {
 
             when_el.querySelector('.time').innerHTML = when_str;
             when_el.querySelector('.duration').querySelector('.value').innerHTML =
-                befriend.activities.getDurationStr(befriend.activities.createActivity.duration.selected);
+                befriend.activities.getDurationStr(
+                    befriend.activities.createActivity.duration.selected,
+                );
 
             //set friends
             let friend_type_str = '';
@@ -1332,9 +1393,9 @@ befriend.activities = {
             //show filters
             let filters_html = befriend.activities.createActivity.getFilterList();
 
-            filters_el.querySelector('.info').innerHTML = filters_html ?
-                `<div class="active-filters">${filters_html}</div>` :
-                `<div class="no-filters">No active filters</div>`;
+            filters_el.querySelector('.info').innerHTML = filters_html
+                ? `<div class="active-filters">${filters_html}</div>`
+                : `<div class="no-filters">No active filters</div>`;
 
             //data for activity
             befriend.activities.draft.create({
@@ -1368,17 +1429,17 @@ befriend.activities = {
             let has_valid_partner = false;
             let has_valid_kid = false;
 
-            for(let option of befriend.modes.options) {
-                if(modes_enabled.includes(option.id)) {
-                    if(option.id === 'mode-solo') {
+            for (let option of befriend.modes.options) {
+                if (modes_enabled.includes(option.id)) {
+                    if (option.id === 'mode-solo') {
                         valid_modes.push(option);
-                    } else if(option.id === 'mode-partner') {
-                        if(befriend.me.modes.hasValidPartner()) {
+                    } else if (option.id === 'mode-partner') {
+                        if (befriend.me.modes.hasValidPartner()) {
                             has_valid_partner = true;
                             valid_modes.push(option);
                         }
-                    } else if(option.id === 'mode-kids') {
-                        if(befriend.me.modes.hasValidKids()) {
+                    } else if (option.id === 'mode-kids') {
+                        if (befriend.me.modes.hasValidKids()) {
                             has_valid_kid = true;
                             valid_modes.push(option);
                         }
@@ -1386,14 +1447,14 @@ befriend.activities = {
                 }
             }
 
-            if(!valid_modes.length) {
-                valid_modes.push(befriend.modes.options.find(mode => mode.id === 'mode-solo'));
+            if (!valid_modes.length) {
+                valid_modes.push(befriend.modes.options.find((mode) => mode.id === 'mode-solo'));
             }
 
-            if(valid_modes.length > 1) {
+            if (valid_modes.length > 1) {
                 removeClassEl('hide', modes_el);
 
-                for(let mode of valid_modes) {
+                for (let mode of valid_modes) {
                     modes_html += `<div class="mode-option ${mode.id}" data-mode="${mode.id}">
                                 <div class="icon">${mode.icon}</div>
                                 <div class="name">${mode.label}</div>
@@ -1402,13 +1463,13 @@ befriend.activities = {
             } else {
                 let hadInvalidPartnerKidSelected = false;
 
-                if(modes_enabled.includes('mode-partner') && !has_valid_partner) {
+                if (modes_enabled.includes('mode-partner') && !has_valid_partner) {
                     hadInvalidPartnerKidSelected = true;
-                } else if(modes_enabled.includes('mode-kids') && has_valid_kid) {
+                } else if (modes_enabled.includes('mode-kids') && has_valid_kid) {
                     hadInvalidPartnerKidSelected = true;
                 }
 
-                if(!hadInvalidPartnerKidSelected) {
+                if (!hadInvalidPartnerKidSelected) {
                     addClassEl('hide', modes_el);
                 }
             }
@@ -1418,14 +1479,20 @@ befriend.activities = {
             befriend.activities.createActivity.events.appMode();
 
             //select active mode
-            if(valid_modes.length > 1) {
+            if (valid_modes.length > 1) {
                 //default option
-                let mode_el = befriend.els.createActivity.querySelector('.modes').querySelector('.mode-option');
+                let mode_el = befriend.els.createActivity
+                    .querySelector('.modes')
+                    .querySelector('.mode-option');
 
                 //previous selection
-                for(let mode of valid_modes) {
-                    if(mode.id === befriend.activities.createActivity.person.mode) {
-                        mode_el = befriend.els.createActivity.querySelector('.modes').querySelector(`.mode-option[data-mode="${befriend.activities.createActivity.person.mode}"]`);
+                for (let mode of valid_modes) {
+                    if (mode.id === befriend.activities.createActivity.person.mode) {
+                        mode_el = befriend.els.createActivity
+                            .querySelector('.modes')
+                            .querySelector(
+                                `.mode-option[data-mode="${befriend.activities.createActivity.person.mode}"]`,
+                            );
                         break;
                     }
                 }
@@ -1435,8 +1502,10 @@ befriend.activities = {
                 befriend.activities.createActivity.setAppMode(valid_modes[0].id);
             }
         },
-        selectAppMode: function(mode_el){
-            let els = befriend.els.createActivity.querySelector('.modes').getElementsByClassName('mode-option');
+        selectAppMode: function (mode_el) {
+            let els = befriend.els.createActivity
+                .querySelector('.modes')
+                .getElementsByClassName('mode-option');
 
             removeElsClass(els, 'active');
 
@@ -1444,16 +1513,16 @@ befriend.activities = {
 
             befriend.activities.createActivity.setAppMode(mode_el.getAttribute('data-mode'));
         },
-        setAppMode: function(mode, skip_update) {
+        setAppMode: function (mode, skip_update) {
             befriend.activities.createActivity.person.mode = mode;
 
-            if(!skip_update) {
-                befriend.user.setLocal('activities.person.mode', mode)
+            if (!skip_update) {
+                befriend.user.setLocal('activities.person.mode', mode);
 
                 befriend.activities.draft.update('person.mode', mode, true);
             }
         },
-        setTravelTimes: function(from, to) {
+        setTravelTimes: function (from, to) {
             return new Promise(async (resolve, reject) => {
                 try {
                     let data = await befriend.places.getTravelTimes(from, to);
@@ -1490,7 +1559,7 @@ befriend.activities = {
                 resolve();
             });
         },
-        setDurations: function() {
+        setDurations: function () {
             let level_1_el = befriend.els.activityDuration.querySelector('.level_1');
             let level_2_el = befriend.els.activityDuration.querySelector('.level_2');
 
@@ -1574,14 +1643,16 @@ befriend.activities = {
 
             level_2_el.innerHTML = level_2_html;
         },
-        updateDuration: function(duration, update_buttons) {
+        updateDuration: function (duration, update_buttons) {
             befriend.activities.createActivity.duration.selected = duration;
             befriend.activities.draft.update('duration', duration, true);
 
             befriend.els.createActivity
                 .querySelector('.when')
                 .querySelector('.duration')
-                .querySelector('.value').innerHTML = befriend.activities.getDurationStr(befriend.activities.createActivity.duration.selected);
+                .querySelector('.value').innerHTML = befriend.activities.getDurationStr(
+                befriend.activities.createActivity.duration.selected,
+            );
 
             if (update_buttons) {
                 let level_1 = befriend.els.createActivity.querySelector('.level_1');
@@ -1602,7 +1673,10 @@ befriend.activities = {
 
                         for (let i = 0; i < buttons.length; i++) {
                             let button = buttons[i];
-                            if (button.getAttribute('data-min-max') === group.getAttribute('data-min-max')) {
+                            if (
+                                button.getAttribute('data-min-max') ===
+                                group.getAttribute('data-min-max')
+                            ) {
                                 addClassEl('active', button);
                                 let cls = level_1.classList;
                                 for (let j = 0; j < cls.length; j++) {
@@ -1617,18 +1691,20 @@ befriend.activities = {
                 }
             }
         },
-        getCurrentTravelTime: function() {
+        getCurrentTravelTime: function () {
             if (!befriend.activities.createActivity.travel.times) {
                 return null;
             }
 
-            return befriend.activities.createActivity.travel.times.modes[befriend.activities.createActivity.travel.mode].total;
+            return befriend.activities.createActivity.travel.times.modes[
+                befriend.activities.createActivity.travel.mode
+            ].total;
         },
-        updateWhenAuto: async function() {
+        updateWhenAuto: async function () {
             const originalTimes = {
                 driving: null,
                 walking: null,
-                bicycle: null
+                bicycle: null,
             };
 
             let needs_update = false;
@@ -1647,7 +1723,7 @@ befriend.activities = {
                 }
                 originalTimes[currentMode] = {
                     mins: mins_to,
-                    whenStr: when_str
+                    whenStr: when_str,
                 };
             }
 
@@ -1661,7 +1737,8 @@ befriend.activities = {
                 } else {
                     // Restore original time if within threshold
                     if (originalTimes[currentMode]) {
-                        when_el.querySelector('.time').innerHTML = originalTimes[currentMode].whenStr;
+                        when_el.querySelector('.time').innerHTML =
+                            originalTimes[currentMode].whenStr;
                         for (let i = 0; i < befriend.when.options.length; i++) {
                             let option = befriend.when.options[i];
                             if (option.id === befriend.when.selected.createActivity.id) {
@@ -1670,7 +1747,8 @@ befriend.activities = {
                             }
                         }
                         if (befriend.when.selected.createActivity.time) {
-                            befriend.when.selected.createActivity.time.formatted = originalTimes[currentMode].whenStr;
+                            befriend.when.selected.createActivity.time.formatted =
+                                originalTimes[currentMode].whenStr;
                         }
                     }
                     message_el.querySelector('.message').style.height = '0';
@@ -1688,7 +1766,7 @@ befriend.activities = {
                         new_when_str = befriend.when.selected.main.time.formatted;
                         originalTimes[currentMode] = {
                             mins: mins_to,
-                            whenStr: new_when_str
+                            whenStr: new_when_str,
                         };
                         break;
                     }
@@ -1700,7 +1778,8 @@ befriend.activities = {
                     inner.innerHTML = 'Your activity time has been updated automatically.';
                     inner.style.backgroundColor = befriend.variables.color_green;
                 } else {
-                    inner.innerHTML = 'Please update your activity location and/or schedule for a later time.';
+                    inner.innerHTML =
+                        'Please update your activity location and/or schedule for a later time.';
                     inner.style.backgroundColor = befriend.variables.color_red;
                 }
 
@@ -1710,12 +1789,10 @@ befriend.activities = {
                 addClassEl('show', message_el);
             }
         },
-        display: async function() {
+        display: async function () {
             try {
                 await befriend.activities.getRules();
-            } catch(e) {
-
-            }
+            } catch (e) {}
 
             befriend.when.selected.createActivity = structuredClone(befriend.when.selected.main);
             befriend.activities.createActivity.setHtml();
@@ -1725,7 +1802,7 @@ befriend.activities = {
 
             try {
                 befriend.activities.createActivity.getMatchCounts();
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
 
@@ -1782,11 +1859,11 @@ befriend.activities = {
                 befriend.variables.create_activity_transition_ms,
             );
 
-            setTimeout(async function() {
+            setTimeout(async function () {
                 befriend.places.activity.toggleDisplayPlaces(false);
             }, befriend.variables.create_activity_transition_ms);
         },
-        toggle: function(show) {
+        toggle: function (show) {
             if (show) {
                 befriend.timing.showCreateActivity = timeNow();
                 addClassEl(befriend.classes.createActivityShown, document.documentElement);
@@ -1794,26 +1871,26 @@ befriend.activities = {
                 removeClassEl(befriend.classes.createActivityShown, document.documentElement);
             }
         },
-        isShown: function() {
+        isShown: function () {
             return elHasClass(document.documentElement, befriend.classes.createActivityShown);
         },
-        toggleError: function(show, message) {
+        toggleError: function (show, message) {
             let error_message = document.getElementById('create-activity-error');
-            if(show) {
+            if (show) {
                 error_message.innerHTML = message;
                 addClassEl('error', error_message);
             } else {
                 removeClassEl('error', error_message);
             }
         },
-        toggleSpinner: function(show) {
+        toggleSpinner: function (show) {
             if (show) {
                 addClassEl('show', befriend.els.createActivitySpinner);
             } else {
                 removeClassEl('show', befriend.els.createActivitySpinner);
             }
         },
-        getMatchCounts: function() {
+        getMatchCounts: function () {
             return new Promise(async (resolve, reject) => {
                 let matches_el = befriend.els.createActivity.querySelector('.matches-overview');
                 let update_circle_el = matches_el.querySelector('.update-circle');
@@ -1831,11 +1908,13 @@ befriend.activities = {
                             duration: draft.duration,
                             place: draft.place,
                             when: draft.when,
-                        }
+                        },
                     });
 
-                    if(response.data?.counts) {
-                        send_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.send);
+                    if (response.data?.counts) {
+                        send_el.querySelector('.count').innerHTML = formattedNumberDisplay(
+                            response.data.counts.send,
+                        );
                         interests_el.querySelector('.count').innerHTML = `
                             <div class="ultra category">
                                 <div class="name">Ultra</div>
@@ -1847,16 +1926,19 @@ befriend.activities = {
                             </div>
                         `;
                     }
-                } catch(e) {
+                } catch (e) {
                     console.error(e);
                 }
 
                 let transition_duration = 2000;
                 let td = timeNow() - ts;
 
-                setTimeout(function() {
-                    removeClassEl('show', update_circle_el);
-                }, Math.max(transition_duration - td, 0));
+                setTimeout(
+                    function () {
+                        removeClassEl('show', update_circle_el);
+                    },
+                    Math.max(transition_duration - td, 0),
+                );
             });
         },
         getFilterList: function () {
@@ -1867,19 +1949,19 @@ befriend.activities = {
             let networks_html = '';
             let networkFilter = filters.networks;
 
-            if(networkFilter?.is_active && networkFilter.is_send) {
+            if (networkFilter?.is_active && networkFilter.is_send) {
                 let selectedName = '';
 
                 if (networkFilter.is_any_network) {
                     selectedName = 'Any Network';
-                } else if(networkFilter.is_all_verified) {
+                } else if (networkFilter.is_all_verified) {
                     selectedName = 'Any Verified Network';
                 } else if (networkFilter.items) {
                     let activeNetworks = Object.values(networkFilter.items).filter(
                         (item) => item.is_active && !item.deleted,
                     );
 
-                    if(Object.keys(activeNetworks).length === 0) {
+                    if (Object.keys(activeNetworks).length === 0) {
                         selectedName = 'My network only';
                     } else {
                         selectedName = `${activeNetworks.length} Network${activeNetworks.length === 1 ? '' : 's'}`;
@@ -1897,27 +1979,34 @@ befriend.activities = {
             let reviews_html = '';
             let reviewsFilter = filters.reviews;
 
-            if(reviewsFilter.is_active && reviewsFilter.is_send) {
+            if (reviewsFilter.is_active && reviewsFilter.is_send) {
                 let review_items = [];
 
-                if(!filters.reviews_new || filters.reviews_new.is_active && filters.reviews_new.is_send) {
+                if (
+                    !filters.reviews_new ||
+                    (filters.reviews_new.is_active && filters.reviews_new.is_send)
+                ) {
                     review_items.push(`Match with new members`);
                 }
 
-                for(let k in befriend.filters.reviews.ratings) {
+                for (let k in befriend.filters.reviews.ratings) {
                     let d = befriend.filters.reviews.ratings[k];
 
                     let filter = filters[d.token];
 
-                    if(filter?.is_active) {
-                        if(typeof filter.is_send === 'undefined' || filter.is_send) {
-                            review_items.push(`${d.name} <span class="review-rating">${d.current_rating}</span>`);
+                    if (filter?.is_active) {
+                        if (typeof filter.is_send === 'undefined' || filter.is_send) {
+                            review_items.push(
+                                `${d.name} <span class="review-rating">${d.current_rating}</span>`,
+                            );
                         }
                     }
                 }
 
-                if(review_items.length) {
-                    let items = review_items.map(item => `<div class="item review-item">${item}</div>`).join('\n');
+                if (review_items.length) {
+                    let items = review_items
+                        .map((item) => `<div class="item review-item">${item}</div>`)
+                        .join('\n');
 
                     reviews_html = `<div class="filter reviews">
                                     <div class="filter-name">Reviews</div>
@@ -1937,7 +2026,7 @@ befriend.activities = {
                 const inPersonFilter = filters.verification_in_person;
 
                 if (inPersonFilter?.is_active) {
-                    if(typeof inPersonFilter.is_send === 'undefined' || inPersonFilter.is_send) {
+                    if (typeof inPersonFilter.is_send === 'undefined' || inPersonFilter.is_send) {
                         filter_items.push('In-Person');
                     }
                 }
@@ -1945,13 +2034,15 @@ befriend.activities = {
                 const linkedinFilter = filters.verification_linkedin;
 
                 if (linkedinFilter?.is_active) {
-                    if(typeof linkedinFilter.is_send === 'undefined' || linkedinFilter.is_send) {
+                    if (typeof linkedinFilter.is_send === 'undefined' || linkedinFilter.is_send) {
                         filter_items.push('LinkedIn');
                     }
                 }
 
                 if (filter_items.length) {
-                    let items = filter_items.map(item => `<div class="item">${item}</div>`).join('\n');
+                    let items = filter_items
+                        .map((item) => `<div class="item">${item}</div>`)
+                        .join('\n');
 
                     verifications_html = `<div class="filter verifications">
                                 <div class="filter-name">Verifications</div>
@@ -1965,7 +2056,7 @@ befriend.activities = {
             let distance_html = '';
             let distanceFilter = filters.distance;
 
-            if(distanceFilter.is_active && distanceFilter.is_send) {
+            if (distanceFilter.is_active && distanceFilter.is_send) {
                 distance_html = `<div class="filter distance">
                                 <div class="filter-name">Distance <span class="small">(max)</span></div>
                                 <div class="filter-value">${befriend.filters.distance.current} ${befriend.filters.distance.unit}</div>
@@ -1980,7 +2071,7 @@ befriend.activities = {
             if (agesFilter?.is_active && agesFilter.is_send) {
                 let ageRange = `${befriend.filters.age.current.min} - ${befriend.filters.age.current.max}`;
 
-                if(befriend.filters.age.current.max === befriend.filters.age.max) {
+                if (befriend.filters.age.current.max === befriend.filters.age.max) {
                     ageRange += '+';
                 }
 
@@ -2001,11 +2092,13 @@ befriend.activities = {
 
                 if (gendersFilter?.items) {
                     const activeGenders = Object.values(gendersFilter.items).filter(
-                        item => !item.is_negative && item.is_active
+                        (item) => !item.is_negative && item.is_active,
                     );
 
                     for (let gender of activeGenders) {
-                        const genderData = befriend.me.data.genders.find(g => g.id === gender.gender_id);
+                        const genderData = befriend.me.data.genders.find(
+                            (g) => g.id === gender.gender_id,
+                        );
                         if (genderData) {
                             selectedGenders.push(genderData.name);
                         }
@@ -2033,31 +2126,40 @@ befriend.activities = {
 
                 if (moviesFilter?.items) {
                     const activeMovies = Object.values(moviesFilter.items).filter(
-                        item => item.is_active && !item.deleted
+                        (item) => item.is_active && !item.deleted,
                     );
 
                     if (activeMovies.length > 0) {
-                        selectedMovies = activeMovies.map(movie => ({
+                        selectedMovies = activeMovies.map((movie) => ({
                             name: movie.name,
-                            importance: movie.importance || befriend.filters.sections.movies.importance.default
+                            importance:
+                                movie.importance ||
+                                befriend.filters.sections.movies.importance.default,
                         }));
                     }
                 }
 
-                let moviesDisplay = selectedMovies.length > 0
-                    ? `${selectedMovies.length} Movie${selectedMovies.length > 1 ? 's' : ''}`
-                    : 'Any';
+                let moviesDisplay =
+                    selectedMovies.length > 0
+                        ? `${selectedMovies.length} Movie${selectedMovies.length > 1 ? 's' : ''}`
+                        : 'Any';
 
                 movies_html = `<div class="filter movies with-importance">
                             <div class="filter-name">Movies</div>
                             <div class="filter-value">
-                                ${selectedMovies.length > 0
-                    ? selectedMovies.map(movie => `<div class="item">
+                                ${
+                                    selectedMovies.length > 0
+                                        ? selectedMovies
+                                              .map(
+                                                  (movie) => `<div class="item">
                                                     <div class="name">${movie.name}</div>
                                                     <div class="importance">${movie.importance}</div>
 
-                                                  </div>`).join('\n')
-                    : moviesDisplay}
+                                                  </div>`,
+                                              )
+                                              .join('\n')
+                                        : moviesDisplay
+                                }
                             </div>
                         </div>`;
 
@@ -2072,30 +2174,39 @@ befriend.activities = {
 
                 if (tvShowsFilter?.items) {
                     const activeShows = Object.values(tvShowsFilter.items).filter(
-                        item => item.is_active && !item.deleted
+                        (item) => item.is_active && !item.deleted,
                     );
 
                     if (activeShows.length > 0) {
-                        selectedShows = activeShows.map(show => ({
+                        selectedShows = activeShows.map((show) => ({
                             name: show.name,
-                            importance: show.importance || befriend.filters.sections.tv_shows.importance.default
+                            importance:
+                                show.importance ||
+                                befriend.filters.sections.tv_shows.importance.default,
                         }));
                     }
                 }
 
-                let showsDisplay = selectedShows.length > 0
-                    ? `${selectedShows.length} TV Show${selectedShows.length > 1 ? 's' : ''}`
-                    : 'Any';
+                let showsDisplay =
+                    selectedShows.length > 0
+                        ? `${selectedShows.length} TV Show${selectedShows.length > 1 ? 's' : ''}`
+                        : 'Any';
 
                 tv_shows_html = `<div class="filter tv-shows with-importance">
                             <div class="filter-name">TV Shows</div>
                             <div class="filter-value">
-                                ${selectedShows.length > 0
-                    ? selectedShows.map(show => `<div class="item">
+                                ${
+                                    selectedShows.length > 0
+                                        ? selectedShows
+                                              .map(
+                                                  (show) => `<div class="item">
                                                     <div class="name">${show.name}</div>
                                                     <div class="importance">${show.importance}</div>
-                                                  </div>`).join('\n')
-                    : showsDisplay}
+                                                  </div>`,
+                                              )
+                                              .join('\n')
+                                        : showsDisplay
+                                }
                             </div>
                         </div>`;
 
@@ -2109,54 +2220,60 @@ befriend.activities = {
                 let sportsByType = {
                     teams: [],
                     leagues: [],
-                    play: []
+                    play: [],
                 };
 
                 if (sportsFilter?.items) {
                     const activeSports = Object.values(sportsFilter.items).filter(
-                        item => item.is_active && !item.deleted
+                        (item) => item.is_active && !item.deleted,
                     );
 
                     // Sort sports into their respective categories
-                    for(let sport of activeSports) {
+                    for (let sport of activeSports) {
                         if (sport.table_key && sportsByType[sport.table_key]) {
                             sportsByType[sport.table_key].push({
                                 name: sport.name,
-                                importance: sport.importance || befriend.filters.sections.sports.importance.default
+                                importance:
+                                    sport.importance ||
+                                    befriend.filters.sections.sports.importance.default,
                             });
                         }
                     }
                 }
 
                 const totalSports = Object.values(sportsByType).reduce(
-                    (total, sports) => total + sports.length, 0
+                    (total, sports) => total + sports.length,
+                    0,
                 );
 
-                let sportsDisplay = totalSports > 0
-                    ? `${totalSports} Sport${totalSports > 1 ? 's' : ''}`
-                    : 'Any';
+                let sportsDisplay =
+                    totalSports > 0 ? `${totalSports} Sport${totalSports > 1 ? 's' : ''}` : 'Any';
 
                 let categoriesHtml = '';
 
                 const categories = [
                     { key: 'teams', name: 'Teams' },
                     { key: 'leagues', name: 'Leagues' },
-                    { key: 'play', name: 'Play' }
+                    { key: 'play', name: 'Play' },
                 ];
 
-                for(let category of categories) {
+                for (let category of categories) {
                     const sports = sportsByType[category.key];
 
                     if (sports.length > 0) {
                         categoriesHtml += `
                             <div class="category">
                                 <div class="category-name">${category.name}</div>
-                                ${sports.map(sport => `
+                                ${sports
+                                    .map(
+                                        (sport) => `
                                     <div class="item">
                                         <div class="name">${sport.name}</div>
                                         <div class="importance">${sport.importance}</div>
                                     </div>
-                                `).join('\n')}
+                                `,
+                                    )
+                                    .join('\n')}
                             </div>
                         `;
                     }
@@ -2178,27 +2295,30 @@ befriend.activities = {
             if (musicFilter?.is_active && musicFilter.is_send) {
                 let musicByType = {
                     genres: [],
-                    artists: []
+                    artists: [],
                 };
 
                 if (musicFilter?.items) {
                     const activeMusic = Object.values(musicFilter.items).filter(
-                        item => item.is_active && !item.deleted
+                        (item) => item.is_active && !item.deleted,
                     );
 
                     // Sort music into their respective categories
-                    for(let item of activeMusic) {
+                    for (let item of activeMusic) {
                         if (item.table_key && musicByType[item.table_key]) {
                             musicByType[item.table_key].push({
                                 name: item.name,
-                                importance: item.importance || befriend.filters.sections.music.importance.default
+                                importance:
+                                    item.importance ||
+                                    befriend.filters.sections.music.importance.default,
                             });
                         }
                     }
                 }
 
                 const totalMusic = Object.values(musicByType).reduce(
-                    (total, music) => total + music.length, 0
+                    (total, music) => total + music.length,
+                    0,
                 );
 
                 let musicDisplay = totalMusic === 0 ? 'Any' : '';
@@ -2210,19 +2330,23 @@ befriend.activities = {
                     { key: 'artists', name: 'Artists' },
                 ];
 
-                for(let category of categories) {
+                for (let category of categories) {
                     const music = musicByType[category.key];
 
                     if (music.length > 0) {
                         categoriesHtml += `
                             <div class="category">
                                 <div class="category-name">${category.name}</div>
-                                ${music.map(item => `
+                                ${music
+                                    .map(
+                                        (item) => `
                                     <div class="item">
                                         <div class="name">${item.name}</div>
                                         <div class="importance">${item.importance}</div>
                                     </div>
-                                `).join('\n')}
+                                `,
+                                    )
+                                    .join('\n')}
                             </div>
                         `;
                     }
@@ -2246,13 +2370,15 @@ befriend.activities = {
 
                 if (instrumentsFilter?.items) {
                     const activeInstruments = Object.values(instrumentsFilter.items).filter(
-                        item => item.is_active && !item.deleted
+                        (item) => item.is_active && !item.deleted,
                     );
 
                     if (activeInstruments.length > 0) {
-                        selectedInstruments = activeInstruments.map(instrument => ({
+                        selectedInstruments = activeInstruments.map((instrument) => ({
                             name: instrument.name,
-                            importance: instrument.importance || befriend.filters.sections.instruments.importance.default
+                            importance:
+                                instrument.importance ||
+                                befriend.filters.sections.instruments.importance.default,
                         }));
                     }
                 }
@@ -2262,12 +2388,18 @@ befriend.activities = {
                 instruments_html = `<div class="filter instruments with-importance">
                         <div class="filter-name">Instruments</div>
                         <div class="filter-value">
-                            ${selectedInstruments.length > 0
-                    ? selectedInstruments.map(instrument => `<div class="item">
+                            ${
+                                selectedInstruments.length > 0
+                                    ? selectedInstruments
+                                          .map(
+                                              (instrument) => `<div class="item">
                                                     <div class="name">${instrument.name}</div>
                                                     <div class="importance">${instrument.importance}</div>
-                                                  </div>`).join('\n')
-                    : instrumentsDisplay}
+                                                  </div>`,
+                                          )
+                                          .join('\n')
+                                    : instrumentsDisplay
+                            }
                         </div>
                     </div>`;
 
@@ -2282,13 +2414,15 @@ befriend.activities = {
 
                 if (schoolsFilter?.items) {
                     const activeSchools = Object.values(schoolsFilter.items).filter(
-                        item => item.is_active && !item.deleted
+                        (item) => item.is_active && !item.deleted,
                     );
 
                     if (activeSchools.length > 0) {
-                        selectedSchools = activeSchools.map(school => ({
+                        selectedSchools = activeSchools.map((school) => ({
                             name: school.name,
-                            importance: school.importance || befriend.filters.sections.schools.importance.default
+                            importance:
+                                school.importance ||
+                                befriend.filters.sections.schools.importance.default,
                         }));
                     }
                 }
@@ -2298,12 +2432,18 @@ befriend.activities = {
                 schools_html = `<div class="filter schools with-importance">
                         <div class="filter-name">Schools</div>
                         <div class="filter-value">
-                            ${selectedSchools.length > 0
-                    ? selectedSchools.map(school => `<div class="item">
+                            ${
+                                selectedSchools.length > 0
+                                    ? selectedSchools
+                                          .map(
+                                              (school) => `<div class="item">
                                                     <div class="name">${school.name}</div>
                                                     <div class="importance">${school.importance}</div>
-                                                  </div>`).join('\n')
-                    : schoolsDisplay}
+                                                  </div>`,
+                                          )
+                                          .join('\n')
+                                    : schoolsDisplay
+                            }
                         </div>
                     </div>`;
 
@@ -2316,27 +2456,30 @@ befriend.activities = {
             if (workFilter?.is_active && workFilter.is_send) {
                 let workByType = {
                     industries: [],
-                    roles: []
+                    roles: [],
                 };
 
                 if (workFilter?.items) {
                     const activeWork = Object.values(workFilter.items).filter(
-                        item => item.is_active && !item.deleted
+                        (item) => item.is_active && !item.deleted,
                     );
 
                     // Sort work into their respective categories
-                    for(let item of activeWork) {
+                    for (let item of activeWork) {
                         if (item.table_key && workByType[item.table_key]) {
                             workByType[item.table_key].push({
                                 name: item.name,
-                                importance: item.importance || befriend.filters.sections.work.importance.default
+                                importance:
+                                    item.importance ||
+                                    befriend.filters.sections.work.importance.default,
                             });
                         }
                     }
                 }
 
                 const totalWork = Object.values(workByType).reduce(
-                    (total, work) => total + work.length, 0
+                    (total, work) => total + work.length,
+                    0,
                 );
 
                 let workDisplay = totalWork === 0 ? 'Any' : '';
@@ -2344,21 +2487,32 @@ befriend.activities = {
                 work_html = `<div class="filter work with-importance">
                     <div class="filter-name">Work</div>
                     <div class="filter-value">
-                        ${totalWork > 0 ? `
-                            ${Object.entries(workByType).map(([key, items]) =>
-                        items.length > 0 ? `
+                        ${
+                            totalWork > 0
+                                ? `
+                            ${Object.entries(workByType)
+                                .map(([key, items]) =>
+                                    items.length > 0
+                                        ? `
                                     <div class="category">
                                         <div class="category-name">${key.charAt(0).toUpperCase() + key.slice(1)}</div>
-                                        ${items.map(item => `
+                                        ${items
+                                            .map(
+                                                (item) => `
                                             <div class="item">
                                                 <div class="name">${item.name}</div>
                                                 <div class="importance">${item.importance}</div>
                                             </div>
-                                        `).join('\n')}
+                                        `,
+                                            )
+                                            .join('\n')}
                                     </div>
-                                ` : ''
-                    ).join('\n')}`
-                    : workDisplay}
+                                `
+                                        : '',
+                                )
+                                .join('\n')}`
+                                : workDisplay
+                        }
                     </div>
                 </div>`;
 
@@ -2373,13 +2527,15 @@ befriend.activities = {
 
                 if (lifeStagesFilter?.items) {
                     const activeStages = Object.values(lifeStagesFilter.items).filter(
-                        item => item.is_active && !item.is_negative && !item.deleted
+                        (item) => item.is_active && !item.is_negative && !item.deleted,
                     );
 
                     if (activeStages.length > 0) {
-                        selectedStages = activeStages.map(stage => ({
+                        selectedStages = activeStages.map((stage) => ({
                             name: stage.name,
-                            importance: stage.importance || befriend.filters.sections.life_stages.importance.default
+                            importance:
+                                stage.importance ||
+                                befriend.filters.sections.life_stages.importance.default,
                         }));
                     }
                 }
@@ -2389,12 +2545,18 @@ befriend.activities = {
                 life_stages_html = `<div class="filter life-stages with-importance">
                             <div class="filter-name">Life Stages</div>
                             <div class="filter-value">
-                                ${selectedStages.length > 0
-                    ? selectedStages.map(stage => `<div class="item">
+                                ${
+                                    selectedStages.length > 0
+                                        ? selectedStages
+                                              .map(
+                                                  (stage) => `<div class="item">
                                                         <div class="name">${stage.name}</div>
                                                         <div class="importance">${stage.importance}</div>
-                                                      </div>`).join('\n')
-                    : stagesDisplay}
+                                                      </div>`,
+                                              )
+                                              .join('\n')
+                                        : stagesDisplay
+                                }
                             </div>
                         </div>`;
 
@@ -2409,13 +2571,15 @@ befriend.activities = {
 
                 if (relationshipStatusFilter?.items) {
                     const activeStatuses = Object.values(relationshipStatusFilter.items).filter(
-                        item => item.is_active && !item.is_negative && !item.deleted
+                        (item) => item.is_active && !item.is_negative && !item.deleted,
                     );
 
                     if (activeStatuses.length > 0) {
-                        selectedStatuses = activeStatuses.map(status => ({
+                        selectedStatuses = activeStatuses.map((status) => ({
                             name: status.name,
-                            importance: status.importance || befriend.filters.sections.relationship_status.importance.default
+                            importance:
+                                status.importance ||
+                                befriend.filters.sections.relationship_status.importance.default,
                         }));
                     }
                 }
@@ -2425,12 +2589,18 @@ befriend.activities = {
                 relationship_status_html = `<div class="filter relationship-status with-importance">
                             <div class="filter-name">Relationships</div>
                             <div class="filter-value">
-                                ${selectedStatuses.length > 0
-                    ? selectedStatuses.map(status => `<div class="item">
+                                ${
+                                    selectedStatuses.length > 0
+                                        ? selectedStatuses
+                                              .map(
+                                                  (status) => `<div class="item">
                                                         <div class="name">${status.name}</div>
                                                         <div class="importance">${status.importance}</div>
-                                                      </div>`).join('\n')
-                    : statusDisplay}
+                                                      </div>`,
+                                              )
+                                              .join('\n')
+                                        : statusDisplay
+                                }
                             </div>
                         </div>`;
 
@@ -2445,13 +2615,15 @@ befriend.activities = {
 
                 if (languagesFilter?.items) {
                     const activeLanguages = Object.values(languagesFilter.items).filter(
-                        item => item.is_active && !item.deleted
+                        (item) => item.is_active && !item.deleted,
                     );
 
                     if (activeLanguages.length > 0) {
-                        selectedLanguages = activeLanguages.map(language => ({
+                        selectedLanguages = activeLanguages.map((language) => ({
                             name: language.name,
-                            importance: language.importance || befriend.filters.sections.languages.importance.default
+                            importance:
+                                language.importance ||
+                                befriend.filters.sections.languages.importance.default,
                         }));
                     }
                 }
@@ -2461,12 +2633,18 @@ befriend.activities = {
                 languages_html = `<div class="filter languages with-importance">
                             <div class="filter-name">Languages</div>
                             <div class="filter-value">
-                                ${selectedLanguages.length > 0
-                    ? selectedLanguages.map(language => `<div class="item">
+                                ${
+                                    selectedLanguages.length > 0
+                                        ? selectedLanguages
+                                              .map(
+                                                  (language) => `<div class="item">
                                                         <div class="name">${language.name}</div>
                                                         <div class="importance">${language.importance}</div>
-                                                      </div>`).join('\n')
-                    : languagesDisplay}
+                                                      </div>`,
+                                              )
+                                              .join('\n')
+                                        : languagesDisplay
+                                }
                             </div>
                         </div>`;
 
@@ -2481,13 +2659,15 @@ befriend.activities = {
 
                 if (politicsFilter?.items) {
                     const activePolitics = Object.values(politicsFilter.items).filter(
-                        item => item.is_active && !item.is_negative && !item.deleted
+                        (item) => item.is_active && !item.is_negative && !item.deleted,
                     );
 
                     if (activePolitics.length > 0) {
-                        selectedPolitics = activePolitics.map(politics => ({
+                        selectedPolitics = activePolitics.map((politics) => ({
                             name: politics.name,
-                            importance: politics.importance || befriend.filters.sections.politics.importance.default
+                            importance:
+                                politics.importance ||
+                                befriend.filters.sections.politics.importance.default,
                         }));
                     }
                 }
@@ -2497,12 +2677,18 @@ befriend.activities = {
                 politics_html = `<div class="filter politics with-importance">
                             <div class="filter-name">Politics</div>
                             <div class="filter-value">
-                                ${selectedPolitics.length > 0
-                    ? selectedPolitics.map(politics => `<div class="item">
+                                ${
+                                    selectedPolitics.length > 0
+                                        ? selectedPolitics
+                                              .map(
+                                                  (politics) => `<div class="item">
                                                         <div class="name">${politics.name}</div>
                                                         <div class="importance">${politics.importance}</div>
-                                                      </div>`).join('\n')
-                    : politicsDisplay}
+                                                      </div>`,
+                                              )
+                                              .join('\n')
+                                        : politicsDisplay
+                                }
                             </div>
                         </div>`;
 
@@ -2517,13 +2703,15 @@ befriend.activities = {
 
                 if (religionFilter?.items) {
                     const activeReligions = Object.values(religionFilter.items).filter(
-                        item => item.is_active && !item.is_negative && !item.deleted
+                        (item) => item.is_active && !item.is_negative && !item.deleted,
                     );
 
                     if (activeReligions.length > 0) {
-                        selectedReligions = activeReligions.map(religion => ({
+                        selectedReligions = activeReligions.map((religion) => ({
                             name: religion.name,
-                            importance: religion.importance || befriend.filters.sections.religion.importance.default
+                            importance:
+                                religion.importance ||
+                                befriend.filters.sections.religion.importance.default,
                         }));
                     }
                 }
@@ -2533,12 +2721,18 @@ befriend.activities = {
                 religion_html = `<div class="filter religion with-importance">
                             <div class="filter-name">Religion</div>
                             <div class="filter-value">
-                                ${selectedReligions.length > 0
-                    ? selectedReligions.map(religion => `<div class="item">
+                                ${
+                                    selectedReligions.length > 0
+                                        ? selectedReligions
+                                              .map(
+                                                  (religion) => `<div class="item">
                                                         <div class="name">${religion.name}</div>
                                                         <div class="importance">${religion.importance}</div>
-                                                      </div>`).join('\n')
-                    : religionDisplay}
+                                                      </div>`,
+                                              )
+                                              .join('\n')
+                                        : religionDisplay
+                                }
                             </div>
                         </div>`;
 
@@ -2553,13 +2747,15 @@ befriend.activities = {
 
                 if (drinkingFilter?.items) {
                     const activeDrinking = Object.values(drinkingFilter.items).filter(
-                        item => item.is_active && !item.is_negative && !item.deleted
+                        (item) => item.is_active && !item.is_negative && !item.deleted,
                     );
 
                     if (activeDrinking.length > 0) {
-                        selectedDrinking = activeDrinking.map(drinking => ({
+                        selectedDrinking = activeDrinking.map((drinking) => ({
                             name: drinking.name,
-                            importance: drinking.importance || befriend.filters.sections.drinking.importance.default
+                            importance:
+                                drinking.importance ||
+                                befriend.filters.sections.drinking.importance.default,
                         }));
                     }
                 }
@@ -2569,12 +2765,18 @@ befriend.activities = {
                 drinking_html = `<div class="filter drinking with-importance">
                             <div class="filter-name">Drinking</div>
                             <div class="filter-value">
-                                ${selectedDrinking.length > 0
-                    ? selectedDrinking.map(drinking => `<div class="item">
+                                ${
+                                    selectedDrinking.length > 0
+                                        ? selectedDrinking
+                                              .map(
+                                                  (drinking) => `<div class="item">
                                                         <div class="name">${drinking.name}</div>
                                                         <div class="importance">${drinking.importance}</div>
-                                                      </div>`).join('\n')
-                    : drinkingDisplay}
+                                                      </div>`,
+                                              )
+                                              .join('\n')
+                                        : drinkingDisplay
+                                }
                             </div>
                         </div>`;
 
@@ -2589,13 +2791,15 @@ befriend.activities = {
 
                 if (smokingFilter?.items) {
                     const activeSmoking = Object.values(smokingFilter.items).filter(
-                        item => item.is_active && !item.is_negative && !item.deleted
+                        (item) => item.is_active && !item.is_negative && !item.deleted,
                     );
 
                     if (activeSmoking.length > 0) {
-                        selectedSmoking = activeSmoking.map(smoking => ({
+                        selectedSmoking = activeSmoking.map((smoking) => ({
                             name: smoking.name,
-                            importance: smoking.importance || befriend.filters.sections.smoking.importance.default
+                            importance:
+                                smoking.importance ||
+                                befriend.filters.sections.smoking.importance.default,
                         }));
                     }
                 }
@@ -2605,12 +2809,18 @@ befriend.activities = {
                 smoking_html = `<div class="filter smoking with-importance">
                             <div class="filter-name">Smoking</div>
                             <div class="filter-value">
-                                ${selectedSmoking.length > 0
-                    ? selectedSmoking.map(smoking => `<div class="item">
+                                ${
+                                    selectedSmoking.length > 0
+                                        ? selectedSmoking
+                                              .map(
+                                                  (smoking) => `<div class="item">
                                                         <div class="name">${smoking.name}</div>
                                                         <div class="importance">${smoking.importance}</div>
-                                                      </div>`).join('\n')
-                    : smokingDisplay}
+                                                      </div>`,
+                                              )
+                                              .join('\n')
+                                        : smokingDisplay
+                                }
                             </div>
                         </div>`;
 
@@ -2729,10 +2939,7 @@ befriend.activities = {
 
             befriend.maps.removeMarkers(befriend.maps.markers.place);
 
-            befriend.maps.setMapCenter(
-                befriend.maps.maps.activities,
-                befriend.location.current,
-            );
+            befriend.maps.setMapCenter(befriend.maps.maps.activities, befriend.location.current);
 
             befriend.maps.centerMap();
 
@@ -2752,9 +2959,9 @@ befriend.activities = {
                 befriend.activities.createActivity.events.createActivity();
                 befriend.activities.createActivity.events.onEditFilters();
             },
-            createActivity: function() {
-                befriend.els.createActivityBtn.addEventListener('click', async function(e) {
-                    if(this._ip) {
+            createActivity: function () {
+                befriend.els.createActivityBtn.addEventListener('click', async function (e) {
+                    if (this._ip) {
                         return false;
                     }
 
@@ -2777,12 +2984,19 @@ befriend.activities = {
                         befriend.activities.setView();
 
                         //show current activity view
-                        befriend.activities.displayActivity.display(r.data.activity_token, false, true);
+                        befriend.activities.displayActivity.display(
+                            r.data.activity_token,
+                            false,
+                            true,
+                        );
                     } catch (e) {
                         let error = e.response?.data?.error;
 
-                        if(Array.isArray(error)) {
-                            befriend.activities.createActivity.toggleError(true, error.join(', ') + '.');
+                        if (Array.isArray(error)) {
+                            befriend.activities.createActivity.toggleError(
+                                true,
+                                error.join(', ') + '.',
+                            );
                         } else {
                             befriend.activities.createActivity.toggleError(true, error);
                         }
@@ -2804,7 +3018,9 @@ befriend.activities = {
                 });
             },
             onEditFilters: function () {
-                let el = befriend.els.createActivity.querySelector('.filters').querySelector('.edit');
+                let el = befriend.els.createActivity
+                    .querySelector('.filters')
+                    .querySelector('.edit');
 
                 el.addEventListener('click', async function (e) {
                     e.preventDefault();
@@ -2889,7 +3105,9 @@ befriend.activities = {
                                             }
                                         }
                                     } else {
-                                        min_selected = parseInt(option_els[0].getAttribute('data-min'));
+                                        min_selected = parseInt(
+                                            option_els[0].getAttribute('data-min'),
+                                        );
                                         addClassEl('selected', option_els[0]);
                                     }
                                 }
@@ -2943,11 +3161,12 @@ befriend.activities = {
 
                         addClassEl('active', mode_el);
 
-                        befriend.activities.createActivity.travel.mode = mode_el.getAttribute('data-mode');
+                        befriend.activities.createActivity.travel.mode =
+                            mode_el.getAttribute('data-mode');
 
                         befriend.activities.draft.update(
                             'travel.mode',
-                            befriend.activities.createActivity.travel.mode
+                            befriend.activities.createActivity.travel.mode,
                         );
 
                         befriend.activities.createActivity.updateWhenAuto();
@@ -2955,7 +3174,9 @@ befriend.activities = {
                 }
             },
             appMode: function () {
-                let els = befriend.els.createActivity.querySelector('.modes').getElementsByClassName('mode-option');
+                let els = befriend.els.createActivity
+                    .querySelector('.modes')
+                    .getElementsByClassName('mode-option');
 
                 for (let i = 0; i < els.length; i++) {
                     let mode_el = els[i];
@@ -2985,7 +3206,7 @@ befriend.activities = {
                     removeClassEl('show', message_el);
                 });
             },
-        }
+        },
     },
     displayActivity: {
         scroll: {}, //y position by activity token
@@ -2995,7 +3216,7 @@ befriend.activities = {
             no_matches: 'No matches accepted this activity.',
             cancelled: 'This activity was cancelled.',
             unfulfilled: 'This activity was unfulfilled.',
-            error: 'Error cancelling activity'
+            error: 'Error cancelling activity',
         },
         getActivity: function () {
             return befriend.activities.data.all[this.currentToken] || null;
@@ -3031,64 +3252,84 @@ befriend.activities = {
 
                 toEl.style.removeProperty('opacity');
 
-                const cleanupProps = ['position', 'top', 'width', 'height', 'transform', 'transition', 'z-index', 'background-color'];
+                const cleanupProps = [
+                    'position',
+                    'top',
+                    'width',
+                    'height',
+                    'transform',
+                    'transition',
+                    'z-index',
+                    'background-color',
+                ];
 
-                cleanupProps.forEach(prop => toEl.style.removeProperty(prop));
+                cleanupProps.forEach((prop) => toEl.style.removeProperty(prop));
 
                 await rafAwait();
             }, duration);
         },
         display: async function (activity_token, no_transition, skip_enrich, cancelled_at = null) {
             try {
-                let prevWhoToken, prevMatchingToken, prevTopHeight = 0, prevData = {};
+                let prevWhoToken,
+                    prevMatchingToken,
+                    prevTopHeight = 0,
+                    prevData = {};
                 let prevActivityToken = this.currentToken;
 
                 let activity_data = befriend.activities.data.all[activity_token];
 
-                if(!activity_data) {
+                if (!activity_data) {
                     return;
                 }
 
                 this.currentToken = activity_token;
 
-                if(prevActivityToken === activity_token) {
-                    prevWhoToken = befriend.els.currentActivityView.querySelector('.who.section')
-                        .querySelector('.person-nav.active')?.getAttribute('data-person-token');
-                    prevMatchingToken = befriend.els.currentActivityView.querySelector('.matching.section')
-                        ?.querySelector('.person-nav.active')?.getAttribute('data-person-token');
+                if (prevActivityToken === activity_token) {
+                    prevWhoToken = befriend.els.currentActivityView
+                        .querySelector('.who.section')
+                        .querySelector('.person-nav.active')
+                        ?.getAttribute('data-person-token');
+                    prevMatchingToken = befriend.els.currentActivityView
+                        .querySelector('.matching.section')
+                        ?.querySelector('.person-nav.active')
+                        ?.getAttribute('data-person-token');
 
-                    if(elHasClass(befriend.els.currentActivityView, 'display-message')) {
-                        prevTopHeight = befriend.els.currentActivityView.querySelector('.activity-message')?.getBoundingClientRect()?.height;
-                    } else if(elHasClass(befriend.els.currentActivityView, 'display-check-in')) {
-                        prevTopHeight = befriend.els.currentActivityView.querySelector('.check-in')?.getBoundingClientRect()?.height;
+                    if (elHasClass(befriend.els.currentActivityView, 'display-message')) {
+                        prevTopHeight = befriend.els.currentActivityView
+                            .querySelector('.activity-message')
+                            ?.getBoundingClientRect()?.height;
+                    } else if (elHasClass(befriend.els.currentActivityView, 'display-check-in')) {
+                        prevTopHeight = befriend.els.currentActivityView
+                            .querySelector('.check-in')
+                            ?.getBoundingClientRect()?.height;
                     }
 
-                    if(elHasClass(befriend.els.currentActivityView, 'display-check-in')) {
-                        let errorEl = befriend.els.currentActivityView.querySelector('.check-in .error');
+                    if (elHasClass(befriend.els.currentActivityView, 'display-check-in')) {
+                        let errorEl =
+                            befriend.els.currentActivityView.querySelector('.check-in .error');
 
-                        if(errorEl && elHasClass(errorEl, 'show')) {
+                        if (errorEl && elHasClass(errorEl, 'show')) {
                             prevData.checkIn = {
-                                error: errorEl.innerHTML
-                            }
+                                error: errorEl.innerHTML,
+                            };
                         }
-                    } else if(elHasClass(befriend.els.currentActivityView, 'display-message')) {
-                        let activityMessageEl = befriend.els.currentActivityView.querySelector('.activity-message');
+                    } else if (elHasClass(befriend.els.currentActivityView, 'display-message')) {
+                        let activityMessageEl =
+                            befriend.els.currentActivityView.querySelector('.activity-message');
 
                         prevData.message = {
                             message: activityMessageEl.querySelector('.message').innerHTML,
-                            classList: activityMessageEl.classList
-                        }
+                            classList: activityMessageEl.classList,
+                        };
                     }
                 }
 
                 //get activity rules if needed
                 try {
                     await befriend.activities.getRules();
-                } catch(e) {
+                } catch (e) {}
 
-                }
-
-                if(!activity_data.enriched && !skip_enrich) {
+                if (!activity_data.enriched && !skip_enrich) {
                     try {
                         //get activity data from own network or 3rd-party network
                         let r;
@@ -3096,47 +3337,51 @@ befriend.activities = {
 
                         let prevAccess = activity_data.access;
 
-                        if(activity_data.access?.token) {
+                        if (activity_data.access?.token) {
                             try {
-                                r = await befriend.networks.get(activity_data.access.domain, `activities/networks/${activity_token}`, {
-                                    access_token: activity_data.access.token,
-                                    person_token: befriend.getPersonToken()
-                                });
+                                r = await befriend.networks.get(
+                                    activity_data.access.domain,
+                                    `activities/networks/${activity_token}`,
+                                    {
+                                        access_token: activity_data.access.token,
+                                        person_token: befriend.getPersonToken(),
+                                    },
+                                );
 
                                 needsData = false;
-                            } catch(e) {
+                            } catch (e) {
                                 console.error(e);
                             }
                         }
 
-                        if(needsData) {
+                        if (needsData) {
                             r = await befriend.auth.get(`/activities/${activity_token}`);
                         }
 
                         activity_data = befriend.activities.data.all[activity_token] = r.data;
 
-                        if(prevAccess) {
+                        if (prevAccess) {
                             activity_data.access = prevAccess;
                         }
 
-                        if(activity_data.data?.reviews) {
+                        if (activity_data.data?.reviews) {
                             befriend.reviews.data[activity_token] = activity_data.data.reviews;
                         }
 
                         activity_data.enriched = true;
-                    } catch(e) {
+                    } catch (e) {
                         console.error(e);
                     }
                 }
 
                 this.setHtml(activity_data, prevData);
 
-                if(!no_transition) {
+                if (!no_transition) {
                     //prevent navigation
                     befriend.preventNavigation(true);
                 }
 
-                if(!prevData?.message) {
+                if (!prevData?.message) {
                     befriend.activities.displayActivity.toggleMessage(false, null, null);
                 }
 
@@ -3144,7 +3389,7 @@ befriend.activities = {
                 removeClassEl('show', befriend.els.activityNotificationView);
                 addClassEl('show', befriend.els.currentActivityView);
 
-                if(!no_transition) {
+                if (!no_transition) {
                     befriend.styles.transformStatusBar(
                         0,
                         befriend.variables.create_activity_transition_ms / 1000,
@@ -3154,12 +3399,14 @@ befriend.activities = {
                     let map_el = befriend.els.activityMap;
 
                     let previousMapTransform = map_el.style.transform;
-                    let matches = previousMapTransform.match(/translate\(([-\d.]+)px,\s*([-\d.]+)px\)/);
+                    let matches = previousMapTransform.match(
+                        /translate\(([-\d.]+)px,\s*([-\d.]+)px\)/,
+                    );
 
                     let prevMapCoords = {
                         x: parseFloat(matches[1]),
-                        y: parseFloat(matches[2])
-                    }
+                        y: parseFloat(matches[2]),
+                    };
 
                     view_el.style.position = 'fixed';
                     view_el.style.backgroundColor = 'white';
@@ -3173,9 +3420,15 @@ befriend.activities = {
 
                     await rafAwait();
 
-                    let transition_els = [befriend.els.createActivity, view_el, map_el, document.getElementById('create-activity-back'), befriend.els.travelTimes];
+                    let transition_els = [
+                        befriend.els.createActivity,
+                        view_el,
+                        map_el,
+                        document.getElementById('create-activity-back'),
+                        befriend.els.travelTimes,
+                    ];
 
-                    for(let el of transition_els) {
+                    for (let el of transition_els) {
                         el.style.transition = `all ${befriend.variables.display_activity_transition_ms}ms ease-out`;
                     }
 
@@ -3189,8 +3442,8 @@ befriend.activities = {
                     //keep home view visible temporarily
                     addClassEl('active', befriend.els.views.querySelector(`.view-home`));
 
-                    for(let el of transition_els) {
-                        if(![view_el, map_el].includes(el)) {
+                    for (let el of transition_els) {
+                        if (![view_el, map_el].includes(el)) {
                             el.style.transform = `translateX(-100vw)`;
                         }
                     }
@@ -3201,16 +3454,24 @@ befriend.activities = {
                         //hide home view again
                         removeClassEl('active', befriend.els.views.querySelector(`.view-home`));
 
-                        let remove_props = ['position', 'background-color', 'z-index', 'top', 'width', 'height', 'transition'];
+                        let remove_props = [
+                            'position',
+                            'background-color',
+                            'z-index',
+                            'top',
+                            'width',
+                            'height',
+                            'transition',
+                        ];
 
-                        for(let prop of remove_props) {
+                        for (let prop of remove_props) {
                             view_el.style.removeProperty(prop);
                         }
 
-                        for(let el of transition_els) {
+                        for (let el of transition_els) {
                             el.style.removeProperty('transition');
 
-                            if(el !== map_el) {
+                            if (el !== map_el) {
                                 el.style.removeProperty('transform');
                             }
                         }
@@ -3226,56 +3487,66 @@ befriend.activities = {
                         befriend.activities.createActivity.backButton();
 
                         befriend.preventNavigation(false);
-
                     }, befriend.variables.display_activity_transition_ms);
                 }
 
                 await rafAwait();
 
-                if(!prevData.message) {
+                if (!prevData.message) {
                     befriend.activities.displayActivity.toggleCheckIn(true, activity_token, true);
                 }
 
-                befriend.styles.displayActivity.updateSectionsHeight(prevTopHeight ? prevTopHeight : 0);
+                befriend.styles.displayActivity.updateSectionsHeight(
+                    prevTopHeight ? prevTopHeight : 0,
+                );
 
                 //set ui to previous state
                 let prevScroll = befriend.activities.scroll.activities[activity_token] || 0;
                 let viewEl = befriend.els.views.querySelector('.view-activities');
                 viewEl.scrollTop = prevScroll;
 
-                if(prevWhoToken) {
+                if (prevWhoToken) {
                     befriend.activities.displayActivity.selectPersonNav(prevWhoToken);
                 }
 
-                if(prevMatchingToken) {
+                if (prevMatchingToken) {
                     befriend.activities.displayActivity.selectMatchingPersonNav(prevMatchingToken);
                 }
 
-                if(cancelled_at) {
-                    await befriend.activities.displayActivity.toggleMessage(true, befriend.activities.displayActivity.messages.cancelled, false, true);
+                if (cancelled_at) {
+                    await befriend.activities.displayActivity.toggleMessage(
+                        true,
+                        befriend.activities.displayActivity.messages.cancelled,
+                        false,
+                        true,
+                    );
 
-                    let height = befriend.els.currentActivityView.querySelector('.activity-message')?.getBoundingClientRect()?.height;
+                    let height = befriend.els.currentActivityView
+                        .querySelector('.activity-message')
+                        ?.getBoundingClientRect()?.height;
 
                     befriend.styles.displayActivity.updateSectionsHeight(height || 0);
-
                 }
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
         },
-        isShown: function() {
-            return elHasClass('activities', 'active') && elHasClass(befriend.els.currentActivityView, 'show');
+        isShown: function () {
+            return (
+                elHasClass('activities', 'active') &&
+                elHasClass(befriend.els.currentActivityView, 'show')
+            );
         },
         isCheckedIn: function (activity_token, person_token) {
             let activity = befriend.activities.data.getActivity(activity_token);
 
-            if(!activity) {
+            if (!activity) {
                 return false;
             }
 
             let isCancelled = befriend.activities.data.isCancelled(activity_token);
 
-            if(isCancelled) {
+            if (isCancelled) {
                 return false;
             }
 
@@ -3285,9 +3556,12 @@ befriend.activities = {
         },
         html: {
             getCheckedIn: function (activity_token) {
-                let isCheckedIn = befriend.activities.displayActivity.isCheckedIn(activity_token, befriend.getPersonToken());
+                let isCheckedIn = befriend.activities.displayActivity.isCheckedIn(
+                    activity_token,
+                    befriend.getPersonToken(),
+                );
 
-                if(!isCheckedIn) {
+                if (!isCheckedIn) {
                     return '';
                 }
 
@@ -3305,17 +3579,18 @@ befriend.activities = {
                 let action_buttons_html = '';
                 let tag_html = '';
 
-                if(!isCancelled && !isUnfulfilled) {
+                if (!isCancelled && !isUnfulfilled) {
                     action_buttons_html = this.getButtons(activity);
                 }
 
-                if(isCancelled) {
+                if (isCancelled) {
                     tag_html = `<div class="tag-status cancelled">Cancelled</div>`;
-                } else if(isUnfulfilled) {
-                    tag_html = `<div class="tag-status unfulfilled">Unfulfilled</div>`;   
+                } else if (isUnfulfilled) {
+                    tag_html = `<div class="tag-status unfulfilled">Unfulfilled</div>`;
                 }
 
-                let activity_type = befriend.activities.activityTypes.lookup.byToken[activity.activity_type_token];
+                let activity_type =
+                    befriend.activities.activityTypes.lookup.byToken[activity.activity_type_token];
 
                 return `<div class="invite">
                                 <div class="content">
@@ -3343,24 +3618,28 @@ befriend.activities = {
             getOverview: function (activity) {
                 let friends_type = '';
 
-                if(activity.is_new_friends && activity.is_existing_friends) {
+                if (activity.is_new_friends && activity.is_existing_friends) {
                     friends_type = 'Both';
-                } else if(activity.is_new_friends) {
+                } else if (activity.is_new_friends) {
                     friends_type = 'New';
-                } else if(activity.is_existing_friends) {
+                } else if (activity.is_existing_friends) {
                     friends_type = 'Existing';
                 }
 
-                let selected_mode = befriend.modes.options.find(mode => mode.id === activity?.mode?.token);
+                let selected_mode = befriend.modes.options.find(
+                    (mode) => mode.id === activity?.mode?.token,
+                );
                 let mode_icon_html = '';
 
-                if(selected_mode) {
+                if (selected_mode) {
                     mode_icon_html = `<div class="icon">${selected_mode.icon}</div>`;
                 }
 
-                let accepted_qty = isNumeric(activity.spots?.accepted) ? activity.spots.accepted : activity.persons_qty - activity.spots_available;
+                let accepted_qty = isNumeric(activity.spots?.accepted)
+                    ? activity.spots.accepted
+                    : activity.persons_qty - activity.spots_available;
 
-                return  `<div class="overview">
+                return `<div class="overview">
                                 <div class="friends-mode">
                                     <div class="mode sub-section">
                                         <div class="title">Mode</div>
@@ -3394,34 +3673,38 @@ befriend.activities = {
                 let cancel_button = '';
                 let report_button = '';
 
-                if(timeNow(true) - activity.activity_start > 60 * 30) {
+                if (timeNow(true) - activity.activity_start > 60 * 30) {
                     //do not show cancel button if it's x minutes past start of activity
                 } else {
-                   cancel_button = `<div class="button cancel">Cancel</div>`
+                    cancel_button = `<div class="button cancel">Cancel</div>`;
                 }
 
                 let participants = [];
 
                 for (let [person_token, person] of Object.entries(activity.data?.persons || {})) {
-                    if(person_token !== befriend.getPersonToken()) {
+                    if (person_token !== befriend.getPersonToken()) {
                         participants.push(person);
                     }
                 }
 
-                if(participants.length <= 0 || timeNow(true) < activity.activity_start || timeNow(true) - activity.activity_end > 3600 * 24 * 7) {
+                if (
+                    participants.length <= 0 ||
+                    timeNow(true) < activity.activity_start ||
+                    timeNow(true) - activity.activity_end > 3600 * 24 * 7
+                ) {
                     //do not show report button if there are zero participants,
                     //the activity time hasn't started, or is a week after activity
                 } else {
                     report_button = `<div class="button report">Report</div>`;
                 }
 
-                if(!cancel_button && !report_button) {
+                if (!cancel_button && !report_button) {
                     return '';
                 }
 
                 return `<div class="action-buttons">
                             ${cancel_button} ${report_button}
-                        </div>`
+                        </div>`;
             },
             getPlace: function (activity) {
                 let rating_price = `
@@ -3434,9 +3717,9 @@ befriend.activities = {
                     befriend.location.device,
                     {
                         lat: activity.location_lat,
-                        lon: activity.location_lon
+                        lon: activity.location_lon,
                     },
-                    true
+                    true,
                 );
 
                 let navigation_buttons = befriend.activities.getNavigation(activity);
@@ -3463,9 +3746,9 @@ befriend.activities = {
             getDate: function (activity) {
                 let date = getFriendlyDateFromString(activity.human_date);
 
-                if(isToday(activity.activity_start)) {
+                if (isToday(activity.activity_start)) {
                     date = 'Today';
-                } else if(isTomorrow(activity.activity_start)) {
+                } else if (isTomorrow(activity.activity_start)) {
                     date = 'Tomorrow';
                 }
 
@@ -3482,18 +3765,18 @@ befriend.activities = {
                 let defaultSet = false;
                 let unknown_person_int = 1;
 
-                for(let person_token in persons) {
+                for (let person_token in persons) {
                     let person = persons[person_token];
 
-                    if(person_token === befriend.getPersonToken()) {
+                    if (person_token === befriend.getPersonToken()) {
                         continue;
                     }
 
-                    if(person.cancelled_at) {
+                    if (person.cancelled_at) {
                         continue;
                     }
 
-                    if(!defaultSet) {
+                    if (!defaultSet) {
                         person_html = this.getWhoPerson(activity, person_token);
                     }
 
@@ -3507,15 +3790,15 @@ befriend.activities = {
 
                 let isValidForReviewing = befriend.reviews.activityValid(activity.activity_token);
 
-                if(isValidForReviewing) {
+                if (isValidForReviewing) {
                     buttons_html += `<div class="person-button review">Review</div>`;
                 }
 
-                if(buttons_html) {
+                if (buttons_html) {
                     buttons_html = `<div class="buttons">${buttons_html}</div>`;
                 }
 
-                if(persons_nav_html) {
+                if (persons_nav_html) {
                     html = `<div class="persons-nav-buttons ${buttons_html ? 'has-buttons' : ''}">
                                 <div class="persons-nav">
                                     ${persons_nav_html}
@@ -3530,19 +3813,19 @@ befriend.activities = {
                 } else {
                     let message = befriend.activities.displayActivity.messages.notifications_sent;
 
-                    if(timeNow(true) > activity.activity_end) {
+                    if (timeNow(true) > activity.activity_end) {
                         message = befriend.activities.displayActivity.messages.no_matches;
                     }
 
-                    if(befriend.activities.data.isCancelled(activity.activity_token)) {
+                    if (befriend.activities.data.isCancelled(activity.activity_token)) {
                         message = befriend.activities.displayActivity.messages.cancelled;
                     }
 
-                    if(befriend.activities.data.isUnfulfilled(activity.activity_token)) {
+                    if (befriend.activities.data.isUnfulfilled(activity.activity_token)) {
                         message = befriend.activities.displayActivity.messages.unfulfilled;
                     }
 
-                    html = `<div class="no-persons">${message}</div>`
+                    html = `<div class="no-persons">${message}</div>`;
                 }
 
                 return `<div class="who section">
@@ -3556,9 +3839,12 @@ befriend.activities = {
             getWhoPerson: function (activity, person_token) {
                 let checked_in_html = '';
 
-                let isCheckedIn = befriend.activities.displayActivity.isCheckedIn(activity.activity_token, person_token);
+                let isCheckedIn = befriend.activities.displayActivity.isCheckedIn(
+                    activity.activity_token,
+                    person_token,
+                );
 
-                if(isCheckedIn) {
+                if (isCheckedIn) {
                     checked_in_html = `<div class="person-checked-in">
                             <div class="icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 401.0168 401"><path d="M160.44,401c-2,0-4.01-.71-5.61-2.12-1.57-1.38-39-34.44-77.02-82.36C26.18,251.44,0,193.07,0,143.01,0,64.15,71.97,0,160.44,0c46.06,0,89.94,17.67,120.41,48.47,3.3,3.34,3.27,8.72-.07,12.02s-8.72,3.27-12.02-.07c-27.29-27.6-66.77-43.42-108.32-43.42-79.09,0-143.44,56.53-143.44,126.01,0,98.37,116.42,212.76,143.49,238.02,11.88-10.9,40.83-38.59,69.46-74.5,33.73-42.31,73.94-105.03,73.94-163.52,0-4.69,3.81-8.5,8.5-8.5s8.5,3.81,8.5,8.5c0,50.97-26.18,109.62-77.83,174.35-38.04,47.67-75.48,80.21-77.06,81.58-1.59,1.37-3.58,2.06-5.56,2.06h0Z"/><path d="M188.37,197.95c-2.01,0-4.03-.71-5.63-2.14l-85.85-76c-3.52-3.11-3.84-8.48-.73-12s8.48-3.84,12-.73l80.22,71.01L386.88,2.37c3.52-3.11,8.89-2.78,12,.73,3.11,3.52,2.79,8.89-.73,12l-204.15,180.71c-1.61,1.42-3.62,2.14-5.63,2.14Z"/></svg>
@@ -3573,7 +3859,7 @@ befriend.activities = {
 
                 let person = activity?.persons[person_token];
 
-                if(!person) {
+                if (!person) {
                     return '';
                 }
 
@@ -3585,21 +3871,21 @@ befriend.activities = {
 
                 let match_type_html = '';
 
-                if(matching?.total_score >= matching?.thresholds?.ultra) {
-                    match_type_html = `<div class="tag match-type ultra">Ultra match</div>`
-                } else if(matching?.total_score >= matching?.thresholds?.super) {
-                    match_type_html = `<div class="tag match-type super">Super match</div>`
+                if (matching?.total_score >= matching?.thresholds?.ultra) {
+                    match_type_html = `<div class="tag match-type ultra">Ultra match</div>`;
+                } else if (matching?.total_score >= matching?.thresholds?.super) {
+                    match_type_html = `<div class="tag match-type super">Super match</div>`;
                 }
 
                 let new_member_html = '';
 
-                if(person.is_new) {
+                if (person.is_new) {
                     new_member_html = `<div class="tag new-member">New member</div>`;
                 }
 
                 let tags_html = ``;
 
-                if(match_type_html || new_member_html) {
+                if (match_type_html || new_member_html) {
                     tags_html = `<div class="tags">
                                 ${new_member_html}
                                 ${match_type_html}
@@ -3630,27 +3916,27 @@ befriend.activities = {
 
                 let mode = activity.mode;
 
-                if(['mode-partner', 'mode-kids'].includes(mode?.token)) {
+                if (['mode-partner', 'mode-kids'].includes(mode?.token)) {
                     let title = '';
                     let content = '';
 
-                    if(mode.token === 'mode-partner') {
+                    if (mode.token === 'mode-partner') {
                         title = 'Partner';
 
-                        if(person.partner?.gender?.name) {
+                        if (person.partner?.gender?.name) {
                             content = `<div class="partner">${person.partner.gender.name}</div>`;
                         }
-                    } else if(mode.token === 'mode-kids') {
+                    } else if (mode.token === 'mode-kids') {
                         title = 'Kids';
 
                         let kids_html = '';
 
-                        for(let k in (person.kids || {})) {
+                        for (let k in person.kids || {}) {
                             let kid = person.kids[k];
 
                             let qty_html = '';
 
-                            if(kid.qty > 1) {
+                            if (kid.qty > 1) {
                                 qty_html = `<div class="qty">${kid.qty}</div>`;
                             }
 
@@ -3660,12 +3946,12 @@ befriend.activities = {
                              </div>`;
                         }
 
-                        if(kids_html) {
+                        if (kids_html) {
                             content = `<div class="kids">${kids_html}</div>`;
                         }
                     }
 
-                    if(content) {
+                    if (content) {
                         partner_kids_html = `<div class="partner-kids sub-section">
                                         <div class="sub-section-title">${title}</div>
                                         <div class="partner-kids-content">${content}</div>                    
@@ -3676,10 +3962,10 @@ befriend.activities = {
                 let network_html = '';
 
                 //show network if different from my own
-                if(befriend.user.network?.network_token !== person.network?.token) {
+                if (befriend.user.network?.network_token !== person.network?.token) {
                     let verified_html = `<div class="verification unverified">Unverified</div>`;
 
-                    if(person.network.verified) {
+                    if (person.network.verified) {
                         verified_html = `<div class="verification verified">Verified</div>`;
                     }
 
@@ -3692,7 +3978,7 @@ befriend.activities = {
                                                 <div class="website"><a href="${person.network.domain}">Website</a></div>
                                             </div>
                                         </div>
-                                    </div>`
+                                    </div>`;
                 }
 
                 return `${checked_in_html}
@@ -3700,8 +3986,7 @@ befriend.activities = {
                         ${about_html}
                         ${reviews_html}
                         ${network_html}
-                        ${partner_kids_html}`
-
+                        ${partner_kids_html}`;
             },
             matching: {
                 getItemTags: function (item) {
@@ -3709,7 +3994,7 @@ befriend.activities = {
 
                     let match_types = item.match?.types;
 
-                    if(!match_types) {
+                    if (!match_types) {
                         return '';
                     }
 
@@ -3722,68 +4007,68 @@ befriend.activities = {
                     const myImportance = item.match?.mine?.importance;
                     const theirImportance = item.match?.theirs?.importance;
 
-                    if(match_types.their_filter) {
+                    if (match_types.their_filter) {
                         let importance = ``;
-                
-                        if(theirImportance) {
-                            importance = `<div class="importance">${theirImportance}</div>`
+
+                        if (theirImportance) {
+                            importance = `<div class="importance">${theirImportance}</div>`;
                         }
-                
+
                         tags_html += `<div class="tag their-filter">
                                                         ${importance}
                                                         Their Filter
                                                     </div>`;
                     }
-                
-                    if(match_types.their_item) {
+
+                    if (match_types.their_item) {
                         let favorite_heart = '';
-                
-                        if(theirPos) {
+
+                        if (theirPos) {
                             favorite_heart = `<div class="favorite">
                                                                 <div class="position">${theirPos}</div>
                                                                 ${heart_svg}
-                                                           </div>`
+                                                           </div>`;
                         }
-                
+
                         tags_html += `<div class="tag their-item">
                                                     ${favorite_heart}
                                                     Their Item
                                                     </div>`;
                     }
-                
-                    if(match_types.my_filter) {
+
+                    if (match_types.my_filter) {
                         let importance = ``;
-                
-                        if(myImportance) {
-                            importance = `<div class="importance">${myImportance}</div>`
+
+                        if (myImportance) {
+                            importance = `<div class="importance">${myImportance}</div>`;
                         }
-                
+
                         tags_html += `<div class="tag my-filter">
                                                     ${importance}
                                                     My Filter
                                                   </div>`;
                     }
-                
-                    if(match_types.my_item) {
+
+                    if (match_types.my_item) {
                         let favorite_heart = '';
-                
-                        if(myPos) {
+
+                        if (myPos) {
                             favorite_heart = `<div class="favorite">
                                                                 <div class="position">${myPos}</div>
                                                                 ${heart_svg}
-                                                           </div>`
+                                                           </div>`;
                         }
-                
+
                         tags_html += `<div class="tag my-item">
                                                     ${favorite_heart}
                                                     My Item
                                                     </div>`;
                     }
-                
-                    if(tags_html) {
+
+                    if (tags_html) {
                         return `<div class="tags">${tags_html}</div>`;
                     }
-                
+
                     return '';
                 },
                 getItemSecondary: function (item) {
@@ -3793,7 +4078,7 @@ befriend.activities = {
                         let secondary_extra = '';
 
                         if (sectionConfig?.tabs) {
-                            const tab = sectionConfig.tabs.find(t => t.key === item.table_key);
+                            const tab = sectionConfig.tabs.find((t) => t.key === item.table_key);
 
                             if (tab) {
                                 secondary_extra = tab.secondary?.extra;
@@ -3812,20 +4097,32 @@ befriend.activities = {
 
                         let secondary_html = '';
 
-                        if(myItemSecondary && theirItemSecondary && myItemSecondary === theirItemSecondary) {
+                        if (
+                            myItemSecondary &&
+                            theirItemSecondary &&
+                            myItemSecondary === theirItemSecondary
+                        ) {
                             secondary_html = `${myItemSecondary} ${secondary_extra}`;
-                        } else if(myFilterSecondary && theirItemSecondary && myFilterSecondary.includes(theirItemSecondary)) {
+                        } else if (
+                            myFilterSecondary &&
+                            theirItemSecondary &&
+                            myFilterSecondary.includes(theirItemSecondary)
+                        ) {
                             secondary_html = `${theirItemSecondary} ${secondary_extra}`;
-                        } else if(theirFilterSecondary && myItemSecondary && theirFilterSecondary.includes(myItemSecondary)) {
+                        } else if (
+                            theirFilterSecondary &&
+                            myItemSecondary &&
+                            theirFilterSecondary.includes(myItemSecondary)
+                        ) {
                             secondary_html = `${myItemSecondary} ${secondary_extra}`;
                         }
 
-                        if(secondary_html) {
+                        if (secondary_html) {
                             html = `<div class="secondary">${secondary_html}</div>`;
                         }
 
                         return html;
-                    } catch(e) {
+                    } catch (e) {
                         console.error(e);
                         return '';
                     }
@@ -3838,8 +4135,8 @@ befriend.activities = {
                             acc[item.section] = {
                                 tableGroups: {},
                                 favorites: 0,
-                                total: 0
-                            }
+                                total: 0,
+                            };
                         }
 
                         const section = acc[item.section];
@@ -3848,7 +4145,7 @@ befriend.activities = {
                         if (!section.tableGroups[tableKey]) {
                             section.tableGroups[tableKey] = {
                                 items: [],
-                                key: tableKey
+                                key: tableKey,
                             };
                         }
 
@@ -3877,7 +4174,7 @@ befriend.activities = {
                     }
 
                     //sort sections by number of favorites/items (mine)
-                    const sortedSections = Object.entries(groupedMatches).sort(([,a], [,b]) => {
+                    const sortedSections = Object.entries(groupedMatches).sort(([, a], [, b]) => {
                         if (a.favorites !== b.favorites) {
                             return b.favorites - a.favorites;
                         }
@@ -3887,7 +4184,7 @@ befriend.activities = {
 
                     let html = '';
 
-                    for(let [sectionKey, sectionOrganized] of sortedSections) {
+                    for (let [sectionKey, sectionOrganized] of sortedSections) {
                         let section = befriend.filters.sections[sectionKey];
                         let sectionName = section?.name || sectionKey.capitalize();
                         const sectionConfig = section?.config;
@@ -3901,20 +4198,20 @@ befriend.activities = {
                             let tableKeyName = tableKey;
 
                             if (sectionConfig?.tabs) {
-                                const tab = sectionConfig.tabs.find(t => t.key === tableKey);
+                                const tab = sectionConfig.tabs.find((t) => t.key === tableKey);
 
                                 if (tab) {
                                     tableKeyName = tab.name;
                                 }
 
-                                if(sectionConfig.tabs.length) {
+                                if (sectionConfig.tabs.length) {
                                     showTableHeader = true;
                                 }
                             }
 
                             let itemsHtml = '';
 
-                            for(let item of tableGroup.items) {
+                            for (let item of tableGroup.items) {
                                 let tags = this.getItemTags(item);
                                 let secondary = this.getItemSecondary(item);
 
@@ -3959,23 +4256,23 @@ befriend.activities = {
                         
                         <div class="matching-groups">${html}</div>`;
                 },
-                getPersonNav: function(activity) {
+                getPersonNav: function (activity) {
                     let persons_nav_html = '';
                     let person_tokens = Object.keys(activity.matching || {});
 
-                    if(person_tokens.length) {
+                    if (person_tokens.length) {
                         let unknown_person_int = 1;
 
-                        for(let i = 0; i < person_tokens.length; i++) {
+                        for (let i = 0; i < person_tokens.length; i++) {
                             let person_token = person_tokens[i];
                             let person = activity.persons[person_token];
 
-                            if(!person) {
+                            if (!person) {
                                 console.warn('Person not found for activity data');
                                 continue;
                             }
 
-                            if(person.cancelled_at) {
+                            if (person.cancelled_at) {
                                 continue;
                             }
 
@@ -3992,17 +4289,17 @@ befriend.activities = {
                     let html = '';
                     let default_person_matching = null;
 
-                    if(Object.keys(activity.matching || {}).length) {
+                    if (Object.keys(activity.matching || {}).length) {
                         default_person_matching = Object.values(activity.matching)[0];
                     }
 
-                    if(!default_person_matching) {
+                    if (!default_person_matching) {
                         return '';
                     }
 
                     let persons_nav = this.getPersonNav(activity);
 
-                    if(!persons_nav) {
+                    if (!persons_nav) {
                         return '';
                     }
 
@@ -4021,14 +4318,14 @@ befriend.activities = {
                             ${html}
                         </div>
                     </div>`;
-                }
+                },
             },
         },
         getViewHtml(activity_data, prevData = null) {
             let activity = activity_data.data;
 
-            if(!activity) {
-                console.error("No data for activity");
+            if (!activity) {
+                console.error('No data for activity');
                 return '';
             }
 
@@ -4055,13 +4352,13 @@ befriend.activities = {
             let prevCheckInError = prevData?.checkIn?.error || '';
             let prevMessage = prevData?.message?.message || '';
 
-            if(prevCheckInError) {
+            if (prevCheckInError) {
                 addClassEl('display-check-in', befriend.els.currentActivityView);
-            } else if(prevMessage) {
+            } else if (prevMessage) {
                 addClassEl('display-message', befriend.els.currentActivityView);
 
-                if(prevData?.message?.classList) {
-                    for(let cls of prevData.message.classList) {
+                if (prevData?.message?.classList) {
+                    for (let cls of prevData.message.classList) {
                         activityMessageCls.add(cls);
                     }
                 }
@@ -4127,18 +4424,18 @@ befriend.activities = {
                 display: 'display-message',
                 success: 'success',
                 cancel: 'cancelled',
-            }
+            };
 
             let message_el = befriend.els.currentActivityView.querySelector('.activity-message');
 
-            if(!message_el) {
+            if (!message_el) {
                 return;
             }
 
-            if(is_success) {
+            if (is_success) {
                 addClassEl(classes.success, message_el);
             } else {
-                if(!show && elHasClass(message_el, classes.success)) {
+                if (!show && elHasClass(message_el, classes.success)) {
                     setTimeout(function () {
                         removeClassEl(classes.success, message_el);
                     }, 300);
@@ -4147,10 +4444,10 @@ befriend.activities = {
                 }
             }
 
-            if(is_cancel) {
+            if (is_cancel) {
                 addClassEl(classes.cancel, message_el);
             } else {
-                if(!show && elHasClass(message_el, classes.cancel)) {
+                if (!show && elHasClass(message_el, classes.cancel)) {
                     setTimeout(function () {
                         removeClassEl(classes.cancel, message_el);
                     }, 300);
@@ -4159,7 +4456,7 @@ befriend.activities = {
                 }
             }
 
-            if(message) {
+            if (message) {
                 message_el.querySelector('.message').innerHTML = message;
             }
 
@@ -4169,7 +4466,7 @@ befriend.activities = {
 
             removeClassEl('no-transition', message_el);
 
-            if(show) {
+            if (show) {
                 this.toggleCheckIn(false);
                 addClassEl(classes.display, befriend.els.currentActivityView);
             } else {
@@ -4194,23 +4491,27 @@ befriend.activities = {
 
             let check_in_el = befriend.els.currentActivityView.querySelector('.check-in');
 
-            if(!check_in_el) {
+            if (!check_in_el) {
                 return;
             }
 
             //if activity token provided, validate before showing check-in
-            if(show && activity_token) {
+            if (show && activity_token) {
                 let activity = befriend.activities.data.getActivity(activity_token);
 
-                if(!activity || !activity.data?.persons) {
+                if (!activity || !activity.data?.persons) {
                     return this.toggleCheckIn(false);
                 }
 
                 let myParticipation = activity.data.persons?.[befriend.getPersonToken()];
 
                 //do not show if no object, person already checked-in, or cancelled
-                if(!myParticipation || myParticipation.arrived_at || befriend.activities.data.isCancelled(activity_token)) {
-                    if(this.isMessageShown()) {
+                if (
+                    !myParticipation ||
+                    myParticipation.arrived_at ||
+                    befriend.activities.data.isCancelled(activity_token)
+                ) {
+                    if (this.isMessageShown()) {
                         return;
                     }
 
@@ -4218,44 +4519,50 @@ befriend.activities = {
                 }
 
                 //do not show check-in if it's too early
-                let checkInStart = activity.activity_start - (befriend.activities.data.rules?.checkIn?.minsBefore || 30) * 60;
+                let checkInStart =
+                    activity.activity_start -
+                    (befriend.activities.data.rules?.checkIn?.minsBefore || 30) * 60;
 
-                if(timeNow(true) < checkInStart) {
-                    if(this.isMessageShown()) {
+                if (timeNow(true) < checkInStart) {
+                    if (this.isMessageShown()) {
                         return;
                     }
 
                     return this.toggleCheckIn(false);
                 }
 
-                let checkInEnd = activity.activity_start + (befriend.activities.data.rules?.checkIn?.minsAfter || 20) * 60;
+                let checkInEnd =
+                    activity.activity_start +
+                    (befriend.activities.data.rules?.checkIn?.minsAfter || 20) * 60;
 
                 let latestAcceptance = null;
 
-                for(let pt in activity.data.persons) {
+                for (let pt in activity.data.persons) {
                     let p = activity.data.persons[pt];
 
-                    if(p.is_creator || p.cancelled_at) {
+                    if (p.is_creator || p.cancelled_at) {
                         continue;
                     }
 
-                    if(!latestAcceptance || p.accepted_at > latestAcceptance) {
+                    if (!latestAcceptance || p.accepted_at > latestAcceptance) {
                         latestAcceptance = p.accepted_at;
                     }
                 }
 
                 //if the latest invitation was accepted after activity start time, use the later time for check-in end
-                if(latestAcceptance) {
+                if (latestAcceptance) {
                     latestAcceptance /= 1000; //ms to sec
 
-                    if(latestAcceptance > activity.activity_start) {
-                        checkInEnd = latestAcceptance + (befriend.activities.data.rules?.checkIn?.minsAfter || 20) * 60;
+                    if (latestAcceptance > activity.activity_start) {
+                        checkInEnd =
+                            latestAcceptance +
+                            (befriend.activities.data.rules?.checkIn?.minsAfter || 20) * 60;
                     }
                 }
 
                 //do not show check-in if it's past the end of check-in time
-                if(timeNow(true) > checkInEnd) {
-                    if(this.isMessageShown()) {
+                if (timeNow(true) > checkInEnd) {
+                    if (this.isMessageShown()) {
                         return;
                     }
 
@@ -4263,8 +4570,8 @@ befriend.activities = {
                 }
 
                 //do not allow check-in if activity cancelled
-                if(activity.data?.cancelled_at) {
-                    if(this.isMessageShown()) {
+                if (activity.data?.cancelled_at) {
+                    if (this.isMessageShown()) {
                         return;
                     }
 
@@ -4272,7 +4579,7 @@ befriend.activities = {
                 }
             }
 
-            if(no_transition) {
+            if (no_transition) {
                 addClassEl('no-transition', befriend.els.currentActivityView);
 
                 setTimeout(function () {
@@ -4282,7 +4589,7 @@ befriend.activities = {
                 removeClassEl('no-transition', befriend.els.currentActivityView);
             }
 
-            if(show) {
+            if (show) {
                 this.toggleMessage(false);
                 addClassEl(cls, befriend.els.currentActivityView);
             } else {
@@ -4293,7 +4600,7 @@ befriend.activities = {
 
             let addHeight = 0;
 
-            if(!show) {
+            if (!show) {
                 addHeight = messageBox.height;
             }
 
@@ -4332,26 +4639,25 @@ befriend.activities = {
 
             let activity = befriend.activities.displayActivity.getActivity();
 
-            if(activity?.is_creator) {
+            if (activity?.is_creator) {
                 let activityParticipants = [];
 
                 for (let [person_token, person] of Object.entries(activity.data?.persons || {})) {
-                    if(person_token === befriend.getPersonToken()) {
+                    if (person_token === befriend.getPersonToken()) {
                         continue;
                     }
 
-                    if(!person.cancelled) {
+                    if (!person.cancelled) {
                         activityParticipants.push(person);
                     }
                 }
 
-                if(activityParticipants.length >= 2) {
+                if (activityParticipants.length >= 2) {
                     creator_message = `<div class="creator-message">This activity would remain active for the existing participants.</div>`;
                 }
             }
 
-            let popupHtml =
-                `<div class="${class_name}">
+            let popupHtml = `<div class="${class_name}">
                     <div class="cancel-activity ${creator_message ? 'with-message' : ''}">
                         <div class="heading">Cancel Activity</div>
                         
@@ -4414,13 +4720,13 @@ befriend.activities = {
                 e.preventDefault();
                 e.stopPropagation();
 
-                if(this._ip) {
+                if (this._ip) {
                     return;
                 }
 
                 let activity = befriend.activities.displayActivity.getActivity();
 
-                if(!activity) {
+                if (!activity) {
                     return;
                 }
 
@@ -4438,31 +4744,39 @@ befriend.activities = {
                     let r;
 
                     //person cancelling activity created on 3rd-party network
-                    if(activity.access?.token) {
-                        r = await befriend.networks.put(activity.access.domain, `activities/networks/cancel/${activity_token}`, {
-                            access_token: activity.access.token,
-                            person_token: befriend.getPersonToken()
-                        });
+                    if (activity.access?.token) {
+                        r = await befriend.networks.put(
+                            activity.access.domain,
+                            `activities/networks/cancel/${activity_token}`,
+                            {
+                                access_token: activity.access.token,
+                                person_token: befriend.getPersonToken(),
+                            },
+                        );
                     } else {
                         r = await befriend.auth.put(`/activities/${activity_token}/cancel`);
                     }
 
                     let message = r.data?.message;
 
-                    if(r.status === 202) {
+                    if (r.status === 202) {
                         //update activity data
                         activity.cancelled_at = r.data.cancelled_at;
 
                         activity.data.spots = r.data.spots;
 
-                        if(r.data.activity_cancelled_at) {
+                        if (r.data.activity_cancelled_at) {
                             activity.data.cancelled_at = r.data.activity_cancelled_at;
                         }
 
                         //update activity view
                         try {
-                            await befriend.activities.displayActivity.display(activity_token, true, true);
-                        } catch(e) {
+                            await befriend.activities.displayActivity.display(
+                                activity_token,
+                                true,
+                                true,
+                            );
+                        } catch (e) {
                             console.error(e);
                         }
 
@@ -4470,27 +4784,42 @@ befriend.activities = {
                         befriend.activities.setView();
 
                         //show message
-                        await befriend.activities.displayActivity.toggleMessage(true, message, false, true);
+                        await befriend.activities.displayActivity.toggleMessage(
+                            true,
+                            message,
+                            false,
+                            true,
+                        );
 
                         let addHeight = 0;
 
-                        if(elHasClass(befriend.els.currentActivityView, 'display-message')) {
-                            addHeight = befriend.els.currentActivityView.querySelector('.activity-message')?.getBoundingClientRect()?.height;
-                        } else if(elHasClass(befriend.els.currentActivityView, 'display-check-in')) {
-                            addHeight = befriend.els.currentActivityView.querySelector('.check-in')?.getBoundingClientRect()?.height;
+                        if (elHasClass(befriend.els.currentActivityView, 'display-message')) {
+                            addHeight = befriend.els.currentActivityView
+                                .querySelector('.activity-message')
+                                ?.getBoundingClientRect()?.height;
+                        } else if (
+                            elHasClass(befriend.els.currentActivityView, 'display-check-in')
+                        ) {
+                            addHeight = befriend.els.currentActivityView
+                                .querySelector('.check-in')
+                                ?.getBoundingClientRect()?.height;
                         }
 
                         befriend.styles.displayActivity.updateSectionsHeight(addHeight);
 
                         befriend.activities.setView();
                     }
-                } catch(e) {
+                } catch (e) {
                     let message = e.response?.data?.error;
 
-                    if(message) {
+                    if (message) {
                         befriend.activities.displayActivity.toggleMessage(true, message, false);
                     } else {
-                        befriend.activities.displayActivity.toggleMessage(true, befriend.activities.displayActivity.messages.error, false);
+                        befriend.activities.displayActivity.toggleMessage(
+                            true,
+                            befriend.activities.displayActivity.messages.error,
+                            false,
+                        );
                     }
                 }
 
@@ -4504,48 +4833,48 @@ befriend.activities = {
             });
         },
         updateData: function (data) {
-            if(!data.activity_token) {
+            if (!data.activity_token) {
                 return;
             }
 
             let notificationObj = befriend.notifications.data.all[data.activity_token];
 
-            if(notificationObj?.acceptance_in_progress) {
+            if (notificationObj?.acceptance_in_progress) {
                 return;
             }
 
-            if(!befriend.activities.data.all) {
+            if (!befriend.activities.data.all) {
                 befriend.activities.data.all = {};
             }
 
-            if(!befriend.activities.data.all[data.activity_token]) {
+            if (!befriend.activities.data.all[data.activity_token]) {
                 return;
                 // befriend.activities.data.all[data.activity_token] = {};
             }
 
             let activity = befriend.activities.data.all[data.activity_token];
 
-            if(data.spots) {
+            if (data.spots) {
                 activity.data.spots = data.spots;
             }
 
-            if(data.matching) {
+            if (data.matching) {
                 activity.data.matching = data.matching;
             }
 
-            if(data.persons) {
+            if (data.persons) {
                 activity.data.persons = data.persons;
             }
 
-            if('is_fulfilled' in data) {
+            if ('is_fulfilled' in data) {
                 activity.data.is_fulfilled = data.is_fulfilled;
             }
 
-            if(data.activity_cancelled_at) {
+            if (data.activity_cancelled_at) {
                 activity.data.cancelled_at = data.activity_cancelled_at;
             }
 
-            if(activity.cancellation_ip || activity.check_in_ip) {
+            if (activity.cancellation_ip || activity.check_in_ip) {
                 return;
             }
 
@@ -4553,8 +4882,13 @@ befriend.activities = {
             befriend.activities.setView();
 
             //update displayed activity view with new data
-            if(data.activity_token === befriend.activities.displayActivity.currentToken) {
-                befriend.activities.displayActivity.display(data.activity_token, true, true, data.activity_cancelled_at);
+            if (data.activity_token === befriend.activities.displayActivity.currentToken) {
+                befriend.activities.displayActivity.display(
+                    data.activity_token,
+                    true,
+                    true,
+                    data.activity_cancelled_at,
+                );
             }
         },
         updateSpotsAccepted: function (activity_token) {
@@ -4562,13 +4896,14 @@ befriend.activities = {
 
             let spots = activity.data?.spots?.accepted;
 
-            if(!isNumeric(spots)) {
+            if (!isNumeric(spots)) {
                 return;
             }
 
-            const personsAcceptedEl = befriend.els.currentActivityView.querySelector('.persons-accepted .text');
+            const personsAcceptedEl =
+                befriend.els.currentActivityView.querySelector('.persons-accepted .text');
 
-            if(!personsAcceptedEl) {
+            if (!personsAcceptedEl) {
                 return;
             }
 
@@ -4606,7 +4941,7 @@ befriend.activities = {
 
             let who_el = befriend.els.currentActivityView.querySelector('.section.who');
 
-            if(who_el) {
+            if (who_el) {
                 let prev_selected_person = who_el.querySelector('.person-nav.active');
 
                 let el = document.createElement('div');
@@ -4617,8 +4952,10 @@ befriend.activities = {
 
                 befriend.activities.displayActivity.events.onPersonNav();
 
-                if(prev_selected_person) {
-                    befriend.activities.displayActivity.selectPersonNav(prev_selected_person.getAttribute('data-person-token'));
+                if (prev_selected_person) {
+                    befriend.activities.displayActivity.selectPersonNav(
+                        prev_selected_person.getAttribute('data-person-token'),
+                    );
                 }
             }
         },
@@ -4630,8 +4967,8 @@ befriend.activities = {
             let matching_el = befriend.els.currentActivityView.querySelector('.section.matching');
             let place_el = befriend.els.currentActivityView.querySelector('.section.place');
 
-            if(matching_el) {
-                if(!html) {
+            if (matching_el) {
+                if (!html) {
                     matching_el.parentNode.removeChild(matching_el);
                 } else {
                     let prev_selected_person = matching_el.querySelector('.person-nav.active');
@@ -4642,8 +4979,10 @@ befriend.activities = {
 
                     matching_el.innerHTML = el.querySelector('.matching').innerHTML;
 
-                    if(prev_selected_person) {
-                        befriend.activities.displayActivity.selectMatchingPersonNav(prev_selected_person.getAttribute('data-person-token'));
+                    if (prev_selected_person) {
+                        befriend.activities.displayActivity.selectMatchingPersonNav(
+                            prev_selected_person.getAttribute('data-person-token'),
+                        );
                     }
                 }
             } else {
@@ -4661,12 +5000,15 @@ befriend.activities = {
 
             removeElsClass(person_nav_els, 'active');
 
-            for(let i = 0; i < person_nav_els.length; i++) {
+            for (let i = 0; i < person_nav_els.length; i++) {
                 let person_nav_el = person_nav_els[i];
 
-                if(person_nav_el.getAttribute('data-person-token') === person_token) {
+                if (person_nav_el.getAttribute('data-person-token') === person_token) {
                     addClassEl('active', person_nav_el);
-                    person_el.innerHTML = befriend.activities.displayActivity.html.getWhoPerson(activity.data, person_token);
+                    person_el.innerHTML = befriend.activities.displayActivity.html.getWhoPerson(
+                        activity.data,
+                        person_token,
+                    );
                     break;
                 }
             }
@@ -4676,7 +5018,7 @@ befriend.activities = {
 
             let section_el = befriend.els.currentActivityView.querySelector('.section.matching');
 
-            if(!section_el) {
+            if (!section_el) {
                 return;
             }
 
@@ -4685,16 +5027,17 @@ befriend.activities = {
 
             removeElsClass(matching_nav_els, 'active');
 
-            for(let i = 0; i < matching_nav_els.length; i++) {
+            for (let i = 0; i < matching_nav_els.length; i++) {
                 let matching_nav_el = matching_nav_els[i];
 
-                if(matching_nav_el.getAttribute('data-person-token') === person_token) {
+                if (matching_nav_el.getAttribute('data-person-token') === person_token) {
                     addClassEl('active', matching_nav_el);
 
                     let matching = activity.data.matching[person_token];
 
-                    if(matching) {
-                        matching_content_el.innerHTML = befriend.activities.displayActivity.html.matching.getContent(matching);
+                    if (matching) {
+                        matching_content_el.innerHTML =
+                            befriend.activities.displayActivity.html.matching.getContent(matching);
                     }
 
                     break;
@@ -4705,7 +5048,7 @@ befriend.activities = {
             onBack: function () {
                 let el = befriend.els.currentActivityView.querySelector('.back-button');
 
-                if(el._listener) {
+                if (el._listener) {
                     return;
                 }
 
@@ -4719,11 +5062,11 @@ befriend.activities = {
             onCancel: function () {
                 let el = befriend.els.currentActivityView.querySelector('.button.cancel');
 
-                if(!el) {
+                if (!el) {
                     return;
                 }
 
-                if(el._listener) {
+                if (el._listener) {
                     return;
                 }
 
@@ -4733,19 +5076,21 @@ befriend.activities = {
                     e.preventDefault();
                     e.stopPropagation();
 
-                    befriend.activities.displayActivity.showCancel(befriend.activities.displayActivity.currentToken);
+                    befriend.activities.displayActivity.showCancel(
+                        befriend.activities.displayActivity.currentToken,
+                    );
                 });
             },
             onCheckIn: function () {
                 let checkInEl = befriend.els.currentActivityView.querySelector('.check-in');
 
-                if(!checkInEl) {
+                if (!checkInEl) {
                     return;
                 }
 
                 let checkInButtonEl = checkInEl.querySelector('.button');
 
-                if(checkInButtonEl._listener) {
+                if (checkInButtonEl._listener) {
                     return;
                 }
 
@@ -4755,7 +5100,7 @@ befriend.activities = {
                     e.preventDefault();
                     e.stopPropagation();
 
-                    if(this._ip) {
+                    if (this._ip) {
                         return;
                     }
 
@@ -4768,7 +5113,7 @@ befriend.activities = {
                     let activityToken = befriend.activities.displayActivity.currentToken;
                     let activity = befriend.activities.data.getActivity(activityToken);
 
-                    if(!activity) {
+                    if (!activity) {
                         this._ip = false;
                         return;
                     }
@@ -4783,37 +5128,55 @@ befriend.activities = {
                         let r;
 
                         //check-in to activity created on 3rd-party network
-                        if(activity.access?.token) {
-                            r = await befriend.networks.post(activity.access.domain, `activities/networks/check-in/${activityToken}`, {
-                                access_token: activity.access.token,
-                                person_token: befriend.getPersonToken(),
-                                location: currentLocation
-                            });
+                        if (activity.access?.token) {
+                            r = await befriend.networks.post(
+                                activity.access.domain,
+                                `activities/networks/check-in/${activityToken}`,
+                                {
+                                    access_token: activity.access.token,
+                                    person_token: befriend.getPersonToken(),
+                                    location: currentLocation,
+                                },
+                            );
                         } else {
                             r = await befriend.auth.post(`/activities/${activityToken}/check-in`, {
-                                location: currentLocation
+                                location: currentLocation,
                             });
                         }
 
                         let message = r.data?.message;
 
-                        if(r.status === 201) {
+                        if (r.status === 201) {
                             activity.arrived_at = r.data.arrived_at;
-                            let myParticipation = activity.data?.persons?.[befriend.getPersonToken()];
+                            let myParticipation =
+                                activity.data?.persons?.[befriend.getPersonToken()];
 
-                            if(myParticipation) {
+                            if (myParticipation) {
                                 myParticipation.arrived_at = r.data.arrived_at;
                             }
 
                             addClassEl('no-transition', befriend.els.currentActivityView);
 
-                            await befriend.activities.displayActivity.toggleMessage(true, message, true);
+                            await befriend.activities.displayActivity.toggleMessage(
+                                true,
+                                message,
+                                true,
+                            );
 
-                            let checked_in_html = befriend.activities.displayActivity.html.getCheckedIn(activityToken);
+                            let checked_in_html =
+                                befriend.activities.displayActivity.html.getCheckedIn(
+                                    activityToken,
+                                );
 
-                            let activityHeadlineEl = befriend.els.currentActivityView.querySelector('.activity-headline');
+                            let activityHeadlineEl =
+                                befriend.els.currentActivityView.querySelector(
+                                    '.activity-headline',
+                                );
 
-                            if(activityHeadlineEl && !activityHeadlineEl.querySelector('.checked-in')) {
+                            if (
+                                activityHeadlineEl &&
+                                !activityHeadlineEl.querySelector('.checked-in')
+                            ) {
                                 activityHeadlineEl.insertAdjacentHTML('beforeend', checked_in_html);
                             }
 
@@ -4821,8 +5184,8 @@ befriend.activities = {
                         } else {
                             errorMessage = r.data.error || 'Error checking in for activity';
                         }
-                    } catch(e) {
-                        if(e?.response?.data?.error) {
+                    } catch (e) {
+                        if (e?.response?.data?.error) {
                             errorMessage = e.response.data.error;
                         } else {
                             console.error(e);
@@ -4830,7 +5193,7 @@ befriend.activities = {
                         }
                     }
 
-                    if(errorMessage) {
+                    if (errorMessage) {
                         checkInErrorEl.innerHTML = errorMessage;
                         addClassEl('show', checkInErrorEl);
                     }
@@ -4843,7 +5206,7 @@ befriend.activities = {
             onCloseMessage: function () {
                 let el = befriend.els.currentActivityView.querySelector('.close');
 
-                if(el._listener) {
+                if (el._listener) {
                     return;
                 }
 
@@ -4857,12 +5220,13 @@ befriend.activities = {
                 });
             },
             onPersonNav: function () {
-                let person_nav_els = befriend.els.currentActivityView.querySelectorAll('.who .person-nav');
+                let person_nav_els =
+                    befriend.els.currentActivityView.querySelectorAll('.who .person-nav');
 
-                for(let i = 0; i < person_nav_els.length; i++) {
+                for (let i = 0; i < person_nav_els.length; i++) {
                     let person_nav_el = person_nav_els[i];
 
-                    if(person_nav_el._listener) {
+                    if (person_nav_el._listener) {
                         continue;
                     }
 
@@ -4872,7 +5236,7 @@ befriend.activities = {
                         e.preventDefault();
                         e.stopPropagation();
 
-                        if(elHasClass(person_nav_el, 'active')) {
+                        if (elHasClass(person_nav_el, 'active')) {
                             return;
                         }
 
@@ -4885,11 +5249,11 @@ befriend.activities = {
             onReview: function () {
                 let el = befriend.els.currentActivityView.querySelector('.person-button.review');
 
-                if(!el) {
+                if (!el) {
                     return;
                 }
 
-                if(el._listener) {
+                if (el._listener) {
                     return;
                 }
 
@@ -4900,34 +5264,36 @@ befriend.activities = {
                     e.stopPropagation();
 
                     let activity_token = befriend.activities.displayActivity.currentToken;
-                    let person_selected = befriend.els.currentActivityView.querySelector(`.person-nav.active`);
+                    let person_selected =
+                        befriend.els.currentActivityView.querySelector(`.person-nav.active`);
 
                     let person_token = null;
 
-                    if(person_selected) {
+                    if (person_selected) {
                         person_token = person_selected.getAttribute('data-person-token');
                     }
 
                     befriend.reviews.showReviewActivities(activity_token, person_token, true);
                 });
             },
-            onMatchingPersonNav: function() {
-                let person_nav_els = befriend.els.currentActivityView.querySelectorAll('.matching .person-nav');
+            onMatchingPersonNav: function () {
+                let person_nav_els =
+                    befriend.els.currentActivityView.querySelectorAll('.matching .person-nav');
 
-                for(let i = 0; i < person_nav_els.length; i++) {
+                for (let i = 0; i < person_nav_els.length; i++) {
                     let person_nav_el = person_nav_els[i];
 
-                    if(person_nav_el._listener) {
+                    if (person_nav_el._listener) {
                         continue;
                     }
 
                     person_nav_el._listener = true;
 
-                    person_nav_el.addEventListener('click', function(e) {
+                    person_nav_el.addEventListener('click', function (e) {
                         e.preventDefault();
                         e.stopPropagation();
 
-                        if(elHasClass(person_nav_el, 'active')) {
+                        if (elHasClass(person_nav_el, 'active')) {
                             return;
                         }
 
@@ -4940,10 +5306,10 @@ befriend.activities = {
             onViewImage: function () {
                 let image_els = befriend.els.currentActivityView.querySelectorAll('.person .image');
 
-                for(let i = 0; i < image_els.length; i++) {
+                for (let i = 0; i < image_els.length; i++) {
                     let image_el = image_els[i];
 
-                    if(image_el._listener) {
+                    if (image_el._listener) {
                         return;
                     }
 
@@ -4955,17 +5321,15 @@ befriend.activities = {
 
                         let url = image_el.getAttribute('data-image-url');
 
-                        befriend.modals.images.openModal(url)
+                        befriend.modals.images.openModal(url);
                     });
                 }
             },
-            onReport: function () {
-
-            },
-        }
+            onReport: function () {},
+        },
     },
     events: {
-        init: function() {
+        init: function () {
             return new Promise(async (resolve, reject) => {
                 try {
                     befriend.activities.activityTypes.events.init();
@@ -4975,17 +5339,17 @@ befriend.activities = {
                 } catch (e) {
                     console.error(e);
                 }
-                
+
                 resolve();
             });
         },
         onShowActivity: function () {
             let activityEls = befriend.els.mainActivitiesView.getElementsByClassName('activity');
 
-            for(let i = 0; i < activityEls.length; i++) {
+            for (let i = 0; i < activityEls.length; i++) {
                 let activityEl = activityEls[i];
 
-                if(activityEl._listener) {
+                if (activityEl._listener) {
                     continue;
                 }
 
@@ -4997,9 +5361,9 @@ befriend.activities = {
 
                     let activityToken = activityEl.getAttribute('data-activity-token');
 
-                    if(activityToken) {
+                    if (activityToken) {
                         //show either regular activity or notification view
-                        if(elHasClass(activityEl, 'is-notification')) {
+                        if (elHasClass(activityEl, 'is-notification')) {
                             befriend.notifications.showActivity(activityToken);
                         } else {
                             befriend.activities.displayActivity.display(activityToken, true);
@@ -5011,10 +5375,10 @@ befriend.activities = {
         onRemoveNotification: function () {
             let removeEls = befriend.els.mainActivitiesView.querySelectorAll('.activity .remove');
 
-            for(let i = 0; i < removeEls.length; i++) {
+            for (let i = 0; i < removeEls.length; i++) {
                 let removeEl = removeEls[i];
 
-                if(removeEl._listener) {
+                if (removeEl._listener) {
                     continue;
                 }
 
@@ -5030,7 +5394,10 @@ befriend.activities = {
 
                     befriend.notifications.data.removed[activityToken] = true;
 
-                    befriend.user.setLocal('notifications.removed', befriend.notifications.data.removed);
+                    befriend.user.setLocal(
+                        'notifications.removed',
+                        befriend.notifications.data.removed,
+                    );
 
                     befriend.activities.setView();
                 });
@@ -5043,20 +5410,24 @@ befriend.activities = {
 
             viewEl.addEventListener('scroll', () => {
                 //apply only if view active
-                if(!befriend.isViewShown('activities')) {
+                if (!befriend.isViewShown('activities')) {
                     return;
                 }
 
                 let scrollTop = viewEl.scrollTop;
 
-                if(elHasClass(befriend.els.mainActivitiesView, 'show')) {
+                if (elHasClass(befriend.els.mainActivitiesView, 'show')) {
                     befriend.activities.scroll.main = scrollTop;
-                } else if(elHasClass(befriend.els.currentActivityView, 'show')) {
-                    befriend.activities.scroll.activities[befriend.activities.displayActivity.currentToken] = scrollTop;
-                } else if(elHasClass(befriend.els.activityNotificationView, 'show')) {
-                    befriend.activities.scroll.notifications[befriend.notifications.data.current.activity_token] = scrollTop;
+                } else if (elHasClass(befriend.els.currentActivityView, 'show')) {
+                    befriend.activities.scroll.activities[
+                        befriend.activities.displayActivity.currentToken
+                    ] = scrollTop;
+                } else if (elHasClass(befriend.els.activityNotificationView, 'show')) {
+                    befriend.activities.scroll.notifications[
+                        befriend.notifications.data.current.activity_token
+                    ] = scrollTop;
                 }
             });
-        }
-    }
+        },
+    },
 };

@@ -1,6 +1,6 @@
 befriend.device = {
     token: null,
-    init: function() {
+    init: function () {
         return new Promise(async (resolve, reject) => {
             try {
                 await befriend.device.getToken();
@@ -58,5 +58,5 @@ befriend.device = {
     },
     sameDeviceToken: function (token) {
         return token === this.token;
-    }
-}
+    },
+};

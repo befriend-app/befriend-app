@@ -31,10 +31,14 @@ befriend.filters = {
             try {
                 let response = await befriend.auth.get('/filters/matches');
 
-                if(response.data?.counts) {
+                if (response.data?.counts) {
                     befriend.filters.matches.data = response.data;
-                    send_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.send);
-                    receive_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.receive);
+                    send_el.querySelector('.count').innerHTML = formattedNumberDisplay(
+                        response.data.counts.send,
+                    );
+                    receive_el.querySelector('.count').innerHTML = formattedNumberDisplay(
+                        response.data.counts.receive,
+                    );
                     interests_el.querySelector('.count').innerHTML = `
                                                                                 <div class="ultra category">
                                                                                     <div class="name">Ultra</div>
@@ -46,9 +50,11 @@ befriend.filters = {
                                                                                      <div class="number">${formattedNumberDisplay(response.data.counts.interests.super)}</div>
                                                                                 </div>
                                                                             `;
-                    excluded_el.querySelector('.count').innerHTML = formattedNumberDisplay(response.data.counts.excluded);
+                    excluded_el.querySelector('.count').innerHTML = formattedNumberDisplay(
+                        response.data.counts.excluded,
+                    );
                 }
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
 
@@ -57,9 +63,12 @@ befriend.filters = {
 
             let td = timeNow() - ts;
 
-            setTimeout(function () {
-                removeClassEl('show', update_circle_el);
-            }, Math.max(transition_duration - td, 0));
+            setTimeout(
+                function () {
+                    removeClassEl('show', update_circle_el);
+                },
+                Math.max(transition_duration - td, 0),
+            );
         },
     },
     groups: [
@@ -211,8 +220,8 @@ befriend.filters = {
                         singular: 'Team',
                         secondary: {
                             name: 'Fan Level',
-                            extra: 'fan'
-                        }
+                            extra: 'fan',
+                        },
                     },
                     {
                         key: 'leagues',
@@ -221,8 +230,8 @@ befriend.filters = {
                         singular: 'League',
                         secondary: {
                             name: 'Fan Level',
-                            extra: 'fan'
-                        }
+                            extra: 'fan',
+                        },
                     },
                     {
                         key: 'play',
@@ -231,8 +240,8 @@ befriend.filters = {
                         singular: 'Sport',
                         secondary: {
                             name: 'Skill Level',
-                            extra: 'skill'
-                        }
+                            extra: 'skill',
+                        },
                     },
                 ],
             },
@@ -273,8 +282,8 @@ befriend.filters = {
                 hasSecondary: true,
                 secondary: {
                     name: 'Skill Level',
-                    extra: 'skill'
-                }
+                    extra: 'skill',
+                },
             },
         },
         schools: {
@@ -549,15 +558,15 @@ befriend.filters = {
                         try {
                             await befriend.auth.put('/filters/active', {
                                 filter_token,
-                                active
+                                active,
                             });
 
-                            if(filter_token in befriend.filters.data.filters) {
+                            if (filter_token in befriend.filters.data.filters) {
                                 befriend.filters.data.filters[filter_token].is_active = active;
                             } else {
                                 befriend.filters.data.filters[filter_token] = {
-                                    is_active: active
-                                }
+                                    is_active: active,
+                                };
                             }
 
                             //update match counts after filter update
@@ -676,9 +685,9 @@ befriend.filters = {
                 filter = filters[filterToken] = {};
             }
 
-            if(optionType === 'send') {
+            if (optionType === 'send') {
                 filter.is_send = isEnabled;
-            } else if(optionType === 'receive') {
+            } else if (optionType === 'receive') {
                 filter.is_receive = isEnabled;
             }
 
@@ -692,7 +701,7 @@ befriend.filters = {
                 console.error('Error updating filter send/receive state:', e);
             }
 
-            if(befriend.filters.isSectionActive(filterToken)) {
+            if (befriend.filters.isSectionActive(filterToken)) {
                 befriend.filters.matches.updateCounts();
             }
         },
@@ -729,7 +738,7 @@ befriend.filters = {
             return section.importance?.default || this.default;
         },
         set: function (section_key) {
-            if(section_key in befriend.filters.data.filters) {
+            if (section_key in befriend.filters.data.filters) {
                 let filterData = befriend.filters.data.filters[section_key];
 
                 if (!(section_key in this.values)) {
@@ -777,11 +786,7 @@ befriend.filters = {
                 if (!importance_el) {
                     let value = this.getValue(section.token, item_token);
 
-                    let importance_html = this.getImportanceHtml(
-                        section.token,
-                        item_token,
-                        value,
-                    );
+                    let importance_html = this.getImportanceHtml(section.token, item_token, value);
 
                     item.insertAdjacentHTML('afterbegin', importance_html);
                 }
@@ -834,7 +839,7 @@ befriend.filters = {
                     .querySelector(`.item[data-token="${itemToken}"]`);
             }
 
-            if(!item) {
+            if (!item) {
                 return;
             }
 
@@ -864,7 +869,7 @@ befriend.filters = {
                 prevValue = isNumeric(prevValue) ? prevValue : null;
 
                 //do not update if no change
-                if(value === prevValue) {
+                if (value === prevValue) {
                     return;
                 }
 
@@ -873,16 +878,16 @@ befriend.filters = {
                 await befriend.auth.put('/filters/importance', {
                     section: sectionToken,
                     filter_item_id: item.id,
-                    importance: value
+                    importance: value,
                 });
 
                 //update local data
                 let filter = befriend.filters.data.filters[sectionToken];
 
-                if(filter?.items) {
+                if (filter?.items) {
                     //find item
-                    for(let filter_item of Object.values(filter.items)) {
-                        if(filter_item.id === item.id) {
+                    for (let filter_item of Object.values(filter.items)) {
+                        if (filter_item.id === item.id) {
                             filter_item.importance = value;
                         }
                     }
@@ -891,11 +896,13 @@ befriend.filters = {
                 //update match counts if threshold changed
                 let importance_threshold = 8;
 
-                const needsUpdate = (value >= importance_threshold && (!prevValue || prevValue < importance_threshold)) ||
+                const needsUpdate =
+                    (value >= importance_threshold &&
+                        (!prevValue || prevValue < importance_threshold)) ||
                     (prevValue >= importance_threshold && value < importance_threshold);
 
                 if (needsUpdate) {
-                    if(befriend.filters.isSectionActive(sectionToken)) {
+                    if (befriend.filters.isSectionActive(sectionToken)) {
                         befriend.filters.matches.updateCounts();
                     }
                 }
@@ -958,7 +965,8 @@ befriend.filters = {
             let startY, startTop;
 
             const setPosition = (value) => {
-                const percent = (value - importanceRef.min) / (importanceRef.max - importanceRef.min);
+                const percent =
+                    (value - importanceRef.min) / (importanceRef.max - importanceRef.min);
                 const height = container.offsetHeight;
                 const position = height - percent * height;
                 thumb.style.top = `${position}px`;
@@ -971,7 +979,10 @@ befriend.filters = {
                 const percent = 1 - position / height;
 
                 return Math.min(
-                    Math.max(percent * (importanceRef.max - importanceRef.min) + importanceRef.min, importanceRef.min),
+                    Math.max(
+                        percent * (importanceRef.max - importanceRef.min) + importanceRef.min,
+                        importanceRef.min,
+                    ),
                     importanceRef.max,
                 );
             };
@@ -1002,7 +1013,7 @@ befriend.filters = {
                 }
             }
 
-            if(isTouchDevice()) {
+            if (isTouchDevice()) {
                 // Touch events
                 thumb.addEventListener('touchstart', handleStart);
                 document.addEventListener('touchmove', handleMove);
@@ -1300,11 +1311,12 @@ befriend.filters = {
                 this.data[dayIndex] = {
                     isDisabled: false,
                     isAny: currentData.isAny,
-                    times: {...currentData.times}, // Preserve existing times
+                    times: { ...currentData.times }, // Preserve existing times
                 };
 
                 // Check if we have stored filter data
-                const hasNoExistingState = !currentData.times ||
+                const hasNoExistingState =
+                    !currentData.times ||
                     (Object.keys(currentData.times).length === 0 && !currentData.isAny);
 
                 if (hasNoExistingState) {
@@ -1512,7 +1524,7 @@ befriend.filters = {
                 this.data[dayIndex].times = {};
                 this.data[dayIndex].isAny = false;
 
-                for(let time of mergedTimes) {
+                for (let time of mergedTimes) {
                     const timeId = existingTimeId || this.generateTimeId();
                     this.data[dayIndex].times[timeId] = time;
                 }
@@ -1703,24 +1715,26 @@ befriend.filters = {
             if (!times || times.length === 0) return [];
 
             // Convert time strings to comparable format and sort
-            const timeRanges = times.map(time => {
-                const [startHours, startMinutes] = time.start.split(':').map(Number);
-                const [endHours, endMinutes] = time.end.split(':').map(Number);
+            const timeRanges = times
+                .map((time) => {
+                    const [startHours, startMinutes] = time.start.split(':').map(Number);
+                    const [endHours, endMinutes] = time.end.split(':').map(Number);
 
-                let startTotalMinutes = startHours * 60 + startMinutes;
-                let endTotalMinutes = endHours * 60 + endMinutes;
+                    let startTotalMinutes = startHours * 60 + startMinutes;
+                    let endTotalMinutes = endHours * 60 + endMinutes;
 
-                // If end time is less than start time, add 24 hours to end time
-                if (endTotalMinutes < startTotalMinutes) {
-                    endTotalMinutes += 24 * 60;
-                }
+                    // If end time is less than start time, add 24 hours to end time
+                    if (endTotalMinutes < startTotalMinutes) {
+                        endTotalMinutes += 24 * 60;
+                    }
 
-                return {
-                    ...time,
-                    startMinutes: startTotalMinutes,
-                    endMinutes: endTotalMinutes
-                };
-            }).sort((a, b) => a.startMinutes - b.startMinutes);
+                    return {
+                        ...time,
+                        startMinutes: startTotalMinutes,
+                        endMinutes: endTotalMinutes,
+                    };
+                })
+                .sort((a, b) => a.startMinutes - b.startMinutes);
 
             const merged = [timeRanges[0]];
 
@@ -1741,9 +1755,9 @@ befriend.filters = {
                 }
             }
 
-            return merged.map(range => ({
+            return merged.map((range) => ({
                 start: range.start,
-                end: range.end
+                end: range.end,
             }));
         },
         openTimeSlots: async function (daySection, minusPixels = 0, autoScrollIfNotVisible) {
@@ -1890,7 +1904,7 @@ befriend.filters = {
                     availability: availabilityData,
                 });
 
-                if(befriend.filters.isSectionActive('availability')) {
+                if (befriend.filters.isSectionActive('availability')) {
                     befriend.filters.matches.updateCounts();
                 }
 
@@ -2520,7 +2534,8 @@ befriend.filters = {
                     let activities_level_2 = [];
 
                     for (let level_2_id in activity.sub) {
-                        let activity = befriend.activities.activityTypes.data[parent_id].sub[level_2_id];
+                        let activity =
+                            befriend.activities.activityTypes.data[parent_id].sub[level_2_id];
 
                         if (activity.name.toLowerCase() === 'any') {
                             continue;
@@ -2815,7 +2830,8 @@ befriend.filters = {
                 sub_activities = befriend.activities.activityTypes.data[activity_id]?.sub;
             } else {
                 const parent_id = activity_el.closest('.level_2').getAttribute('data-parent-id');
-                sub_activities = befriend.activities.activityTypes.data[parent_id]?.sub[activity_id]?.sub;
+                sub_activities =
+                    befriend.activities.activityTypes.data[parent_id]?.sub[activity_id]?.sub;
             }
 
             if (!sub_activities) return;
@@ -2963,7 +2979,7 @@ befriend.filters = {
                             active: !wasSelected,
                         });
 
-                        if(befriend.filters.isSectionActive('modes')) {
+                        if (befriend.filters.isSectionActive('modes')) {
                             befriend.filters.matches.updateCounts();
                         }
                     } catch (e) {
@@ -3012,7 +3028,7 @@ befriend.filters = {
                     filter_data = befriend.filters.data.filters.networks = {
                         is_active: true,
                         is_send: true,
-                        is_receive: true
+                        is_receive: true,
                     };
                 }
 
@@ -3577,7 +3593,7 @@ befriend.filters = {
                 is_all_verified: filter_data.is_all_verified,
             });
 
-            if(befriend.filters.isSectionActive('networks')) {
+            if (befriend.filters.isSectionActive('networks')) {
                 befriend.filters.matches.updateCounts();
             }
         },
@@ -3877,12 +3893,11 @@ befriend.filters = {
                         rating: parseFloat(rating),
                     });
 
-                    if(befriend.filters.isSectionActive('reviews')) {
-                        if(befriend.filters.data.filters?.[filter_token]?.is_active) {
+                    if (befriend.filters.isSectionActive('reviews')) {
+                        if (befriend.filters.data.filters?.[filter_token]?.is_active) {
                             befriend.filters.matches.updateCounts();
                         }
                     }
-
                 } catch (e) {
                     console.error(`Error saving ${type} rating:`, e);
                 }
@@ -4113,7 +4128,7 @@ befriend.filters = {
                     distance: this.current,
                 });
 
-                if(befriend.filters.isSectionActive('distance')) {
+                if (befriend.filters.isSectionActive('distance')) {
                     befriend.filters.matches.updateCounts();
                 }
             } catch (e) {
@@ -4289,7 +4304,7 @@ befriend.filters = {
                     max_age: this.current.max,
                 });
 
-                if(befriend.filters.isSectionActive('ages')) {
+                if (befriend.filters.isSectionActive('ages')) {
                     befriend.filters.matches.updateCounts();
                 }
             } catch (e) {
@@ -4410,11 +4425,11 @@ befriend.filters = {
                                 active: !wasSelected,
                             });
 
-                            if(r.data?.data) {
+                            if (r.data?.data) {
                                 befriend.filters.data.filters['genders'] = r.data.data;
                             }
 
-                            if(befriend.filters.isSectionActive('genders')) {
+                            if (befriend.filters.isSectionActive('genders')) {
                                 befriend.filters.matches.updateCounts();
                             }
                         } catch (e) {
@@ -4658,7 +4673,10 @@ befriend.filters = {
         let groupOffsetTop = calculateOffsetTop();
 
         function calculateOffsetTop() {
-            return befriend.styles.getVariableValue('view-top') + befriend.variables.filters_matches_offset_top;
+            return (
+                befriend.styles.getVariableValue('view-top') +
+                befriend.variables.filters_matches_offset_top
+            );
         }
 
         window.addEventListener('resize', () => {
@@ -4677,14 +4695,15 @@ befriend.filters = {
                 let scrollLeft;
 
                 if (isScrollingUp) {
-                    scrollLeft = activeButton.offsetLeft - (navRect.width - activeButton.offsetWidth);
+                    scrollLeft =
+                        activeButton.offsetLeft - (navRect.width - activeButton.offsetWidth);
                 } else {
                     scrollLeft = activeButton.offsetLeft;
                 }
 
                 navScroll.scrollTo({
                     left: scrollLeft,
-                    behavior: 'smooth'
+                    behavior: 'smooth',
                 });
             }
         }
@@ -4731,29 +4750,35 @@ befriend.filters = {
         let prevIndex = 0;
 
         function updateActiveButtonOnScroll() {
-            if(!befriend.isViewShown('filters')) {
+            if (!befriend.isViewShown('filters')) {
                 return;
             }
 
             let threshold = groupOffsetTop;
             let scrollingUp = scrollEl.scrollTop > lastScrollTop;
 
-            console.log({prevIndex, threshold, scrollingUp, lastScrollTop, current: scrollEl.scrollTop});
+            console.log({
+                prevIndex,
+                threshold,
+                scrollingUp,
+                lastScrollTop,
+                current: scrollEl.scrollTop,
+            });
 
             let selected = {
                 top: null,
                 index: null,
-                el: null
-            }
+                el: null,
+            };
 
-            for(let i = 0; i < groups.length; i++) {
+            for (let i = 0; i < groups.length; i++) {
                 let group = groups[i];
                 let groupBox = group.getBoundingClientRect();
 
                 console.log(groupBox);
 
-                if(groupBox.top <= threshold) {
-                    if(selected.top === null || groupBox.top > selected.top) {
+                if (groupBox.top <= threshold) {
+                    if (selected.top === null || groupBox.top > selected.top) {
                         selected.top = groupBox.top;
                         selected.index = i;
                         selected.el = group;
@@ -4762,12 +4787,12 @@ befriend.filters = {
             }
 
             //select last section
-            if(selected.index === groups.length - 2) {
+            if (selected.index === groups.length - 2) {
                 let lastGroupBox = groups[groups.length - 1].getBoundingClientRect();
 
                 let diff = lastGroupBox.top - threshold;
 
-                if(diff > 0 && diff < 60) {
+                if (diff > 0 && diff < 60) {
                     selected.index++;
                 }
             }
@@ -4776,7 +4801,7 @@ befriend.filters = {
 
             lastScrollTop = scrollEl.scrollTop;
 
-            if(selected.index !== null && selected.index !== prevIndex) {
+            if (selected.index !== null && selected.index !== prevIndex) {
                 removeElsClass(navButtons, 'active');
                 addClassEl('active', navButtons[selected.index]);
 
@@ -5036,9 +5061,9 @@ befriend.filters = {
     isSectionActive: function (section_key) {
         let filterData;
 
-        if(section_key.startsWith('review')) {
+        if (section_key.startsWith('review')) {
             filterData = befriend.filters.data.filters['reviews'];
-        } else if(section_key.startsWith('verification')) {
+        } else if (section_key.startsWith('verification')) {
             filterData = befriend.filters.data.filters['verifications'];
         } else {
             filterData = befriend.filters.data.filters[section_key];
@@ -5411,11 +5436,11 @@ befriend.filters = {
                                 }
                             }
 
-                            if(befriend.filters.isSectionActive(filterName)) {
+                            if (befriend.filters.isSectionActive(filterName)) {
                                 befriend.filters.matches.updateCounts();
                             }
 
-                            if(response?.data?.data) {
+                            if (response?.data?.data) {
                                 befriend.filters.data.filters[filterName] = response.data.data;
                             }
 
@@ -5600,7 +5625,7 @@ befriend.filters = {
 
                 return items;
             },
-            getItemByToken: function(token) {
+            getItemByToken: function (token) {
                 if (!befriend.filters.data.filters?.[this.key]?.items) {
                     return null;
                 }
@@ -5613,7 +5638,7 @@ befriend.filters = {
 
                 return null;
             },
-            getItemById: function(id) {
+            getItemById: function (id) {
                 if (!befriend.filters.data.filters?.[this.key]?.items) {
                     return null;
                 }
@@ -5941,15 +5966,13 @@ befriend.filters = {
                     let hash_token = hashToken || befriend.filters[config.key].getFilterHashToken();
 
                     let response = await befriend.auth.put(config.endpoint, {
-                        ...(config.hasSelect
-                            ? { hash_token: hash_token }
-                            : {}),
+                        ...(config.hasSelect ? { hash_token: hash_token } : {}),
                         ...(config.hasTableKey ? { table_key: tableKey } : {}),
                         token,
                         active: true,
                     });
 
-                    if(befriend.filters.isSectionActive(config.key)) {
+                    if (befriend.filters.isSectionActive(config.key)) {
                         befriend.filters.matches.updateCounts();
                     }
 
@@ -6401,7 +6424,7 @@ befriend.filters = {
                                             ) {
                                                 item._is_internal = true;
 
-                                                if(hash_token) {
+                                                if (hash_token) {
                                                     item.hash_token = hash_token;
                                                 }
 
@@ -6737,7 +6760,7 @@ befriend.filters = {
                                         active: true,
                                     });
 
-                                    if(befriend.filters.isSectionActive(config.key)) {
+                                    if (befriend.filters.isSectionActive(config.key)) {
                                         befriend.filters.matches.updateCounts();
                                     }
 
@@ -6749,7 +6772,9 @@ befriend.filters = {
 
                                     // Deactivate other items for current table
                                     for (let otherItem of otherItems) {
-                                        const storedItem = befriend.filters[config.key].getItemById(otherItem.getAttribute('data-id'));
+                                        const storedItem = befriend.filters[config.key].getItemById(
+                                            otherItem.getAttribute('data-id'),
+                                        );
 
                                         if (
                                             storedItem &&
@@ -6772,7 +6797,9 @@ befriend.filters = {
                                 return;
                             }
 
-                            let hash_token = itemData?.hash_token || befriend.filters[config.key].getFilterHashToken();
+                            let hash_token =
+                                itemData?.hash_token ||
+                                befriend.filters[config.key].getFilterHashToken();
 
                             // Handle mine item toggle
                             if (elHasClass(item, 'mine')) {
@@ -6794,7 +6821,7 @@ befriend.filters = {
                                         active: !wasSelected,
                                     });
 
-                                    if(befriend.filters.isSectionActive(config.key)) {
+                                    if (befriend.filters.isSectionActive(config.key)) {
                                         befriend.filters.matches.updateCounts();
                                     }
 
@@ -6802,7 +6829,9 @@ befriend.filters = {
                                     const activeItems = Array.from(
                                         section_el.querySelectorAll('.item.mine.active'),
                                     ).filter((item) => {
-                                        const storedItem = befriend.filters[config.key].getItemById(item.getAttribute('data-id'));
+                                        const storedItem = befriend.filters[config.key].getItemById(
+                                            item.getAttribute('data-id'),
+                                        );
 
                                         return (
                                             storedItem &&
@@ -6822,9 +6851,10 @@ befriend.filters = {
                                     }
 
                                     // Update stored data
-                                    let itemData = befriend.filters[config.key].getItemByToken(token);
+                                    let itemData =
+                                        befriend.filters[config.key].getItemByToken(token);
 
-                                    if(itemData) {
+                                    if (itemData) {
                                         itemData.is_active = !wasSelected;
                                     }
                                 } catch (e) {
@@ -6881,7 +6911,9 @@ befriend.filters = {
 
                                 befriend.toggleSpinner(true);
 
-                                let hash_token = itemData.hash_token || befriend.filters[config.key].getFilterHashToken();
+                                let hash_token =
+                                    itemData.hash_token ||
+                                    befriend.filters[config.key].getFilterHashToken();
 
                                 const tableKey = config.hasTableKey
                                     ? befriend.filters[config.key].getTableKey(token)
@@ -6890,8 +6922,7 @@ befriend.filters = {
                                 await befriend.auth.put(config.endpoint, {
                                     ...(config.hasSelect
                                         ? {
-                                              hash_token:
-                                                  hash_token,
+                                              hash_token: hash_token,
                                           }
                                         : {}),
                                     ...(config.hasTableKey ? { table_key: tableKey } : {}),
@@ -6899,7 +6930,7 @@ befriend.filters = {
                                     is_delete: true,
                                 });
 
-                                if(befriend.filters.isSectionActive(config.key)) {
+                                if (befriend.filters.isSectionActive(config.key)) {
                                     befriend.filters.matches.updateCounts();
                                 }
 
@@ -6915,7 +6946,7 @@ befriend.filters = {
 
                                 // Update stored data
 
-                                if(itemData) {
+                                if (itemData) {
                                     itemData.deleted = true;
                                 }
                             } catch (e) {
@@ -7022,10 +7053,7 @@ befriend.filters = {
                                 befriend.toggleSpinner(true);
 
                                 // Initialize array if needed
-                                if (
-                                    !itemData.secondary ||
-                                    !Array.isArray(itemData.secondary)
-                                ) {
+                                if (!itemData.secondary || !Array.isArray(itemData.secondary)) {
                                     itemData.secondary = [];
                                 }
 
@@ -7072,7 +7100,7 @@ befriend.filters = {
                                     table_key: tableKey || config.key,
                                 });
 
-                                if(befriend.filters.isSectionActive(config.key)) {
+                                if (befriend.filters.isSectionActive(config.key)) {
                                     befriend.filters.matches.updateCounts();
                                 }
 
@@ -7191,19 +7219,19 @@ befriend.filters = {
         };
     },
     setFilterState: function () {
-        if(befriend.filters.data.filters) {
-            for(let k in befriend.filters.sections) {
+        if (befriend.filters.data.filters) {
+            for (let k in befriend.filters.sections) {
                 let d = befriend.filters.sections[k];
 
-                if(!befriend.filters.data.filters[d.token]) {
+                if (!befriend.filters.data.filters[d.token]) {
                     befriend.filters.data.filters[d.token] = {
                         is_active: true,
                         is_send: true,
                         is_receive: true,
-                        items: {}
-                    }
+                        items: {},
+                    };
                 }
             }
         }
-    }
+    },
 };

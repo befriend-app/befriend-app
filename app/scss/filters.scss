@@ -171,31 +171,30 @@
                 }
 
                 .icon {
-                    height: $icon_dim * .6;
+                    height: $icon_dim * 0.6;
                     @include flex-center-col;
                 }
 
                 .text {
-
                 }
             }
 
             .send {
                 .label {
-                    background-color: #D0F6DB;
+                    background-color: #d0f6db;
 
                     .icon-container {
-                        background-color: #D0F6DB;
+                        background-color: #d0f6db;
                     }
                 }
             }
 
             .receive {
                 .label {
-                    background-color: #FAF000;
+                    background-color: #faf000;
 
                     .icon-container {
-                        background-color: #FAF000;
+                        background-color: #faf000;
                     }
                 }
             }
@@ -210,7 +209,7 @@
                 }
 
                 svg {
-                    height: $icon_dim * .5;
+                    height: $icon_dim * 0.5;
                     fill: white;
                 }
 
@@ -239,7 +238,6 @@
                                 border-bottom-left-radius: $br;
                             }
                         }
-
                     }
 
                     .name {
@@ -249,7 +247,6 @@
                         text-align: center;
                         font-size: 12px;
                         line-height: $lh;
-
                     }
 
                     .number {
@@ -262,10 +259,10 @@
 
             .excluded {
                 .label {
-                    background-color: #FF9F5A;
+                    background-color: #ff9f5a;
 
                     .icon-container {
-                        background-color: #FF9F5A;
+                        background-color: #ff9f5a;
                     }
 
                     .text {
@@ -316,7 +313,7 @@
 
             &:before,
             &:after {
-                content: "";
+                content: '';
                 position: absolute;
                 left: 50%;
                 bottom: 0;
@@ -337,13 +334,16 @@
             0% {
                 transform: translate(-50%, 100%) scale($scale_max);
             }
-            15%, 25% {
+            15%,
+            25% {
                 transform: translate(-50%, 50%) scale($scale_max);
             }
-            50%, 75% {
+            50%,
+            75% {
                 transform: translate(-50%, -30%) scale($scale_mid);
             }
-            80%, 100% {
+            80%,
+            100% {
                 transform: translate(-50%, -50%) scale($scale_min);
             }
         }

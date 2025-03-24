@@ -3,7 +3,7 @@ window['befriend'] = {
     is_paused: false,
     views: {
         active: 'home',
-        scroll: {}
+        scroll: {},
     },
     classes: {
         placesShown: 'display-places',
@@ -200,11 +200,11 @@ window['befriend'] = {
             return new Promise(async (resolve, reject) => {
                 try {
                     let params = {
-                        ...data
+                        ...data,
                     };
 
                     let r = await axios.get(joinPaths(domain, route), {
-                        params
+                        params,
                     });
 
                     resolve(r);
@@ -237,7 +237,7 @@ window['befriend'] = {
                     return reject(e);
                 }
             });
-        }
+        },
     },
     init: function () {
         console.log('Befriend: [init]');
@@ -348,12 +348,11 @@ window['befriend'] = {
                 //show first activity
                 let activity = befriend.els.mainActivitiesView.querySelector('.activity');
 
-                if(activity) {
+                if (activity) {
                     // fireClick(activity);
                 }
 
                 // befriend.reviews.showReviewActivities();
-
             }, 50);
 
             resolve();
@@ -370,12 +369,12 @@ window['befriend'] = {
         let viewEl = befriend.els.views.querySelector(`.${view_name}`);
         let prevViewEl = befriend.els.views.querySelector('.view.active');
 
-        let navEl = Array.from(nav_items).find(item => item.getAttribute('data-nav') === view);
+        let navEl = Array.from(nav_items).find((item) => item.getAttribute('data-nav') === view);
 
         removeElsClass(nav_items, 'active');
         removeElsClass(views, 'active');
 
-        if(skip_transition) {
+        if (skip_transition) {
             addElsClass(nav_items, 'no-transition');
         }
 
@@ -386,7 +385,7 @@ window['befriend'] = {
             removeElsClass(nav_items, 'no-transition');
         });
 
-        if(classes_only) {
+        if (classes_only) {
             return;
         }
 
@@ -404,8 +403,8 @@ window['befriend'] = {
         befriend.me.hideActiveSecondaryIf();
 
         //view specific logic
-        if(view === 'home') {
-            if(befriend.maps.needsResize) {
+        if (view === 'home') {
+            if (befriend.maps.needsResize) {
                 requestAnimationFrame(function () {
                     befriend.maps.centerMap();
                     befriend.maps.needsResize = false;
@@ -413,15 +412,22 @@ window['befriend'] = {
             }
         } else if (view === 'activities') {
             //navigate back to main activities view if current and previous views are the same
-            if(prevViewEl === viewEl) {
+            if (prevViewEl === viewEl) {
                 viewEl.scrollTop = befriend.activities.scroll.main || 0;
 
                 removeClassEl('show', befriend.els.activityNotificationView);
                 removeClassEl('show', befriend.els.currentActivityView);
                 addClassEl('show', befriend.els.mainActivitiesView);
             } else {
-                if(befriend.activities.displayActivity.currentToken && elHasClass(befriend.els.currentActivityView, 'show')) {
-                    befriend.activities.displayActivity.display(befriend.activities.displayActivity.currentToken, true, true);
+                if (
+                    befriend.activities.displayActivity.currentToken &&
+                    elHasClass(befriend.els.currentActivityView, 'show')
+                ) {
+                    befriend.activities.displayActivity.display(
+                        befriend.activities.displayActivity.currentToken,
+                        true,
+                        true,
+                    );
                 } else {
                     viewEl.scrollTop = befriend.activities.scroll.main || 0;
                 }
@@ -439,7 +445,7 @@ window['befriend'] = {
             befriend.me.account.setView('profile');
         }
 
-        if(befriend.filters.matches.needsUpdate) {
+        if (befriend.filters.matches.needsUpdate) {
             befriend.filters.matches.updateCounts();
             befriend.filters.matches.needsUpdate = false;
         }
@@ -470,16 +476,20 @@ window['befriend'] = {
         console.log(message);
 
         if (message.namespace === 'notifications') {
-            befriend.notifications.updateAvailableSpots(message.data?.activity_token, message.data?.spots?.available, message.data?.activity_cancelled_at);
-        } else if(message.namespace === 'activities') {
+            befriend.notifications.updateAvailableSpots(
+                message.data?.activity_token,
+                message.data?.spots?.available,
+                message.data?.activity_cancelled_at,
+            );
+        } else if (message.namespace === 'activities') {
             befriend.activities.displayActivity.updateData(message.data);
         }
     },
     initFinished: function () {
         return new Promise(async (resolve, reject) => {
-            console.log("init finished check")
+            console.log('init finished check');
 
-            if(befriend.init_finished) {
+            if (befriend.init_finished) {
                 return resolve(true);
             }
 
@@ -489,10 +499,10 @@ window['befriend'] = {
         });
     },
     preventNavigation: function (prevent) {
-        if(prevent) {
+        if (prevent) {
             addClassEl('show', 'transition-overlay');
         } else {
             removeClassEl('show', 'transition-overlay');
         }
-    }
+    },
 };

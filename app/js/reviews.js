@@ -23,12 +23,17 @@ befriend.reviews = {
 
             let date = befriend.activities.displayActivity.html.getDate(activityData);
 
-            let activityType = befriend.activities.activityTypes.lookup.byToken[activityData.activity_type_token];
+            let activityType =
+                befriend.activities.activityTypes.lookup.byToken[activityData.activity_type_token];
             let activityImage = activityType?.image || '';
             let activityName = activityType?.notification || 'Activity';
 
-            let startTime = dayjs(activityData.activity_start * 1000).format('h:mm a').toLowerCase();
-            let endTime = dayjs(activityData.activity_end * 1000).format('h:mm a').toLowerCase();
+            let startTime = dayjs(activityData.activity_start * 1000)
+                .format('h:mm a')
+                .toLowerCase();
+            let endTime = dayjs(activityData.activity_end * 1000)
+                .format('h:mm a')
+                .toLowerCase();
             let timeString = `${startTime} - ${endTime}`;
 
             let participants = [];
@@ -36,7 +41,10 @@ befriend.reviews = {
             let defaultPerson = null;
             let personInt = 0;
 
-            let personParamExists = person_token && person_token in activityData.persons && !activityData.persons[person_token].cancelled_at;
+            let personParamExists =
+                person_token &&
+                person_token in activityData.persons &&
+                !activityData.persons[person_token].cancelled_at;
 
             for (let personToken in activityData.persons) {
                 if (personToken === befriend.getPersonToken()) {
@@ -53,20 +61,20 @@ befriend.reviews = {
 
                 participants.push({
                     token: personToken,
-                    data: person
+                    data: person,
                 });
 
-                if(personParamExists) {
-                    if(personToken === person_token) {
+                if (personParamExists) {
+                    if (personToken === person_token) {
                         defaultPerson = {
                             token: personToken,
-                            data: person
+                            data: person,
                         };
                     }
                 } else if (!defaultPerson) {
                     defaultPerson = {
                         token: personToken,
-                        data: person
+                        data: person,
                     };
                 }
 
@@ -106,8 +114,9 @@ befriend.reviews = {
                     <div class="stars">
                         <div class="stars-container">
                             ${Array(5)
-                    .fill()
-                    .map(() => `
+                                .fill()
+                                .map(
+                                    () => `
                                 <div class="star-container">
                                     <svg class="outline" viewBox="0 0 24 24">
                                         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
@@ -116,7 +125,9 @@ befriend.reviews = {
                                         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                                     </svg>
                                 </div>
-                            `).join('')}
+                            `,
+                                )
+                                .join('')}
                         </div>
                     </div>
                 </div>
@@ -186,16 +197,35 @@ befriend.reviews = {
             }
 
             const ratings = [
-                { name: 'Safety', current_rating: isNumeric(reviews.safety) ? parseFloat(reviews.safety) : null },
-                { name: 'Trust', current_rating: isNumeric(reviews.trust) ? parseFloat(reviews.trust) : null },
-                { name: 'Timeliness', current_rating: isNumeric(reviews.timeliness) ? parseFloat(reviews.timeliness) : null },
-                { name: 'Friendliness', current_rating: isNumeric(reviews.friendliness) ? parseFloat(reviews.friendliness) : null },
-                { name: 'Fun', current_rating: isNumeric(reviews.fun) ? parseFloat(reviews.fun) : null }
+                {
+                    name: 'Safety',
+                    current_rating: isNumeric(reviews.safety) ? parseFloat(reviews.safety) : null,
+                },
+                {
+                    name: 'Trust',
+                    current_rating: isNumeric(reviews.trust) ? parseFloat(reviews.trust) : null,
+                },
+                {
+                    name: 'Timeliness',
+                    current_rating: isNumeric(reviews.timeliness)
+                        ? parseFloat(reviews.timeliness)
+                        : null,
+                },
+                {
+                    name: 'Friendliness',
+                    current_rating: isNumeric(reviews.friendliness)
+                        ? parseFloat(reviews.friendliness)
+                        : null,
+                },
+                {
+                    name: 'Fun',
+                    current_rating: isNumeric(reviews.fun) ? parseFloat(reviews.fun) : null,
+                },
             ];
 
             let reviews_html = '';
 
-            for(let rating of ratings) {
+            for (let rating of ratings) {
                 reviews_html += `
                     <div class="review ${rating.current_rating === null ? 'no-rating' : ''}">
                         <div class="name">
@@ -209,14 +239,20 @@ befriend.reviews = {
                         <div class="stars">
                             <div class="stars-container">
                                 ${Array(5)
-                            .fill()
-                            .map((_, i) => {
-                                const fillPercentage = Math.max(0, Math.min(100, (rating.current_rating - i) * 100));
-                                const fillStyle = fillPercentage === 0 ? 'fill: transparent;' :
-                                    fillPercentage === 100 ? `fill: ${befriend.variables.brand_color_a};` :
-                                        `fill: ${befriend.variables.brand_color_a}; clip-path: polygon(0 0, ${fillPercentage}% 0, ${fillPercentage}% 100%, 0 100%);`;
-                                
-                                return `
+                                    .fill()
+                                    .map((_, i) => {
+                                        const fillPercentage = Math.max(
+                                            0,
+                                            Math.min(100, (rating.current_rating - i) * 100),
+                                        );
+                                        const fillStyle =
+                                            fillPercentage === 0
+                                                ? 'fill: transparent;'
+                                                : fillPercentage === 100
+                                                  ? `fill: ${befriend.variables.brand_color_a};`
+                                                  : `fill: ${befriend.variables.brand_color_a}; clip-path: polygon(0 0, ${fillPercentage}% 0, ${fillPercentage}% 100%, 0 100%);`;
+
+                                        return `
                                         <div class="star-container">
                                             <svg class="outline" viewBox="0 0 24 24">
                                                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
@@ -225,7 +261,9 @@ befriend.reviews = {
                                                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                                             </svg>
                                         </div>
-                                    `}).join('')}
+                                    `;
+                                    })
+                                    .join('')}
                             </div>
                         </div>
                     </div>
@@ -234,18 +272,18 @@ befriend.reviews = {
 
             let count_html = '';
 
-            if(with_count) {
+            if (with_count) {
                 count_html = `<div class="count">${person.reviews.count || 0} review${person.reviews.count !== 1 ? 's' : ''}</div>`;
             }
 
             return `${count_html}
-                <div class="reviews-container">${reviews_html}</div>`
+                <div class="reviews-container">${reviews_html}</div>`;
         },
     },
-    toggleOverlay: async function(show) {
+    toggleOverlay: async function (show) {
         let overlayEl = document.getElementById('reviews-overlay');
 
-        if(show && elHasClass(overlayEl, 'active')) {
+        if (show && elHasClass(overlayEl, 'active')) {
             return;
         }
 
@@ -257,14 +295,16 @@ befriend.reviews = {
             removeClassEl('active', overlayEl);
             removeClassEl('no-scroll', document.body);
 
-            setTimeout(function() {
+            setTimeout(function () {
                 removeClassEl('transition-out', overlayEl);
             }, befriend.variables.reviews_transition_ms);
         }
     },
-    saveRating: function(activityToken, personToken, type, rating) {
+    saveRating: function (activityToken, personToken, type, rating) {
         let activity = befriend.activities.data.getActivity(activityToken);
-        let reviewCard = document.querySelector(`.review-card[data-activity-token="${activityToken}"]`);
+        let reviewCard = document.querySelector(
+            `.review-card[data-activity-token="${activityToken}"]`,
+        );
 
         if (!activity || !reviewCard) {
             return;
@@ -290,19 +330,23 @@ befriend.reviews = {
 
                 let activity = befriend.activities.data.getActivity(activityToken);
 
-                if(activity.access?.token) {
+                if (activity.access?.token) {
                     //update review on originating network
                     try {
-                        r = await befriend.networks.put(activity.access.domain, `/activities/networks/reviews/${activityToken}`, {
-                            access_token: activity.access.token,
-                            person_token: befriend.getPersonToken(),
-                            person_to_token: personToken,
-                            review: {
-                                type,
-                                rating
-                            }
-                        });
-                    } catch(e) {
+                        r = await befriend.networks.put(
+                            activity.access.domain,
+                            `/activities/networks/reviews/${activityToken}`,
+                            {
+                                access_token: activity.access.token,
+                                person_token: befriend.getPersonToken(),
+                                person_to_token: personToken,
+                                review: {
+                                    type,
+                                    rating,
+                                },
+                            },
+                        );
+                    } catch (e) {
                         console.error(e);
                     }
 
@@ -312,10 +356,10 @@ befriend.reviews = {
                             person_to_token: personToken,
                             review: {
                                 type,
-                                rating
-                            }
+                                rating,
+                            },
                         });
-                    } catch(e) {
+                    } catch (e) {
                         console.error(e);
                     }
                 } else {
@@ -323,13 +367,13 @@ befriend.reviews = {
                         person_to_token: personToken,
                         review: {
                             type,
-                            rating
-                        }
+                            rating,
+                        },
                     });
                 }
 
-                if(r.status === 202) {
-                    if(r.data) {
+                if (r.status === 202) {
+                    if (r.data) {
                         befriend.activities.data.updateReviews(personToken, r.data);
                     }
 
@@ -344,9 +388,11 @@ befriend.reviews = {
             }
         }, 200);
     },
-    saveNoShow: function(activityToken, personToken, isNoShow) {
+    saveNoShow: function (activityToken, personToken, isNoShow) {
         let activity = befriend.activities.data.getActivity(activityToken);
-        let reviewCard = document.querySelector(`.review-card[data-activity-token="${activityToken}"]`);
+        let reviewCard = document.querySelector(
+            `.review-card[data-activity-token="${activityToken}"]`,
+        );
 
         if (!activity || !reviewCard) {
             return;
@@ -372,16 +418,20 @@ befriend.reviews = {
 
                 let activity = befriend.activities.data.getActivity(activityToken);
 
-                if(activity.access?.token) {
+                if (activity.access?.token) {
                     //update no show on originating network
                     try {
-                        r = await befriend.networks.put(activity.access.domain, `/activities/networks/reviews/${activityToken}`, {
-                            access_token: activity.access.token,
-                            person_token: befriend.getPersonToken(),
-                            person_to_token: personToken,
-                            no_show: isNoShow
-                        });
-                    } catch(e) {
+                        r = await befriend.networks.put(
+                            activity.access.domain,
+                            `/activities/networks/reviews/${activityToken}`,
+                            {
+                                access_token: activity.access.token,
+                                person_token: befriend.getPersonToken(),
+                                person_to_token: personToken,
+                                no_show: isNoShow,
+                            },
+                        );
+                    } catch (e) {
                         console.error(e);
                     }
 
@@ -389,20 +439,20 @@ befriend.reviews = {
                     try {
                         let r2 = await befriend.auth.put(`/activities/${activityToken}/reviews`, {
                             person_to_token: personToken,
-                            no_show: isNoShow
+                            no_show: isNoShow,
                         });
-                    } catch(e) {
+                    } catch (e) {
                         console.error(e);
                     }
                 } else {
                     r = await befriend.auth.put(`/activities/${activityToken}/reviews`, {
                         person_to_token: personToken,
-                        no_show: isNoShow
+                        no_show: isNoShow,
                     });
                 }
 
-                if(r.status === 202) {
-                    if(r.data) {
+                if (r.status === 202) {
+                    if (r.data) {
                         befriend.activities.data.updateReviews(personToken, r.data);
                     }
 
@@ -417,11 +467,13 @@ befriend.reviews = {
             }
         }, 200);
     },
-    centerActiveIndicator: function() {
-        let indicatorsContainer = document.getElementById('reviews-overlay').querySelector('.slide-indicators');
+    centerActiveIndicator: function () {
+        let indicatorsContainer = document
+            .getElementById('reviews-overlay')
+            .querySelector('.slide-indicators');
         let innerContainer = indicatorsContainer.querySelector('.slide-indicators-inner');
 
-        if(!innerContainer) {
+        if (!innerContainer) {
             return;
         }
 
@@ -433,14 +485,16 @@ befriend.reviews = {
 
         let indicatorWidth = befriend.variables.reviews_indicator_dim;
         let indicatorGap = befriend.variables.reviews_indicator_gap;
-        let activeIndex = Array.from(innerContainer.querySelectorAll('.slide-indicator'))
-            .findIndex(indicator => elHasClass(indicator, 'active'));
+        let activeIndex = Array.from(innerContainer.querySelectorAll('.slide-indicator')).findIndex(
+            (indicator) => elHasClass(indicator, 'active'),
+        );
 
         let containerBox = indicatorsContainer.getBoundingClientRect();
         let containerWidth = indicatorsContainer.offsetWidth;
         let containerCenter = containerWidth / 2 - indicatorWidth / 2;
 
-        let activeIndicatorCenter = (activeIndex * (indicatorWidth + indicatorGap)) + (indicatorWidth / 2);
+        let activeIndicatorCenter =
+            activeIndex * (indicatorWidth + indicatorGap) + indicatorWidth / 2;
 
         let targetScrollLeft = activeIndicatorCenter - containerCenter + containerBox.left / 2;
 
@@ -448,12 +502,12 @@ befriend.reviews = {
             indicatorsContainer.scrollLeft = Math.max(0, targetScrollLeft);
         });
     },
-    nextSlide: function() {
+    nextSlide: function () {
         if (this.current.index < this.activities.length - 1) {
             this.goToSlide(this.current.index + 1);
         }
     },
-    prevSlide: function() {
+    prevSlide: function () {
         if (this.current.index > 0) {
             this.goToSlide(this.current.index - 1);
         }
@@ -461,14 +515,14 @@ befriend.reviews = {
     updateInterval: function () {
         //update is_reviewable property on activity periodically
         setInterval(function () {
-            if(!befriend.activities.data.all) {
+            if (!befriend.activities.data.all) {
                 return;
             }
 
-            for(let activity_token in befriend.activities.data.all) {
+            for (let activity_token in befriend.activities.data.all) {
                 let activity = befriend.activities.data.all[activity_token];
 
-                if(!activity.data) {
+                if (!activity.data) {
                     continue;
                 }
 
@@ -477,7 +531,7 @@ befriend.reviews = {
         }, 60 * 1000);
     },
     isReviewable: function (activity) {
-        if(befriend.reviews.debug) {
+        if (befriend.reviews.debug) {
             return true;
         }
 
@@ -486,21 +540,21 @@ befriend.reviews = {
         return timeNow(true) > activity.activity_end && activity.activity_end > reviewThreshold;
     },
     setReviews: function (reviews) {
-        for(let activity_token in reviews) {
+        for (let activity_token in reviews) {
             let activity = reviews[activity_token];
 
-            if(!this.data[activity_token]) {
-                this.data[activity_token] = {}
+            if (!this.data[activity_token]) {
+                this.data[activity_token] = {};
             }
 
-            for(let person_token in activity) {
-                if(!this.data[activity_token][person_token]) {
+            for (let person_token in activity) {
+                if (!this.data[activity_token][person_token]) {
                     this.data[activity_token][person_token] = {};
                 }
 
                 let data = activity[person_token];
 
-                for(let key in data) {
+                for (let key in data) {
                     this.data[activity_token][person_token][key] = data[key];
                 }
             }
@@ -509,7 +563,7 @@ befriend.reviews = {
     getActivities: function (force_activity_token = null) {
         let activities = befriend.activities.data.all;
 
-        if(!activities) {
+        if (!activities) {
             return null;
         }
 
@@ -523,23 +577,23 @@ befriend.reviews = {
         let activitiesFiltered = [];
 
         //filter by activity finished, cancelled
-        for(let activity of activities) {
-            if(!force_activity_token || activity.activity_token !== force_activity_token) {
-                if(!activity.data.is_reviewable || !activity.data.persons) {
+        for (let activity of activities) {
+            if (!force_activity_token || activity.activity_token !== force_activity_token) {
+                if (!activity.data.is_reviewable || !activity.data.persons) {
                     continue;
                 }
 
                 //do not include activities that were already reviewed for every person
                 let existingRatings = this.data[activity.activity_token];
 
-                if(Object.keys(existingRatings || {}).length) {
-                    const allFinished = Object.values(existingRatings).every(data => {
+                if (Object.keys(existingRatings || {}).length) {
+                    const allFinished = Object.values(existingRatings).every((data) => {
                         if (data.noShow) {
                             return true;
                         }
 
-                        return Object.keys(befriend.filters.reviews.ratings).every(key =>
-                            isNumeric(data[key])
+                        return Object.keys(befriend.filters.reviews.ratings).every((key) =>
+                            isNumeric(data[key]),
                         );
                     });
 
@@ -550,7 +604,7 @@ befriend.reviews = {
 
                 let isValid = befriend.reviews.activityValid(activity.activity_token);
 
-                if(!isValid) {
+                if (!isValid) {
                     continue;
                 }
             }
@@ -565,33 +619,33 @@ befriend.reviews = {
     activityValid: function (activity_token) {
         let activity = befriend.activities.data.getActivity(activity_token);
 
-        if(!activity) {
+        if (!activity) {
             return false;
         }
 
         //allow reviewing only after official end time of activity
-        if(timeNow(true) < activity.activity_end && !this.debug) {
+        if (timeNow(true) < activity.activity_end && !this.debug) {
             return false;
         }
 
         //do not allow reviewing if person cancelled participation or entire activity was cancelled
         let isCancelled = befriend.activities.data.isCancelled(activity.activity_token);
 
-        if(isCancelled) {
+        if (isCancelled) {
             return false;
         }
 
         //ensure activity had at least one person other than me
         let activeParticipants = [];
 
-        for(let person_token in activity.data.persons) {
-            if(person_token === befriend.getPersonToken()) {
+        for (let person_token in activity.data.persons) {
+            if (person_token === befriend.getPersonToken()) {
                 continue;
             }
 
             let person = activity.data.persons[person_token];
 
-            if(person.cancelled_at) {
+            if (person.cancelled_at) {
                 continue;
             }
 
@@ -600,17 +654,21 @@ befriend.reviews = {
 
         return !!activeParticipants.length;
     },
-    showReviewActivities: function (activity_token = null, person_token = null, skipTransition = false) {
+    showReviewActivities: function (
+        activity_token = null,
+        person_token = null,
+        skipTransition = false,
+    ) {
         let activities = this.getActivities(activity_token);
 
-        if(!activities.length) {
+        if (!activities.length) {
             return;
         }
 
         let initialIndex = 0;
 
         if (activity_token) {
-            let activityIndex = activities.findIndex(a => a.activity_token === activity_token);
+            let activityIndex = activities.findIndex((a) => a.activity_token === activity_token);
 
             if (activityIndex !== -1) {
                 initialIndex = activityIndex;
@@ -619,12 +677,14 @@ befriend.reviews = {
 
         this.current.index = initialIndex;
 
-        let activitiesContainerEl = document.getElementById('reviews-overlay').querySelector('.activities-container');
+        let activitiesContainerEl = document
+            .getElementById('reviews-overlay')
+            .querySelector('.activities-container');
         let arrowsEl = document.getElementById('reviews-overlay').querySelector('.arrows');
 
         let activities_html = ``;
 
-        for(let activity of activities) {
+        for (let activity of activities) {
             let html = this.html.reviewsOverlay(activity, person_token);
 
             activities_html += `<div class="activity-slide">${html}</div>`;
@@ -636,7 +696,7 @@ befriend.reviews = {
         let prevArrow = document.getElementById('reviews-prev-arrow');
         let nextArrow = document.getElementById('reviews-next-arrow');
 
-        if(showArrows) {
+        if (showArrows) {
             addClassEl('show', arrowsEl);
         } else {
             removeClassEl('show', arrowsEl);
@@ -662,12 +722,14 @@ befriend.reviews = {
 
         befriend.reviews.toggleOverlay(true);
     },
-    toggleNoShow: function(activityToken, personToken, isNoShow) {
+    toggleNoShow: function (activityToken, personToken, isNoShow) {
         let ratings = this.getPersonRatings(activityToken, personToken);
 
         ratings.noShow = isNoShow;
 
-        let reviewCard = document.querySelector(`.review-card[data-activity-token="${activityToken}"]`);
+        let reviewCard = document.querySelector(
+            `.review-card[data-activity-token="${activityToken}"]`,
+        );
 
         if (!reviewCard) {
             return;
@@ -688,8 +750,10 @@ befriend.reviews = {
 
         this.saveNoShow(activityToken, personToken, isNoShow);
     },
-    goToSlide: function(index) {
-        let containerEl = document.getElementById('reviews-overlay').querySelector('.activities-container');
+    goToSlide: function (index) {
+        let containerEl = document
+            .getElementById('reviews-overlay')
+            .querySelector('.activities-container');
 
         if (index < 0) {
             index = 0;
@@ -717,13 +781,15 @@ befriend.reviews = {
             nextArrow.classList.toggle('disabled', index === this.activities.length - 1);
         }
 
-        let indicatorsContainer = document.getElementById('reviews-overlay').querySelector('.slide-indicators');
+        let indicatorsContainer = document
+            .getElementById('reviews-overlay')
+            .querySelector('.slide-indicators');
         let innerContainer = indicatorsContainer.querySelector('.slide-indicators-inner');
 
         if (innerContainer) {
             let indicators = innerContainer.querySelectorAll('.slide-indicator');
 
-            if(!indicators.length) {
+            if (!indicators.length) {
                 return;
             }
 
@@ -741,7 +807,7 @@ befriend.reviews = {
         }
     },
     getPersonRatings: function (activityToken, personToken) {
-        if(!befriend.reviews.data[activityToken]) {
+        if (!befriend.reviews.data[activityToken]) {
             befriend.reviews.data[activityToken] = {};
         }
 
@@ -751,8 +817,10 @@ befriend.reviews = {
 
         return befriend.reviews.data[activityToken][personToken];
     },
-    displayRatings: function(activityToken, personToken) {
-        let reviewCard = document.querySelector(`.review-card[data-activity-token="${activityToken}"]`);
+    displayRatings: function (activityToken, personToken) {
+        let reviewCard = document.querySelector(
+            `.review-card[data-activity-token="${activityToken}"]`,
+        );
 
         if (!reviewCard) {
             return;
@@ -774,7 +842,7 @@ befriend.reviews = {
             removeClassEl('active', noShowBtn);
             removeClassEl('disabled', ratingsSection);
 
-            if(!this.isReviewable(activity)) {
+            if (!this.isReviewable(activity)) {
                 addClassEl('dni', noShowSection);
             } else {
                 removeClassEl('dni', noShowSection);
@@ -803,7 +871,7 @@ befriend.reviews = {
             } else {
                 addClassEl('no-rating', option);
 
-                stars.forEach(star => {
+                stars.forEach((star) => {
                     let fill = star.querySelector('.fill');
                     fill.style.fill = 'transparent';
                     fill.style.removeProperty('clip-path');
@@ -813,8 +881,10 @@ befriend.reviews = {
 
         return { reviewCard, ratingOptions };
     },
-    clearAllRatings: function(activityToken, personToken) {
-        let reviewCard = document.querySelector(`.review-card[data-activity-token="${activityToken}"]`);
+    clearAllRatings: function (activityToken, personToken) {
+        let reviewCard = document.querySelector(
+            `.review-card[data-activity-token="${activityToken}"]`,
+        );
 
         if (!reviewCard) {
             return;
@@ -827,7 +897,7 @@ befriend.reviews = {
             let type = option.getAttribute('data-rating-type');
             let stars = option.querySelectorAll('.star-container');
 
-            stars.forEach(star => {
+            stars.forEach((star) => {
                 let fill = star.querySelector('.fill');
                 fill.style.fill = 'transparent';
                 fill.style.removeProperty('clip-path');
@@ -838,10 +908,12 @@ befriend.reviews = {
             addClassEl('no-rating', option);
         }
     },
-    selectDefaultPerson: function() {
+    selectDefaultPerson: function () {
         let activityToken = this.current.activity_token;
 
-        let reviewCard = document.querySelector(`.review-card[data-activity-token="${activityToken}"]`);
+        let reviewCard = document.querySelector(
+            `.review-card[data-activity-token="${activityToken}"]`,
+        );
 
         if (!reviewCard) {
             return;
@@ -849,14 +921,14 @@ befriend.reviews = {
 
         let personsNavEl = reviewCard.querySelector('.person-nav.active');
 
-        if(personsNavEl) {
+        if (personsNavEl) {
             this.current.person_token = personsNavEl.getAttribute('data-person-token');
             return;
         }
 
         let personsNavEls = reviewCard.getElementsByClassName('person-nav');
 
-        if(!personsNavEls.length) {
+        if (!personsNavEls.length) {
             return;
         }
 
@@ -864,21 +936,30 @@ befriend.reviews = {
     },
     showIfNew: function () {
         //do not show if notification view just shown
-        if(befriend.notifications.timing.lastShown && timeNow() - befriend.notifications.timing.lastShown < 1000) {
+        if (
+            befriend.notifications.timing.lastShown &&
+            timeNow() - befriend.notifications.timing.lastShown < 1000
+        ) {
             return;
         }
 
         let activities = this.getActivities();
 
-        if(!activities.length) {
+        if (!activities.length) {
             return;
         }
 
         let most_recent_activity = activities[0];
 
-        if(!this.lastNewActivityToken || this.lastNewActivityToken !== most_recent_activity.activity_token) {
+        if (
+            !this.lastNewActivityToken ||
+            this.lastNewActivityToken !== most_recent_activity.activity_token
+        ) {
             this.showReviewActivities();
-            befriend.user.setLocal('reviews.lastNewActivityToken', most_recent_activity.activity_token);
+            befriend.user.setLocal(
+                'reviews.lastNewActivityToken',
+                most_recent_activity.activity_token,
+            );
         }
     },
     events: {
@@ -893,7 +974,7 @@ befriend.reviews = {
         onClose: function () {
             let overlayEl = document.getElementById('reviews-overlay');
 
-            if(overlayEl._close_listener) {
+            if (overlayEl._close_listener) {
                 return;
             }
 
@@ -905,7 +986,7 @@ befriend.reviews = {
                 }
             });
 
-            document.addEventListener('keydown', function(e) {
+            document.addEventListener('keydown', function (e) {
                 if (e.key === 'Escape') {
                     befriend.reviews.toggleOverlay(false);
                 }
@@ -918,19 +999,21 @@ befriend.reviews = {
                 befriend.reviews.toggleOverlay(false);
             });
         },
-        onRatings: function() {
-            let reviewCards = document.getElementById('reviews-overlay').getElementsByClassName('review-card');
+        onRatings: function () {
+            let reviewCards = document
+                .getElementById('reviews-overlay')
+                .getElementsByClassName('review-card');
             let min = 1;
             let max = 5;
 
-            for(let card of Array.from(reviewCards)) {
+            for (let card of Array.from(reviewCards)) {
                 let ratingOptions = card.querySelectorAll('.rating-option');
                 let activityToken = card.getAttribute('data-activity-token');
                 let personToken = befriend.reviews.current.person_token;
 
                 befriend.reviews.displayRatings(activityToken, personToken);
 
-                for(let option of Array.from(ratingOptions)) {
+                for (let option of Array.from(ratingOptions)) {
                     let type = option.getAttribute('data-rating-type');
                     let stars = option.querySelectorAll('.star-container');
                     let clearBtn = option.querySelector('.clear-rating-btn .button');
@@ -938,11 +1021,14 @@ befriend.reviews = {
                     let updateRating = async (personToken, rating) => {
                         let activity = befriend.activities.data.getActivity(activityToken);
 
-                        if(!activity.data.is_reviewable) {
+                        if (!activity.data.is_reviewable) {
                             return;
                         }
 
-                        let personRatings = befriend.reviews.getPersonRatings(activityToken, personToken);
+                        let personRatings = befriend.reviews.getPersonRatings(
+                            activityToken,
+                            personToken,
+                        );
 
                         if (personRatings.noShow) {
                             return;
@@ -955,9 +1041,12 @@ befriend.reviews = {
                         if (rating > 0) {
                             rating = Math.max(min, Math.min(max, rating));
 
-                            let personRatings = befriend.reviews.getPersonRatings(activityToken, personToken);
+                            let personRatings = befriend.reviews.getPersonRatings(
+                                activityToken,
+                                personToken,
+                            );
 
-                            if(rating === personRatings[type]) {
+                            if (rating === personRatings[type]) {
                                 return;
                             }
 
@@ -983,13 +1072,16 @@ befriend.reviews = {
                     };
 
                     let clearRating = (personToken, onLoad) => {
-                        let personRatings = befriend.reviews.getPersonRatings(activityToken, personToken);
+                        let personRatings = befriend.reviews.getPersonRatings(
+                            activityToken,
+                            personToken,
+                        );
 
                         if (personRatings.noShow) {
                             return;
                         }
 
-                        stars.forEach(star => {
+                        stars.forEach((star) => {
                             let fill = star.querySelector('.fill');
                             fill.style.fill = 'transparent';
                             fill.style.removeProperty('clip-path');
@@ -997,7 +1089,7 @@ befriend.reviews = {
 
                         delete personRatings[type];
 
-                        if(!onLoad) {
+                        if (!onLoad) {
                             befriend.reviews.saveRating(activityToken, personToken, type, null);
                         }
 
@@ -1021,61 +1113,68 @@ befriend.reviews = {
 
                     let starsContainer = option.querySelector('.stars-container');
 
-                    starsContainer.addEventListener('touchstart', function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
+                    starsContainer.addEventListener(
+                        'touchstart',
+                        function (e) {
+                            e.preventDefault();
+                            e.stopPropagation();
 
-                        let startTouch = e.touches[0];
-                        let containerRect = starsContainer.getBoundingClientRect();
-                        let starWidth = containerRect.width / 5;
+                            let startTouch = e.touches[0];
+                            let containerRect = starsContainer.getBoundingClientRect();
+                            let starWidth = containerRect.width / 5;
 
-                        let isDragging = true;
+                            let isDragging = true;
 
-                        let getRatingFromPosition = (posX) => {
-                            let boundedX = Math.max(0, Math.min(containerRect.width, posX));
-                            return Math.ceil(boundedX / starWidth);
-                        };
+                            let getRatingFromPosition = (posX) => {
+                                let boundedX = Math.max(0, Math.min(containerRect.width, posX));
+                                return Math.ceil(boundedX / starWidth);
+                            };
 
-                        let startRating = getRatingFromPosition(startTouch.clientX - containerRect.left);
+                            let startRating = getRatingFromPosition(
+                                startTouch.clientX - containerRect.left,
+                            );
 
-                        updateRating(befriend.reviews.current.person_token, startRating);
+                            updateRating(befriend.reviews.current.person_token, startRating);
 
-                        let onTouchMove = (event) => {
-                            if (!isDragging) {
-                                return;
-                            }
+                            let onTouchMove = (event) => {
+                                if (!isDragging) {
+                                    return;
+                                }
 
-                            event.preventDefault();
-                            event.stopPropagation();
+                                event.preventDefault();
+                                event.stopPropagation();
 
-                            let touch = event.touches[0];
-                            let currentX = touch.clientX - containerRect.left;
+                                let touch = event.touches[0];
+                                let currentX = touch.clientX - containerRect.left;
 
-                            let newRating = getRatingFromPosition(currentX);
+                                let newRating = getRatingFromPosition(currentX);
 
-                            requestAnimationFrame(() => {
-                                updateRating(befriend.reviews.current.person_token, newRating);
-                            });
-                        };
+                                requestAnimationFrame(() => {
+                                    updateRating(befriend.reviews.current.person_token, newRating);
+                                });
+                            };
 
-                        let onTouchEnd = () => {
-                            isDragging = false;
-                            document.removeEventListener('touchmove', onTouchMove);
-                            document.removeEventListener('touchend', onTouchEnd);
-                        };
+                            let onTouchEnd = () => {
+                                isDragging = false;
+                                document.removeEventListener('touchmove', onTouchMove);
+                                document.removeEventListener('touchend', onTouchEnd);
+                            };
 
-                        document.addEventListener('touchmove', onTouchMove, { passive: false });
-                        document.addEventListener('touchend', onTouchEnd);
-                    }, { passive: false });
+                            document.addEventListener('touchmove', onTouchMove, { passive: false });
+                            document.addEventListener('touchend', onTouchEnd);
+                        },
+                        { passive: false },
+                    );
                 }
             }
         },
         onPersonNav: function () {
-            let personsNavEls = document.getElementById('reviews-overlay')
+            let personsNavEls = document
+                .getElementById('reviews-overlay')
                 .querySelectorAll('.person-nav');
 
-            for(let nav of Array.from(personsNavEls)) {
-                if(nav._listener) {
+            for (let nav of Array.from(personsNavEls)) {
+                if (nav._listener) {
                     continue;
                 }
 
@@ -1090,44 +1189,52 @@ befriend.reviews = {
 
                     let navs = nav.parentElement.getElementsByClassName('person-nav');
 
-                    for(let el of Array.from(navs)) {
+                    for (let el of Array.from(navs)) {
                         removeClassEl('active', el);
                     }
 
                     addClassEl('active', nav);
 
-                    befriend.reviews.displayRatings(befriend.reviews.current.activity_token, newPersonToken);
+                    befriend.reviews.displayRatings(
+                        befriend.reviews.current.activity_token,
+                        newPersonToken,
+                    );
                 });
             }
         },
-        onNoShow: function() {
-            let reviewCards = document.getElementById('reviews-overlay').getElementsByClassName('review-card');
+        onNoShow: function () {
+            let reviewCards = document
+                .getElementById('reviews-overlay')
+                .getElementsByClassName('review-card');
 
-            for(let card of Array.from(reviewCards)) {
+            for (let card of Array.from(reviewCards)) {
                 let noShowBtn = card.querySelector('.no-show-section .button');
                 let activityToken = card.getAttribute('data-activity-token');
 
-                if(noShowBtn._listener) {
+                if (noShowBtn._listener) {
                     continue;
                 }
 
                 noShowBtn._listener = true;
 
-                noShowBtn.addEventListener('click', function(e) {
+                noShowBtn.addEventListener('click', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
 
                     let activity = befriend.activities.data.getActivity(activityToken);
 
-                    if(!activity.data.is_reviewable) {
+                    if (!activity.data.is_reviewable) {
                         return;
                     }
 
                     let personToken = befriend.reviews.current.person_token;
-                    let personRatings = befriend.reviews.getPersonRatings(activityToken, personToken);
+                    let personRatings = befriend.reviews.getPersonRatings(
+                        activityToken,
+                        personToken,
+                    );
 
                     let isCurrentlyNoShow = personRatings.noShow || false;
-                    
+
                     befriend.reviews.toggleNoShow(activityToken, personToken, !isCurrentlyNoShow);
                 });
             }
@@ -1138,7 +1245,7 @@ befriend.reviews = {
             let prevArrow = document.getElementById('reviews-prev-arrow');
             let nextArrow = document.getElementById('reviews-next-arrow');
 
-            if(prevArrow._listener) {
+            if (prevArrow._listener) {
                 return;
             }
 
@@ -1147,7 +1254,7 @@ befriend.reviews = {
             prevArrow.addEventListener('click', (e) => {
                 e.stopPropagation();
 
-                if(!elHasClass(prevArrow, 'disabled')) {
+                if (!elHasClass(prevArrow, 'disabled')) {
                     befriend.reviews.prevSlide();
                 }
             });
@@ -1155,7 +1262,7 @@ befriend.reviews = {
             nextArrow.addEventListener('click', (e) => {
                 e.stopPropagation();
 
-                if(!elHasClass(nextArrow, 'disabled')) {
+                if (!elHasClass(nextArrow, 'disabled')) {
                     befriend.reviews.nextSlide();
                 }
             });
@@ -1170,8 +1277,10 @@ befriend.reviews = {
             container.addEventListener('touchstart', (e) => {
                 let target = e.target;
 
-                if(target.closest('.stars-container') || target.closest('.sliders-control')) {
-                    startX = null; moveX = null; initialTransform = null;
+                if (target.closest('.stars-container') || target.closest('.sliders-control')) {
+                    startX = null;
+                    moveX = null;
+                    initialTransform = null;
                     return;
                 }
 
@@ -1191,7 +1300,7 @@ befriend.reviews = {
 
                 let target = e.target;
 
-                if(target.closest('.stars-container') || target.closest('.sliders-control')) {
+                if (target.closest('.stars-container') || target.closest('.sliders-control')) {
                     return;
                 }
 
@@ -1220,7 +1329,10 @@ befriend.reviews = {
                     if (Math.abs(diff) < threshold) {
                         befriend.reviews.goToSlide(befriend.reviews.current.index);
                     } else {
-                        if (diff < 0 && befriend.reviews.current.index < befriend.reviews.activities.length - 1) {
+                        if (
+                            diff < 0 &&
+                            befriend.reviews.current.index < befriend.reviews.activities.length - 1
+                        ) {
                             befriend.reviews.nextSlide();
                         } else if (diff > 0 && befriend.reviews.current.index > 0) {
                             befriend.reviews.prevSlide();
@@ -1237,15 +1349,19 @@ befriend.reviews = {
                 isHorizontalSwipe = null;
             });
 
-            container.addEventListener('wheel', (e) => {
-                e.preventDefault();
-            }, { passive: false });
+            container.addEventListener(
+                'wheel',
+                (e) => {
+                    e.preventDefault();
+                },
+                { passive: false },
+            );
         },
         onIndicators: function () {
             let activities = befriend.reviews.activities;
 
             if (activities.length > 1) {
-                console.log("on indicators");
+                console.log('on indicators');
                 let indicatorsContainer = document.querySelector('.slide-indicators');
                 indicatorsContainer.innerHTML = '';
 
@@ -1273,6 +1389,6 @@ befriend.reviews = {
                     befriend.reviews.centerActiveIndicator();
                 }, 100);
             }
-        }
-    }
+        },
+    },
 };

@@ -62,5 +62,5 @@ befriend.modes = {
                               <path d="M1019.52,1785.22v-308.63" fill="none" stroke="#000" stroke-width="45" stroke-miterlimit="10"/>
                             </svg>`,
         },
-    ]
-}
+    ],
+};

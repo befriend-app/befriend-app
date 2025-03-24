@@ -26,8 +26,10 @@ befriend.html = {
         befriend.els.confirmMeAction = document.getElementById('confirm-me-action');
 
         befriend.els.mainActivitiesView = befriend.els.activities.querySelector('.main-view');
-        befriend.els.currentActivityView = befriend.els.activities.querySelector('.current-activity-view');
-        befriend.els.activityNotificationView = befriend.els.activities.querySelector('.notification-view');
+        befriend.els.currentActivityView =
+            befriend.els.activities.querySelector('.current-activity-view');
+        befriend.els.activityNotificationView =
+            befriend.els.activities.querySelector('.notification-view');
     },
     appInit: function () {
         return new Promise(async (resolve, reject) => {
@@ -303,8 +305,8 @@ befriend.html = {
                                             <div class="mode-wrapper">
                                                 <div class="mode-options">
                                                     ${befriend.modes.options
-                    .map(
-                        (option) => `
+                                                        .map(
+                                                            (option) => `
                                                         <div class="mode-option ${option.id} ${option.id === befriend.me.modes.selected ? 'selected' : ''}" data-mode="${option.id}">
                                                             <div class="content">
                                                                 <div class="icon">${option.icon}</div>
@@ -313,8 +315,8 @@ befriend.html = {
                                                             </div>
                                                         </div>
                                                     `,
-                    )
-                    .join('')}
+                                                        )
+                                                        .join('')}
                                                 </div>
                                                 
                                                 <div class="selected-mode-container">

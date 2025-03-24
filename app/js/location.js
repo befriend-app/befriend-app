@@ -14,7 +14,7 @@ befriend.location = {
             try {
                 await befriend.location.getLocation();
                 resolve();
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
                 return reject();
             }
@@ -187,7 +187,7 @@ befriend.location = {
                             lat: befriend.location.prev.server.lat,
                             lon: befriend.location.prev.server.lon,
                         },
-                        true
+                        true,
                     ) > MINIMUM_DISTANCE_THRESHOLD_KM
                 ) {
                     // Save location to server

@@ -114,7 +114,9 @@ befriend.places = {
                 befriend.places.search.toggleAutoComplete(true);
             }
 
-            befriend.places.events.handleSelectPlace(suggestions_el.getElementsByClassName('place'));
+            befriend.places.events.handleSelectPlace(
+                suggestions_el.getElementsByClassName('place'),
+            );
         },
         toggleAutoComplete: function (show) {
             if (show) {
@@ -365,7 +367,6 @@ befriend.places = {
                         }
                     }
 
-
                     //price
                     place_html.price += befriend.places.activity.html.getPrice(place);
 
@@ -455,7 +456,7 @@ befriend.places = {
 
                 let place_hours = befriend.places.getPlaceHours(place_data);
 
-                if(place_hours) {
+                if (place_hours) {
                     hours_el.innerHTML += `<div class="open-hours">${place_hours}</div>`;
                 }
 
@@ -532,8 +533,8 @@ befriend.places = {
                                                 <div class="no-rating">No Rating</div>
                                         </div>`;
                 }
-            }
-        }
+            },
+        },
     },
     setIsOpen: function (places) {
         if (!places) return;
@@ -584,7 +585,10 @@ befriend.places = {
         }
     },
     getPlace: function (place_id) {
-        return befriend.places.activity.data.obj[place_id] || befriend.places.search.autoComplete.obj[place_id];
+        return (
+            befriend.places.activity.data.obj[place_id] ||
+            befriend.places.search.autoComplete.obj[place_id]
+        );
     },
     toggleSpinner: function (show) {
         let spinnerEl = befriend.els.places.querySelector('.spinner');
@@ -696,7 +700,7 @@ befriend.places = {
         return html;
     },
     getPlaceHours: function (place) {
-        if(!place.hours) {
+        if (!place.hours) {
             return null;
         }
 
@@ -718,9 +722,9 @@ befriend.places = {
         //get hours for day, Monday = 1, Tuesday = 2, Sunday = 7
         let day = new Date().getDay();
 
-        let dayHours = place.hours.find(item => item.day === day);
+        let dayHours = place.hours.find((item) => item.day === day);
 
-        if(!dayHours) {
+        if (!dayHours) {
             return null;
         }
 
@@ -804,7 +808,10 @@ befriend.places = {
                         let activity_type = befriend.activities.activityTypes.getCurrent();
 
                         if (activity_type) {
-                            befriend.activities.createActivity.updateDuration(activity_type.duration, true);
+                            befriend.activities.createActivity.updateDuration(
+                                activity_type.duration,
+                                true,
+                            );
                         }
                     } else {
                         befriend.places.selected.is_activity_type = false;

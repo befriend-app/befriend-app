@@ -76,16 +76,16 @@ befriend.me = {
                     <div class="label">Your Partner</div>
                     <div class="options">
                         ${genders
-                        .filter((gender) => gender.is_visible)
-                        .map(
-                            (gender) => `
+                            .filter((gender) => gender.is_visible)
+                            .map(
+                                (gender) => `
                                 <div class="option ${befriend.me.data.me.modes?.partner?.gender_id === gender.id ? 'selected' : ''}" 
                                      data-gender="${gender.token}">
                                     ${gender.name}
                                 </div>
                             `,
-                        )
-                        .join('')}
+                            )
+                            .join('')}
                     </div>
                 </div>`;
                 }
@@ -158,7 +158,9 @@ befriend.me = {
             }
         },
         addKidHtml: function (kid = {}) {
-            let kid_els = befriend.els.me.querySelector('.kids-section').getElementsByClassName('kid');
+            let kid_els = befriend.els.me
+                .querySelector('.kids-section')
+                .getElementsByClassName('kid');
             let count = kid_els.length + 1;
 
             let age_options = '';
@@ -187,7 +189,11 @@ befriend.me = {
                 }
 
                 let gender_name =
-                    gender.token === 'male' ? 'Boy' : gender.token === 'female' ? 'Girl' : gender.name;
+                    gender.token === 'male'
+                        ? 'Boy'
+                        : gender.token === 'female'
+                          ? 'Girl'
+                          : gender.name;
 
                 gender_options += `
                 <div class="option ${kid.gender_id === gender.id ? 'selected' : ''}" 
@@ -268,7 +274,7 @@ befriend.me = {
         hasValidPartner: function () {
             let hasPartnerSelected = befriend.me.modes.selected.includes('mode-partner');
 
-            if(!hasPartnerSelected) {
+            if (!hasPartnerSelected) {
                 return false;
             }
 
@@ -278,7 +284,7 @@ befriend.me = {
         hasValidKids: function () {
             let hasKidsSelected = befriend.me.modes.selected.includes('mode-kids');
 
-            if(!hasKidsSelected) {
+            if (!hasKidsSelected) {
                 return false;
             }
 
@@ -286,7 +292,7 @@ befriend.me = {
 
             if (befriend.me.data.me.modes?.kids) {
                 for (let kid of Object.values(befriend.me.data.me.modes.kids)) {
-                    if(kid.gender_id && kid.age_id && kid.is_active) {
+                    if (kid.gender_id && kid.age_id && kid.is_active) {
                         hasValidKid = true;
                         break;
                     }
@@ -294,8 +300,7 @@ befriend.me = {
             }
 
             return hasValidKid;
-
-        }
+        },
     },
     init: function () {
         return new Promise(async (resolve, reject) => {
@@ -345,7 +350,7 @@ befriend.me = {
                 }
 
                 //set debug settings from backend
-                if(data.debug?.reviews?.reviewable) {
+                if (data.debug?.reviews?.reviewable) {
                     befriend.reviews.debug = true;
                 }
 
@@ -857,7 +862,7 @@ befriend.me = {
             }
 
             //select first category if exists
-            if(!skip_save) {
+            if (!skip_save) {
                 let category_btns = section_el.getElementsByClassName('category-btn');
 
                 if (category_btns && category_btns.length) {
@@ -2410,7 +2415,10 @@ befriend.me = {
 
                 requestAnimationFrame(() => {
                     //remove is-draggable from all els
-                    removeElsClass(befriend.els.me.querySelectorAll('.section.is-draggable'), 'is-draggable');
+                    removeElsClass(
+                        befriend.els.me.querySelectorAll('.section.is-draggable'),
+                        'is-draggable',
+                    );
                     reorderEl.style.transform = '';
                 });
             },
@@ -3091,11 +3099,11 @@ befriend.me = {
         },
         onSectionReorder: function () {
             function isSectionOpen(section) {
-                  return !elHasClass(section, 'collapsed');
+                return !elHasClass(section, 'collapsed');
             }
 
             let TOUCH_DELAY = 40; //40 when section closed, 80 when open
-            let MOVE_THRESHOLD = 6 //6 when closed, 3 when open
+            let MOVE_THRESHOLD = 6; //6 when closed, 3 when open
             let touchTimeout;
             let initialTouchY;
             let hasMoved;
@@ -3123,7 +3131,7 @@ befriend.me = {
 
                         if (!initialTouchY) return;
 
-                        if(isSectionOpen(section)) {
+                        if (isSectionOpen(section)) {
                             MOVE_THRESHOLD = 3;
                         } else {
                             MOVE_THRESHOLD = 6;
@@ -3164,7 +3172,7 @@ befriend.me = {
 
                     clearTimeout(touchTimeout);
 
-                    if(isSectionOpen(section)) {
+                    if (isSectionOpen(section)) {
                         TOUCH_DELAY = 80;
                     } else {
                         TOUCH_DELAY = 40;

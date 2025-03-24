@@ -70,7 +70,9 @@ footer {
             }
 
             &.no-transition {
-                .container, .name, svg {
+                .container,
+                .name,
+                svg {
                     transition: none !important;
                 }
             }
