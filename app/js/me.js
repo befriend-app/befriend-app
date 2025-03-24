@@ -344,6 +344,11 @@ befriend.me = {
                     befriend.me.data.country = data.country;
                 }
 
+                //set debug settings from backend
+                if(data.debug?.reviews?.reviewable) {
+                    befriend.reviews.debug = true;
+                }
+
                 //local data
                 befriend.user.setLocal('me.me', data.me);
             } catch (e) {
