@@ -435,7 +435,7 @@ befriend.places = {
                 let place_data = befriend.places.activity.data.obj[id];
 
                 if (!place_data) {
-                    console.error('No place data');
+                    console.warn('No place data');
                     continue;
                 }
 

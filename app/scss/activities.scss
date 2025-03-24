@@ -917,9 +917,13 @@
                 $w: 80px;
                 $mode-w: 76px;
                 display: flex;
-                gap: 0 5px;
+                gap: 15px 5px;
                 justify-content: space-between;
                 flex-wrap: wrap;
+
+                @media only screen and (max-width: 380px) {
+                    gap: 15px 3px;
+                }
 
                 .sub-section {
                     box-sizing: border-box;
