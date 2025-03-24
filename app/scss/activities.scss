@@ -457,17 +457,18 @@
     .notification-view, .current-activity-view {
         display: none;
         padding: 0 $padding_lr;
-        padding-top: calc(#{$activity_accept_decline_h});
+        //padding-top: calc(#{$activity_accept_decline_h});
         width: calc(100vw - #{$padding_lr * 2});
         overflow: hidden;
-        position: fixed;
-        top: 0;
+        //position: fixed;
+        //top: 0;
 
         .top-row {
             display: flex;
             align-items: center;
-            margin-top: calc(#{$message_h} + 17px);
+            margin-top: $message_h;
             padding: $overview_padding_tb 0;
+            padding-top: 20px;
         }
 
         h2 {
@@ -1230,6 +1231,10 @@
                     flex-wrap: wrap;
                     gap: 6px 10px;
                     width: 100%;
+
+                    @media only screen and (max-width: 380px) {
+                        gap: 3px 3px;
+                    }
                 }
 
                 .count {
@@ -1852,7 +1857,7 @@
 
         &.display-check-in {
             .activity {
-                transform: translateY(40px);
+                //transform: translateY(40px);
             }
 
             .check-in {

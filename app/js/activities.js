@@ -572,7 +572,8 @@ befriend.activities = {
             //update current activity view if active
             if(elHasClass(activitiesViewEl, 'active') && elHasClass(befriend.els.currentActivityView, 'show')) {
                 try {
-                    await befriend.activities.displayActivity.display(befriend.activities.displayActivity.currentToken, true, true);
+                    //todo
+                    // await befriend.activities.displayActivity.display(befriend.activities.displayActivity.currentToken, true, true);
                 } catch(e) {
 
                 }
