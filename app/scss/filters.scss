@@ -353,7 +353,7 @@
         display: flex;
         flex-direction: column;
         gap: 20px 0;
-        padding-top: calc($filters_matches_h + 60px);
+        padding-top: calc($filters_matches_offset_top);
 
         .group {
             .group-name {
@@ -378,6 +378,7 @@
         padding: 0 0;
         background: white;
         position: relative;
+        width: calc(100vw - ($view_padding_lr) * 2);
 
         .section-top {
             $icon_width: 30px;

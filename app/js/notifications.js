@@ -139,8 +139,12 @@ befriend.notifications = {
             } else if(activity_data.notification.accepted_at) {
 
             } else if(timeNow(true) > activity_data.activity.activity_end) {
-                befriend.notifications.showUnavailable(befriend.activities.messages.past, true);
+                befriend.notifications.showUnavailable(befriend.notifications.messages.past, true);
             }
+
+            let prevScroll = befriend.activities.scroll.notifications[activity_token] || 0;
+            let viewEl = befriend.els.views.querySelector('.view-activities');
+            viewEl.scrollTop = prevScroll;
 
              //show view
              removeClassEl('show', befriend.els.mainActivitiesView);

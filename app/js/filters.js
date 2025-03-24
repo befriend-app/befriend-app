@@ -4641,21 +4641,57 @@ befriend.filters = {
         });
     },
     initNavigation: function () {
+        const scrollEl = befriend.els.views.querySelector('.view-filters');
         const nav = befriend.els.filters.querySelector('.filters-nav');
+        const navScroll = nav.querySelector('.nav-scroll');
         const navButtons = nav.querySelectorAll('.nav-button');
         const sections = befriend.els.filters.querySelector('.sections');
         const groups = sections.querySelectorAll('.group');
-        let isScrolling = false; // Flag to track programmatic scrolling
+        let isScrolling = false;
 
-        // Set first button as active initially
         if (navButtons.length) {
             addClassEl('active', navButtons[0]);
+            // Ensure the initially active button is visible
+            scrollActiveButtonIntoView(navButtons[0]);
         }
 
-        let groupOffsetTop = befriend.styles.getVariableValue('view-top') + befriend.variables.filters_matches_h + 60;
+        let groupOffsetTop = calculateOffsetTop();
 
-        // Add click handlers to nav buttons
-        for (let button of navButtons) {
+        function calculateOffsetTop() {
+            return befriend.styles.getVariableValue('view-top') + befriend.variables.filters_matches_offset_top;
+        }
+
+        window.addEventListener('resize', () => {
+            groupOffsetTop = calculateOffsetTop();
+        });
+
+        function scrollActiveButtonIntoView(activeButton, isScrollingUp = false) {
+            if (!activeButton) {
+                return;
+            }
+
+            const navRect = nav.getBoundingClientRect();
+            const buttonRect = activeButton.getBoundingClientRect();
+
+            if (buttonRect.left < navRect.left || buttonRect.right > navRect.right) {
+                let scrollLeft;
+
+                if (isScrollingUp) {
+                    scrollLeft = activeButton.offsetLeft - (navRect.width - activeButton.offsetWidth);
+                } else {
+                    scrollLeft = activeButton.offsetLeft;
+                }
+
+                navScroll.scrollTo({
+                    left: scrollLeft,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        for (let i = 0; i < navButtons.length; i++) {
+            let button = navButtons[i];
+
             button.addEventListener('click', () => {
                 const groupKey = button.getAttribute('data-group');
                 const targetGroup = sections.querySelector(`.group[data-group="${groupKey}"]`);
@@ -4664,79 +4700,107 @@ befriend.filters = {
                     removeElsClass(navButtons, 'active');
                     addClassEl('active', button);
 
+                    scrollActiveButtonIntoView(button, i > prevIndex);
+
                     isScrolling = true;
 
-                    // Get the absolute position of the target group relative to the document
-                    const targetOffset =
-                        targetGroup.getBoundingClientRect().top + window.pageYOffset;
+                    const targetOffset = targetGroup.offsetTop;
 
-                    // Add padding and scroll
-                    window.scrollTo({
-                        top: targetOffset - groupOffsetTop,
+                    scrollEl.scrollTo({
+                        top: targetOffset - groupOffsetTop + 10,
                         behavior: 'smooth',
                     });
 
-                    // Reset scrolling flag after animation completes
+                    const scrollEndCheck = setInterval(() => {
+                        if (Math.abs(scrollEl.scrollTop - (targetOffset - groupOffsetTop)) < 2) {
+                            isScrolling = false;
+                            clearInterval(scrollEndCheck);
+                        }
+                    }, 100);
+
                     setTimeout(() => {
                         isScrolling = false;
-                    }, 500);
+                        clearInterval(scrollEndCheck);
+                    }, 1000);
                 }
             });
         }
 
-        // Track scroll position and update active button
         let scrollTimeout;
-        window.addEventListener('scroll', () => {
-            // Skip scroll handling if we're programmatically scrolling
-            if (isScrolling) return;
+        let lastScrollTop = scrollEl.scrollTop;
+        let prevIndex = 0;
+
+        function updateActiveButtonOnScroll() {
+            if(!befriend.isViewShown('filters')) {
+                return;
+            }
+
+            let threshold = groupOffsetTop;
+            let scrollingUp = scrollEl.scrollTop > lastScrollTop;
+
+            console.log({prevIndex, threshold, scrollingUp, lastScrollTop, current: scrollEl.scrollTop});
+
+            let selected = {
+                top: null,
+                index: null,
+                el: null
+            }
+
+            for(let i = 0; i < groups.length; i++) {
+                let group = groups[i];
+                let groupBox = group.getBoundingClientRect();
+
+                console.log(groupBox);
+
+                if(groupBox.top <= threshold) {
+                    if(selected.top === null || groupBox.top > selected.top) {
+                        selected.top = groupBox.top;
+                        selected.index = i;
+                        selected.el = group;
+                    }
+                }
+            }
+
+            //select last section
+            if(selected.index === groups.length - 2) {
+                let lastGroupBox = groups[groups.length - 1].getBoundingClientRect();
+
+                let diff = lastGroupBox.top - threshold;
+
+                if(diff > 0 && diff < 60) {
+                    selected.index++;
+                }
+            }
+
+            console.log(selected);
+
+            lastScrollTop = scrollEl.scrollTop;
+
+            if(selected.index !== null && selected.index !== prevIndex) {
+                removeElsClass(navButtons, 'active');
+                addClassEl('active', navButtons[selected.index]);
+
+                scrollActiveButtonIntoView(navButtons[selected.index], scrollingUp);
+
+                prevIndex = selected.index;
+            }
+        }
+
+        scrollEl.addEventListener('scroll', () => {
+            if (!befriend.isViewShown('filters')) {
+                return;
+            }
+
+            if (isScrolling) {
+                return;
+            }
 
             if (scrollTimeout) {
                 clearTimeout(scrollTimeout);
             }
 
             scrollTimeout = setTimeout(() => {
-                // Find the currently visible group
-                let activeGroup = null;
-
-                for (let group of groups) {
-                    // Get the distance from the top of the viewport to the group
-                    const rect = group.getBoundingClientRect();
-
-                    if (rect.top <= groupOffsetTop && rect.bottom > groupOffsetTop) {
-                        activeGroup = group;
-                        break;
-                    }
-                }
-
-                // Update active button
-                if (activeGroup) {
-                    const groupKey = activeGroup.getAttribute('data-group');
-
-                    for (let button of navButtons) {
-                        if (button.getAttribute('data-group') === groupKey) {
-                            addClassEl('active', button);
-
-                            // Scroll button into view if needed
-                            const buttonLeft = button.offsetLeft;
-                            const buttonWidth = button.offsetWidth;
-                            const navWidth = nav.offsetWidth;
-                            const navScroll = nav.querySelector('.nav-scroll');
-                            const scrollLeft = navScroll.scrollLeft;
-
-                            if (
-                                buttonLeft < scrollLeft ||
-                                buttonLeft + buttonWidth > scrollLeft + navWidth
-                            ) {
-                                navScroll.scrollTo({
-                                    left: buttonLeft - navWidth / 2 + buttonWidth / 2,
-                                    behavior: 'smooth',
-                                });
-                            }
-                        } else {
-                            removeClassEl('active', button);
-                        }
-                    }
-                }
+                updateActiveButtonOnScroll();
             }, 10);
         });
     },

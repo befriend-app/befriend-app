@@ -73,6 +73,11 @@ befriend.activities = {
             }
         }
     },
+    scroll: {
+        main: null,
+        activities: {},
+        notifications: {}
+    },
     init: function() {
         console.log('[init] Activities');
 
@@ -2983,6 +2988,7 @@ befriend.activities = {
         }
     },
     displayActivity: {
+        scroll: {}, //y position by activity token
         currentToken: null,
         messages: {
             notifications_sent: 'Notifications sent to matches.',
@@ -3034,7 +3040,7 @@ befriend.activities = {
         },
         display: async function (activity_token, no_transition, skip_enrich, cancelled_at = null) {
             try {
-                let prevScroll, prevWhoToken, prevMatchingToken, prevTopHeight = 0, prevData = {};
+                let prevWhoToken, prevMatchingToken, prevTopHeight = 0, prevData = {};
                 let prevActivityToken = this.currentToken;
 
                 let activity_data = befriend.activities.data.all[activity_token];
@@ -3046,8 +3052,6 @@ befriend.activities = {
                 this.currentToken = activity_token;
 
                 if(prevActivityToken === activity_token) {
-                    prevScroll = befriend.els.currentActivityView.querySelector('.sections-wrapper')?.scrollTop;
-
                     prevWhoToken = befriend.els.currentActivityView.querySelector('.who.section')
                         .querySelector('.person-nav.active')?.getAttribute('data-person-token');
                     prevMatchingToken = befriend.els.currentActivityView.querySelector('.matching.section')
@@ -3235,10 +3239,9 @@ befriend.activities = {
                 befriend.styles.displayActivity.updateSectionsHeight(prevTopHeight ? prevTopHeight : 0);
 
                 //set ui to previous state
-                if(prevScroll) {
-                    befriend.els.currentActivityView.querySelector('.sections-wrapper')
-                        .scrollTop = prevScroll;
-                }
+                let prevScroll = befriend.activities.scroll.activities[activity_token] || 0;
+                let viewEl = befriend.els.views.querySelector('.view-activities');
+                viewEl.scrollTop = prevScroll;
 
                 if(prevWhoToken) {
                     befriend.activities.displayActivity.selectPersonNav(prevWhoToken);
@@ -4308,7 +4311,6 @@ befriend.activities = {
             befriend.activities.displayActivity.events.onCheckIn();
             befriend.activities.displayActivity.events.onCloseMessage();
             befriend.activities.displayActivity.events.onViewImage();
-            befriend.activities.displayActivity.events.onMapsNavigate();
             befriend.activities.displayActivity.events.onReport();
             befriend.activities.displayActivity.events.onPersonNav();
             befriend.activities.displayActivity.events.onReview();
@@ -4957,9 +4959,6 @@ befriend.activities = {
                     });
                 }
             },
-            onMapsNavigate: function () {
-
-            },
             onReport: function () {
 
             },
@@ -4971,6 +4970,8 @@ befriend.activities = {
                 try {
                     befriend.activities.activityTypes.events.init();
                     befriend.activities.createActivity.events.init();
+
+                    befriend.activities.events.onScroll();
                 } catch (e) {
                     console.error(e);
                 }
@@ -5034,6 +5035,28 @@ befriend.activities = {
                     befriend.activities.setView();
                 });
             }
+        },
+        onScroll: function () {
+            let scrollTimeout;
+
+            let viewEl = befriend.els.views.querySelector('.view-activities');
+
+            viewEl.addEventListener('scroll', () => {
+                //apply only if view active
+                if(!befriend.isViewShown('activities')) {
+                    return;
+                }
+
+                let scrollTop = viewEl.scrollTop;
+
+                if(elHasClass(befriend.els.mainActivitiesView, 'show')) {
+                    befriend.activities.scroll.main = scrollTop;
+                } else if(elHasClass(befriend.els.currentActivityView, 'show')) {
+                    befriend.activities.scroll.activities[befriend.activities.displayActivity.currentToken] = scrollTop;
+                } else if(elHasClass(befriend.els.activityNotificationView, 'show')) {
+                    befriend.activities.scroll.notifications[befriend.notifications.data.current.activity_token] = scrollTop;
+                }
+            });
         }
     }
 };

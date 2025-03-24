@@ -38,332 +38,342 @@ befriend.html = {
                         <div id="view-spinner"></div>
                         
                         <div id="home" class="view active view-home">
-                            <div id="when" class="view-section">
-                                <div class="section-title">When</div>
-                                
-                                <div class="when-wrapper">
-<!--                                    <div class="arrow arrow-left"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 276.5168 512.0019"><path d="M5.834,270.051l236.816,236.161c7.759,7.733,20.321,7.72,28.067-.04,7.74-7.759,7.72-20.328-.04-28.067L47.957,256,270.685,33.896c7.759-7.74,7.779-20.301.04-28.061-3.883-3.89-8.97-5.835-14.057-5.835-5.074,0-10.141,1.932-14.017,5.795L5.834,241.95c-3.737,3.718-5.834,8.778-5.834,14.05s2.103,10.326,5.834,14.051Z"/></svg></div>-->
-<!--                                    <div class="arrow arrow-right"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 276.5168 512.0019"><path d="M270.6828,241.9509L33.8668,5.7899c-7.759-7.733-20.321-7.72-28.067.04-7.74,7.759-7.72,20.328.04,28.067l222.72,222.105L5.8318,478.1059c-7.759,7.74-7.779,20.301-.04,28.061,3.883,3.89,8.97,5.835,14.057,5.835,5.074,0,10.141-1.932,14.017-5.795l236.817-236.155c3.737-3.718,5.834-8.778,5.834-14.05s-2.103-10.326-5.834-14.051Z"/></svg></div>-->
+                            <div class="view-container">
+                                 <div id="when" class="view-section">
+                                    <div class="section-title">When</div>
                                     
-                                    <div class="when-options-container">
-                                        <div class="when-options"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div id="who" class="view-section">
-                                <div class="section-title">Friends</div>
-                                
-                                <div class="friend-options">
-                                    <div class="friend-option active" data-type="new">
-                                        <div class="name">New</div>
-                                    </div>
-                                    <div class="friend-option" data-type="existing">
-                                        <div class="name">Existing</div>
-                                    </div>
-                                    <div class="friend-option" data-type="both">
-                                        <div class="name">Both</div>
+                                    <div class="when-wrapper">
+    <!--                                    <div class="arrow arrow-left"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 276.5168 512.0019"><path d="M5.834,270.051l236.816,236.161c7.759,7.733,20.321,7.72,28.067-.04,7.74-7.759,7.72-20.328-.04-28.067L47.957,256,270.685,33.896c7.759-7.74,7.779-20.301.04-28.061-3.883-3.89-8.97-5.835-14.057-5.835-5.074,0-10.141,1.932-14.017,5.795L5.834,241.95c-3.737,3.718-5.834,8.778-5.834,14.05s2.103,10.326,5.834,14.051Z"/></svg></div>-->
+    <!--                                    <div class="arrow arrow-right"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 276.5168 512.0019"><path d="M270.6828,241.9509L33.8668,5.7899c-7.759-7.733-20.321-7.72-28.067.04-7.74,7.759-7.72,20.328.04,28.067l222.72,222.105L5.8318,478.1059c-7.759,7.74-7.779,20.301-.04,28.061,3.883,3.89,8.97,5.835,14.057,5.835,5.074,0,10.141-1.932,14.017-5.795l236.817-236.155c3.737-3.718,5.834-8.778,5.834-14.05s-2.103-10.326-5.834-14.051Z"/></svg></div>-->
+                                        
+                                        <div class="when-options-container">
+                                            <div class="when-options"></div>
+                                        </div>
                                     </div>
                                 </div>
                                 
-                                <div id="num-persons">
-                                    <div class="range-container">
-                                        <div class="sliders-control">
-                                            <div class="slider-track"></div>
-                                            <div class="slider-range"></div>
-                                            <div class="thumb">
-                                                <span class="thumb-value">1</span>
+                                 <div id="who" class="view-section">
+                                    <div class="section-title">Friends</div>
+                                    
+                                    <div class="friend-options">
+                                        <div class="friend-option active" data-type="new">
+                                            <div class="name">New</div>
+                                        </div>
+                                        <div class="friend-option" data-type="existing">
+                                            <div class="name">Existing</div>
+                                        </div>
+                                        <div class="friend-option" data-type="both">
+                                            <div class="name">Both</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div id="num-persons">
+                                        <div class="range-container">
+                                            <div class="sliders-control">
+                                                <div class="slider-track"></div>
+                                                <div class="slider-range"></div>
+                                                <div class="thumb">
+                                                    <span class="thumb-value">1</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            
-                            <div id="activity-types" class="view-section">
-                                <div class="activities_container">
-                                    <div id="place-search-location">
-                                        <div class="section-title">Place</div>
-                                        
-                                        <div class="cols">
-                                            <div class="left-col">
-                                                <div class="near">
-                                                    <div class="near-wrapper">
-                                                        <div class="near-location"><span class="near-text">Near Me</span></div>
+                                
+                                <div id="activity-types" class="view-section">
+                                    <div class="activities_container">
+                                        <div id="place-search-location">
+                                            <div class="section-title">Place</div>
+                                            
+                                            <div class="cols">
+                                                <div class="left-col">
+                                                    <div class="near">
+                                                        <div class="near-wrapper">
+                                                            <div class="near-location"><span class="near-text">Near Me</span></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="right-col">
+                                                    <div id="change-location-btn" class="change">
+                                                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 272 368.16">
+                                                          <!-- Background fill paths -->
+                                                          <path class="outer" fill="white" d="M245.72,182.152c-3.192,7.608-9.76,19.872-14.328,26.8l-93.256,141.296c-1.84,2.792-2.424,2.792-4.264,0L40.616,208.952c-4.568-6.928-11.136-19.2-14.328-26.808-.136-.328-10.288-24.768-10.288-46.144,0-66.168,53.832-120,120-120s120,53.832,120,120c0,21.408-10.176,45.912-10.28,46.152Z"/>
+                                                          <path class="inner" fill="white" d="M136,192.008c-30.872,0-56-25.12-56-56s25.128-56,56-56,56,25.12,56,56-25.128,56-56,56Z"/>
+                                                          <!-- Original outline paths -->
+                                                          <path d="M136,0C61.008,0,0,61.008,0,136c0,24.688,11.072,51.24,11.536,52.36,3.576,8.488,10.632,21.672,15.72,29.4l93.248,141.288c3.816,5.792,9.464,9.112,15.496,9.112s11.68-3.32,15.496-9.104l93.256-141.296c5.096-7.728,12.144-20.912,15.72-29.4.464-1.112,11.528-27.664,11.528-52.36,0-74.992-61.008-136-136-136ZM245.72,182.152c-3.192,7.608-9.76,19.872-14.328,26.8l-93.256,141.296c-1.84,2.792-2.424,2.792-4.264,0L40.616,208.952c-4.568-6.928-11.136-19.2-14.328-26.808-.136-.328-10.288-24.768-10.288-46.144,0-66.168,53.832-120,120-120s120,53.832,120,120c0,21.408-10.176,45.912-10.28,46.152Z"/>
+                                                          <path d="M136,64.008c-39.704,0-72,32.304-72,72s32.296,72,72,72,72-32.304,72-72c0-39.696-32.296-72-72-72ZM136,192.008c-30.872,0-56-25.12-56-56s25.128-56,56-56,56,25.12,56,56-25.128,56-56,56Z"/>
+                                                        </svg> 
+                                                        Change City
                                                     </div>
                                                 </div>
                                             </div>
+                                        </div>
+                                        
+                                        <div id="place-search" class="place-search">
+                                            <div class="search">
+                                                <div class="sub-section-title"></div>
+                                                <input type="text" class="input-search-place" placeholder="Search for cafe, park, etc. ">
+                                            </div>
                                             
-                                            <div class="right-col">
-                                                <div id="change-location-btn" class="change">
-                                                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 272 368.16">
-                                                      <!-- Background fill paths -->
-                                                      <path class="outer" fill="white" d="M245.72,182.152c-3.192,7.608-9.76,19.872-14.328,26.8l-93.256,141.296c-1.84,2.792-2.424,2.792-4.264,0L40.616,208.952c-4.568-6.928-11.136-19.2-14.328-26.808-.136-.328-10.288-24.768-10.288-46.144,0-66.168,53.832-120,120-120s120,53.832,120,120c0,21.408-10.176,45.912-10.28,46.152Z"/>
-                                                      <path class="inner" fill="white" d="M136,192.008c-30.872,0-56-25.12-56-56s25.128-56,56-56,56,25.12,56,56-25.128,56-56,56Z"/>
-                                                      <!-- Original outline paths -->
-                                                      <path d="M136,0C61.008,0,0,61.008,0,136c0,24.688,11.072,51.24,11.536,52.36,3.576,8.488,10.632,21.672,15.72,29.4l93.248,141.288c3.816,5.792,9.464,9.112,15.496,9.112s11.68-3.32,15.496-9.104l93.256-141.296c5.096-7.728,12.144-20.912,15.72-29.4.464-1.112,11.528-27.664,11.528-52.36,0-74.992-61.008-136-136-136ZM245.72,182.152c-3.192,7.608-9.76,19.872-14.328,26.8l-93.256,141.296c-1.84,2.792-2.424,2.792-4.264,0L40.616,208.952c-4.568-6.928-11.136-19.2-14.328-26.808-.136-.328-10.288-24.768-10.288-46.144,0-66.168,53.832-120,120-120s120,53.832,120,120c0,21.408-10.176,45.912-10.28,46.152Z"/>
-                                                      <path d="M136,64.008c-39.704,0-72,32.304-72,72s32.296,72,72,72,72-32.304,72-72c0-39.696-32.296-72-72-72ZM136,192.008c-30.872,0-56-25.12-56-56s25.128-56,56-56,56,25.12,56,56-25.128,56-56,56Z"/>
-                                                    </svg> 
-                                                    Change City
+                                            <div class="place-search-suggestions-wrapper">
+                                                <div class="place-search-suggestions">
+                                                    <div class="container"></div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div id="place-search" class="place-search">
-                                        <div class="search">
-                                            <div class="sub-section-title"></div>
-                                            <input type="text" class="input-search-place" placeholder="Search for cafe, park, etc. ">
+                                        </div>  
+        
+                                        <div id="activities-map-wrapper">
+                                            <div class="buttons-wrapper">
+                                                <div class="reset-location">Reset</div>
+                                                <div class="reset-to-marker">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512.001 512.001"><defs><linearGradient id="" x1="-83.6807" y1="45.5227" x2="-63.8819" y2="54.755" gradientTransform="translate(1829.9987 -813.6266) scale(21.3333)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff" stop-opacity=".2"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><path class="" d="M501.333,245.333h-53.873c-5.388-97.341-83.443-175.405-180.793-180.793V10.667c0-5.896-4.771-10.667-10.667-10.667s-10.667,4.771-10.667,10.667v53.873c-97.35,5.388-175.405,83.452-180.793,180.793H10.667c-5.896,0-10.667,4.771-10.667,10.667s4.771,10.667,10.667,10.667h53.873c5.388,97.341,83.443,175.405,180.793,180.793v53.874c0,5.896,4.771,10.667,10.667,10.667s10.667-4.771,10.667-10.667v-53.874c97.35-5.388,175.405-83.452,180.793-180.793h53.874c5.896,0,10.667-4.771,10.667-10.667-.001-5.896-4.772-10.667-10.668-10.667ZM256,426.667c-94.104,0-170.667-76.563-170.667-170.667s76.563-170.667,170.667-170.667,170.667,76.563,170.667,170.667-76.563,170.667-170.667,170.667Z"/><path class="" d="M256,170.667c-47.063,0-85.333,38.281-85.333,85.333s38.271,85.333,85.333,85.333,85.333-38.281,85.333-85.333-38.27-85.333-85.333-85.333Z"/><path class="" d="M501.333,245.333h-53.873c-5.388-97.341-83.443-175.405-180.793-180.793V10.667c0-5.896-4.771-10.667-10.667-10.667s-10.667,4.771-10.667,10.667v53.873c-97.35,5.388-175.405,83.452-180.793,180.793H10.667c-5.896,0-10.667,4.771-10.667,10.667s4.771,10.667,10.667,10.667h53.873c5.388,97.341,83.443,175.405,180.793,180.793v53.874c0,5.896,4.771,10.667,10.667,10.667s10.667-4.771,10.667-10.667v-53.874c97.35-5.388,175.405-83.452,180.793-180.793h53.874c5.896,0,10.667-4.771,10.667-10.667-.001-5.896-4.772-10.667-10.668-10.667ZM256,426.667c-94.104,0-170.667-76.563-170.667-170.667s76.563-170.667,170.667-170.667,170.667,76.563,170.667,170.667-76.563,170.667-170.667,170.667ZM256,170.667c-47.063,0-85.333,38.281-85.333,85.333s38.271,85.333,85.333,85.333,85.333-38.281,85.333-85.333-38.27-85.333-85.333-85.333Z"/></svg>
+                                                </div>
+                                            </div>
+                                            
+                                            <div id="activities-map"></div>
                                         </div>
                                         
-                                        <div class="place-search-suggestions-wrapper">
-                                            <div class="place-search-suggestions">
-                                                <div class="container"></div>
-                                            </div>
-                                        </div>
-                                    </div>  
-    
-                                    <div id="activities-map-wrapper">
-                                        <div class="buttons-wrapper">
-                                            <div class="reset-location">Reset</div>
-                                            <div class="reset-to-marker">
-                                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512.001 512.001"><defs><linearGradient id="" x1="-83.6807" y1="45.5227" x2="-63.8819" y2="54.755" gradientTransform="translate(1829.9987 -813.6266) scale(21.3333)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff" stop-opacity=".2"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><path class="" d="M501.333,245.333h-53.873c-5.388-97.341-83.443-175.405-180.793-180.793V10.667c0-5.896-4.771-10.667-10.667-10.667s-10.667,4.771-10.667,10.667v53.873c-97.35,5.388-175.405,83.452-180.793,180.793H10.667c-5.896,0-10.667,4.771-10.667,10.667s4.771,10.667,10.667,10.667h53.873c5.388,97.341,83.443,175.405,180.793,180.793v53.874c0,5.896,4.771,10.667,10.667,10.667s10.667-4.771,10.667-10.667v-53.874c97.35-5.388,175.405-83.452,180.793-180.793h53.874c5.896,0,10.667-4.771,10.667-10.667-.001-5.896-4.772-10.667-10.668-10.667ZM256,426.667c-94.104,0-170.667-76.563-170.667-170.667s76.563-170.667,170.667-170.667,170.667,76.563,170.667,170.667-76.563,170.667-170.667,170.667Z"/><path class="" d="M256,170.667c-47.063,0-85.333,38.281-85.333,85.333s38.271,85.333,85.333,85.333,85.333-38.281,85.333-85.333-38.27-85.333-85.333-85.333Z"/><path class="" d="M501.333,245.333h-53.873c-5.388-97.341-83.443-175.405-180.793-180.793V10.667c0-5.896-4.771-10.667-10.667-10.667s-10.667,4.771-10.667,10.667v53.873c-97.35,5.388-175.405,83.452-180.793,180.793H10.667c-5.896,0-10.667,4.771-10.667,10.667s4.771,10.667,10.667,10.667h53.873c5.388,97.341,83.443,175.405,180.793,180.793v53.874c0,5.896,4.771,10.667,10.667,10.667s10.667-4.771,10.667-10.667v-53.874c97.35-5.388,175.405-83.452,180.793-180.793h53.874c5.896,0,10.667-4.771,10.667-10.667-.001-5.896-4.772-10.667-10.668-10.667ZM256,426.667c-94.104,0-170.667-76.563-170.667-170.667s76.563-170.667,170.667-170.667,170.667,76.563,170.667,170.667-76.563,170.667-170.667,170.667ZM256,170.667c-47.063,0-85.333,38.281-85.333,85.333s38.271,85.333,85.333,85.333,85.333-38.281,85.333-85.333-38.27-85.333-85.333-85.333Z"/></svg>
-                                            </div>
-                                        </div>
-                                        
-                                        <div id="activities-map"></div>
+                                        <div class="activities"></div>
                                     </div>
-                                    
-                                    <div class="activities"></div>
                                 </div>
                             </div>
                         </div>
                         
                         <div id="activities" class="view view-activities">
-                            <div class="main-view show">
-                                <div class="sections">
-                                    <div class="current-activity section">
-                                        <div class="heading">Current Activity</div>
-                                        <div class="container"></div>
-                                    </div>
-                                    
-                                    <div class="notifications section">
-                                        <div class="heading">Notifications</div>
-                                        <div class="separator"></div>
-                                        <div class="container"></div>
-                                    </div>
-                                    
-                                    <div class="upcoming-activities section">
-                                        <div class="heading">Upcoming</div>
-                                        <div class="separator"></div>
-                                        <div class="container"></div>
-                                    </div>
-                                    
-                                    <div class="past-activities section">
-                                        <div class="heading">Past</div>
-                                        <div class="separator"></div>
-                                        <div class="container"></div>
+                            <div class="view-container">
+                                <div class="main-view show">
+                                    <div class="sections">
+                                        <div class="current-activity section">
+                                            <div class="heading">Current Activity</div>
+                                            <div class="container"></div>
+                                        </div>
+                                        
+                                        <div class="notifications section">
+                                            <div class="heading">Notifications</div>
+                                            <div class="separator"></div>
+                                            <div class="container"></div>
+                                        </div>
+                                        
+                                        <div class="upcoming-activities section">
+                                            <div class="heading">Upcoming</div>
+                                            <div class="separator"></div>
+                                            <div class="container"></div>
+                                        </div>
+                                        
+                                        <div class="past-activities section">
+                                            <div class="heading">Past</div>
+                                            <div class="separator"></div>
+                                            <div class="container"></div>
+                                        </div>
                                     </div>
                                 </div>
+                                
+                                <div class="current-activity-view">
+                                    <div class="container">
+                                    
+                                    </div>
+                                </div>  
+                                
+                                <div class="notification-view">
+                                    <div class="container">
+                                    
+                                    </div>
+                                </div>    
                             </div>
-                            
-                            <div class="current-activity-view">
-                                <div class="container">
-                                
-                                </div>
-                            </div>  
-                            
-                            <div class="notification-view">
-                                <div class="container">
-                                
-                                </div>
-                            </div>                      
+                                          
                         </div>
                         
                         <div id="friends" class="view view-friends"><h2>Friends</h2></div>
                         
                         <div id="filters" class="view view-filters">
-                            <div class="matches-overview">
-                                <div class="update-circle">
-                                    <div class="updating"></div>
+                            <div class="view-container">
+                                <div class="matches-overview">
+                                    <div class="update-circle">
+                                        <div class="updating"></div>
+                                    </div>
+                                    
+                                    <div class="matches">
+                                        <div class="match send">
+                                            <div class="label">
+                                                <div class="outside">
+                                                    <div class="icon-container">
+                                                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 511.998 512.0029">
+                                                            <path d="M510.539,36.2574c7.1675-21.5056-13.29-41.9661-34.7956-34.7985L18.8108,153.7717c-25.6598,8.5523-24.8644,45.1188,1.1409,52.5476l222.2321,63.4978,63.4949,222.2321c7.4317,26.0082,43.9953,26.8036,52.5476,1.1409L510.539,36.2574Z" fill="black"/>
+                                                            <path d="M474.7157,56.7382l-142.5848,427.7544-63.373-221.7995L474.7157,56.7382ZM455.2626,37.285l-205.9548,205.9548L27.5111,179.8698,455.2626,37.285Z" fill="white"/>
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="text">Send</div>
+                                            </div>
+                                            <div class="count"></div>
+                                        </div>
+                                        <div class="match receive">
+                                            <div class="label">
+                                                <div class="outside">
+                                                    <div class="icon-container">
+                                                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 426.6667 520">
+                                                              <path d="M394.6667,448H32c-17.6427,0-32-14.3573-32-32,0-9.3653,4.0747-18.2187,11.2-24.32,33.6213-28.416,52.8-69.76,52.8-113.536v-64.8107c0-82.3467,66.9867-149.3333,149.3333-149.3333s149.3333,66.9867,149.3333,149.3333v64.8107c0,43.7973,19.1787,85.12,52.6293,113.3867,7.296,6.2507,11.3707,15.104,11.3707,24.4693,0,17.6427-14.336,32-32,32Z" fill="black"/>
+                                                              <path d="M213.3333,85.3333c-70.592,0-128,57.408-128,128v64.8107c0,50.0907-21.9307,97.344-60.1813,129.6853-2.4533,2.0907-3.8187,5.056-3.8187,8.1707,0,5.888,4.7787,10.6667,10.6667,10.6667h362.6667c5.888,0,10.6667-4.7787,10.6667-10.6667,0-3.1147-1.3653-6.08-3.7333-8.1066-38.3147-32.4053-60.2667-79.68-60.2667-129.7493v-64.8107c0-70.592-57.408-128-128-128h0Z" fill="white"/>
+                                                              <path d="M245.3333,89.1733c-5.888,0-10.6667-4.7787-10.6667-10.6667v-35.84c0-11.7547-9.5787-21.3333-21.3333-21.3333s-21.3333,9.5787-21.3333,21.3333v35.84c0,5.888-4.7787,10.6667-10.6667,10.6667s-10.6667-4.7573-10.6667-10.6667v-35.84c0-23.5307,19.136-42.6667,42.6667-42.6667s42.6667,19.136,42.6667,42.6667v35.84c0,5.9093-4.7787,10.6667-10.6667,10.6667Z" fill="black"/>
+                                                              <path d="M213.3333,512c-41.1733,0-74.6667-33.4933-74.6667-74.6667,0-5.888,4.7787-10.6667,10.6667-10.6667s10.6667,4.7787,10.6667,10.6667c0,29.3973,23.936,53.3333,53.3333,53.3333s53.3333-23.936,53.3333-53.3333c0-5.888,4.7787-10.6667,10.6667-10.6667s10.6667,4.7787,10.6667,10.6667c0,41.1733-33.4933,74.6667-74.6667,74.6667Z" fill="black"/>
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="text">Receive</div>
+                                            </div>
+                                            <div class="count"></div>
+                                        </div>
+                                        <div class="match interests">
+                                            <div class="label">
+                                                <div class="outside">
+                                                    <div class="icon-container">
+                                                        <svg id="Capa_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 511.9954"><path d="M209.297,106.4674c-27.041-19.819-54.785-44.246-74.531-73.865l-17.286-25.928c-3.662-5.493-10.488-7.939-16.831-6.035-6.328,1.919-10.649,7.749-10.649,14.356v235.344c-8.86-5.167-19.023-8.344-30-8.344-33.091,0-60,26.909-60,60s26.909,59.999,60,59.999,60-26.909,60-60V64.2464c21.196,26.792,47.71,48.93,71.558,66.42,11.718,8.584,18.442,21.827,18.442,36.328,0,24.814-20.186,45-45,45-8.291,0-15,6.709-15,15s6.709,15,15,15c41.353,0,75-33.647,75-75,0-23.804-11.47-46.421-30.703-60.527Z"/><path d="M492.884,122.5664l-212,60c-6.445,1.846-10.884,7.734-10.884,14.429v203.344c-8.86-5.167-19.023-8.344-30-8.344-33.091,0-60,26.909-60,60s26.909,60,60,60,60-26.909,60-60v-183.68l182-51.429v123.453c-8.86-5.167-19.023-8.344-30-8.344-33.091,0-60,26.909-60,60s26.909,60,60,60,60-26.909,60-60v-255c0-9.921-9.49-17.148-19.116-14.429Z"/></svg>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="text">Interests</div>
+                                            </div>
+                                            
+                                            <div class="count"></div>
+                                        </div>
+                                        <div class="match excluded">
+                                            <div class="label">
+                                                <div class="outside">
+                                                    <div class="icon-container">
+                                                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 26"><g id="layer1"><circle id="circle15625" class="exclude-cls-1" cx="12.5" cy="12.5" r="12"/><path id="path818" class="exclude-cls-2" d="M4.0195,20.9801L20.9805,4.0192"/></g></svg> 
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="text">Excluded</div>
+                                            </div>
+                                            <div class="count"></div>
+                                        </div>
+                                    </div>
                                 </div>
                                 
-                                <div class="matches">
-                                    <div class="match send">
-                                        <div class="label">
-                                            <div class="outside">
-                                                <div class="icon-container">
-                                                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 511.998 512.0029">
-                                                        <path d="M510.539,36.2574c7.1675-21.5056-13.29-41.9661-34.7956-34.7985L18.8108,153.7717c-25.6598,8.5523-24.8644,45.1188,1.1409,52.5476l222.2321,63.4978,63.4949,222.2321c7.4317,26.0082,43.9953,26.8036,52.5476,1.1409L510.539,36.2574Z" fill="black"/>
-                                                        <path d="M474.7157,56.7382l-142.5848,427.7544-63.373-221.7995L474.7157,56.7382ZM455.2626,37.285l-205.9548,205.9548L27.5111,179.8698,455.2626,37.285Z" fill="white"/>
-                                                    </svg>
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="text">Send</div>
-                                        </div>
-                                        <div class="count"></div>
-                                    </div>
-                                    <div class="match receive">
-                                        <div class="label">
-                                            <div class="outside">
-                                                <div class="icon-container">
-                                                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 426.6667 520">
-                                                          <path d="M394.6667,448H32c-17.6427,0-32-14.3573-32-32,0-9.3653,4.0747-18.2187,11.2-24.32,33.6213-28.416,52.8-69.76,52.8-113.536v-64.8107c0-82.3467,66.9867-149.3333,149.3333-149.3333s149.3333,66.9867,149.3333,149.3333v64.8107c0,43.7973,19.1787,85.12,52.6293,113.3867,7.296,6.2507,11.3707,15.104,11.3707,24.4693,0,17.6427-14.336,32-32,32Z" fill="black"/>
-                                                          <path d="M213.3333,85.3333c-70.592,0-128,57.408-128,128v64.8107c0,50.0907-21.9307,97.344-60.1813,129.6853-2.4533,2.0907-3.8187,5.056-3.8187,8.1707,0,5.888,4.7787,10.6667,10.6667,10.6667h362.6667c5.888,0,10.6667-4.7787,10.6667-10.6667,0-3.1147-1.3653-6.08-3.7333-8.1066-38.3147-32.4053-60.2667-79.68-60.2667-129.7493v-64.8107c0-70.592-57.408-128-128-128h0Z" fill="white"/>
-                                                          <path d="M245.3333,89.1733c-5.888,0-10.6667-4.7787-10.6667-10.6667v-35.84c0-11.7547-9.5787-21.3333-21.3333-21.3333s-21.3333,9.5787-21.3333,21.3333v35.84c0,5.888-4.7787,10.6667-10.6667,10.6667s-10.6667-4.7573-10.6667-10.6667v-35.84c0-23.5307,19.136-42.6667,42.6667-42.6667s42.6667,19.136,42.6667,42.6667v35.84c0,5.9093-4.7787,10.6667-10.6667,10.6667Z" fill="black"/>
-                                                          <path d="M213.3333,512c-41.1733,0-74.6667-33.4933-74.6667-74.6667,0-5.888,4.7787-10.6667,10.6667-10.6667s10.6667,4.7787,10.6667,10.6667c0,29.3973,23.936,53.3333,53.3333,53.3333s53.3333-23.936,53.3333-53.3333c0-5.888,4.7787-10.6667,10.6667-10.6667s10.6667,4.7787,10.6667,10.6667c0,41.1733-33.4933,74.6667-74.6667,74.6667Z" fill="black"/>
-                                                    </svg>
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="text">Receive</div>
-                                        </div>
-                                        <div class="count"></div>
-                                    </div>
-                                    <div class="match interests">
-                                        <div class="label">
-                                            <div class="outside">
-                                                <div class="icon-container">
-                                                    <svg id="Capa_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 511.9954"><path d="M209.297,106.4674c-27.041-19.819-54.785-44.246-74.531-73.865l-17.286-25.928c-3.662-5.493-10.488-7.939-16.831-6.035-6.328,1.919-10.649,7.749-10.649,14.356v235.344c-8.86-5.167-19.023-8.344-30-8.344-33.091,0-60,26.909-60,60s26.909,59.999,60,59.999,60-26.909,60-60V64.2464c21.196,26.792,47.71,48.93,71.558,66.42,11.718,8.584,18.442,21.827,18.442,36.328,0,24.814-20.186,45-45,45-8.291,0-15,6.709-15,15s6.709,15,15,15c41.353,0,75-33.647,75-75,0-23.804-11.47-46.421-30.703-60.527Z"/><path d="M492.884,122.5664l-212,60c-6.445,1.846-10.884,7.734-10.884,14.429v203.344c-8.86-5.167-19.023-8.344-30-8.344-33.091,0-60,26.909-60,60s26.909,60,60,60,60-26.909,60-60v-183.68l182-51.429v123.453c-8.86-5.167-19.023-8.344-30-8.344-33.091,0-60,26.909-60,60s26.909,60,60,60,60-26.909,60-60v-255c0-9.921-9.49-17.148-19.116-14.429Z"/></svg>
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="text">Interests</div>
-                                        </div>
-                                        
-                                        <div class="count"></div>
-                                    </div>
-                                    <div class="match excluded">
-                                        <div class="label">
-                                            <div class="outside">
-                                                <div class="icon-container">
-                                                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 26"><g id="layer1"><circle id="circle15625" class="exclude-cls-1" cx="12.5" cy="12.5" r="12"/><path id="path818" class="exclude-cls-2" d="M4.0195,20.9801L20.9805,4.0192"/></g></svg> 
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="text">Excluded</div>
-                                        </div>
-                                        <div class="count"></div>
-                                    </div>
-                                </div>
+                                <div class="sections"></div>
                             </div>
-                            <div class="sections"></div>
                         </div>
                         
                         <div id="me" class="view view-me">
-                            <div id="confirm-me-action">
-                                <div class="title">
-                                    <div class="main"></div>
-                                    <div class="details"></div>
-                                </div>
-                                <div class="buttons">
-                                    <div class="button yes" data-action="yes">Yes</div>
-                                    <div class="button no" data-action="no">Cancel</div>
-                                </div>
-                            </div>
-                            
-                            <div class="view-section view-profile active">
-                                <div class="top">
-                                    <div class="name-account">
-                                        <div class="first-name"></div>
-
-                                        <div class="account-btn">
-                                            <div class="text">Account</div>
-                                            <div class="icon">
-                                                <?xml version="1.0" encoding="UTF-8"?><svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512.0001 512"><path d="M279.8933,512h-47.7867c-16.1493,0-29.7813-12.096-31.7013-28.16l-5.0987-40.0213c-10.176-3.3067-19.9893-7.3813-29.312-12.1387l-31.872,24.768c-12.928,10.0053-31.1253,8.8534-42.3467-2.688l-33.6-33.6c-11.456-11.1147-12.608-29.312-2.6027-42.2187l24.768-31.8934c-4.7787-9.3227-8.8533-19.136-12.1387-29.312l-40.1067-5.0987c-16-1.9627-28.096-15.5947-28.096-31.744v-47.7867c0-16.1493,12.096-29.7813,28.16-31.7013l40.0213-5.0987c3.3067-10.176,7.3813-19.9893,12.1387-29.312l-24.7467-31.872c-10.0267-12.928-8.8533-31.1467,2.7093-42.368l33.6-33.6c11.1147-11.456,29.3333-12.5867,42.2187-2.6027l31.872,24.7893c9.3227-4.7573,19.136-8.832,29.3333-12.1387l5.0987-40.1067c1.92-16,15.552-28.096,31.7013-28.096h47.7867c16.1493,0,29.7813,12.096,31.7013,28.16l5.0987,40.0213c10.1973,3.3067,20.0107,7.3813,29.3334,12.1387l31.872-24.768c12.9493-10.0053,31.1253-8.8533,42.3467,2.7093l33.6,33.6c11.456,11.1147,12.608,29.312,2.6027,42.2187l-24.768,31.8933c4.7787,9.3227,8.8534,19.136,12.1387,29.312l40.1066,5.0987c15.9787,1.9413,28.0747,15.5733,28.0747,31.7227v47.7867c0,16.1493-12.096,29.7813-28.16,31.7013l-40.0213,5.0987c-3.3067,10.176-7.3813,19.9893-12.1387,29.312l24.768,31.872c10.0267,12.928,8.8534,31.1253-2.7094,42.3467l-33.6,33.6c-11.1147,11.456-29.3333,12.6294-42.2187,2.6027l-31.8934-24.768c-9.3227,4.7787-19.136,8.8534-29.312,12.1387l-5.0987,40.1066c-1.9413,16-15.5733,28.096-31.7227,28.096h0ZM164.9067,408.32c1.7707,0,3.584.448,5.2053,1.344,11.7547,6.5707,24.4907,11.8613,37.8453,15.7013,4.096,1.1733,7.104,4.672,7.6373,8.896l5.9733,46.9334c.64,5.3547,5.2693,9.472,10.5387,9.472h47.7867c5.2693,0,9.8987-4.1174,10.5173-9.3653l5.9947-47.0187c.5333-4.224,3.5413-7.7227,7.6373-8.896,13.3547-3.84,26.0907-9.1307,37.8453-15.7013,3.7333-2.0907,8.384-1.728,11.7333.896l37.3333,29.0133c4.288,3.328,10.304,3.0507,13.9733-.7253l33.8133-33.8134c3.8613-3.7547,4.16-9.7707.832-14.08l-29.0133-37.3333c-2.624-3.3707-2.9867-8-.896-11.7333,6.5707-11.7547,11.8613-24.4907,15.7013-37.8453,1.1733-4.096,4.672-7.104,8.896-7.6373l46.9334-5.9733c5.3547-.6613,9.472-5.2907,9.472-10.56v-47.7867c0-5.2693-4.1174-9.8987-9.3653-10.5173l-47.0187-5.9947c-4.224-.5333-7.7227-3.5413-8.896-7.6373-3.84-13.3547-9.1307-26.0907-15.7013-37.8453-2.0907-3.7333-1.7493-8.3627.896-11.7333l29.0133-37.3333c3.3493-4.3093,3.0507-10.3253-.704-13.952l-33.8133-33.8133c-3.7333-3.8827-9.7707-4.1813-14.08-.832l-37.3333,29.0133c-3.392,2.624-8.0213,2.9867-11.7547.896-11.712-6.5707-24.448-11.84-37.8453-15.7013-4.096-1.1733-7.104-4.672-7.6373-8.896l-5.9733-46.9333c-.6613-5.376-5.2907-9.4933-10.56-9.4933h-47.7867c-5.2693,0-9.8987,4.1173-10.5173,9.3653l-5.9947,47.0187c-.5333,4.224-3.5413,7.7227-7.6373,8.9173-13.3973,3.84-26.1333,9.1307-37.8453,15.68-3.7333,2.112-8.3627,1.728-11.7547-.8747l-37.3333-29.0133c-4.3093-3.3493-10.304-3.0507-13.952.704l-33.8133,33.8347c-3.8613,3.7547-4.16,9.7707-.832,14.08l29.0133,37.3333c2.624,3.3707,2.9867,8,.896,11.7333-6.592,11.7547-11.8613,24.4907-15.7013,37.8453-1.1733,4.096-4.672,7.104-8.896,7.6373l-46.9333,5.9733c-5.3547.64-9.472,5.2693-9.472,10.5387v47.7867c0,5.2693,4.1173,9.8987,9.3653,10.5173l47.0187,5.9947c4.224.5333,7.7227,3.5413,8.896,7.6373,3.84,13.3547,9.1307,26.0907,15.7013,37.8453,2.0907,3.7333,1.7493,8.3627-.896,11.7333l-29.0133,37.3333c-3.3493,4.3093-3.0507,10.3253.704,13.952l33.8133,33.8133c3.7333,3.8613,9.728,4.16,14.08.832l37.3333-29.0133c1.9413-1.4507,4.2453-2.2187,6.5707-2.2187h0Z"/><path d="M256,362.6667c-58.816,0-106.6667-47.8507-106.6667-106.6667s47.8507-106.6667,106.6667-106.6667,106.6667,47.8507,106.6667,106.6667-47.8507,106.6667-106.6667,106.6667ZM256,170.6667c-47.0613,0-85.3333,38.272-85.3333,85.3333s38.272,85.3333,85.3333,85.3333,85.3333-38.272,85.3333-85.3333-38.272-85.3333-85.3333-85.3333Z"/></svg>
-                                            </div>
-                                        </div>
+                            <div class="view-container">
+                                 <div id="confirm-me-action">
+                                    <div class="title">
+                                        <div class="main"></div>
+                                        <div class="details"></div>
                                     </div>
-                                    
-                                    <div class="birthday">
-                                        <div class="icon-age">
-                                            <svg id="Icons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 495 497"><defs><style>.cls-1{fill:#fff;}</style></defs><g id="t4hFCO.tif"><path class="cls-1" d="M0,452.0904V0c81.3333,0,162.6667,0,244,0-10.6588,14.0938-19.7371,29.1122-24.0837,46.3552-2.8491,11.3023,1.7882,20.5719,10.9115,27.4057,8.9332,6.6914,21.4899,6.9307,31.0167,1.0823,9.3293-5.7272,15.3131-17.0666,12.8282-27.1548-4.3758-17.7651-13.3279-33.3978-24.6727-47.6884h245v452.0904c-2.2474-3.8525-5.6049-5.1287-10.0222-5.0258-9.4442.2201-18.8972.0674-28.8619.0674,0-2.467,0-4.4216,0-6.3763-.0018-48.7205.0858-97.4412-.0407-146.1614-.0699-26.9286-16.2707-50.6175-41.4633-59.4672-7.9911-2.8071-16.8694-3.3838-25.4163-4.2371-6.5253-.6515-13.1682-.1295-20.1239-.1295,0-2.5457.0003-4.3457,0-6.1457-.0041-21.284.11-42.5689-.0516-63.8518-.1194-15.7274-13.255-28.3543-28.9539-28.2173-15.9904.1395-28.2664,12.8369-28.409,29.8201-.1745,20.7837-.039,41.57-.0591,62.3552-.0018,1.9079-.1595,3.8156-.2404,5.6241h-34.5821c0-2.3953,0-4.3769,0-6.3586-.0003-31.5935-.018-63.187.0085-94.7805.0095-11.3216-4.2746-20.4345-14.0134-26.4784-9.2433-5.7364-18.9868-6.014-28.4762-.7545-9.9701,5.5259-15.1561,14.3018-15.19,25.7281-.0953,32.0921-.0345,64.1846-.0353,96.2769,0,1.9161,0,3.8323,0,5.8328h-34.9532c0-2.1212,0-3.9112,0-5.7012-.0013-21.1178-.0342-42.2356.0116-63.3532.0184-8.4819-3.0825-15.6424-9.3018-21.2575-8.8025-7.9472-19.0652-10.2504-30.0936-5.5879-11.0291,4.6628-17.648,13.246-17.8631,25.3994-.3795,21.4436-.147,42.8979-.1702,64.3478-.0021,1.9438-.0003,3.8876-.0003,6.4877-2.3802,0-4.1597-.0424-5.9368.0071-9.3156.2595-18.8173-.5436-27.912,1.0136-31.7053,5.4285-53.0915,31.3513-53.1339,63.4655-.0638,48.3878-.0171,96.7758-.0174,145.1638,0,1.955,0,3.91,0,6.47-9.3086,0-18.0921.1905-26.8621-.0701-5.4197-.1611-9.7346,1.371-12.8363,5.8943ZM340.0003,112.3251c18.7089-.3902,31.5569-17.7105,26.1389-35.5802-4.4282-14.605-12.2576-27.5639-20.7003-40.1265-2.9881-4.4463-8.932-4.1436-12.1544.6856-8.4001,12.5884-16.253,25.5405-20.4671,40.2281-5.0947,17.7564,8.6462,35.1796,27.1829,34.793ZM126.6017,82.4164c.4856,13.5974,5.6002,22.315,16.0522,27.1484,10.5473,4.8774,20.9452,3.7538,29.914-3.8097,8.9234-7.5253,12.1464-17.2954,8.7282-28.6643-4.3472-14.4588-11.967-27.3353-20.3564-39.7373-3.6486-5.3937-9.6221-5.204-12.9413.4903-6.0926,10.4525-11.9513,21.0625-17.3642,31.8777-2.2537,4.5029-3.1154,9.6998-4.0324,12.6949Z"/><path d="M0,452.0904c3.1017-4.5233,7.4166-6.0554,12.8363-5.8943,8.77.2606,17.5535.0701,26.8621.0701,0-2.56,0-4.515,0-6.47.0003-48.3879-.0464-96.7759.0174-145.1638.0424-32.1142,21.4285-58.037,53.1339-63.4655,9.0947-1.5572,18.5964-.7541,27.912-1.0136,1.777-.0495,3.5566-.0071,5.9368-.0071,0-2.6001-.0018-4.5439.0003-6.4877.0232-21.4498-.2093-42.9042.1702-64.3478.2151-12.1535,6.834-20.7366,17.8631-25.3994,11.0284-4.6626,21.2911-2.3593,30.0936,5.5879,6.2194,5.6151,9.3202,12.7756,9.3018,21.2575-.0458,21.1177-.0129,42.2355-.0116,63.3532.0001,1.79,0,3.58,0,5.7012h34.9532c0-2.0005,0-3.9167,0-5.8328.0008-32.0923-.06-64.1849.0353-96.2769.034-11.4263,5.2199-20.2022,15.19-25.7281,9.4894-5.2595,19.2329-4.9819,28.4762.7545,9.7388,6.0439,14.0229,15.1568,14.0134,26.4784-.0265,31.5935-.0088,63.187-.0085,94.7805,0,1.9816,0,3.9632,0,6.3586h34.5821c.0809-1.8084.2386-3.7162.2404-5.6241.0201-20.7852-.1155-41.5714.0591-62.3552.1426-16.9832,12.4186-29.6806,28.409-29.8201,15.6989-.137,28.8344,12.4899,28.9539,28.2173.1616,21.2828.0475,42.5677.0516,63.8518.0004,1.8,0,3.6001,0,6.1457,6.9557,0,13.5986-.522,20.1239.1295,8.5469.8532,17.4252,1.43,25.4163,4.2371,25.1926,8.8497,41.3934,32.5386,41.4633,59.4672.1265,48.7201.0389,97.4409.0407,146.1614,0,1.9546,0,3.9092,0,6.3763,9.9647,0,19.4176.1527,28.8619-.0674,4.4174-.1029,7.7748,1.1733,10.0222,5.0258v8.9819c-.6399,2.0478-1.2708,4.0985-1.9212,6.143-5.4135,17.0135-21.2139,28.763-39.0971,28.7675-137.6545.0341-275.309.0341-412.9635,0-17.8845-.0044-33.6829-11.7526-39.0969-28.7675C1.2707,465.1708.6399,463.1201,0,461.0723c0-2.994,0-5.988,0-8.9819ZM440.2563,447.7424c.1354-1.6264.3253-2.9235.339-4.2225.1508-14.2904.4013-28.5813.3795-42.8717-.0533-34.9122-.1903-69.8245-.3809-104.7363-.1559-28.56-21.1132-49.4225-49.6325-49.4296-95.6496-.0236-191.2991-.0129-286.9487.0102-2.824.0007-5.7057-.023-8.463.4882-29.8797,5.5395-41.0122,25.8891-41.3772,51.076-.694,47.8796-.3703,95.7739-.4685,143.6621-.004,1.931-.0005,3.8619-.0005,6.0235h386.5528ZM477.7295,463.0684H17.1744c0,.7812-.1167,1.3037.0256,1.7427.2545.7852.6092,1.5517,1.0186,2.2713,5.5044,9.6727,13.9974,13.402,24.9453,13.3946,135.9836-.0913,271.9672-.0581,407.9508-.0737,2.1618-.0002,4.3688.0318,6.4775-.3626,9.5509-1.7864,16.1074-7.2287,20.1372-16.9724ZM259.6411,229.915c.2834-.8157.4867-1.1279.4869-1.4402.0166-34.0653.0536-68.1306-.021-102.1957-.0103-4.6962-2.6417-8.1464-6.5917-10.4977-8.9698-5.3394-19.4956,1.2932-19.5197,12.4231-.0706,32.7371-.0287,65.4745-.012,98.2117.0006,1.1013.2025,2.2024.3298,3.4988h25.3277ZM326.3018,230.3118h26.4814c0-23.532.167-46.619-.1003-69.701-.0816-7.0459-6.4744-12.6464-13.0887-12.6513-6.4522-.0047-12.131,5.228-13.087,12.1445-.2037,1.4737-.1964,2.9836-.1973,4.4769-.0118,20.2804-.008,40.5609-.008,60.8413,0,1.6125,0,3.225,0,4.8896ZM167.8841,230.4157c0-4.6391.0003-9.0813,0-13.5235-.0012-18.2837.0633-36.5677-.0367-54.8509-.0395-7.2265-4.6001-12.6016-11.2797-13.8412-5.5497-1.03-11.8465,2.4353-13.9559,8.1441-.8944,2.4207-1.1581,5.1883-1.1697,7.8006-.0909,20.4441-.0509,40.8888-.0512,61.3332,0,1.6141,0,3.2282,0,5.2809,7.7904,0,14.9313.0148,22.072-.0136,1.2917-.0051,2.5827-.187,4.4211-.3298Z"/><path d="M250,0c11.3448,14.2906,20.2969,29.9232,24.6727,47.6884,2.4849,10.0882-3.4989,21.4276-12.8282,27.1548-9.5268,5.8484-22.0836,5.6091-31.0167-1.0823-9.1233-6.8337-13.7605-16.1034-10.9115-27.4057,4.3466-17.243,13.4249-32.2614,24.0837-46.3552h6ZM248.1792,23.2574c-.6793-.0594-1.3586-.1188-2.0379-.1782-3.471,7.6358-7.2053,15.1663-10.3264,22.942-2.3257,5.7941-.5827,10.8893,3.9084,14.2061,4.4669,3.2989,10.4234,3.2624,14.8842-.0914,4.3909-3.3013,6.1101-8.5033,3.7894-14.2643-3.0879-7.6656-6.7832-15.0875-10.2175-22.6141Z"/><path class="cls-1" d="M0,461.0723c.6399,2.0478,1.2707,4.0985,1.9212,6.1429,5.414,17.015,21.2124,28.7631,39.0969,28.7675,137.6545.0341,275.309.0341,412.9635,0,17.8832-.0044,33.6837-11.7539,39.0971-28.7675.6505-2.0444,1.2813-4.0952,1.9212-6.143v35.9277H0c0-11.9759,0-23.9518,0-35.9277Z"/><path d="M340.0003,112.3251c-18.5367.3866-32.2776-17.0366-27.1829-34.793,4.2141-14.6876,12.067-27.6398,20.4671-40.2281,3.2224-4.8292,9.1664-5.1319,12.1544-.6856,8.4426,12.5626,16.2721,25.5215,20.7003,40.1265,5.418,17.8697-7.43,35.1901-26.1389,35.5802ZM340.5468,56.9014l-1.8956.0071c-3.5945,8.1102-7.4503,16.1184-10.6861,24.3688-1.9609,5.0001.1499,10.1746,4.33,13.1574,4.3342,3.0928,10.183,3.112,14.5047.0476,4.1956-2.975,6.4357-8.2099,4.5079-13.146-3.2344-8.2821-7.1386-16.3037-10.761-24.4349Z"/><path d="M126.6017,82.4164c.9171-2.9951,1.7787-8.192,4.0324-12.6949,5.4129-10.8152,11.2716-21.4251,17.3642-31.8777,3.3192-5.6944,9.2928-5.884,12.9413-.4903,8.3894,12.402,16.0093,25.2785,20.3564,39.7373,3.4182,11.3689.1952,21.139-8.7282,28.6643-8.9687,7.5635-19.3667,8.6872-29.914,3.8097-10.452-4.8334-15.5666-13.5509-16.0522-27.1484ZM155.6256,56.8302c-.4929.0946-.9857.1893-1.4786.2839-2.5683,4.986-5.2643,9.912-7.658,14.9801-1.4793,3.1321-2.7058,6.4205-3.6752,9.7463-1.3989,4.7993.5842,9.8272,4.6257,12.6574,4.2187,2.9543,9.7934,3.0325,14.0804.1975,4.1315-2.7322,6.8247-7.978,5.1064-12.5063-3.2651-8.6049-7.2908-16.9222-11.0007-25.359Z"/><path class="cls-1" d="M440.2563,447.7424H53.7035c0-2.1615-.0035-4.0925.0005-6.0235.0982-47.8882-.2255-95.7825.4685-143.6621.3651-25.1869,11.4975-45.5365,41.3772-51.076,2.7573-.5112,5.639-.4875,8.463-.4882,95.6496-.0232,191.2991-.0339,286.9487-.0102,28.5193.0071,49.4766,20.8696,49.6325,49.4296.1906,34.9118.3276,69.824.3809,104.7363.0218,14.2904-.2288,28.5813-.3795,42.8717-.0137,1.299-.2036,2.5961-.339,4.2225Z"/><path class="cls-1" d="M477.7295,463.0684c-4.0298,9.7437-10.5863,15.186-20.1372,16.9724-2.1087.3944-4.3157.3624-6.4775.3626-135.9836.0155-271.9673-.0176-407.9508.0737-10.9479.0074-19.4409-3.7219-24.9453-13.3946-.4095-.7195-.7642-1.4861-1.0186-2.2713-.1423-.439-.0256-.9615-.0256-1.7427h460.5551Z"/><path class="cls-1" d="M259.6411,229.915h-25.3277c-.1272-1.2963-.3292-2.3975-.3298-3.4988-.0166-32.7373-.0586-65.4746.012-98.2117.024-11.1299,10.5499-17.7625,19.5197-12.4231,3.95,2.3513,6.5814,5.8015,6.5917,10.4977.0746,34.0651.0377,68.1304.021,102.1957-.0002.3123-.2035.6245-.4869,1.4402Z"/><path class="cls-1" d="M326.3018,230.3118c0-1.6646,0-3.2771,0-4.8896,0-20.2804-.0038-40.5609.008-60.8413.0009-1.4933-.0065-3.0032.1973-4.4769.9561-6.9165,6.6348-12.1492,13.087-12.1445,6.6144.0049,13.0071,5.6054,13.0887,12.6513.2674,23.082.1003,46.1689.1003,69.701h-26.4814Z"/><path class="cls-1" d="M167.8841,230.4157c-1.8384.1428-3.1294.3246-4.4211.3298-7.1407.0283-14.2816.0136-22.072.0136,0-2.0526,0-3.6668,0-5.2809.0004-20.4445-.0397-40.8892.0512-61.3332.0116-2.6123.2753-5.38,1.1697-7.8006,2.1093-5.7089,8.4061-9.1741,13.9559-8.1441,6.6796,1.2396,11.2402,6.6147,11.2797,13.8412.0999,18.2831.0354,36.5672.0367,54.8509.0003,4.4422,0,8.8844,0,13.5235Z"/><path class="cls-1" d="M248.1792,23.2574c3.4344,7.5266,7.1296,14.9485,10.2175,22.6141,2.3207,5.761.6015,10.9631-3.7894,14.2643-4.4608,3.3538-10.4172,3.3904-14.8842.0914-4.4911-3.3168-6.2341-8.412-3.9084-14.2061,3.1212-7.7757,6.8554-15.3062,10.3264-22.942.6793.0594,1.3586.1188,2.0379.1782Z"/><path class="cls-1" d="M340.5468,56.9014c3.6223,8.1312,7.5265,16.1528,10.761,24.4349,1.9277,4.9361-.3123,10.171-4.5079,13.146-4.3216,3.0644-10.1705,3.0452-14.5047-.0476-4.1801-2.9828-6.291-8.1573-4.33-13.1574,3.2357-8.2504,7.0916-16.2585,10.6861-24.3688l1.8956-.0071Z"/><path class="cls-1" d="M155.6256,56.8302c3.7098,8.4368,7.7356,16.7541,11.0007,25.359,1.7182,4.5283-.975,9.7741-5.1064,12.5063-4.2869,2.835-9.8617,2.7568-14.0804-.1975-4.0415-2.8302-6.0246-7.8582-4.6257-12.6574.9694-3.3258,2.1959-6.6142,3.6752-9.7463,2.3938-5.0681,5.0897-9.9941,7.658-14.9801.4929-.0946.9857-.1893,1.4786-.2839Z"/></g></svg>
-                                            <div class="age"></div>
-                                        </div>
-                                        
-                                        <div class="date"></div>
+                                    <div class="buttons">
+                                        <div class="button yes" data-action="yes">Yes</div>
+                                        <div class="button no" data-action="no">Cancel</div>
                                     </div>
                                 </div>
                                 
-                                <div class="me-container">
-                                    <div class="${befriend.variables.class_modes_section}">
-                                        <div class="tab">
-                                            <div class="title">Modes</div>
+                                <div class="view-section view-profile active">
+                                    <div class="top">
+                                        <div class="name-account">
+                                            <div class="first-name"></div>
+    
+                                            <div class="account-btn">
+                                                <div class="text">Account</div>
+                                                <div class="icon">
+                                                    <?xml version="1.0" encoding="UTF-8"?><svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512.0001 512"><path d="M279.8933,512h-47.7867c-16.1493,0-29.7813-12.096-31.7013-28.16l-5.0987-40.0213c-10.176-3.3067-19.9893-7.3813-29.312-12.1387l-31.872,24.768c-12.928,10.0053-31.1253,8.8534-42.3467-2.688l-33.6-33.6c-11.456-11.1147-12.608-29.312-2.6027-42.2187l24.768-31.8934c-4.7787-9.3227-8.8533-19.136-12.1387-29.312l-40.1067-5.0987c-16-1.9627-28.096-15.5947-28.096-31.744v-47.7867c0-16.1493,12.096-29.7813,28.16-31.7013l40.0213-5.0987c3.3067-10.176,7.3813-19.9893,12.1387-29.312l-24.7467-31.872c-10.0267-12.928-8.8533-31.1467,2.7093-42.368l33.6-33.6c11.1147-11.456,29.3333-12.5867,42.2187-2.6027l31.872,24.7893c9.3227-4.7573,19.136-8.832,29.3333-12.1387l5.0987-40.1067c1.92-16,15.552-28.096,31.7013-28.096h47.7867c16.1493,0,29.7813,12.096,31.7013,28.16l5.0987,40.0213c10.1973,3.3067,20.0107,7.3813,29.3334,12.1387l31.872-24.768c12.9493-10.0053,31.1253-8.8533,42.3467,2.7093l33.6,33.6c11.456,11.1147,12.608,29.312,2.6027,42.2187l-24.768,31.8933c4.7787,9.3227,8.8534,19.136,12.1387,29.312l40.1066,5.0987c15.9787,1.9413,28.0747,15.5733,28.0747,31.7227v47.7867c0,16.1493-12.096,29.7813-28.16,31.7013l-40.0213,5.0987c-3.3067,10.176-7.3813,19.9893-12.1387,29.312l24.768,31.872c10.0267,12.928,8.8534,31.1253-2.7094,42.3467l-33.6,33.6c-11.1147,11.456-29.3333,12.6294-42.2187,2.6027l-31.8934-24.768c-9.3227,4.7787-19.136,8.8534-29.312,12.1387l-5.0987,40.1066c-1.9413,16-15.5733,28.096-31.7227,28.096h0ZM164.9067,408.32c1.7707,0,3.584.448,5.2053,1.344,11.7547,6.5707,24.4907,11.8613,37.8453,15.7013,4.096,1.1733,7.104,4.672,7.6373,8.896l5.9733,46.9334c.64,5.3547,5.2693,9.472,10.5387,9.472h47.7867c5.2693,0,9.8987-4.1174,10.5173-9.3653l5.9947-47.0187c.5333-4.224,3.5413-7.7227,7.6373-8.896,13.3547-3.84,26.0907-9.1307,37.8453-15.7013,3.7333-2.0907,8.384-1.728,11.7333.896l37.3333,29.0133c4.288,3.328,10.304,3.0507,13.9733-.7253l33.8133-33.8134c3.8613-3.7547,4.16-9.7707.832-14.08l-29.0133-37.3333c-2.624-3.3707-2.9867-8-.896-11.7333,6.5707-11.7547,11.8613-24.4907,15.7013-37.8453,1.1733-4.096,4.672-7.104,8.896-7.6373l46.9334-5.9733c5.3547-.6613,9.472-5.2907,9.472-10.56v-47.7867c0-5.2693-4.1174-9.8987-9.3653-10.5173l-47.0187-5.9947c-4.224-.5333-7.7227-3.5413-8.896-7.6373-3.84-13.3547-9.1307-26.0907-15.7013-37.8453-2.0907-3.7333-1.7493-8.3627.896-11.7333l29.0133-37.3333c3.3493-4.3093,3.0507-10.3253-.704-13.952l-33.8133-33.8133c-3.7333-3.8827-9.7707-4.1813-14.08-.832l-37.3333,29.0133c-3.392,2.624-8.0213,2.9867-11.7547.896-11.712-6.5707-24.448-11.84-37.8453-15.7013-4.096-1.1733-7.104-4.672-7.6373-8.896l-5.9733-46.9333c-.6613-5.376-5.2907-9.4933-10.56-9.4933h-47.7867c-5.2693,0-9.8987,4.1173-10.5173,9.3653l-5.9947,47.0187c-.5333,4.224-3.5413,7.7227-7.6373,8.9173-13.3973,3.84-26.1333,9.1307-37.8453,15.68-3.7333,2.112-8.3627,1.728-11.7547-.8747l-37.3333-29.0133c-4.3093-3.3493-10.304-3.0507-13.952.704l-33.8133,33.8347c-3.8613,3.7547-4.16,9.7707-.832,14.08l29.0133,37.3333c2.624,3.3707,2.9867,8,.896,11.7333-6.592,11.7547-11.8613,24.4907-15.7013,37.8453-1.1733,4.096-4.672,7.104-8.896,7.6373l-46.9333,5.9733c-5.3547.64-9.472,5.2693-9.472,10.5387v47.7867c0,5.2693,4.1173,9.8987,9.3653,10.5173l47.0187,5.9947c4.224.5333,7.7227,3.5413,8.896,7.6373,3.84,13.3547,9.1307,26.0907,15.7013,37.8453,2.0907,3.7333,1.7493,8.3627-.896,11.7333l-29.0133,37.3333c-3.3493,4.3093-3.0507,10.3253.704,13.952l33.8133,33.8133c3.7333,3.8613,9.728,4.16,14.08.832l37.3333-29.0133c1.9413-1.4507,4.2453-2.2187,6.5707-2.2187h0Z"/><path d="M256,362.6667c-58.816,0-106.6667-47.8507-106.6667-106.6667s47.8507-106.6667,106.6667-106.6667,106.6667,47.8507,106.6667,106.6667-47.8507,106.6667-106.6667,106.6667ZM256,170.6667c-47.0613,0-85.3333,38.272-85.3333,85.3333s38.272,85.3333,85.3333,85.3333,85.3333-38.272,85.3333-85.3333-38.272-85.3333-85.3333-85.3333Z"/></svg>
+                                                </div>
+                                            </div>
                                         </div>
                                         
-                                        <div class="mode-wrapper">
-                                            <div class="mode-options">
-                                                ${befriend.modes.options
-                                                    .map(
-                                                        (option) => `
-                                                    <div class="mode-option ${option.id} ${option.id === befriend.me.modes.selected ? 'selected' : ''}" data-mode="${option.id}">
-                                                        <div class="content">
-                                                            <div class="icon">${option.icon}</div>
-                                                            <div class="name">${option.name}</div>
-                                                            <div class="description">${option.description}</div>
+                                        <div class="birthday">
+                                            <div class="icon-age">
+                                                <svg id="Icons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 495 497"><defs><style>.cls-1{fill:#fff;}</style></defs><g id="t4hFCO.tif"><path class="cls-1" d="M0,452.0904V0c81.3333,0,162.6667,0,244,0-10.6588,14.0938-19.7371,29.1122-24.0837,46.3552-2.8491,11.3023,1.7882,20.5719,10.9115,27.4057,8.9332,6.6914,21.4899,6.9307,31.0167,1.0823,9.3293-5.7272,15.3131-17.0666,12.8282-27.1548-4.3758-17.7651-13.3279-33.3978-24.6727-47.6884h245v452.0904c-2.2474-3.8525-5.6049-5.1287-10.0222-5.0258-9.4442.2201-18.8972.0674-28.8619.0674,0-2.467,0-4.4216,0-6.3763-.0018-48.7205.0858-97.4412-.0407-146.1614-.0699-26.9286-16.2707-50.6175-41.4633-59.4672-7.9911-2.8071-16.8694-3.3838-25.4163-4.2371-6.5253-.6515-13.1682-.1295-20.1239-.1295,0-2.5457.0003-4.3457,0-6.1457-.0041-21.284.11-42.5689-.0516-63.8518-.1194-15.7274-13.255-28.3543-28.9539-28.2173-15.9904.1395-28.2664,12.8369-28.409,29.8201-.1745,20.7837-.039,41.57-.0591,62.3552-.0018,1.9079-.1595,3.8156-.2404,5.6241h-34.5821c0-2.3953,0-4.3769,0-6.3586-.0003-31.5935-.018-63.187.0085-94.7805.0095-11.3216-4.2746-20.4345-14.0134-26.4784-9.2433-5.7364-18.9868-6.014-28.4762-.7545-9.9701,5.5259-15.1561,14.3018-15.19,25.7281-.0953,32.0921-.0345,64.1846-.0353,96.2769,0,1.9161,0,3.8323,0,5.8328h-34.9532c0-2.1212,0-3.9112,0-5.7012-.0013-21.1178-.0342-42.2356.0116-63.3532.0184-8.4819-3.0825-15.6424-9.3018-21.2575-8.8025-7.9472-19.0652-10.2504-30.0936-5.5879-11.0291,4.6628-17.648,13.246-17.8631,25.3994-.3795,21.4436-.147,42.8979-.1702,64.3478-.0021,1.9438-.0003,3.8876-.0003,6.4877-2.3802,0-4.1597-.0424-5.9368.0071-9.3156.2595-18.8173-.5436-27.912,1.0136-31.7053,5.4285-53.0915,31.3513-53.1339,63.4655-.0638,48.3878-.0171,96.7758-.0174,145.1638,0,1.955,0,3.91,0,6.47-9.3086,0-18.0921.1905-26.8621-.0701-5.4197-.1611-9.7346,1.371-12.8363,5.8943ZM340.0003,112.3251c18.7089-.3902,31.5569-17.7105,26.1389-35.5802-4.4282-14.605-12.2576-27.5639-20.7003-40.1265-2.9881-4.4463-8.932-4.1436-12.1544.6856-8.4001,12.5884-16.253,25.5405-20.4671,40.2281-5.0947,17.7564,8.6462,35.1796,27.1829,34.793ZM126.6017,82.4164c.4856,13.5974,5.6002,22.315,16.0522,27.1484,10.5473,4.8774,20.9452,3.7538,29.914-3.8097,8.9234-7.5253,12.1464-17.2954,8.7282-28.6643-4.3472-14.4588-11.967-27.3353-20.3564-39.7373-3.6486-5.3937-9.6221-5.204-12.9413.4903-6.0926,10.4525-11.9513,21.0625-17.3642,31.8777-2.2537,4.5029-3.1154,9.6998-4.0324,12.6949Z"/><path d="M0,452.0904c3.1017-4.5233,7.4166-6.0554,12.8363-5.8943,8.77.2606,17.5535.0701,26.8621.0701,0-2.56,0-4.515,0-6.47.0003-48.3879-.0464-96.7759.0174-145.1638.0424-32.1142,21.4285-58.037,53.1339-63.4655,9.0947-1.5572,18.5964-.7541,27.912-1.0136,1.777-.0495,3.5566-.0071,5.9368-.0071,0-2.6001-.0018-4.5439.0003-6.4877.0232-21.4498-.2093-42.9042.1702-64.3478.2151-12.1535,6.834-20.7366,17.8631-25.3994,11.0284-4.6626,21.2911-2.3593,30.0936,5.5879,6.2194,5.6151,9.3202,12.7756,9.3018,21.2575-.0458,21.1177-.0129,42.2355-.0116,63.3532.0001,1.79,0,3.58,0,5.7012h34.9532c0-2.0005,0-3.9167,0-5.8328.0008-32.0923-.06-64.1849.0353-96.2769.034-11.4263,5.2199-20.2022,15.19-25.7281,9.4894-5.2595,19.2329-4.9819,28.4762.7545,9.7388,6.0439,14.0229,15.1568,14.0134,26.4784-.0265,31.5935-.0088,63.187-.0085,94.7805,0,1.9816,0,3.9632,0,6.3586h34.5821c.0809-1.8084.2386-3.7162.2404-5.6241.0201-20.7852-.1155-41.5714.0591-62.3552.1426-16.9832,12.4186-29.6806,28.409-29.8201,15.6989-.137,28.8344,12.4899,28.9539,28.2173.1616,21.2828.0475,42.5677.0516,63.8518.0004,1.8,0,3.6001,0,6.1457,6.9557,0,13.5986-.522,20.1239.1295,8.5469.8532,17.4252,1.43,25.4163,4.2371,25.1926,8.8497,41.3934,32.5386,41.4633,59.4672.1265,48.7201.0389,97.4409.0407,146.1614,0,1.9546,0,3.9092,0,6.3763,9.9647,0,19.4176.1527,28.8619-.0674,4.4174-.1029,7.7748,1.1733,10.0222,5.0258v8.9819c-.6399,2.0478-1.2708,4.0985-1.9212,6.143-5.4135,17.0135-21.2139,28.763-39.0971,28.7675-137.6545.0341-275.309.0341-412.9635,0-17.8845-.0044-33.6829-11.7526-39.0969-28.7675C1.2707,465.1708.6399,463.1201,0,461.0723c0-2.994,0-5.988,0-8.9819ZM440.2563,447.7424c.1354-1.6264.3253-2.9235.339-4.2225.1508-14.2904.4013-28.5813.3795-42.8717-.0533-34.9122-.1903-69.8245-.3809-104.7363-.1559-28.56-21.1132-49.4225-49.6325-49.4296-95.6496-.0236-191.2991-.0129-286.9487.0102-2.824.0007-5.7057-.023-8.463.4882-29.8797,5.5395-41.0122,25.8891-41.3772,51.076-.694,47.8796-.3703,95.7739-.4685,143.6621-.004,1.931-.0005,3.8619-.0005,6.0235h386.5528ZM477.7295,463.0684H17.1744c0,.7812-.1167,1.3037.0256,1.7427.2545.7852.6092,1.5517,1.0186,2.2713,5.5044,9.6727,13.9974,13.402,24.9453,13.3946,135.9836-.0913,271.9672-.0581,407.9508-.0737,2.1618-.0002,4.3688.0318,6.4775-.3626,9.5509-1.7864,16.1074-7.2287,20.1372-16.9724ZM259.6411,229.915c.2834-.8157.4867-1.1279.4869-1.4402.0166-34.0653.0536-68.1306-.021-102.1957-.0103-4.6962-2.6417-8.1464-6.5917-10.4977-8.9698-5.3394-19.4956,1.2932-19.5197,12.4231-.0706,32.7371-.0287,65.4745-.012,98.2117.0006,1.1013.2025,2.2024.3298,3.4988h25.3277ZM326.3018,230.3118h26.4814c0-23.532.167-46.619-.1003-69.701-.0816-7.0459-6.4744-12.6464-13.0887-12.6513-6.4522-.0047-12.131,5.228-13.087,12.1445-.2037,1.4737-.1964,2.9836-.1973,4.4769-.0118,20.2804-.008,40.5609-.008,60.8413,0,1.6125,0,3.225,0,4.8896ZM167.8841,230.4157c0-4.6391.0003-9.0813,0-13.5235-.0012-18.2837.0633-36.5677-.0367-54.8509-.0395-7.2265-4.6001-12.6016-11.2797-13.8412-5.5497-1.03-11.8465,2.4353-13.9559,8.1441-.8944,2.4207-1.1581,5.1883-1.1697,7.8006-.0909,20.4441-.0509,40.8888-.0512,61.3332,0,1.6141,0,3.2282,0,5.2809,7.7904,0,14.9313.0148,22.072-.0136,1.2917-.0051,2.5827-.187,4.4211-.3298Z"/><path d="M250,0c11.3448,14.2906,20.2969,29.9232,24.6727,47.6884,2.4849,10.0882-3.4989,21.4276-12.8282,27.1548-9.5268,5.8484-22.0836,5.6091-31.0167-1.0823-9.1233-6.8337-13.7605-16.1034-10.9115-27.4057,4.3466-17.243,13.4249-32.2614,24.0837-46.3552h6ZM248.1792,23.2574c-.6793-.0594-1.3586-.1188-2.0379-.1782-3.471,7.6358-7.2053,15.1663-10.3264,22.942-2.3257,5.7941-.5827,10.8893,3.9084,14.2061,4.4669,3.2989,10.4234,3.2624,14.8842-.0914,4.3909-3.3013,6.1101-8.5033,3.7894-14.2643-3.0879-7.6656-6.7832-15.0875-10.2175-22.6141Z"/><path class="cls-1" d="M0,461.0723c.6399,2.0478,1.2707,4.0985,1.9212,6.1429,5.414,17.015,21.2124,28.7631,39.0969,28.7675,137.6545.0341,275.309.0341,412.9635,0,17.8832-.0044,33.6837-11.7539,39.0971-28.7675.6505-2.0444,1.2813-4.0952,1.9212-6.143v35.9277H0c0-11.9759,0-23.9518,0-35.9277Z"/><path d="M340.0003,112.3251c-18.5367.3866-32.2776-17.0366-27.1829-34.793,4.2141-14.6876,12.067-27.6398,20.4671-40.2281,3.2224-4.8292,9.1664-5.1319,12.1544-.6856,8.4426,12.5626,16.2721,25.5215,20.7003,40.1265,5.418,17.8697-7.43,35.1901-26.1389,35.5802ZM340.5468,56.9014l-1.8956.0071c-3.5945,8.1102-7.4503,16.1184-10.6861,24.3688-1.9609,5.0001.1499,10.1746,4.33,13.1574,4.3342,3.0928,10.183,3.112,14.5047.0476,4.1956-2.975,6.4357-8.2099,4.5079-13.146-3.2344-8.2821-7.1386-16.3037-10.761-24.4349Z"/><path d="M126.6017,82.4164c.9171-2.9951,1.7787-8.192,4.0324-12.6949,5.4129-10.8152,11.2716-21.4251,17.3642-31.8777,3.3192-5.6944,9.2928-5.884,12.9413-.4903,8.3894,12.402,16.0093,25.2785,20.3564,39.7373,3.4182,11.3689.1952,21.139-8.7282,28.6643-8.9687,7.5635-19.3667,8.6872-29.914,3.8097-10.452-4.8334-15.5666-13.5509-16.0522-27.1484ZM155.6256,56.8302c-.4929.0946-.9857.1893-1.4786.2839-2.5683,4.986-5.2643,9.912-7.658,14.9801-1.4793,3.1321-2.7058,6.4205-3.6752,9.7463-1.3989,4.7993.5842,9.8272,4.6257,12.6574,4.2187,2.9543,9.7934,3.0325,14.0804.1975,4.1315-2.7322,6.8247-7.978,5.1064-12.5063-3.2651-8.6049-7.2908-16.9222-11.0007-25.359Z"/><path class="cls-1" d="M440.2563,447.7424H53.7035c0-2.1615-.0035-4.0925.0005-6.0235.0982-47.8882-.2255-95.7825.4685-143.6621.3651-25.1869,11.4975-45.5365,41.3772-51.076,2.7573-.5112,5.639-.4875,8.463-.4882,95.6496-.0232,191.2991-.0339,286.9487-.0102,28.5193.0071,49.4766,20.8696,49.6325,49.4296.1906,34.9118.3276,69.824.3809,104.7363.0218,14.2904-.2288,28.5813-.3795,42.8717-.0137,1.299-.2036,2.5961-.339,4.2225Z"/><path class="cls-1" d="M477.7295,463.0684c-4.0298,9.7437-10.5863,15.186-20.1372,16.9724-2.1087.3944-4.3157.3624-6.4775.3626-135.9836.0155-271.9673-.0176-407.9508.0737-10.9479.0074-19.4409-3.7219-24.9453-13.3946-.4095-.7195-.7642-1.4861-1.0186-2.2713-.1423-.439-.0256-.9615-.0256-1.7427h460.5551Z"/><path class="cls-1" d="M259.6411,229.915h-25.3277c-.1272-1.2963-.3292-2.3975-.3298-3.4988-.0166-32.7373-.0586-65.4746.012-98.2117.024-11.1299,10.5499-17.7625,19.5197-12.4231,3.95,2.3513,6.5814,5.8015,6.5917,10.4977.0746,34.0651.0377,68.1304.021,102.1957-.0002.3123-.2035.6245-.4869,1.4402Z"/><path class="cls-1" d="M326.3018,230.3118c0-1.6646,0-3.2771,0-4.8896,0-20.2804-.0038-40.5609.008-60.8413.0009-1.4933-.0065-3.0032.1973-4.4769.9561-6.9165,6.6348-12.1492,13.087-12.1445,6.6144.0049,13.0071,5.6054,13.0887,12.6513.2674,23.082.1003,46.1689.1003,69.701h-26.4814Z"/><path class="cls-1" d="M167.8841,230.4157c-1.8384.1428-3.1294.3246-4.4211.3298-7.1407.0283-14.2816.0136-22.072.0136,0-2.0526,0-3.6668,0-5.2809.0004-20.4445-.0397-40.8892.0512-61.3332.0116-2.6123.2753-5.38,1.1697-7.8006,2.1093-5.7089,8.4061-9.1741,13.9559-8.1441,6.6796,1.2396,11.2402,6.6147,11.2797,13.8412.0999,18.2831.0354,36.5672.0367,54.8509.0003,4.4422,0,8.8844,0,13.5235Z"/><path class="cls-1" d="M248.1792,23.2574c3.4344,7.5266,7.1296,14.9485,10.2175,22.6141,2.3207,5.761.6015,10.9631-3.7894,14.2643-4.4608,3.3538-10.4172,3.3904-14.8842.0914-4.4911-3.3168-6.2341-8.412-3.9084-14.2061,3.1212-7.7757,6.8554-15.3062,10.3264-22.942.6793.0594,1.3586.1188,2.0379.1782Z"/><path class="cls-1" d="M340.5468,56.9014c3.6223,8.1312,7.5265,16.1528,10.761,24.4349,1.9277,4.9361-.3123,10.171-4.5079,13.146-4.3216,3.0644-10.1705,3.0452-14.5047-.0476-4.1801-2.9828-6.291-8.1573-4.33-13.1574,3.2357-8.2504,7.0916-16.2585,10.6861-24.3688l1.8956-.0071Z"/><path class="cls-1" d="M155.6256,56.8302c3.7098,8.4368,7.7356,16.7541,11.0007,25.359,1.7182,4.5283-.975,9.7741-5.1064,12.5063-4.2869,2.835-9.8617,2.7568-14.0804-.1975-4.0415-2.8302-6.0246-7.8582-4.6257-12.6574.9694-3.3258,2.1959-6.6142,3.6752-9.7463,2.3938-5.0681,5.0897-9.9941,7.658-14.9801.4929-.0946.9857-.1893,1.4786-.2839Z"/></g></svg>
+                                                <div class="age"></div>
+                                            </div>
+                                            
+                                            <div class="date"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="me-container">
+                                        <div class="${befriend.variables.class_modes_section}">
+                                            <div class="tab">
+                                                <div class="title">Modes</div>
+                                            </div>
+                                            
+                                            <div class="mode-wrapper">
+                                                <div class="mode-options">
+                                                    ${befriend.modes.options
+                    .map(
+                        (option) => `
+                                                        <div class="mode-option ${option.id} ${option.id === befriend.me.modes.selected ? 'selected' : ''}" data-mode="${option.id}">
+                                                            <div class="content">
+                                                                <div class="icon">${option.icon}</div>
+                                                                <div class="name">${option.name}</div>
+                                                                <div class="description">${option.description}</div>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                `,
-                                                    )
-                                                    .join('')}
-                                            </div>
-                                            
-                                            <div class="selected-mode-container">
-                                                <div class="partner">
+                                                    `,
+                    )
+                    .join('')}
                                                 </div>
-                                                <div class="kids">
+                                                
+                                                <div class="selected-mode-container">
+                                                    <div class="partner">
+                                                    </div>
+                                                    <div class="kids">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                
-                                    <div class="add-section-btn">
-                                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 514 512.668"><path d="M334.269,284.88c0,6.9976-5.6714,12.6708-12.669,12.673h-83.139v83.134c0,6.9991-5.6739,12.673-12.673,12.673s-12.673-5.6739-12.673-12.673v-83.134h-83.134c-6.9991,0-12.673-5.6739-12.673-12.673s5.6739-12.673,12.673-12.673h83.134v-83.135c0-6.9991,5.6739-12.673,12.673-12.673s12.673,5.6739,12.673,12.673v83.135h83.139c6.9976.0022,12.669,5.6754,12.669,12.673ZM512,71.724v308.129c-.0476,35.6151-26.1863,65.8167-61.426,70.974-5.8412,34.5158-35.7145,59.7932-70.721,59.841H71.724c-39.5947-.0419-71.6821-32.1293-71.724-71.724V130.815c.0475-35.6147,26.1857-65.8163,61.425-70.974C67.2667,25.3251,97.1403.0477,132.147,0h308.129c39.5947.0419,71.6821,32.1293,71.724,71.724ZM426.23,130.815c-.027-25.6028-20.7742-46.3518-46.377-46.381H71.724c-25.6016.0292-46.3483,20.7764-46.377,46.378v308.132c.0287,25.6016,20.7754,46.3488,46.377,46.378h308.129c25.6016-.0292,46.3484-20.7764,46.377-46.378V130.815ZM486.653,71.724c-.0287-25.6016-20.7754-46.3488-46.377-46.378H132.147c-20.7365.0289-38.9422,13.7992-44.614,33.745h292.32c39.5943.0424,71.6811,32.1297,71.723,71.724v294.019c20.604-5.205,35.049-23.7277,35.077-44.979V71.724Z"/></svg>
-                                        <div class="name">Add Section</div>
-                                    </div>
                                     
-                                    <div class="sections">
-                                
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="view-section view-account">
-                                <div class="profile-btn">
-                                   <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 198.2477 353.8294"><path class="" d="M161.8301,6.2483c8.3307-8.3311,21.8389-8.3311,30.1696,0,8.3306,8.3313,8.3306,21.8387,0,30.17l-125.4123,125.4116c-8.3307,8.3307-8.3307,21.8389,0,30.1696l125.4123,125.4123c8.3306,8.3306,8.3306,21.8389,0,30.1696s-21.8389,8.3306-30.1696,0L6.2485,191.9996c-8.3313-8.3307-8.3313-21.8389,0-30.1696L161.8301,6.2483Z"/></svg>
-                                    Back
-                                </div>
-                                <!-- Email Settings -->
-                                <div class="settings-section">
-                                    <h3>Email</h3>
-                                    <div class="settings-item email">
-                                        <div class="info">
-                                            
+                                        <div class="add-section-btn">
+                                            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 514 512.668"><path d="M334.269,284.88c0,6.9976-5.6714,12.6708-12.669,12.673h-83.139v83.134c0,6.9991-5.6739,12.673-12.673,12.673s-12.673-5.6739-12.673-12.673v-83.134h-83.134c-6.9991,0-12.673-5.6739-12.673-12.673s5.6739-12.673,12.673-12.673h83.134v-83.135c0-6.9991,5.6739-12.673,12.673-12.673s12.673,5.6739,12.673,12.673v83.135h83.139c6.9976.0022,12.669,5.6754,12.669,12.673ZM512,71.724v308.129c-.0476,35.6151-26.1863,65.8167-61.426,70.974-5.8412,34.5158-35.7145,59.7932-70.721,59.841H71.724c-39.5947-.0419-71.6821-32.1293-71.724-71.724V130.815c.0475-35.6147,26.1857-65.8163,61.425-70.974C67.2667,25.3251,97.1403.0477,132.147,0h308.129c39.5947.0419,71.6821,32.1293,71.724,71.724ZM426.23,130.815c-.027-25.6028-20.7742-46.3518-46.377-46.381H71.724c-25.6016.0292-46.3483,20.7764-46.377,46.378v308.132c.0287,25.6016,20.7754,46.3488,46.377,46.378h308.129c25.6016-.0292,46.3484-20.7764,46.377-46.378V130.815ZM486.653,71.724c-.0287-25.6016-20.7754-46.3488-46.377-46.378H132.147c-20.7365.0289-38.9422,13.7992-44.614,33.745h292.32c39.5943.0424,71.6811,32.1297,71.723,71.724v294.019c20.604-5.205,35.049-23.7277,35.077-44.979V71.724Z"/></svg>
+                                            <div class="name">Add Section</div>
                                         </div>
                                         
-                                        <div class="action-btn" data-action="change-email">Change</div>
-                                    </div>
-                                </div>
-        
-                                <!-- Password Settings -->
-                                <div class="settings-section">
-                                    <h3>Password</h3>
-                                    <div class="settings-item password">
-                                        <div class="info">
-                                            ********
+                                        <div class="sections">
+                                    
                                         </div>
-                                        <div class="action-btn" data-action="change-password">Update</div>
                                     </div>
                                 </div>
-        
-                                <!-- Country Settings -->
-                                <div class="settings-section">
-                                    <h3>Country</h3>
-                                    <div class="settings-item country">
-                                        <div class="info">
+                                
+                                <div class="view-section view-account">
+                                    <div class="profile-btn">
+                                       <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 198.2477 353.8294"><path class="" d="M161.8301,6.2483c8.3307-8.3311,21.8389-8.3311,30.1696,0,8.3306,8.3313,8.3306,21.8387,0,30.17l-125.4123,125.4116c-8.3307,8.3307-8.3307,21.8389,0,30.1696l125.4123,125.4123c8.3306,8.3306,8.3306,21.8389,0,30.1696s-21.8389,8.3306-30.1696,0L6.2485,191.9996c-8.3313-8.3307-8.3313-21.8389,0-30.1696L161.8301,6.2483Z"/></svg>
+                                        Back
+                                    </div>
+                                    <!-- Email Settings -->
+                                    <div class="settings-section">
+                                        <h3>Email</h3>
+                                        <div class="settings-item email">
+                                            <div class="info">
+                                                
+                                            </div>
                                             
+                                            <div class="action-btn" data-action="change-email">Change</div>
                                         </div>
-                                        <div class="action-btn" data-action="change-country">Change</div>
+                                    </div>
+            
+                                    <!-- Password Settings -->
+                                    <div class="settings-section">
+                                        <h3>Password</h3>
+                                        <div class="settings-item password">
+                                            <div class="info">
+                                                ********
+                                            </div>
+                                            <div class="action-btn" data-action="change-password">Update</div>
+                                        </div>
+                                    </div>
+            
+                                    <!-- Country Settings -->
+                                    <div class="settings-section">
+                                        <h3>Country</h3>
+                                        <div class="settings-item country">
+                                            <div class="info">
+                                                
+                                            </div>
+                                            <div class="action-btn" data-action="change-country">Change</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

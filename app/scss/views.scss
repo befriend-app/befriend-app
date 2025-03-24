@@ -31,10 +31,20 @@
 #views {
     .view {
         display: none;
-        flex-direction: column;
-        gap: $view_gap_tb 0;
-
+        //position: absolute;
+        //width: calc(100vw - #{$app_margin_lr * 2});
+        top: 0;
+        height: calc(100vh - var(--view-top) - var(--footer_full_h));
+        overflow-x: hidden;
+        overflow-y: scroll;
         padding: var(--view-top) $app_margin_lr calc(var(--footer_full_h) + 40px);
+
+        .view-container {
+            display: flex;
+            flex-direction: column;
+            gap: $view_gap_tb 0;
+            height: fit-content;
+        }
 
         &.active {
             display: flex;
@@ -42,6 +52,17 @@
 
         &.view-home {
             background-color: $app_background;
+
+            .view-container {
+                position: relative;
+                padding-bottom: 30px;
+            }
+        }
+
+        &.view-filters {
+            .view-container {
+                padding-bottom: calc(#{$filters_matches_h + 100px});
+            }
         }
 
         .view-section {

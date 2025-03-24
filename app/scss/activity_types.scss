@@ -126,10 +126,7 @@
 
             .level_2_container {
                 padding: $activity_level_2_ptb $activity_level_2_plr;
-                width: calc(
-                    100vw - #{$app_margin_lr * 2} - #{$activity_level_2_plr * 2} - #{$activity_level_2_border_w *
-                        2}
-                );
+                width: calc(100% - #{$activity_level_2_plr * 2});
             }
 
             .level_2_row {

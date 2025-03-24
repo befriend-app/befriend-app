@@ -18,7 +18,6 @@ befriend.events = {
                 await befriend.activities.events.init();
                 await befriend.location.events.init();
                 await befriend.places.events.init();
-
                 await befriend.me.events.init();
 
                 befriend.modals.events.init();

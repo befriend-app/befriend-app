@@ -69,7 +69,7 @@ $activity_level_3_row_items: 3;
 
 $activity_transition_ms: 300ms;
 
-$footer_h: 40px;
+$footer_h: 56px;
 $footer_pt: 15px;
 $total_footer_h: $footer_h + $footer_pt * 2;;
 
@@ -125,6 +125,7 @@ $me_add_btn_tb: 15px;
 $me_movie_item_plr: 15px;
 
 $filters_matches_h: 100px;
+$filters_matches_offset_top: 160px;
 $filters_section_transition_ms: 300ms;
 $filter_range_dim: 37px;
 $filter_review_range_dim: 30px;

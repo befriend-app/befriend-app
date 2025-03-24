@@ -1,6 +1,10 @@
 window['befriend'] = {
     init_finished: false,
     is_paused: false,
+    views: {
+        active: 'home',
+        scroll: {}
+    },
     classes: {
         placesShown: 'display-places',
         changeLocationShown: 'display-change-location',
@@ -356,6 +360,8 @@ window['befriend'] = {
         });
     },
     navigateToView: function (view, skip_transition, classes_only) {
+        befriend.views.active = view;
+
         let nav_items = befriend.els.footer.getElementsByClassName('nav-item');
         let views = befriend.els.views.getElementsByClassName('view');
 
@@ -408,12 +414,16 @@ window['befriend'] = {
         } else if (view === 'activities') {
             //navigate back to main activities view if current and previous views are the same
             if(prevViewEl === viewEl) {
+                viewEl.scrollTop = befriend.activities.scroll.main || 0;
+
                 removeClassEl('show', befriend.els.activityNotificationView);
                 removeClassEl('show', befriend.els.currentActivityView);
                 addClassEl('show', befriend.els.mainActivitiesView);
             } else {
                 if(befriend.activities.displayActivity.currentToken && elHasClass(befriend.els.currentActivityView, 'show')) {
                     befriend.activities.displayActivity.display(befriend.activities.displayActivity.currentToken, true, true);
+                } else {
+                    viewEl.scrollTop = befriend.activities.scroll.main || 0;
                 }
             }
         } else if (view === 'filters') {
