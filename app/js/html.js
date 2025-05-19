@@ -377,6 +377,8 @@ befriend.html = {
                                             <div class="action-btn" data-action="change-country">Change</div>
                                         </div>
                                     </div>
+
+                                    <div class="sign-out">Sign out</div>
                                 </div>
                             </div>
                         </div>
