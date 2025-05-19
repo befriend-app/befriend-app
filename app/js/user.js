@@ -53,6 +53,22 @@ befriend.user = {
                 befriend.reviews.lastNewActivityToken = localData.reviews.lastNewActivityToken;
             }
 
+            if(!befriend.user.person.token || !befriend.user.login.token) {
+                return reject('User not previously logged in');
+            }
+
+            try {
+                await befriend.me.getMe();
+            } catch(e) {
+                if(e.response?.status === 401) {
+                    befriend.user.setPersonToken(null);
+                    befriend.user.setLoginToken(null);
+                    return reject();
+                }
+
+                console.error(e);
+            }
+
             resolve();
         });
     },
@@ -68,6 +84,12 @@ befriend.user = {
             }
         }
     },
+    saveLocal: function () {
+        window.localStorage.setItem(
+            befriend.user.local.key,
+            JSON.stringify(befriend.user.local.data),
+        );
+    },
     getLocal: function () {
         return befriend.user.local.data;
     },
@@ -77,12 +99,6 @@ befriend.user = {
         setNestedValue(data, key, value);
 
         befriend.user.saveLocal();
-    },
-    saveLocal: function () {
-        window.localStorage.setItem(
-            befriend.user.local.key,
-            JSON.stringify(befriend.user.local.data),
-        );
     },
     setPersonToken: function (token) {
         befriend.user.person.token = token;
@@ -95,16 +111,25 @@ befriend.user = {
         befriend.user.setLocal('login.token', token);
     },
     logout: function () {
+        function afterLogout() {
+            //clean up local data, show login screen
+
+            befriend.user.setPersonToken(null);
+            befriend.user.setLoginToken(null);
+
+            befriend.showLoginSignup();
+        }
+
         return new Promise(async (resolve, reject) => {
             try {
                 await befriend.auth.put('/logout');
 
-                befriend.user.setPersonToken(null);
-                befriend.user.setLoginToken(null);
+                afterLogout();
 
                 resolve();
             } catch(e) {
-                console.error(e);
+                afterLogout();
+
                 return reject(e);
             }
         });

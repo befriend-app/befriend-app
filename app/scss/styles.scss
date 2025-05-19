@@ -2,6 +2,7 @@
 @import 'fonts';
 @import '_mixins';
 @import 'os';
+@import 'login_signup';
 @import 'header';
 @import 'views';
 @import 'footer';
@@ -70,6 +71,16 @@ body.loading {
     overflow-y: hidden;
     min-height: 100vh;
     min-height: 100dvh;
+
+    &.show-login-signup {
+        .app-wrapper {
+            display: none !important;
+        }
+
+        .login-signup-wrapper {
+            display: block !important;
+        }
+    }
 }
 
 #overlay {

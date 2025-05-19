@@ -672,6 +672,138 @@ befriend.html = {
                         </div>
                     </footer>
                 </div>
+                
+                <div class="login-signup-wrapper">
+                    <div class="container">
+                        <div class="logo-container">
+                            <img class="logo" src="${befriend.variables.logo}">
+                        </div>
+                        
+                        <div class="screens-container">
+                            <div class="screen" id="phone-screen">
+                                <div class="heading">
+                                    <h1>Welcome</h1>
+                                    <p>Sign in or create an account</p>
+                                </div>
+                    
+                                <div class="social-buttons">
+                                    <button class="social-button">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"></path><path d="M6 12H18"></path><path d="M12 6V18"></path></svg>
+                                        Continue with Google
+                                    </button>
+                                    <button class="social-button">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"></path><path d="M15 12H9"></path><path d="M12 9L9 12L12 15"></path></svg>
+                                        Continue with Apple
+                                    </button>
+                                </div>
+                    
+                                <div class="separator">
+                                    <div class="line"></div>
+                                    <div class="text">or</div>
+                                    <div class="line"></div>
+                                </div>
+                    
+                                <div class="phone-input">
+                                    <div class="country-code">
+                                        <select id="country-code">
+                                        </select>
+                                    </div>
+                                    <div class="phone-number">
+                                        <input type="tel" id="phone-input" placeholder="Phone number">
+                                    </div>
+                                </div>
+                    
+                                <div class="toggle-method">
+                                    <a href="#" id="use-email">Use email instead</a>
+                                </div>
+                    
+                                <button class="continue-button" id="continue-phone">Continue to sign in</button>
+                            </div>
+                    
+                            <!-- Email Login Screen -->
+                            <div class="screen hidden" id="email-screen">
+                                <div class="heading">
+                                    <h1>Welcome</h1>
+                                    <p>Sign in or create an account</p>
+                                </div>
+                    
+                                <div class="social-buttons">
+                                    <button class="social-button">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"></path><path d="M6 12H18"></path><path d="M12 6V18"></path></svg>
+                                        Continue with Google
+                                    </button>
+                                    <button class="social-button">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"></path><path d="M15 12H9"></path><path d="M12 9L9 12L12 15"></path></svg>
+                                        Continue with Apple
+                                    </button>
+                                </div>
+                    
+                                <div class="separator">
+                                    <div class="line"></div>
+                                    <div class="text">or</div>
+                                    <div class="line"></div>
+                                </div>
+                    
+                                <div class="email-input">
+                                    <input type="email" placeholder="Email address">
+                                </div>
+                    
+                                <div class="toggle-method">
+                                    <a href="#" id="use-phone">Use phone instead</a>
+                                </div>
+                    
+                                <button class="continue-button" id="continue-email">Continue to sign in</button>
+                            </div>
+                    
+                            <!-- Verification Code Screen -->
+                            <div class="screen hidden" id="verification-screen">
+                                <button class="back-button" id="back-from-verification">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                                    Back
+                                </button>
+                    
+                                <div class="heading">
+                                    <h1>Verification Code</h1>
+                                    <p>Enter the code sent to your phone</p>
+                                </div>
+                    
+                                <div class="verification-code">
+                                    <input type="text" maxlength="1">
+                                    <input type="text" maxlength="1">
+                                    <input type="text" maxlength="1">
+                                    <input type="text" maxlength="1">
+                                    <input type="text" maxlength="1">
+                                    <input type="text" maxlength="1">
+                                </div>
+                    
+                                <button class="continue-button">Verify and continue</button>
+                            </div>
+                    
+                            <!-- Password Screen -->
+                            <div class="screen hidden" id="password-screen">
+                                <button class="back-button" id="back-from-password">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                                    Back
+                                </button>
+                    
+                                <div class="heading">
+                                    <h1>Enter Password</h1>
+                                    <p>Sign in to your account</p>
+                                </div>
+                    
+                                <div class="password-input">
+                                    <input type="password" placeholder="Password">
+                                </div>
+                    
+                                <div class="forgot-password">
+                                    <a href="#">Forgot password?</a>
+                                </div>
+                    
+                                <button class="continue-button">Sign in</button>
+                            </div>    
+                        </div>
+                    </div>
+                </div>
             </div>
         `;
 

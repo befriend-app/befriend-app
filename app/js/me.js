@@ -305,7 +305,6 @@ befriend.me = {
     init: function () {
         return new Promise(async (resolve, reject) => {
             try {
-                await befriend.me.getMe();
                 await befriend.me.setMe();
 
                 befriend.me.setOnline();
@@ -357,12 +356,12 @@ befriend.me = {
                 //local data
                 befriend.user.setLocal('me.me', data.me);
             } catch (e) {
-                console.error(e);
-
                 if (befriend.user.local.data?.me?.me) {
                     console.log('Using local me data');
                     befriend.me.data.me = befriend.user.local.data.me.me;
                 }
+
+                return reject(e);
             }
 
             resolve();
@@ -2199,10 +2198,8 @@ befriend.me = {
 
                 try {
                     await befriend.user.logout();
-
-                    //clean up local data, show login screen
                 } catch(e) {
-                    console.error(e);
+
                 }
 
                 this._ip = false;

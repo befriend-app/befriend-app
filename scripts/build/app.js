@@ -74,9 +74,23 @@ function addStyleVariables() {
             if (l[0] === '$') {
                 let l_split = l.split(':');
 
+                if(l_split.length > 2) {
+                    let str_arr = [];
+
+                    for(let i = 1; i < l_split.length; i++) {
+                        str_arr.push(l_split[i]);
+                    }
+
+                    let str = str_arr.join(':');
+
+                    let first_item = l_split[0];
+
+                    l_split = [first_item, str];
+                }
+
                 l_split[1] = l_split[1].trimStart();
 
-                styles_organized[l_split[0].replace('$', '')] = l_split[1].replace(';', '');
+                styles_organized[l_split[0].replace('$', '')] = l_split[1].replaceAll(';', '').replaceAll(`'`, '');
             }
         }
 

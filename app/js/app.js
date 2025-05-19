@@ -239,7 +239,7 @@ window['befriend'] = {
             });
         },
     },
-    init: function () {
+    init: function (logged_in = null) {
         console.log('Befriend: [init]');
 
         return new Promise(async (resolve, reject) => {
@@ -253,13 +253,6 @@ window['befriend'] = {
             //handle app start on notification
             await befriend.notifications.events.init();
 
-            //user
-            try {
-                await befriend.user.init();
-            } catch (e) {
-                console.error(e);
-            }
-
             //html
             try {
                 await befriend.html.appInit();
@@ -272,6 +265,19 @@ window['befriend'] = {
                 await befriend.styles.init();
             } catch (e) {
                 console.error(e);
+            }
+
+            //user
+            try {
+                if(!logged_in) {
+                    await befriend.user.init();
+                }
+            } catch (e) {
+                //catch rejection if not logged in
+                //show login screen
+                befriend.showLoginSignup();
+
+                return resolve();
             }
 
             //location
@@ -489,13 +495,19 @@ window['befriend'] = {
         return new Promise(async (resolve, reject) => {
             console.log('init finished check');
 
-            if (befriend.init_finished) {
-                return resolve(true);
+            async function isFinished() {
+                if (befriend.init_finished) {
+                    return resolve(true);
+                }
+
+                await rafAwait();
+
+                await isFinished();
             }
 
-            await rafAwait();
+            await isFinished();
 
-            resolve(await befriend.initFinished());
+            resolve(true);
         });
     },
     preventNavigation: function (prevent) {
@@ -505,4 +517,11 @@ window['befriend'] = {
             removeClassEl('show', 'transition-overlay');
         }
     },
+    showLoginSignup: function () {
+        befriend.events.loginSignupEvents();
+        let appEl = document.getElementById('app');
+        console.log('Show login');
+
+        addClassEl('show-login-signup', appEl);
+    }
 };

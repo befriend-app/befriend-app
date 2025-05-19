@@ -406,4 +406,119 @@ befriend.events = {
         document.addEventListener('pause', onPause, false);
         document.addEventListener('resume', onResume, false);
     },
+    loginSignupEvents: function () {
+        let phoneScreen = document.getElementById('phone-screen');
+        let emailScreen = document.getElementById('email-screen');
+        let verificationScreen = document.getElementById('verification-screen');
+        let passwordScreen = document.getElementById('password-screen');
+
+        let useEmailBtn = document.getElementById('use-email');
+        let usePhoneBtn = document.getElementById('use-phone');
+        let backFromVerificationBtn = document.getElementById('back-from-verification');
+        let backFromPasswordBtn = document.getElementById('back-from-password');
+        let continuePhoneBtn = document.getElementById('continue-phone');
+        let continueEmailBtn = document.getElementById('continue-email');
+
+        // prevent duplicate event handlers
+        if(phoneScreen._listener) {
+            return;
+        }
+
+        phoneScreen._listener = true;
+
+        // Toggle between phone and email screens
+        useEmailBtn.addEventListener('click', async function(e) {
+            e.preventDefault();
+            addClassEl('no-transition', phoneScreen);
+            addClassEl('no-transition', emailScreen);
+
+            addClassEl('hidden', phoneScreen);
+            removeClassEl('hidden', emailScreen);
+
+            await rafAwait();
+
+            removeClassEl('no-transition', phoneScreen);
+            removeClassEl('no-transition', emailScreen);
+        });
+
+        usePhoneBtn.addEventListener('click', async function(e) {
+            e.preventDefault();
+
+            addClassEl('no-transition', phoneScreen);
+            addClassEl('no-transition', emailScreen);
+
+            addClassEl('hidden', emailScreen);
+            removeClassEl('hidden', phoneScreen);
+
+            await rafAwait();
+
+            removeClassEl('no-transition', phoneScreen);
+            removeClassEl('no-transition', emailScreen);
+        });
+
+        // Navigate to verification screen (from phone)
+        continuePhoneBtn.addEventListener('click', function() {
+            addClassEl('hidden', phoneScreen);
+            removeClassEl('hidden', verificationScreen);
+        });
+
+        // Navigate to password screen (from email)
+        continueEmailBtn.addEventListener('click', function() {
+            addClassEl('hidden', emailScreen);
+            removeClassEl('hidden', passwordScreen);
+        });
+
+        // Back button functionality
+        backFromVerificationBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            addClassEl('hidden', verificationScreen);
+            removeClassEl('hidden', phoneScreen);
+        });
+
+        backFromPasswordBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            addClassEl('hidden', passwordScreen);
+            removeClassEl('hidden', emailScreen);
+        });
+
+        // Auto-focus next input in verification code
+        let verificationInputs = document.querySelectorAll('.verification-code input');
+
+        verificationInputs.forEach((input, index) => {
+            input.addEventListener('keyup', function(e) {
+                if (e.key >= '0' && e.key <= '9') {
+                    if (index < verificationInputs.length - 1) {
+                        verificationInputs[index + 1].focus();
+                    }
+                } else if (e.key === 'Backspace') {
+                    if (index > 0) {
+                        verificationInputs[index - 1].focus();
+                    }
+                }
+            });
+        });
+
+        let phoneInput = document.getElementById('phone-input');
+
+        phoneInput.addEventListener('input', function(e) {
+            // Get only digits from the input
+            let digits = this.value.replace(/\D/g, '');
+
+            // Limit to 10 digits
+            digits = digits.substring(0, 10);
+
+            // Format the number
+            if (digits.length > 0) {
+                if (digits.length <= 3) {
+                    this.value = '(' + digits;
+                } else if (digits.length <= 6) {
+                    this.value = '(' + digits.substring(0, 3) + ') ' + digits.substring(3);
+                } else {
+                    this.value = '(' + digits.substring(0, 3) + ') ' +
+                        digits.substring(3, 6) + '-' +
+                        digits.substring(6);
+                }
+            }
+        });
+    }
 };
