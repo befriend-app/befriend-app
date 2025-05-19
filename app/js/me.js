@@ -359,11 +359,7 @@ befriend.me = {
             } catch (e) {
                 console.error(e);
 
-                if (
-                    befriend.user.local.data &&
-                    befriend.user.local.data.me &&
-                    befriend.user.local.data.me.me
-                ) {
+                if (befriend.user.local.data?.me?.me) {
                     console.log('Using local me data');
                     befriend.me.data.me = befriend.user.local.data.me.me;
                 }
@@ -872,10 +868,6 @@ befriend.me = {
         }
     },
     addSectionItem: function (section_key, item_token, table_key) {
-        console.log({
-            add_section_item: table_key,
-        });
-
         return new Promise(async (resolve, reject) => {
             try {
                 let section_data = befriend.me.getActiveSection(section_key);
@@ -1002,7 +994,7 @@ befriend.me = {
         let isOnline = this.data.me.is_online || this.data.me.online === null;
 
         let html = `<div id="me-online">
-                        ${toggleHtml(isOnline, isOnline ? 'Online' : 'Offline')}
+                        ${toggleHtml(isOnline, isOnline ? 'Online' : 'Offline', null, true)}
                     </div>`;
 
         let top_el = befriend.els.me.querySelector('.top');

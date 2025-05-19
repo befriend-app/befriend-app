@@ -362,8 +362,8 @@ befriend.activities = {
         let activities = befriend.activities.data.all;
         let notifications = befriend.notifications.data.all;
 
-        activities = Object.values(activities);
-        notifications = Object.values(notifications);
+        activities = Object.values(activities || {});
+        notifications = Object.values(notifications || {});
 
         //sort newest->oldest
         activities.sort(function (a, b) {

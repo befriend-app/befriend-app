@@ -56,26 +56,30 @@ html.#{$class_confirm_me_action} {
     }
 
     .view-profile {
-        margin-top: 10px;
-    }
-
-    .name-account {
-        display: flex;
-        flex-direction: column;
-        gap: 0 20px;
-        justify-content: center;
+        padding-top: 0 !important;
     }
 
     #me-online {
-        position: absolute;
-        right: 0;
+        //position: absolute;
+        left: 0;
+        top: 0;
     }
 
     .top {
         display: flex;
+        flex-direction: column;
         align-items: start;
-        margin-top: 10px;
         position: relative;
+
+        .toggle-label {
+            margin-left: 0;
+        }
+
+        .name {
+            display: flex;
+            width: 100%;
+            margin-top: 15px;
+        }
 
         .first-name {
             display: flex;
@@ -132,6 +136,9 @@ html.#{$class_confirm_me_action} {
         margin-top: 8px;
         border-radius: 8px;
         background-color: lighten(black, 96%);
+        position: absolute;
+        top: 0;
+        right: 0;
 
         .text {
             font-weight: 500;
@@ -149,7 +156,7 @@ html.#{$class_confirm_me_action} {
     }
 
     .me-container {
-        margin-top: 25px;
+        margin-top: 20px;
     }
 
     .add-section-btn {

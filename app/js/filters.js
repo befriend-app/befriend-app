@@ -4757,14 +4757,6 @@ befriend.filters = {
             let threshold = groupOffsetTop;
             let scrollingUp = scrollEl.scrollTop > lastScrollTop;
 
-            console.log({
-                prevIndex,
-                threshold,
-                scrollingUp,
-                lastScrollTop,
-                current: scrollEl.scrollTop,
-            });
-
             let selected = {
                 top: null,
                 index: null,
@@ -4774,8 +4766,6 @@ befriend.filters = {
             for (let i = 0; i < groups.length; i++) {
                 let group = groups[i];
                 let groupBox = group.getBoundingClientRect();
-
-                console.log(groupBox);
 
                 if (groupBox.top <= threshold) {
                     if (selected.top === null || groupBox.top > selected.top) {
@@ -4796,8 +4786,6 @@ befriend.filters = {
                     selected.index++;
                 }
             }
-
-            console.log(selected);
 
             lastScrollTop = scrollEl.scrollTop;
 
