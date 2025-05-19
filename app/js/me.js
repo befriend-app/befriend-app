@@ -2198,7 +2198,7 @@ befriend.me = {
                 this._ip = true;
 
                 try {
-                    await befriend.auth.put('/logout');
+                    await befriend.user.logout();
 
                     //clean up local data, show login screen
                 } catch(e) {

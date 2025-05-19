@@ -343,14 +343,14 @@ window['befriend'] = {
 
             //todo remove
             setTimeout(function () {
-                befriend.navigateToView('activities');
+                // befriend.navigateToView('activities');
 
                 //show first activity
-                let activity = befriend.els.mainActivitiesView.querySelector('.activity');
+                // let activity = befriend.els.mainActivitiesView.querySelector('.activity');
 
-                if (activity) {
+                // if (activity) {
                     // fireClick(activity);
-                }
+                // }
 
                 // befriend.reviews.showReviewActivities();
             }, 50);

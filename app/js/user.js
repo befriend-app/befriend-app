@@ -94,4 +94,19 @@ befriend.user = {
 
         befriend.user.setLocal('login.token', token);
     },
+    logout: function () {
+        return new Promise(async (resolve, reject) => {
+            try {
+                await befriend.auth.put('/logout');
+
+                befriend.user.setPersonToken(null);
+                befriend.user.setLoginToken(null);
+
+                resolve();
+            } catch(e) {
+                console.error(e);
+                return reject(e);
+            }
+        });
+    }
 };
