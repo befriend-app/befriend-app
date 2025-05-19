@@ -738,6 +738,10 @@ befriend.filters = {
             return section.importance?.default || this.default;
         },
         set: function (section_key) {
+            if(!befriend.filters.data.filters) {
+                return;
+            }
+
             if (section_key in befriend.filters.data.filters) {
                 let filterData = befriend.filters.data.filters[section_key];
 
@@ -3010,6 +3014,10 @@ befriend.filters = {
             dropdown: null,
         },
         init: function () {
+            if(!befriend.filters.data.filters?.networks) {
+                return;
+            }
+
             let section = befriend.filters.sections.networks;
             this.els.section = befriend.els.filters.querySelector(`.section.${section.token}`);
 
@@ -5900,6 +5908,11 @@ befriend.filters = {
                 let tabs_html = `<div class="tabs-container">${html}</div>`;
 
                 let categories_container = section_el.querySelector('.categories-container');
+
+                if(!categories_container) {
+                    return;
+                }
+
                 categories_container.insertAdjacentHTML('afterend', tabs_html);
 
                 this.events.tabs();

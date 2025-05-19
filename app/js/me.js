@@ -2177,6 +2177,7 @@ befriend.me = {
             let accountViewEl = befriend.els.me.querySelector('.view-account');
             let accountBtn = befriend.els.me.querySelector('.account-btn');
             let profileBtn = befriend.els.me.querySelector('.profile-btn');
+            let signOutBtn = befriend.els.me.querySelector('.sign-out');
 
             accountBtn.addEventListener('click', function (e) {
                 befriend.me.account.setView('account');
@@ -2184,6 +2185,27 @@ befriend.me = {
 
             profileBtn.addEventListener('click', function (e) {
                 befriend.me.account.setView('profile');
+            });
+
+            signOutBtn.addEventListener('click', async function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                if(this._ip) {
+                    return;
+                }
+
+                this._ip = true;
+
+                try {
+                    await befriend.auth.put('/logout');
+
+                    //clean up local data, show login screen
+                } catch(e) {
+                    console.error(e);
+                }
+
+                this._ip = false;
             });
         },
         setView: function (view) {

@@ -13,6 +13,7 @@ befriend.location = {
         return new Promise(async (resolve, reject) => {
             try {
                 await befriend.location.getLocation();
+
                 resolve();
             } catch (e) {
                 console.error(e);

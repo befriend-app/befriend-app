@@ -945,7 +945,7 @@ befriend.reviews = {
 
         let activities = this.getActivities();
 
-        if (!activities.length) {
+        if (!activities?.length) {
             return;
         }
 
