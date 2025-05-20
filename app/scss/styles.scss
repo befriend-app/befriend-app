@@ -71,6 +71,7 @@ body.loading {
     overflow-y: hidden;
     min-height: 100vh;
     min-height: 100dvh;
+    transition: all 220ms;
 
     &.show-login-signup {
         .app-wrapper {
@@ -80,6 +81,26 @@ body.loading {
         .login-signup-wrapper {
             display: block !important;
         }
+    }
+
+    &.transitioning-to-app {
+        .app-wrapper {
+            display: flex !important;
+            transform: translateX(100%);
+        }
+    }
+
+    &.transform-0 {
+        .app-wrapper {
+            transform: translateX(0);
+        }
+    }
+
+    .app-wrapper {
+        position: relative;
+        height: 100vh;
+        height: 100dvh;
+        transition: transform 220ms;
     }
 }
 
@@ -149,4 +170,8 @@ html.#{$class_available_me_sections} {
 
 .no-scroll {
     overflow: hidden;
+}
+
+.transition-x-left {
+    transform: translateX(-100%) !important;
 }

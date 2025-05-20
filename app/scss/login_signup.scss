@@ -2,9 +2,22 @@
     $screens_mt: 30px;
     $plr: 24px;
     $ptb: 24px;
+    $input_mtb: 32px;
 
     display: none;
     margin-top: var(--sbh);
+    transition: transform 220ms;
+    transform: translateX(0);
+
+    &.transition-out {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 100;
+        width: 100%;
+        display: flex;
+        transform: translateX(-100%);
+    }
 
     .logo-container {
         display: flex;
@@ -60,7 +73,8 @@
                 transform: translateX(-100%);
             }
 
-            &.create-account-screen, &.verification-screen, &.password-screen {
+            &.create-account-screen, &.verification-screen,
+            &.password-screen, &.create-password-screen, &.post-signup-screen {
                 transform: translateX(100%);
             }
         }
@@ -143,6 +157,16 @@
             color: #666;
             font-size: 14px;
         }
+    }
+
+    //default input
+    input {
+        $p: 12px;
+        width: calc(100% - $p * 2);
+        padding: $p;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        font-size: 16px;
     }
 
     // Phone input
@@ -293,10 +317,10 @@
     .verification-code {
         display: flex;
         justify-content: space-between;
-        margin-bottom: 32px;
+        margin-bottom: $input_mtb;
 
         input {
-            width: 48px;
+            width: 44px;
             height: 54px;
             text-align: center;
             font-size: 24px;
@@ -346,7 +370,7 @@
         border-color: $error_message_color !important;
     }
 
-    .spam-message {
+    .check-spam-message {
         margin-top: 8px;
         font-size: 13px;
         display: none;
@@ -358,13 +382,19 @@
 
     .error-message {
         color: $error_message_color;
-        font-size: 13px;
-        margin-top: 8px;
+        font-size: 14px;
+        margin-top: 10px;
     }
 
     .loading {
         pointer-events: none;
         opacity: 0.7;
+    }
+
+    .create-password-screen {
+        .continue-button {
+            margin-top: $input_mtb;
+        }
     }
 
     @media (max-width: 360px) {

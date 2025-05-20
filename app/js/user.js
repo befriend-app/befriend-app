@@ -113,6 +113,11 @@ befriend.user = {
     logout: function () {
         function afterLogout() {
             //clean up local data, show login screen
+            let delete_keys = [befriend.location.prev.key, befriend.user.local.key];
+
+            for(let key of delete_keys) {
+                window.localStorage.removeItem(key);
+            }
 
             befriend.user.setPersonToken(null);
             befriend.user.setLoginToken(null);

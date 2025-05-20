@@ -239,7 +239,7 @@ window['befriend'] = {
             });
         },
     },
-    init: function (logged_in = null) {
+    init: function (afterSignupLogin = false) {
         console.log('Befriend: [init]');
 
         return new Promise(async (resolve, reject) => {
@@ -269,9 +269,7 @@ window['befriend'] = {
 
             //user
             try {
-                if(!logged_in) {
-                    await befriend.user.init();
-                }
+                await befriend.user.init();
             } catch (e) {
                 //catch rejection if not logged in
                 //show login screen
@@ -544,6 +542,8 @@ window['befriend'] = {
         });
     },
     showLoginSignup: async function () {
+        let appEl = document.getElementById('app');
+
         try {
             await befriend.setLoginSignup();
         } catch(e) {
@@ -552,8 +552,9 @@ window['befriend'] = {
 
         befriend.events.loginSignupEvents();
 
-        let appEl = document.getElementById('app');
-
         addClassEl('show-login-signup', appEl);
     },
+    showPostSignupForm: function () {
+
+    }
 };

@@ -356,6 +356,8 @@ befriend.me = {
                 //local data
                 befriend.user.setLocal('me.me', data.me);
             } catch (e) {
+                console.error(e);
+
                 if (befriend.user.local.data?.me?.me) {
                     console.log('Using local me data');
                     befriend.me.data.me = befriend.user.local.data.me.me;

@@ -407,6 +407,29 @@ befriend.events = {
         document.addEventListener('resume', onResume, false);
     },
     loginSignupEvents: function () {
+        function showPostSignupScreen() {
+            let screenToTransition = lastScreen;
+
+            addClassEl('transition-x-left', screenToTransition);
+
+            hideScreen(screenToTransition);
+
+            showScreen(postSignupScreen);
+
+            setTimeout(function () {
+                removeClassEl('transition-x-left', screenToTransition);
+            }, 400);
+        }
+
+        function showScreen(screen) {
+            removeClassEl('hidden', screen);
+            lastScreen = screen;
+        }
+
+        function hideScreen(screen) {
+            addClassEl('hidden', screen);
+        }
+
         function setErrorMessage(el, bool, message = '') {
             let parentEl = el.closest('.screen');
 
@@ -463,14 +486,399 @@ befriend.events = {
                     data[loginObj.method] = loginObj[loginObj.method];
 
                     let r = await befriend.api.put(`/auth/code/verify`, data);
-                } catch(e) {
 
+                    befriend.user.setPersonToken(r.data.person_token);
+                    befriend.user.setLoginToken(r.data.login_token);
+
+                    if (loginObj.action === 'signup') {
+                        if (loginObj.method === 'email') {
+                            // Show create password screen for email signup
+                            hideScreen(verificationScreen);
+                            showScreen(createPasswordScreen);
+                        } else {
+                            // Show post-signup screen for phone signup
+                            showPostSignupScreen();
+                        }
+                    } else {
+                        //todo
+                    }
+                } catch(e) {
+                    setErrorMessage(verifyButtonEl, true, e.response?.data || 'Error verifying code');
                 }
             }
 
             toggleSpinner(verifyButtonEl, false);
 
             verifyButtonEl._ip = false;
+        }
+
+        function inputEvents() {
+            emailInputEl.addEventListener('input', async function(e) {
+                setErrorMessage(this, false, '');
+            });
+
+            // Handle keyboard input
+            verificationInputs.forEach((input, index) => {
+                input.addEventListener('input', function(e) {
+                    setErrorMessage(verifyButtonEl, false, ``);
+
+                    // Get the current value
+                    let currentValue = this.value;
+
+                    // If the input has a value and it's a digit
+                    if (currentValue && /^\d$/.test(currentValue)) {
+                        // Move to the next input if available
+                        if (index < verificationInputs.length - 1) {
+                            verificationInputs[index + 1].focus();
+                        } else {
+                            //last input field
+                            let code = '';
+
+                            for(let input of Array.from(verificationInputs)) {
+                                code += input.value;
+                            }
+
+                            if(code.length === verificationInputs.length) {
+                                submitVerification();
+                            }
+                        }
+                    }
+                });
+
+                // Handle backspace for deleting
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Backspace') {
+                        // If the input is empty and not the first one, focus the previous input
+                        if (this.value === '' && index > 0) {
+                            e.preventDefault();
+                            verificationInputs[index - 1].focus();
+                        }
+                    }
+                });
+
+                // Handle paste event on each input
+                input.addEventListener('paste', function(e) {
+                    e.preventDefault();
+                    // Get pasted data
+                    let pastedData = (e.clipboardData || window.clipboardData).getData('text');
+
+                    // Clean the pasted data to only include digits
+                    pastedData = pastedData.replace(/\D/g, '');
+
+                    // Limit to the number of inputs we have
+                    pastedData = pastedData.substring(0, verificationInputs.length);
+
+                    // Fill each input with the corresponding digit
+                    for (let i = 0; i < pastedData.length; i++) {
+                        verificationInputs[i].value = pastedData.charAt(i);
+
+                        // If we've filled all inputs, focus the last one
+                        if (i === pastedData.length - 1 && i < verificationInputs.length - 1) {
+                            verificationInputs[i + 1].focus();
+                        }
+                    }
+
+                    // If we've filled all inputs, focus on the verify button
+                    if (pastedData.length === verificationInputs.length) {
+                        submitVerification();
+                    }
+                });
+            });
+
+            phoneInputEl.addEventListener('input', function(e) {
+                setErrorMessage(this, false, '');
+
+                // Get only digits from the input
+                let digits = this.value.replace(/\D/g, '');
+
+                // Limit to 10 digits
+                digits = digits.substring(0, 10);
+
+                // Format the number
+                if (digits.length > 0) {
+                    if (digits.length <= 3) {
+                        this.value = '(' + digits;
+                    } else if (digits.length <= 6) {
+                        this.value = '(' + digits.substring(0, 3) + ') ' + digits.substring(3);
+                    } else {
+                        this.value = '(' + digits.substring(0, 3) + ') ' +
+                            digits.substring(3, 6) + '-' +
+                            digits.substring(6);
+                    }
+                }
+            });
+        }
+
+        function clickEvents() {
+            //toggle between phone and email screens
+            useEmailBtn.addEventListener('click', async function(e) {
+                e.preventDefault();
+
+                loginObj.method = 'email';
+
+                addClassEl('no-transition', phoneScreen);
+                addClassEl('no-transition', emailScreen);
+
+                hideScreen(phoneScreen);
+                showScreen(emailScreen);
+
+                await rafAwait();
+
+                removeClassEl('no-transition', phoneScreen);
+                removeClassEl('no-transition', emailScreen);
+            });
+
+            usePhoneBtn.addEventListener('click', async function(e) {
+                e.preventDefault();
+
+                loginObj.method = 'phone';
+
+                addClassEl('no-transition', phoneScreen);
+                addClassEl('no-transition', emailScreen);
+
+                hideScreen(emailScreen);
+                showScreen(phoneScreen);
+
+                await rafAwait();
+
+                removeClassEl('no-transition', phoneScreen);
+                removeClassEl('no-transition', emailScreen);
+            });
+
+            //navigate back
+            backFromVerificationBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                hideScreen(verificationScreen);
+
+                if(loginObj.method === 'phone') {
+                    showScreen(phoneScreen);
+                } else {
+                    showScreen(emailScreen);
+                }
+            });
+
+            backFromPasswordBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                hideScreen(passwordScreen);
+                showScreen(emailScreen);
+            });
+
+            //navigate to verification screen (from phone)
+            continuePhoneBtn.addEventListener('click', async function() {
+                if(this._ip) {
+                    return false;
+                }
+
+                this._ip = true;
+
+                setErrorMessage(this, false, '');
+
+                let value = phoneInputEl.value;
+                let code = countryCodeEl.value;
+
+                if(!isValidPhone(value, code)) {
+                    this._ip = false;
+                    toggleSpinner(this, false);
+
+                    return setErrorMessage(this, true, 'Please provide a valid phone number');
+                }
+
+                removeClassEl('show', spamMessageEl);
+                toggleSpinner(this, true);
+
+                loginObj.phone.countryCode = code;
+                loginObj.phone.number = value;
+
+                //check if account exists
+                try {
+                    let exists = await befriend.user.checkAccountExists(loginObj.phone);
+
+                    hideScreen(phoneScreen);
+
+                    verifyMessageEl.innerHTML = 'Enter the code sent to your phone';
+
+                    if(exists) {
+                        loginObj.action = 'login';
+                        showScreen(verificationScreen);
+                        verifyButtonEl.innerHTML = 'Verify';
+                    } else {
+                        loginObj.action = 'signup';
+                        verifyButtonEl.innerHTML = 'Create account <span class="spinner"></span>';
+
+                        showScreen(createAccountScreen);
+                    }
+                } catch(e) {
+                    setErrorMessage(this, true, e?.response?.data || 'Login error');
+                    console.error(e);
+                }
+
+                this._ip = false;
+
+                toggleSpinner(this, false);
+            });
+
+            //navigate to password screen (from email)
+            continueEmailBtn.addEventListener('click', async function() {
+                if(this._ip) {
+                    return false;
+                }
+
+                this._ip = true;
+
+                toggleSpinner(this, true);
+
+                setErrorMessage(this, false, '');
+
+                let value = emailInputEl.value;
+
+                loginObj.email = value;
+
+                if(!isValidEmail(value)) {
+                    this._ip = false;
+                    toggleSpinner(this, false);
+
+                    return setErrorMessage(this, true, 'Please provide a valid email');
+                }
+
+                addClassEl('show', spamMessageEl);
+
+                //check if account exists
+                try {
+                    let exists = await befriend.user.checkAccountExists(null, value);
+
+                    hideScreen(emailScreen);
+
+                    if(exists) {
+                        loginObj.action = 'login';
+
+                        showScreen(passwordScreen);
+                    } else {
+                        loginObj.action = 'signup';
+
+                        //set email specific language on verification screen
+                        verifyMessageEl.innerHTML = 'Enter the code sent to your email';
+                        verifyButtonEl.innerHTML = 'Create account <span class="spinner"></span>';
+
+                        showScreen(verificationScreen);
+                    }
+                } catch(e) {
+                    setErrorMessage(this, true, e?.response?.data || 'Error checking account');
+                    console.error(e);
+                }
+
+                this._ip = false;
+                toggleSpinner(this, false);
+            });
+
+            verifyButtonEl.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                submitVerification();
+            });
+
+            continueSetPasswordBtn.addEventListener('click', async function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                if(this._ip) {
+                    return false;
+                }
+
+                this._ip = true;
+
+                toggleSpinner(this, true);
+
+                setErrorMessage(this, false, '');
+
+                try {
+                    let password = createPasswordInputEl.value;
+
+                    let r = await befriend.auth.put(`/password/init`, {
+                        password
+                    });
+
+                    showPostSignupScreen();
+                } catch(e) {
+                    setErrorMessage(this, true, e?.response?.data || 'Error setting password');
+
+                    console.error(e);
+                }
+
+                toggleSpinner(this, false);
+
+                this._ip = false;
+            });
+
+            continueLoginPassword.addEventListener('click', async function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                if(this._ip) {
+                    return false;
+                }
+
+                this._ip = true;
+
+                toggleSpinner(this, true);
+
+                setErrorMessage(this, false, '');
+
+                try {
+                    let r = await befriend.api.post('/login', {
+                         email: loginObj.email,
+                         password: passwordInputEl.value
+                    });
+
+                    befriend.user.setPersonToken(r.data.person_token);
+                    befriend.user.setLoginToken(r.data.login_token);
+
+                    try {
+                        await befriend.init(true);
+
+                        //transition from login to app
+                        transitionToApp(passwordScreen);
+                    } catch(e) {
+
+                    }
+                } catch(e) {
+                    setErrorMessage(this, true, e.response?.data || 'Error signing in');
+                }
+
+                this._ip = false;
+
+                toggleSpinner(this, false);
+            });
+        }
+
+        async function transitionToApp(fromScreen) {
+            let app = document.getElementById('app');
+            let loginSignup = document.querySelector('.login-signup-wrapper');
+
+            // Transition out the current screen
+            addClassEl('transition-out', loginSignup);
+
+            addClassEl('transitioning-to-app', app);
+
+            await rafAwait();
+
+            removeClassEl('show-login-signup', app);
+
+            await rafAwait();
+
+            addClassEl('transform-0', app);
+
+            setTimeout(() => {
+                //remove classes
+                removeClassEl('transition-out', loginSignup);
+
+                removeClassEl('transitioning-to-app', app);
+                removeClassEl('transform-0', app);
+
+                //reset login/signup screens
+                addElsClass(allScreens, 'hidden');
+                showScreen(allScreens[0]);
+            }, 250);
         }
 
         let loginObj = {
@@ -483,31 +891,36 @@ befriend.events = {
             }
         };
 
+        let allScreens = document.querySelectorAll('.screens-container .screen');
         let phoneScreen = document.getElementById('phone-screen');
         let emailScreen = document.getElementById('email-screen');
         let createAccountScreen = document.getElementById('create-account-screen');
         let verificationScreen = document.getElementById('verification-screen');
         let passwordScreen = document.getElementById('password-screen');
+        let createPasswordScreen = document.getElementById('create-password-screen');
+        let postSignupScreen = document.getElementById('post-signup-screen');
 
         let useEmailBtn = document.getElementById('use-email');
         let usePhoneBtn = document.getElementById('use-phone');
-        let backFromCreateAccountBtn = document.getElementById('back-from-create-account');
         let backFromVerificationBtn = document.getElementById('back-from-verification');
         let backFromPasswordBtn = document.getElementById('back-from-password');
         let continuePhoneBtn = document.getElementById('continue-phone');
         let continueEmailBtn = document.getElementById('continue-email');
+        let continueLoginPassword = document.getElementById('login-password-btn');
+        let continueSetPasswordBtn = document.getElementById('set-password-btn');
 
         //verify els
-        let verifyH1El = verificationScreen.querySelector('h1');
         let verifyMessageEl = verificationScreen.querySelector('.heading p');
         let verifyButtonEl = verificationScreen.querySelector('.continue-button');
-        let spamMessageEl = verificationScreen.querySelector('.spam-message');
+        let spamMessageEl = verificationScreen.querySelector('.check-spam-message');
         let verificationInputs = document.querySelectorAll('.verification-code input');
 
         //inputs
         let countryCodeEl = document.getElementById('country-code');
         let phoneInputEl = document.getElementById('phone-input');
         let emailInputEl = document.getElementById('email-input');
+        let passwordInputEl = document.getElementById('password-input');
+        let createPasswordInputEl = document.getElementById('create-password-input');
 
         // prevent duplicate event handlers
         if(phoneScreen._listener) {
@@ -518,275 +931,8 @@ befriend.events = {
 
         let lastScreen = phoneScreen;
 
-        // Toggle between phone and email screens
-        useEmailBtn.addEventListener('click', async function(e) {
-            e.preventDefault();
+        inputEvents();
 
-            loginObj.method = 'email';
-
-            addClassEl('no-transition', phoneScreen);
-            addClassEl('no-transition', emailScreen);
-
-            addClassEl('hidden', phoneScreen);
-            removeClassEl('hidden', emailScreen);
-
-            await rafAwait();
-
-            removeClassEl('no-transition', phoneScreen);
-            removeClassEl('no-transition', emailScreen);
-
-            lastScreen = emailScreen;
-        });
-
-        usePhoneBtn.addEventListener('click', async function(e) {
-            e.preventDefault();
-
-            loginObj.method = 'phone';
-
-            addClassEl('no-transition', phoneScreen);
-            addClassEl('no-transition', emailScreen);
-
-            addClassEl('hidden', emailScreen);
-            removeClassEl('hidden', phoneScreen);
-
-            await rafAwait();
-
-            removeClassEl('no-transition', phoneScreen);
-            removeClassEl('no-transition', emailScreen);
-
-            lastScreen = phoneScreen;
-        });
-
-        // Navigate to verification screen (from phone)
-        continuePhoneBtn.addEventListener('click', async function() {
-            if(this._ip) {
-                return false;
-            }
-
-            this._ip = true;
-
-            setErrorMessage(this, false, '');
-
-            let value = phoneInputEl.value;
-            let code = countryCodeEl.value;
-
-            if(!isValidPhone(value, code)) {
-                this._ip = false;
-                toggleSpinner(this, false);
-
-                return setErrorMessage(this, true, 'Please provide a valid phone number');
-            }
-
-            removeClassEl('show', spamMessageEl);
-            toggleSpinner(this, true);
-
-            loginObj.phone.countryCode = code;
-            loginObj.phone.number = value;
-
-            //check if account exists
-            try {
-                let exists = await befriend.user.checkAccountExists(loginObj.phone);
-
-                addClassEl('hidden', phoneScreen);
-
-                verifyMessageEl.innerHTML = 'Enter the code sent to your phone';
-
-                if(exists) {
-                    loginObj.action = 'login';
-                    removeClassEl('hidden', verificationScreen);
-                    verifyButtonEl.innerHTML = 'Verify';
-                } else {
-                    loginObj.action = 'signup';
-                    verifyButtonEl.innerHTML = 'Create account <span class="spinner"></span>';
-
-                    removeClassEl('hidden', createAccountScreen);
-                }
-            } catch(e) {
-                setErrorMessage(this, true, e?.response?.data || 'Login error');
-                console.error(e);
-            }
-
-            this._ip = false;
-
-            toggleSpinner(this, false);
-        });
-
-        phoneInputEl.addEventListener('input', async function(e) {
-            setErrorMessage(this, false, '');
-        });
-
-        // Navigate to password screen (from email)
-        continueEmailBtn.addEventListener('click', async function() {
-            if(this._ip) {
-                return false;
-            }
-
-            this._ip = true;
-
-            toggleSpinner(this, true);
-
-            setErrorMessage(this, false, '');
-
-            let value = emailInputEl.value;
-
-            loginObj.email = value;
-
-            if(!isValidEmail(value)) {
-                this._ip = false;
-                toggleSpinner(this, false);
-
-                return setErrorMessage(this, true, 'Please provide a valid email');
-            }
-
-            addClassEl('show', spamMessageEl);
-
-            //check if account exists
-            try {
-                let exists = await befriend.user.checkAccountExists(null, value);
-
-                addClassEl('hidden', emailScreen);
-
-                if(exists) {
-                    loginObj.action = 'login';
-
-                    removeClassEl('hidden', passwordScreen);
-                } else {
-                    loginObj.action = 'signup';
-
-                    //set email specific language on verification screen
-                    verifyMessageEl.innerHTML = 'Enter the code sent to your email';
-                    verifyButtonEl.innerHTML = 'Create account <span class="spinner"></span>';
-
-                    removeClassEl('hidden', verificationScreen);
-                }
-            } catch(e) {
-                setErrorMessage(this, true, e?.response?.data || 'Error checking account');
-                console.error(e);
-            }
-
-            this._ip = false;
-            toggleSpinner(this, false);
-        });
-
-        emailInputEl.addEventListener('input', async function(e) {
-            setErrorMessage(this, false, '');
-        });
-
-        // Back button functionality
-        backFromCreateAccountBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            addClassEl('hidden', createAccountScreen);
-            removeClassEl('hidden', lastScreen);
-        });
-
-        backFromVerificationBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            addClassEl('hidden', verificationScreen);
-            removeClassEl('hidden', phoneScreen);
-        });
-
-        backFromPasswordBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            addClassEl('hidden', passwordScreen);
-            removeClassEl('hidden', emailScreen);
-        });
-
-        // Handle keyboard input
-        verificationInputs.forEach((input, index) => {
-            input.addEventListener('input', function(e) {
-                setErrorMessage(verifyButtonEl, false, ``);
-
-                // Get the current value
-                let currentValue = this.value;
-
-                // If the input has a value and it's a digit
-                if (currentValue && /^\d$/.test(currentValue)) {
-                    // Move to the next input if available
-                    if (index < verificationInputs.length - 1) {
-                        verificationInputs[index + 1].focus();
-                    } else {
-                        //last input field
-                        let code = '';
-
-                        for(let input of Array.from(verificationInputs)) {
-                            code += input.value;
-                        }
-
-                        if(code.length === verificationInputs.length) {
-                            submitVerification();
-                        }
-                    }
-                }
-            });
-
-            // Handle backspace for deleting
-            input.addEventListener('keydown', function(e) {
-                if (e.key === 'Backspace') {
-                    // If the input is empty and not the first one, focus the previous input
-                    if (this.value === '' && index > 0) {
-                        e.preventDefault();
-                        verificationInputs[index - 1].focus();
-                    }
-                }
-            });
-
-            // Handle paste event on each input
-            input.addEventListener('paste', function(e) {
-                e.preventDefault();
-                // Get pasted data
-                let pastedData = (e.clipboardData || window.clipboardData).getData('text');
-
-                // Clean the pasted data to only include digits
-                pastedData = pastedData.replace(/\D/g, '');
-
-                // Limit to the number of inputs we have
-                pastedData = pastedData.substring(0, verificationInputs.length);
-
-                // Fill each input with the corresponding digit
-                for (let i = 0; i < pastedData.length; i++) {
-                    verificationInputs[i].value = pastedData.charAt(i);
-
-                    // If we've filled all inputs, focus the last one
-                    if (i === pastedData.length - 1 && i < verificationInputs.length - 1) {
-                        verificationInputs[i + 1].focus();
-                    }
-                }
-
-                // If we've filled all inputs, focus on the verify button
-                if (pastedData.length === verificationInputs.length) {
-                    submitVerification();
-                }
-            });
-        });
-
-        verifyButtonEl.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            submitVerification();
-        });
-
-        let phoneInput = document.getElementById('phone-input');
-
-        phoneInput.addEventListener('input', function(e) {
-            // Get only digits from the input
-            let digits = this.value.replace(/\D/g, '');
-
-            // Limit to 10 digits
-            digits = digits.substring(0, 10);
-
-            // Format the number
-            if (digits.length > 0) {
-                if (digits.length <= 3) {
-                    this.value = '(' + digits;
-                } else if (digits.length <= 6) {
-                    this.value = '(' + digits.substring(0, 3) + ') ' + digits.substring(3);
-                } else {
-                    this.value = '(' + digits.substring(0, 3) + ') ' +
-                        digits.substring(3, 6) + '-' +
-                        digits.substring(6);
-                }
-            }
-        });
+        clickEvents();
     }
 };
