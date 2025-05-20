@@ -1102,7 +1102,7 @@ befriend.events = {
                 monthSelect.appendChild(option);
             });
 
-            // Populate years (120 years back from earliest year)
+            // Populate years (~130 years)
             let currentYear = new Date().getFullYear();
             let startYear = currentYear - 17;
             
@@ -1145,6 +1145,51 @@ befriend.events = {
 
             // Default populate days for current month/year
             populateDays(1, currentYear);
+
+            continueProfileBtn.addEventListener('click', async function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                if(this._ip) {
+                    return false;
+                }
+
+                this._ip = true;
+
+                toggleSpinner(this, true);
+
+                setErrorMessage(this, false, '');
+
+                let firstName = document.getElementById('create-first-name').value;
+                let lastName = document.getElementById('create-last-name').value;
+                let genderToken = document.getElementById('select-gender').value;
+                let birthdayMonth = document.getElementById('birthday-month').value;
+                let birthdayDay = document.getElementById('birthday-day').value;
+                let birthdayYear = document.getElementById('birthday-year').value;
+
+                try {
+                    let r = await befriend.auth.put(`/profile`, {
+                        first_name: firstName,
+                        last_name: lastName,
+                        gender_token: genderToken,
+                        birthday: {
+                            month: birthdayMonth,
+                            day: birthdayDay,
+                            year: birthdayYear
+                        }
+                    });
+
+                    showProfileScreen();
+                } catch(e) {
+                    setErrorMessage(this, true, e?.response?.data || 'Error setting password');
+
+                    console.error(e);
+                }
+
+                toggleSpinner(this, false);
+
+                this._ip = false;
+            });
         }
 
         async function transitionToApp(fromScreen) {
