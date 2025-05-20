@@ -3,6 +3,7 @@ const exec = require('cordova/exec');
 const geo = require('./GeoLocation');
 
 var Befriend = {
+    geo: geo,
     statusBar: {
         nameSpace: 'StatusBar',
         setBorder: function (px, color, successCallback, errorCallback) {
@@ -77,7 +78,19 @@ var Befriend = {
             exec(success, error, 'FileSystem', 'getDataDirectory', []);
         },
     },
-    geo: geo,
+    camera: {
+        takePicture: function(successCallback, errorCallback, options) {
+            options = options || {};
+            exec(successCallback, errorCallback, "Camera", "takePicture", [options]);
+        },
+        getPicture: function(successCallback, errorCallback, options) {
+            options = options || {};
+            exec(successCallback, errorCallback, "Camera", "getPicture", [options]);
+        },
+        cleanup: function(successCallback, errorCallback) {
+            exec(successCallback, errorCallback, "Camera", "cleanup", []);
+        }
+    }
 };
 
 module.exports = Befriend;

@@ -63,6 +63,12 @@
             </feature>
         </config-file>
 
+        <config-file target="config.xml" parent="/*">
+            <feature name="Camera">
+                <param name="ios-package" value="Camera" />
+            </feature>
+        </config-file>
+
         <!-- status bar-->
         <header-file src="src/ios/StatusBar.h" />
         <source-file src="src/ios/StatusBar.m" />
@@ -78,6 +84,10 @@
         <!-- location -->
         <header-file src="src/ios/Location.h" />
         <source-file src="src/ios/Location.m" />
+
+        <!-- camera -->
+        <header-file src="src/ios/Camera.h" />
+        <source-file src="src/ios/Camera.m" />
 
     </platform>
 </plugin>

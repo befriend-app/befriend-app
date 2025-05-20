@@ -1,4 +1,4 @@
-const {
+let {
     devPort,
     joinPaths,
     loadScriptEnv,
@@ -12,17 +12,17 @@ const {
     isDirF,
     copyFile,
 } = require('../helpers');
-const yargs = require('yargs');
-const gm = require('gm').subClass({ imageMagick: '7+' });
-const os = require('os');
-const plist = require('plist');
-const xcode = require('xcode');
+let yargs = require('yargs');
+let gm = require('gm').subClass({ imageMagick: '7+' });
+let os = require('os');
+let plist = require('plist');
+let xcode = require('xcode');
 
 //load env variables
 loadScriptEnv();
 
 // Configuration
-const CONFIG = {
+let CONFIG = {
     plugin_name: 'befriend-cordova-plugins',
     icons: {
         path: 'resources/icon.png',
@@ -66,9 +66,35 @@ const CONFIG = {
     },
 };
 
+let PHOTO_CONFIG = {
+    ios: {
+        permissions: {
+            camera: {
+                key: 'NSCameraUsageDescription',
+                description: 'This app needs access to your camera to take profile pictures.'
+            },
+            photoLibrary: {
+                key: 'NSPhotoLibraryUsageDescription',
+                description: 'This app needs access to your photo library to select profile pictures.'
+            },
+            // photoLibraryAdd: {
+            //     key: 'NSPhotoLibraryAddUsageDescription',
+            //     description: 'This app needs permission to save photos to your library.'
+            // }
+        }
+    },
+    android: {
+        permissions: [
+            'android.permission.CAMERA',
+            'android.permission.READ_EXTERNAL_STORAGE',
+            'android.permission.WRITE_EXTERNAL_STORAGE'
+        ]
+    }
+};
+
 // Parse command line arguments
 function parseArguments() {
-    const args = yargs.argv;
+    let args = yargs.argv;
 
     return {
         platforms: {
@@ -109,12 +135,12 @@ function ensureProtocolWs(url) {
 }
 
 function getIPAddress() {
-    const interfaces = os.networkInterfaces();
+    let interfaces = os.networkInterfaces();
 
-    for (const devName in interfaces) {
-        const iface = interfaces[devName];
+    for (let devName in interfaces) {
+        let iface = interfaces[devName];
 
-        for (const alias of iface) {
+        for (let alias of iface) {
             if (alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal) {
                 return alias.address;
             }
@@ -126,11 +152,11 @@ function getIPAddress() {
 
 // Document manipulation
 async function updateIndexHtml(urls) {
-    const indexPath = joinPaths(repoRoot(), 'www', 'index.html');
-    const content = await readFile(indexPath);
-    const lines = content.split('\n');
+    let indexPath = joinPaths(repoRoot(), 'www', 'index.html');
+    let content = await readFile(indexPath);
+    let lines = content.split('\n');
 
-    const updatedLines = lines.map((line) => {
+    let updatedLines = lines.map((line) => {
         if (line.includes(CONFIG.documentStrings.apiDomain)) {
             return `    ${CONFIG.documentStrings.apiDomain} '${urls.api}';`;
         }
@@ -188,7 +214,7 @@ function getIOSNamePaths() {
     return new Promise(async (resolve, reject) => {
         try {
             // Find the .xcodeproj file
-            const projectName = (await listFilesDir(CONFIG.ios.dir)).find((name) =>
+            let projectName = (await listFilesDir(CONFIG.ios.dir)).find((name) =>
                 name.endsWith('.xcodeproj'),
             );
 
@@ -197,9 +223,9 @@ function getIOSNamePaths() {
                 return reject();
             }
 
-            const projectPath = joinPaths(CONFIG.ios.dir, projectName);
-            const pbxprojPath = joinPaths(projectPath, 'project.pbxproj');
-            const appName = projectName.replace('.xcodeproj', '');
+            let projectPath = joinPaths(CONFIG.ios.dir, projectName);
+            let pbxprojPath = joinPaths(projectPath, 'project.pbxproj');
+            let appName = projectName.replace('.xcodeproj', '');
 
             resolve({
                 appName,
@@ -217,29 +243,29 @@ async function addIOSCapabilities() {
 
     return new Promise(async (resolve, reject) => {
         try {
-            const { appName, pbxprojPath } = await getIOSNamePaths();
+            let { appName, pbxprojPath } = await getIOSNamePaths();
 
             // Parse the .xcodeproj file
-            const proj = xcode.project(pbxprojPath);
+            let proj = xcode.project(pbxprojPath);
             await proj.parseSync();
 
             // Get the native target
-            const nativeTargets = proj.pbxNativeTargetSection();
-            const targetUUID = Object.keys(nativeTargets).find((key) => !key.endsWith('_comment'));
+            let nativeTargets = proj.pbxNativeTargetSection();
+            let targetUUID = Object.keys(nativeTargets).find((key) => !key.endsWith('_comment'));
             if (!targetUUID) {
                 return reject('Could not find main target');
             }
 
             // Get the project
-            const pbxProjectSection = proj.pbxProjectSection();
-            const projectUUID = Object.keys(pbxProjectSection).find(
+            let pbxProjectSection = proj.pbxProjectSection();
+            let projectUUID = Object.keys(pbxProjectSection).find(
                 (key) => !key.endsWith('_comment'),
             );
             if (!projectUUID) {
                 return reject('Could not find project');
             }
 
-            const project = pbxProjectSection[projectUUID];
+            let project = pbxProjectSection[projectUUID];
             if (!project.attributes) {
                 project.attributes = {};
             }
@@ -259,13 +285,13 @@ async function addIOSCapabilities() {
             };
 
             // Add entitlements file to build settings
-            const configurations = proj.pbxXCBuildConfigurationSection();
-            const buildConfigs = Object.keys(configurations)
+            let configurations = proj.pbxXCBuildConfigurationSection();
+            let buildConfigs = Object.keys(configurations)
                 .filter((key) => !key.endsWith('_comment'))
                 .map((key) => configurations[key])
                 .filter((config) => config.buildSettings);
 
-            const entitlementsPath = `${appName}/${appName}.entitlements`;
+            let entitlementsPath = `${appName}/${appName}.entitlements`;
             buildConfigs.forEach((config) => {
                 config.buildSettings.CODE_SIGN_ENTITLEMENTS = entitlementsPath;
             });
@@ -274,7 +300,7 @@ async function addIOSCapabilities() {
             await writeFile(pbxprojPath, proj.writeSync());
 
             // Update/create entitlements file
-            const entitlementsFullPath = joinPaths(
+            let entitlementsFullPath = joinPaths(
                 CONFIG.ios.dir,
                 appName,
                 `${appName}.entitlements`,
@@ -282,7 +308,7 @@ async function addIOSCapabilities() {
             let entitlements = {};
 
             if (await checkPathExists(entitlementsFullPath)) {
-                const content = await readFile(entitlementsFullPath);
+                let content = await readFile(entitlementsFullPath);
                 try {
                     entitlements = plist.parse(content);
                 } catch (error) {
@@ -302,11 +328,11 @@ async function addIOSCapabilities() {
             await writeFile(entitlementsFullPath, plist.build(entitlements));
 
             // Update Info.plist
-            const infoPlistPath = joinPaths(CONFIG.ios.dir, appName, appName, 'Info.plist');
+            let infoPlistPath = joinPaths(CONFIG.ios.dir, appName, `${ appName}-Info.plist`);
             let infoPlist = {};
 
             if (await checkPathExists(infoPlistPath)) {
-                const content = await readFile(infoPlistPath);
+                let content = await readFile(infoPlistPath);
                 try {
                     infoPlist = plist.parse(content);
                 } catch (error) {
@@ -360,6 +386,102 @@ function copyIOSAppDelegate() {
     });
 }
 
+async function addIOSPhotoCapabilities() {
+    console.log('Adding iOS photo capabilities...');
+
+    return new Promise(async (resolve, reject) => {
+        try {
+            const { appName, pbxprojPath } = await getIOSNamePaths();
+            let infoPlistPath = joinPaths(CONFIG.ios.dir, appName, `${ appName}-Info.plist`);
+
+            // Read current Info.plist
+            let infoPlist = {};
+
+            if (await checkPathExists(infoPlistPath)) {
+                const content = await readFile(infoPlistPath);
+                try {
+                    infoPlist = plist.parse(content);
+                } catch (error) {
+                    console.warn('Failed to parse Info.plist:', error);
+                    infoPlist = {};
+                }
+            }
+
+            // Add camera and photo library permissions if not already present
+            if (!infoPlist[PHOTO_CONFIG.ios.permissions.camera.key]) {
+                infoPlist[PHOTO_CONFIG.ios.permissions.camera.key] =
+                    PHOTO_CONFIG.ios.permissions.camera.description;
+            }
+
+            if (!infoPlist[PHOTO_CONFIG.ios.permissions.photoLibrary.key]) {
+                infoPlist[PHOTO_CONFIG.ios.permissions.photoLibrary.key] =
+                    PHOTO_CONFIG.ios.permissions.photoLibrary.description;
+            }
+
+            // if (!infoPlist[PHOTO_CONFIG.ios.permissions.photoLibraryAdd.key]) {
+            //     infoPlist[PHOTO_CONFIG.ios.permissions.photoLibraryAdd.key] =
+            //         PHOTO_CONFIG.ios.permissions.photoLibraryAdd.description;
+            // }
+
+            // Write updated Info.plist
+            await writeFile(infoPlistPath, plist.build(infoPlist));
+            console.log('Successfully added photo permissions to Info.plist');
+            resolve();
+        } catch (error) {
+            console.error('Failed to add iOS photo capabilities:', error);
+            reject(error);
+        }
+    });
+}
+
+// Add this function to enable photo capabilities in Android
+function addAndroidPhotoCapabilities() {
+    console.log('Adding Android photo capabilities...');
+
+    return new Promise(async (resolve, reject) => {
+        try {
+            const androidManifestPath = joinPaths(
+                CONFIG.android.dir,
+                'app/src/main/AndroidManifest.xml'
+            );
+
+            if (!(await checkPathExists(androidManifestPath))) {
+                console.warn('Android manifest not found. Skipping photo capabilities.');
+                return resolve();
+            }
+
+            let manifestContent = await readFile(androidManifestPath);
+            let updated = false;
+
+            // Check if permissions are already added
+            for (const permission of PHOTO_CONFIG.android.permissions) {
+                if (!manifestContent.includes(`<uses-permission android:name="${permission}"`)) {
+                    const permissionLine = `    <uses-permission android:name="${permission}" />`;
+
+                    // Add permission before the closing manifest tag
+                    manifestContent = manifestContent.replace(
+                        '</manifest>',
+                        `${permissionLine}\n</manifest>`
+                    );
+                    updated = true;
+                }
+            }
+
+            if (updated) {
+                await writeFile(androidManifestPath, manifestContent);
+                console.log('Successfully added photo permissions to AndroidManifest.xml');
+            } else {
+                console.log('Photo permissions already present in AndroidManifest.xml');
+            }
+
+            resolve();
+        } catch (error) {
+            console.error('Failed to add Android photo capabilities:', error);
+            reject(error);
+        }
+    });
+}
+
 async function buildIOS(skipIcon) {
     console.log('Building iOS...');
 
@@ -367,6 +489,7 @@ async function buildIOS(skipIcon) {
         await copyIOSAppDelegate();
 
         await addIOSCapabilities();
+        await addIOSPhotoCapabilities();
 
         if (!skipIcon) {
             await execCmd(`cordova-icon --icon=${CONFIG.icons.path}`);
@@ -413,7 +536,7 @@ async function updateAssetIcons(assets_dir) {
 async function copyIOSIcons() {
     if (!(await checkPathExists(CONFIG.ios.dir))) return;
 
-    const { assetDir, imageDir } = await findIOSAssetDirectories(CONFIG.ios.dir);
+    let { assetDir, imageDir } = await findIOSAssetDirectories(CONFIG.ios.dir);
     if (!assetDir || !imageDir) return;
 
     await copyIconsBetweenDirectories(imageDir, assetDir);
@@ -424,14 +547,14 @@ async function findIOSAssetDirectories() {
     let assetDir = null;
     let imageDir = null;
 
-    const level1Files = await listFilesDir(CONFIG.ios.dir);
+    let level1Files = await listFilesDir(CONFIG.ios.dir);
 
-    for (const file of level1Files) {
-        const level1Path = joinPaths(CONFIG.ios.dir, file);
+    for (let file of level1Files) {
+        let level1Path = joinPaths(CONFIG.ios.dir, file);
         if (!(await isDirF(level1Path))) continue;
 
-        const level2Files = await listFilesDir(level1Path);
-        for (const subFile of level2Files) {
+        let level2Files = await listFilesDir(level1Path);
+        for (let subFile of level2Files) {
             if (subFile.includes('Assets.xcassets')) assetDir = joinPaths(level1Path, subFile);
             if (subFile.includes('Images.xcassets')) imageDir = joinPaths(level1Path, subFile);
             if (assetDir && imageDir) break;
@@ -443,11 +566,11 @@ async function findIOSAssetDirectories() {
 }
 
 async function copyIconsBetweenDirectories(imageDir, assetDir) {
-    const imageIconDir = joinPaths(imageDir, 'AppIcon.appiconset');
-    const assetIconDir = joinPaths(assetDir, 'AppIcon.appiconset');
-    const imageFiles = await listFilesDir(imageIconDir);
+    let imageIconDir = joinPaths(imageDir, 'AppIcon.appiconset');
+    let assetIconDir = joinPaths(assetDir, 'AppIcon.appiconset');
+    let imageFiles = await listFilesDir(imageIconDir);
 
-    for (const file of imageFiles) {
+    for (let file of imageFiles) {
         try {
             await copyFile(joinPaths(imageIconDir, file), joinPaths(assetIconDir, file));
         } catch (error) {
@@ -462,6 +585,7 @@ async function buildAndroid(skipIcon) {
 
     try {
         await setAndroidUserAgent('OS: Android');
+        await addAndroidPhotoCapabilities();
         await execCmd('cordova build android');
 
         if (!skipIcon) {
@@ -473,11 +597,11 @@ async function buildAndroid(skipIcon) {
 }
 
 async function setAndroidUserAgent(ua) {
-    const configPath = joinPaths(repoRoot(), 'platforms/android/app/src/main/res/xml/config.xml');
-    const configData = await readFile(configPath);
-    const lines = configData.split('\n').filter((l) => !l.includes('OverrideUserAgent'));
+    let configPath = joinPaths(repoRoot(), 'platforms/android/app/src/main/res/xml/config.xml');
+    let configData = await readFile(configPath);
+    let lines = configData.split('\n').filter((l) => !l.includes('OverrideUserAgent'));
 
-    const newConfig = lines
+    let newConfig = lines
         .join('\n')
         .replace('</widget>', `\t<preference name="OverrideUserAgent" value="${ua}" />\n</widget>`);
 
@@ -485,7 +609,7 @@ async function setAndroidUserAgent(ua) {
 }
 
 async function generateAndroidIcons() {
-    const outputRoot = joinPaths(repoRoot(), 'platforms/android/app/src/main/res');
+    let outputRoot = joinPaths(repoRoot(), 'platforms/android/app/src/main/res');
 
     // Generate basic icons
     await generateBasicAndroidIcons(outputRoot);
@@ -498,11 +622,11 @@ async function generateAndroidIcons() {
 }
 
 async function generateBasicAndroidIcons(outputRoot) {
-    const sourceFile = joinPaths(repoRoot(), CONFIG.icons.path);
+    let sourceFile = joinPaths(repoRoot(), CONFIG.icons.path);
 
-    for (const [density, size] of Object.entries(CONFIG.android.iconSizes)) {
-        for (const dir of CONFIG.android.resourceDirs) {
-            const outputFolder = joinPaths(outputRoot, `${dir}-${density}`);
+    for (let [density, size] of Object.entries(CONFIG.android.iconSizes)) {
+        for (let dir of CONFIG.android.resourceDirs) {
+            let outputFolder = joinPaths(outputRoot, `${dir}-${density}`);
             await makeDir(outputFolder).catch(() => {});
 
             try {
@@ -515,12 +639,12 @@ async function generateBasicAndroidIcons(outputRoot) {
 }
 
 async function generateLayeredAndroidIcons(outputRoot) {
-    const foregroundSource = joinPaths(repoRoot(), CONFIG.icons.foreground);
-    const backgroundSource = joinPaths(repoRoot(), CONFIG.icons.background);
-    const resDirs = await listFilesDir(outputRoot);
+    let foregroundSource = joinPaths(repoRoot(), CONFIG.icons.foreground);
+    let backgroundSource = joinPaths(repoRoot(), CONFIG.icons.background);
+    let resDirs = await listFilesDir(outputRoot);
 
-    for (const [size, dim] of Object.entries(CONFIG.android.iconSizes)) {
-        for (const folder of resDirs) {
+    for (let [size, dim] of Object.entries(CONFIG.android.iconSizes)) {
+        for (let folder of resDirs) {
             if (!folder.includes(`-${size}-v`)) continue;
 
             try {
@@ -550,7 +674,7 @@ async function createIcon(input, output, dimension) {
 }
 
 async function setSplashScreen() {
-    const splashPath = joinPaths(
+    let splashPath = joinPaths(
         repoRoot(),
         'platforms/android/app/src/main/res/drawable/ic_cdv_splashscreen.xml',
     );
@@ -563,7 +687,7 @@ async function setSplashScreen() {
 
 // Main build process
 async function main() {
-    const buildConfig = parseArguments();
+    let buildConfig = parseArguments();
     console.log(buildConfig);
 
     // Include OS/Plugins
