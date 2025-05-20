@@ -279,7 +279,7 @@ window['befriend'] = {
             }
 
             //if user missing first name/birthday show post signup screen
-            if(!befriend.me?.data?.me?.birth_date || !befriend.me?.data?.me?.first_name) {
+            if(!befriend.user.isProfileReady()) {
                 befriend.showProfileScreen();
                 return resolve();
             }
@@ -559,6 +559,13 @@ window['befriend'] = {
         befriend.events.loginSignupEvents();
 
         addClassEl('show-login-signup', appEl);
+    },
+    resetLoginScreens: function () {
+        let allScreens = document.querySelectorAll('.screens-container .screen');
+        let phoneScreen = document.getElementById('phone-screen');
+
+        addElsClass(allScreens, 'hidden');
+        removeClassEl('hidden', phoneScreen);
     },
     showProfileScreen: async function () {
         try {

@@ -407,20 +407,35 @@ befriend.events = {
         document.addEventListener('resume', onResume, false);
     },
     loginSignupEvents: function () {
-        async function setUserLogin(data, skip_init) {
+        // if(!skip_init) {
+        //     try {
+        //         await befriend.init(true);
+        //
+        //         //transition from login to app
+        //         transitionToApp(passwordScreen);
+        //     } catch(e) {
+        //         console.error(e);
+        //     }
+        // }
+
+        async function afterLoginLogic() {
+            //determine whether to transition to app or show screen
+            try {
+                await befriend.me.getMe();
+
+                if(befriend.user.isProfileReady()) {
+
+                } else {
+                    showProfileScreen();
+                }
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        function setUserLogin(data) {
             befriend.user.setPersonToken(data.person_token);
             befriend.user.setLoginToken(data.login_token);
-
-            if(!skip_init) {
-                try {
-                    await befriend.init(true);
-
-                    //transition from login to app
-                    transitionToApp(passwordScreen);
-                } catch(e) {
-                    console.error(e);
-                }
-            }
         }
 
         function showProfileScreen() {
@@ -433,8 +448,14 @@ befriend.events = {
 
             befriend.setProfileGenderOptions();
 
-            setTimeout(function () {
+            setTimeout(async function () {
+                addClassEl('dni', screenToTransition);
                 removeClassEl('transition-x-left', screenToTransition);
+
+                await rafAwait();
+
+                removeClassEl('dni', screenToTransition);
+
             }, 400);
         }
 
@@ -506,7 +527,7 @@ befriend.events = {
 
                     let r = await befriend.api.put(`/auth/code/verify`, data);
 
-                    setUserLogin(r.data, true);
+                    setUserLogin(r.data);
 
                     if (loginObj.action === 'signup') {
                         if (loginObj.method === 'email') {
@@ -518,7 +539,8 @@ befriend.events = {
                             showProfileScreen();
                         }
                     } else {
-                        //todo
+                        //logged in via phone
+                        await afterLoginLogic();
                     }
                 } catch(e) {
                     setErrorMessage(verifyButtonEl, true, e.response?.data || 'Error verifying code');
@@ -930,7 +952,9 @@ befriend.events = {
                          password: passwordInputEl.value
                     });
 
-                    await setUserLogin(r.data);
+                    setUserLogin(r.data);
+
+                    await afterLoginLogic();
                 } catch(e) {
                     setErrorMessage(this, true, e.response?.data || 'Error signing in');
                 }
@@ -1018,14 +1042,35 @@ befriend.events = {
                         let r = await befriend.api.put(`/password/set/code`, data);
 
                         setUserLogin(r.data);
+
+                        await afterLoginLogic();
                     } catch(e) {
-                        setErrorMessage(verifyButtonEl, true, e.response?.data || 'Error verifying code');
+                        setErrorMessage(this, true, e.response?.data || 'Error verifying code');
                     }
                 }
 
                 this._ip = false;
 
                 toggleSpinner(this, false);
+            });
+
+            logoutEl.addEventListener('click', async function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                if(this._ip) {
+                    return false;
+                }
+
+                this._ip = true;
+
+                try {
+                    await befriend.user.logout();
+                } catch(e) {
+
+                }
+
+                this._ip = false;
             });
         }
 
@@ -1164,6 +1209,7 @@ befriend.events = {
         let forgotPasswordLink = document.querySelector('.forgot-password');
         let continueResetPasswordBtn = document.getElementById('reset-forgot-password-btn')
         let continueProfileBtn = document.getElementById('profile-screen-btn');
+        let logoutEl = profileScreen.querySelector('.logout');
 
         //verify els
         let verifyMessageEl = verificationScreen.querySelector('.heading p');

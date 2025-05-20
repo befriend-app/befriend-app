@@ -839,7 +839,7 @@ befriend.html = {
                     
                                 <div class="heading">
                                     <h1>Reset password</h1>
-                                    <p>Enter your verification code and new password</p>
+                                    <p>Check your email for a verification code</p>
                                 </div>
                     
                                 <div class="label">Verification Code</div>
@@ -852,7 +852,7 @@ befriend.html = {
                                     <input type="text" maxlength="1">
                                 </div>
                                 
-                                <div class="password-input">
+                                <div class="reset-password-input">
                                     <input id="reset-password-input" type="password" placeholder="New Password (min. 8 characters)">
                                 </div>
                     
@@ -862,6 +862,8 @@ befriend.html = {
                             </div>   
                             
                             <div class="screen profile-screen hidden" id="profile-screen">
+                                <div class="logout">Logout</div>
+                                
                                 <div class="heading">
                                     <h1>Profile</h1>
                                     <p>Start meeting new and existing friends</p>

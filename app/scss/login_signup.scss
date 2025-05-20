@@ -5,6 +5,7 @@
     $ptb: 24px;
     $input_mtb: 32px;
     $back_button_h: 20px;
+    $space_top: calc($screens_mt * -1 - $login_logo_h / 2  - $back_button_h / 2);
 
     display: none;
     margin-top: var(--sbh);
@@ -165,13 +166,15 @@
         margin-left: 6px;
     }
 
+    label, .label {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        margin-bottom: 6px;
+    }
+
     .input-container {
-        label {
-            display: flex;
-            align-items: center;
-            font-size: 16px;
-            margin-bottom: 6px;
-        }
+
     }
 
     input {
@@ -231,12 +234,16 @@
         }
     }
 
-    .password-input {
+    .password-input, .reset-password-input {
         margin-bottom: 16px;
 
         input {
             @include input-base;
         }
+    }
+
+    .reset-password-input {
+        margin-bottom: 32px;
     }
 
     .verification-code,
@@ -319,7 +326,7 @@
 
     .back-button {
         position: absolute;
-        top: calc($screens_mt * -1 - $login_logo_h / 2  - $back_button_h / 2);
+        top: $space_top;
         left: 0;
         background: none;
         border: none;
@@ -503,6 +510,15 @@
                 }
             }
         }
+    }
+
+    .logout {
+        position: absolute;
+        top: calc($space_top);
+        left: 20px;
+        color: $color_blue;
+        font-weight: 400;
+        font-size: 14px;
     }
 
 

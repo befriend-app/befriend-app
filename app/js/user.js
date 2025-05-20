@@ -122,6 +122,8 @@ befriend.user = {
             befriend.user.setPersonToken(null);
             befriend.user.setLoginToken(null);
 
+            befriend.resetLoginScreens();
+
             befriend.showLoginSignup();
         }
 
@@ -153,5 +155,10 @@ befriend.user = {
                 return reject(e);
             }
         });
+    },
+    isProfileReady: function () {
+        let data = befriend.me?.data?.me;
+
+        return data?.birth_date && data?.first_name && data?.gender_id;
     }
 };
