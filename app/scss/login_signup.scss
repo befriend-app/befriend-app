@@ -1,13 +1,43 @@
 .login-signup-wrapper {
+    $container_height: 680px;
     $screens_mt: 30px;
     $plr: 24px;
     $ptb: 24px;
     $input_mtb: 32px;
+    $back_button_h: 20px;
 
     display: none;
     margin-top: var(--sbh);
     transition: transform $login_signup_screen_transition;
     transform: translateX(0);
+
+    @mixin button-base {
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        width: 100%;
+        padding: 16px;
+    }
+
+    @mixin input-base {
+        $p: 12px;
+        width: calc(100% - $p * 2);
+        padding: $p;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        font-size: 16px;
+    }
+
+    @keyframes rotation {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
 
     &.transition-out {
         position: absolute;
@@ -17,6 +47,26 @@
         width: 100%;
         display: flex;
         transform: translateX(-100%);
+    }
+
+    .container {
+        width: 100%;
+        max-width: 460px;
+        background-color: white;
+        border-radius: 16px;
+        overflow-x: hidden;
+        overflow-y: hidden;
+        position: relative;
+        //height: $container_height;
+        height: calc(100vh - var(--sab));
+        height: calc(100dvh - var(--sab));
+    }
+
+    .screens-container {
+        position: relative;
+        margin-top: $screens_mt;
+        height: calc(100vh - var(--sab));
+        height: calc(100dvh - var(--sab));
     }
 
     .logo-container {
@@ -34,24 +84,6 @@
         position: relative;
     }
 
-    // Container styles
-    .container {
-        width: 100%;
-        max-width: 460px;
-        background-color: white;
-        border-radius: 16px;
-        overflow: hidden;
-        //box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        position: relative;
-        height: 640px;
-    }
-
-    .screens-container {
-        position: relative;
-        margin-top: $screens_mt;
-    }
-
-    // Screen styles
     .screen {
         position: absolute;
         top: 0;
@@ -70,18 +102,22 @@
         }
 
         &.hidden {
-            &.phone-screen, &.email-screen {
+            &.phone-screen,
+            &.email-screen {
                 transform: translateX(-100%);
             }
 
-            &.create-account-screen, &.verification-screen, &.reset-password-screen,
-            &.password-screen, &.create-password-screen, &.post-signup-screen {
+            &.create-account-screen,
+            &.verification-screen,
+            &.reset-password-screen,
+            &.password-screen,
+            &.create-password-screen,
+            &.profile-screen {
                 transform: translateX(100%);
             }
         }
     }
 
-    // Heading styles
     .heading {
         text-align: center;
         margin-bottom: 20px;
@@ -108,76 +144,31 @@
         }
     }
 
-    // Social buttons
-    .social-buttons {
+    .inputs {
         display: flex;
         flex-direction: column;
-        gap: 16px;
+        gap: 20px 0;
     }
 
-    .social-button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 12px;
-        border-radius: 8px;
-        border: 1px solid #ddd;
-        background-color: white;
-        font-size: 16px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: background-color 0.2s;
-
-        color: $color_blue;
-
-        &:hover {
-            background-color: #f9f9f9;
-        }
-
-        img, svg {
-            width: 24px;
-            height: 24px;
-            margin-right: 12px;
+    .input-container {
+        label {
+            display: flex;
+            font-size: 16px;
+            margin-bottom: 6px;
         }
     }
 
-    // Separator
-    .separator {
-        display: flex;
-        align-items: center;
-        margin: 24px 0;
-
-        .line {
-            flex: 1;
-            height: 1px;
-            background-color: #ddd;
-        }
-
-        .text {
-            padding: 0 16px;
-            color: #666;
-            font-size: 14px;
-        }
-    }
-
-    //default input
     input {
-        $p: 12px;
-        width: calc(100% - $p * 2);
-        padding: $p;
-        border-radius: 8px;
-        border: 1px solid #ddd;
-        font-size: 16px;
+        @include input-base;
     }
 
-    // Phone input
     .phone-input {
         display: flex;
         gap: 8px;
         margin-bottom: 16px;
     }
 
-    .country-code {
+    .country-code, .select-gender {
         flex: .6;
         position: relative;
 
@@ -212,53 +203,79 @@
         flex: 2;
 
         input {
-            $p: 12px;
-            width: calc(100% - $p * 2);
-            padding: $p;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            font-size: 16px;
+            @include input-base;
         }
     }
 
-    // Email input
     .email-input {
         margin-bottom: 16px;
 
         input {
-            $p: 12px;
-            width: calc(100% - $p * 2);
-            padding: $p;
+            @include input-base;
+        }
+    }
+
+    .password-input {
+        margin-bottom: 16px;
+
+        input {
+            @include input-base;
+        }
+    }
+
+    .verification-code,
+    .password-verification-code {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: $input_mtb;
+
+        input {
+            width: 44px;
+            height: 54px;
+            text-align: center;
+            font-size: 24px;
             border-radius: 8px;
             border: 1px solid #ddd;
-            font-size: 16px;
+            padding: 0;
         }
     }
 
-    // Toggle method
-    .toggle-method {
-        margin-bottom: 24px;
-
-        a {
-            color: $color_blue;
-            //text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-        }
+    .social-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
     }
 
-    // Continue button
-    .continue-button {
-        background-color: $color_blue;
-        color: white;
-        border: none;
+    .social-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px;
         border-radius: 8px;
-        padding: 16px;
+        border: 1px solid #ddd;
+        background-color: white;
         font-size: 16px;
         font-weight: 500;
         cursor: pointer;
         transition: background-color 0.2s;
-        width: 100%;
+        color: $color_blue;
+
+        &:hover {
+            background-color: #f9f9f9;
+        }
+
+        img, svg {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+        }
+    }
+
+    .continue-button {
+        @include button-base;
+        background-color: $color_blue;
+        color: white;
+        border: none;
         position: relative;
         display: flex;
         text-align: center;
@@ -275,7 +292,6 @@
             display: none;
             box-sizing: border-box;
             animation: rotation 1s linear infinite;
-
             right: 80px;
             top: calc(50% - calc($dim / 2));
 
@@ -283,20 +299,9 @@
                 display: inline-block;
             }
         }
-
-        @keyframes rotation {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
     }
 
-    // Back button
     .back-button {
-        $back_button_h: 20px;
         position: absolute;
         top: calc($screens_mt * -1 - $login_logo_h / 2  - $back_button_h / 2);
         left: 0;
@@ -314,40 +319,37 @@
         }
     }
 
-    // Verification code
-    .verification-code, .password-verification-code {
+    .separator {
         display: flex;
-        justify-content: space-between;
-        margin-bottom: $input_mtb;
+        align-items: center;
+        margin: 24px 0;
 
-        input {
-            width: 44px;
-            height: 54px;
-            text-align: center;
-            font-size: 24px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            padding: 0;
+        .line {
+            flex: 1;
+            height: 1px;
+            background-color: #ddd;
+        }
+
+        .text {
+            padding: 0 16px;
+            color: #666;
+            font-size: 14px;
         }
     }
 
-    // Password input
-    .password-input {
-        margin-bottom: 16px;
+    .toggle-method {
+        margin-bottom: 24px;
 
-        input {
-            $p: 12px;
-            width: calc(100% - $p * 2);
-            padding: $p;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            font-size: 16px;
+        a {
+            color: $color_blue;
+            font-size: 14px;
+            font-weight: 500;
         }
     }
 
-    // Forgot password
     .forgot-password {
-        text-align: right;
+        width: fit-content;
+        margin-left: auto;
         margin-bottom: 24px;
 
         a {
@@ -358,7 +360,6 @@
         }
     }
 
-    // Focus states for better accessibility
     input:focus,
     select:focus,
     button:focus {
@@ -366,19 +367,8 @@
         border-color: $color_blue;
     }
 
-    // Error states
     .error-input {
         border-color: $error_message_color !important;
-    }
-
-    .check-spam-message {
-        margin-top: 8px;
-        font-size: 13px;
-        display: none;
-
-        &.show {
-            display: flex;
-        }
     }
 
     .error-message {
@@ -392,11 +382,114 @@
         opacity: 0.7;
     }
 
+    .check-spam-message {
+        margin-top: 8px;
+        font-size: 13px;
+        display: none;
+
+        &.show {
+            display: flex;
+        }
+    }
+
     .create-password-screen {
         .continue-button {
             margin-top: $input_mtb;
         }
     }
+
+    .profile-screen {
+        .note {
+            font-size: 14px;
+        }
+
+        .select-birthday {
+            $border-color: #d0d9e8;
+            $text-color: #333;
+
+            label {
+                display: none !important;
+            }
+
+            .birthday-form {
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .select-group {
+                display: flex;
+                gap: 0.75rem;
+                flex-wrap: wrap;
+
+                @media (max-width: 480px) {
+                    //flex-direction: column;
+                    //gap: 1rem;
+                }
+            }
+
+            .select-wrapper {
+                flex: 1;
+                min-width: 80px;
+                position: relative;
+
+                &.month {
+                    flex: 1.4;
+                }
+
+                &.day {
+                    flex: .8;
+                }
+
+                @media (max-width: 480px) {
+                    width: 100%;
+                }
+
+                &::after {
+                    content: "";
+                    position: absolute;
+                    right: 12px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    width: 0;
+                    height: 0;
+                    border-left: 5px solid transparent;
+                    border-right: 5px solid transparent;
+                    border-top: 5px solid #666;
+                    pointer-events: none;
+                }
+
+                label {
+                    display: block;
+                    margin-bottom: 0.5rem;
+                    font-size: 0.9rem;
+                    font-weight: 500;
+                    color: #555;
+                }
+
+                select {
+                    width: 100%;
+                    padding: 0.75rem 1rem;
+                    border: 1px solid $border-color;
+                    border-radius: 8px;
+                    background-color: white;
+                    font-size: 1rem;
+                    color: $text-color;
+                    appearance: none;
+                    cursor: pointer;
+                    transition: border-color 0.2s ease;
+
+                    &:focus {
+                        outline: none;
+                        border-color: $brand_color_a;
+                        //box-shadow: 0 0 0 3px rgba($brand_color_a, 0.2);
+                    }
+                }
+            }
+        }
+
+    }
+
 
     @media (max-width: 360px) {
         .container {
@@ -411,5 +504,4 @@
             font-size: 20px;
         }
     }
-
 }

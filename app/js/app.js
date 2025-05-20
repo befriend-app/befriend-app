@@ -278,6 +278,12 @@ window['befriend'] = {
                 return resolve();
             }
 
+            //if user missing first name/birthday show post signup screen
+            if(!befriend.me?.data?.me?.birth_date || !befriend.me?.data?.me?.first_name) {
+                befriend.showProfileScreen();
+                return resolve();
+            }
+
             //location
             try {
                 await befriend.location.init();
@@ -554,7 +560,50 @@ window['befriend'] = {
 
         addClassEl('show-login-signup', appEl);
     },
-    showPostSignupForm: function () {
+    showProfileScreen: async function () {
+        try {
+            let allScreens = document.querySelectorAll('.screens-container .screen');
+            let profileScreen = document.getElementById('profile-screen');
 
+             addElsClass(allScreens, 'hidden');
+             removeClassEl('hidden', profileScreen);
+
+             await befriend.showLoginSignup();
+
+             await befriend.setProfileGenderOptions();
+        } catch(e) {
+            console.error(e);
+        }
+    },
+    setProfileGenderOptions: function () {
+        return new Promise(async (resolve, reject) => {
+            try {
+                if(!befriend.me.data.genders) {
+                    let r = await befriend.api.get('/genders');
+
+                    befriend.me.data.genders = r.data;
+                }
+
+                let genderSelectEl = document.getElementById('select-gender');
+
+                let genderOptionEls = genderSelectEl.querySelectorAll('option');
+
+                if(!genderOptionEls.length) {
+                    let genders = structuredClone(befriend.me.data.genders).filter(item => item.is_visible);
+
+                    let html = '';
+
+                    for(let gender of genders) {
+                        html += `<option value="${gender.token}">${gender.name}</option>`;
+                    }
+
+                    genderSelectEl.innerHTML = html;
+                }
+            } catch(e) {
+                console.error(e);
+            }
+
+            resolve();
+        });
     }
 };

@@ -407,14 +407,31 @@ befriend.events = {
         document.addEventListener('resume', onResume, false);
     },
     loginSignupEvents: function () {
-        function showPostSignupScreen() {
+        async function setUserLogin(data, skip_init) {
+            befriend.user.setPersonToken(data.person_token);
+            befriend.user.setLoginToken(data.login_token);
+
+            if(!skip_init) {
+                try {
+                    await befriend.init(true);
+
+                    //transition from login to app
+                    transitionToApp(passwordScreen);
+                } catch(e) {
+                    console.error(e);
+                }
+            }
+        }
+
+        function showProfileScreen() {
             let screenToTransition = lastScreen;
 
             addClassEl('transition-x-left', screenToTransition);
 
             hideScreen(screenToTransition);
+            showScreen(profileScreen);
 
-            showScreen(postSignupScreen);
+            befriend.setProfileGenderOptions();
 
             setTimeout(function () {
                 removeClassEl('transition-x-left', screenToTransition);
@@ -424,6 +441,8 @@ befriend.events = {
         function showScreen(screen) {
             removeClassEl('hidden', screen);
             lastScreen = screen;
+
+            setErrorMessage(screen, false, '');
         }
 
         function hideScreen(screen) {
@@ -487,8 +506,7 @@ befriend.events = {
 
                     let r = await befriend.api.put(`/auth/code/verify`, data);
 
-                    befriend.user.setPersonToken(r.data.person_token);
-                    befriend.user.setLoginToken(r.data.login_token);
+                    setUserLogin(r.data, true);
 
                     if (loginObj.action === 'signup') {
                         if (loginObj.method === 'email') {
@@ -497,7 +515,7 @@ befriend.events = {
                             showScreen(createPasswordScreen);
                         } else {
                             // Show post-signup screen for phone signup
-                            showPostSignupScreen();
+                            showProfileScreen();
                         }
                     } else {
                         //todo
@@ -513,11 +531,15 @@ befriend.events = {
         }
 
         function inputEvents() {
-            emailInputEl.addEventListener('input', async function(e) {
-                setErrorMessage(this, false, '');
-            });
+            let inputRemoveErrorEls = [emailInputEl, passwordInputEl, resetPasswordInputEl];
 
-            // Handle keyboard input
+            for(let el of inputRemoveErrorEls) {
+                el.addEventListener('input', async function(e) {
+                    setErrorMessage(this, false, '');
+                });
+            }
+
+            //verification code input
             verificationInputs.forEach((input, index) => {
                 input.addEventListener('input', function(e) {
                     setErrorMessage(verifyButtonEl, false, ``);
@@ -581,6 +603,56 @@ befriend.events = {
                     // If we've filled all inputs, focus on the verify button
                     if (pastedData.length === verificationInputs.length) {
                         submitVerification();
+                    }
+                });
+            });
+
+            passwordResetCodeInputs.forEach((input, index) => {
+                input.addEventListener('input', function(e) {
+                    setErrorMessage(this, false, ``);
+
+                    // Get the current value
+                    let currentValue = this.value;
+
+                    // If the input has a value and it's a digit
+                    if (currentValue && /^\d$/.test(currentValue)) {
+                        // Move to the next input if available
+                        if (index < passwordResetCodeInputs.length - 1) {
+                            passwordResetCodeInputs[index + 1].focus();
+                        }
+                    }
+                });
+
+                // Handle backspace for deleting
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Backspace') {
+                        if (this.value === '' && index > 0) {
+                            e.preventDefault();
+                            passwordResetCodeInputs[index - 1].focus();
+                        }
+                    }
+                });
+
+                // Handle paste event on each input
+                input.addEventListener('paste', function(e) {
+                    e.preventDefault();
+                    // Get pasted data
+                    let pastedData = (e.clipboardData || window.clipboardData).getData('text');
+
+                    // Clean the pasted data to only include digits
+                    pastedData = pastedData.replace(/\D/g, '');
+
+                    // Limit to the number of inputs we have
+                    pastedData = pastedData.substring(0, passwordResetCodeInputs.length);
+
+                    // Fill each input with the corresponding digit
+                    for (let i = 0; i < pastedData.length; i++) {
+                        passwordResetCodeInputs[i].value = pastedData.charAt(i);
+
+                        // If we've filled all inputs, focus the last one
+                        if (i === pastedData.length - 1 && i < verificationInputs.length - 1) {
+                            passwordResetCodeInputs[i + 1].focus();
+                        }
                     }
                 });
             });
@@ -826,7 +898,7 @@ befriend.events = {
                         password
                     });
 
-                    showPostSignupScreen();
+                    showProfileScreen();
                 } catch(e) {
                     setErrorMessage(this, true, e?.response?.data || 'Error setting password');
 
@@ -858,17 +930,7 @@ befriend.events = {
                          password: passwordInputEl.value
                     });
 
-                    befriend.user.setPersonToken(r.data.person_token);
-                    befriend.user.setLoginToken(r.data.login_token);
-
-                    try {
-                        await befriend.init(true);
-
-                        //transition from login to app
-                        transitionToApp(passwordScreen);
-                    } catch(e) {
-
-                    }
+                    await setUserLogin(r.data);
                 } catch(e) {
                     setErrorMessage(this, true, e.response?.data || 'Error signing in');
                 }
@@ -881,6 +943,16 @@ befriend.events = {
             forgotPasswordLink.addEventListener('click', async function(e) {
                 e.preventDefault();
                 e.stopPropagation();
+
+                if(this._ip) {
+                    return false;
+                }
+
+                this._ip = true;
+
+                toggleSpinner(this, true);
+
+                setErrorMessage(this, false, '');
 
                 try {
                     await befriend.api.put(`/password/reset`, {
@@ -903,7 +975,131 @@ befriend.events = {
                 } catch(e) {
                     console.error(e);
                 }
+
+                toggleSpinner(this, false);
+
+                this._ip = false;
             });
+
+            continueResetPasswordBtn.addEventListener('click', async function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                if(this._ip) {
+                    return false;
+                }
+
+                this._ip = true;
+
+                toggleSpinner(this, true);
+
+                setErrorMessage(this, false, '');
+
+                let code = '';
+
+                for(let input of Array.from(passwordResetCodeInputs)) {
+                    code += input.value;
+                }
+
+                let password = resetPasswordInputEl.value;
+
+                if(code.length < verificationInputs.length || !password) {
+                    setErrorMessage(this, true, `Valid code and password required`);
+                    toggleSpinner(this, false);
+                    verifyButtonEl._ip = false;
+                } else {
+                    try {
+                        let data = {
+                            email: loginObj.email,
+                            code,
+                            password
+                        }
+
+                        let r = await befriend.api.put(`/password/set/code`, data);
+
+                        setUserLogin(r.data);
+                    } catch(e) {
+                        setErrorMessage(verifyButtonEl, true, e.response?.data || 'Error verifying code');
+                    }
+                }
+
+                this._ip = false;
+
+                toggleSpinner(this, false);
+            });
+        }
+
+        function birthdayEvents() {
+            let monthSelect = document.getElementById('birthday-month');
+            let daySelect = document.getElementById('birthday-day');
+            let yearSelect = document.getElementById('birthday-year');
+
+            const months = [
+                { value: 1, name: 'January' },
+                { value: 2, name: 'February' },
+                { value: 3, name: 'March' },
+                { value: 4, name: 'April' },
+                { value: 5, name: 'May' },
+                { value: 6, name: 'June' },
+                { value: 7, name: 'July' },
+                { value: 8, name: 'August' },
+                { value: 9, name: 'September' },
+                { value: 10, name: 'October' },
+                { value: 11, name: 'November' },
+                { value: 12, name: 'December' }
+            ];
+
+            // Populate months
+            months.forEach(month => {
+                const option = document.createElement('option');
+                option.value = month.value;
+                option.textContent = month.name;
+                monthSelect.appendChild(option);
+            });
+
+            // Populate years (120 years back from earliest year)
+            let currentYear = new Date().getFullYear();
+            let startYear = currentYear - 17;
+            
+            for (let year = startYear; year >= startYear - 115; year--) {
+                let option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                yearSelect.appendChild(option);
+            }
+
+            // Function to populate days based on month and year
+            function populateDays(month, year) {
+                // Clear existing days
+                daySelect.innerHTML = '<option value="" selected disabled>Day</option>';
+
+                // Get number of days in the selected month and year
+                const daysInMonth = new Date(year, month, 0).getDate();
+
+                // Add day options
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const option = document.createElement('option');
+                    option.value = day;
+                    option.textContent = day;
+                    daySelect.appendChild(option);
+                }
+            }
+
+            // Event listeners
+            monthSelect.addEventListener('change', function() {
+                if (yearSelect.value) {
+                    populateDays(parseInt(monthSelect.value), parseInt(yearSelect.value));
+                }
+            });
+
+            yearSelect.addEventListener('change', function() {
+                if (monthSelect.value) {
+                    populateDays(parseInt(monthSelect.value), parseInt(yearSelect.value));
+                }
+            });
+
+            // Default populate days for current month/year
+            populateDays(1, currentYear);
         }
 
         async function transitionToApp(fromScreen) {
@@ -954,7 +1150,7 @@ befriend.events = {
         let passwordScreen = document.getElementById('password-screen');
         let resetPasswordScreen = document.getElementById('reset-password-screen');
         let createPasswordScreen = document.getElementById('create-password-screen');
-        let postSignupScreen = document.getElementById('post-signup-screen');
+        let profileScreen = document.getElementById('profile-screen');
 
         let useEmailBtn = document.getElementById('use-email');
         let usePhoneBtn = document.getElementById('use-phone');
@@ -966,6 +1162,8 @@ befriend.events = {
         let continueLoginPassword = document.getElementById('login-password-btn');
         let continueSetPasswordBtn = document.getElementById('set-password-btn');
         let forgotPasswordLink = document.querySelector('.forgot-password');
+        let continueResetPasswordBtn = document.getElementById('reset-forgot-password-btn')
+        let continueProfileBtn = document.getElementById('profile-screen-btn');
 
         //verify els
         let verifyMessageEl = verificationScreen.querySelector('.heading p');
@@ -980,6 +1178,7 @@ befriend.events = {
         let emailInputEl = document.getElementById('email-input');
         let passwordInputEl = document.getElementById('password-input');
         let createPasswordInputEl = document.getElementById('create-password-input');
+        let resetPasswordInputEl = document.getElementById('reset-password-input');
 
         // prevent duplicate event handlers
         if(phoneScreen._listener) {
@@ -993,5 +1192,7 @@ befriend.events = {
         inputEvents();
 
         clickEvents();
+
+        birthdayEvents();
     }
 };

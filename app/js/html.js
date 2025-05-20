@@ -861,28 +861,67 @@ befriend.html = {
                                 <div class="error-message"></div>
                             </div>   
                             
-                            <div class="screen post-signup-screen hidden" id="post-signup-screen">
+                            <div class="screen profile-screen hidden" id="profile-screen">
                                 <div class="heading">
-                                    <h1>Account information</h1>
-                                    <p>Let us know about yourself</p>
-                                </div>
-                    
-                                <div class="form-group">
-                                    <label for="create-name">First Name</label>
-                                    <input type="text" id="create-first-name" placeholder="Your first name">
+                                    <h1>Profile</h1>
+                                    <p>Start meeting new and existing friends</p>
                                 </div>
                                 
-                                <div class="form-group">
-                                    <label for="create-name">Last Name (optional)</label>
-                                    <input type="text" id="create-last-name" placeholder="Your last name">
+                                <div class="inputs">
+                                    <div class="input-container">
+                                        <label for="create-first-name">First name</label>
+                                        <input type="text" id="create-first-name" placeholder="Your first name">
+                                    </div>
+                                    
+                                    <div class="input-container">
+                                        <label for="create-last-name">Last name (optional)</label>
+                                        <input type="text" id="create-last-name" placeholder="Your last name">
+                                    </div>
+                                    
+                                    <div class="input-container">
+                                        <label for="create-password">Gender</label>
+                                        
+                                        <div class="select-gender">
+                                            <select id="select-gender">
+                                            </select>
+                                        </div>
+                                    </div>
+                        
+                                    <div class="input-container">
+                                        <label for="create-password">Birthday</label>
+                                        
+                                        <div class="select-birthday">
+                                            <div class="birthday-form">
+                                                <div class="select-group">
+                                                    <div class="select-wrapper month">
+                                                        <label for="birthday-month">Month</label>
+                                                        <select id="birthday-month" name="month" required>
+                                                            <option value="" selected disabled>Month</option>
+                                                        </select>
+                                                    </div>
+                                                    
+                                                    <div class="select-wrapper day">
+                                                        <label for="birthday-day">Day</label>
+                                                        <select id="birthday-day" name="day" required>
+                                                            <option value="" selected disabled>Day</option>
+                                                        </select>
+                                                    </div>
+                                                    
+                                                    <div class="select-wrapper">
+                                                        <label for="birthday-year">Year</label>
+                                                        <select id="birthday-year" name="year" required>
+                                                            <option value="" selected disabled>Year</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <p class="note">Your birthday cannot be changed once set. Please double-check for accuracy before continuing.</p>
+                                    </div>
                                 </div>
                     
-                                <div class="form-group">
-                                    <p>Your birthday is required and cannot be changed once set. Please double-check for accuracy before continuing.</p>
-                                    <label for="create-password">Birthday</label>
-                                </div>
-                    
-                                <button class="continue-button" id="post-signup-btn">Continue to app <span class="spinner"></span></button>
+                                <button class="continue-button" id="profile-screen-btn">Continue to app <span class="spinner"></span></button>
                                 
                                 <div class="error-message"></div>
                             </div>
