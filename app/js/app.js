@@ -595,16 +595,15 @@ window['befriend'] = {
 
                 let genderOptionEls = genderSelectEl.querySelectorAll('option');
 
-                if(!genderOptionEls.length) {
+                if(genderOptionEls.length < 2) {
                     let genders = structuredClone(befriend.me.data.genders).filter(item => item.is_visible);
 
-                    let html = '';
-
                     for(let gender of genders) {
-                        html += `<option value="${gender.token}">${gender.name}</option>`;
+                        let option = document.createElement('option');
+                        option.value = gender.token;
+                        option.textContent = gender.name;
+                        genderSelectEl.appendChild(option);
                     }
-
-                    genderSelectEl.innerHTML = html;
                 }
             } catch(e) {
                 console.error(e);

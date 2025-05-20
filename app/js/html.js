@@ -887,6 +887,7 @@ befriend.html = {
                                         
                                         <div class="select-gender">
                                             <select id="select-gender">
+                                                <option value="" selected disabled>Select</option>
                                             </select>
                                         </div>
                                     </div>
