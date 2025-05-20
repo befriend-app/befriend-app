@@ -100,7 +100,7 @@ body.loading {
         position: relative;
         height: 100vh;
         height: 100dvh;
-        transition: transform 220ms;
+        transition: transform $login_signup_screen_transition;
     }
 }
 
@@ -172,6 +172,18 @@ html.#{$class_available_me_sections} {
     overflow: hidden;
 }
 
+.no-transition {
+    transition: none !important;
+}
+
+.transform-0 {
+    transform: translate(0, 0);
+}
+
 .transition-x-left {
     transform: translateX(-100%) !important;
+}
+
+.transition-x-right {
+    transform: translateX(100%) !important;
 }

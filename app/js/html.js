@@ -237,7 +237,6 @@ befriend.html = {
                                     </div>
                                 </div>    
                             </div>
-                                          
                         </div>
                         
                         <div id="friends" class="view view-friends"><h2>Friends</h2></div>
@@ -831,6 +830,36 @@ befriend.html = {
                                 
                                 <div class="error-message"></div>
                             </div>
+                            
+                            <div class="screen reset-password-screen hidden" id="reset-password-screen">
+                                <button class="back-button" id="back-from-reset-password">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                                    Back
+                                </button>
+                    
+                                <div class="heading">
+                                    <h1>Reset password</h1>
+                                    <p>Enter your verification code and new password</p>
+                                </div>
+                    
+                                <div class="label">Verification Code</div>
+                                <div class="password-verification-code">
+                                    <input type="text" maxlength="1">
+                                    <input type="text" maxlength="1">
+                                    <input type="text" maxlength="1">
+                                    <input type="text" maxlength="1">
+                                    <input type="text" maxlength="1">
+                                    <input type="text" maxlength="1">
+                                </div>
+                                
+                                <div class="password-input">
+                                    <input id="reset-password-input" type="password" placeholder="New Password (min. 8 characters)">
+                                </div>
+                    
+                                <button class="continue-button" id="reset-forgot-password-btn">Update<span class="spinner"></span></button>
+                                
+                                <div class="error-message"></div>
+                            </div>   
                             
                             <div class="screen post-signup-screen hidden" id="post-signup-screen">
                                 <div class="heading">

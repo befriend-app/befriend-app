@@ -663,6 +663,34 @@ befriend.events = {
                 showScreen(emailScreen);
             });
 
+            backFromResetPasswordBtn.addEventListener('click', async function(e) {
+                e.preventDefault();
+
+                addClassEl('transition-x-right', resetPasswordScreen);
+                addClassEl('no-transition', passwordScreen);
+                passwordScreen.style.transform = `translate(-100%)`;
+
+                await rafAwait();
+
+                hideScreen(resetPasswordScreen);
+                showScreen(passwordScreen);
+
+                removeClassEl('no-transition', passwordScreen);
+
+                await rafAwait();
+
+                passwordScreen.style.removeProperty('transform');
+
+                setTimeout(async function () {
+                    addClassEl('dni', resetPasswordScreen);
+                    removeClassEl('transition-x-right', resetPasswordScreen);
+
+                    await rafAwait();
+
+                    removeClassEl('dni', resetPasswordScreen);
+                }, befriend.variables.login_signup_screen_transition + 50);
+            });
+
             //navigate to verification screen (from phone)
             continuePhoneBtn.addEventListener('click', async function() {
                 if(this._ip) {
@@ -849,6 +877,33 @@ befriend.events = {
 
                 toggleSpinner(this, false);
             });
+
+            forgotPasswordLink.addEventListener('click', async function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                try {
+                    await befriend.api.put(`/password/reset`, {
+                        email: loginObj.email
+                    });
+
+                    addClassEl('transition-x-left', passwordScreen);
+
+                    hideScreen(passwordScreen);
+                    showScreen(resetPasswordScreen);
+
+                    setTimeout(async function () {
+                        addClassEl('dni', passwordScreen);
+                        removeClassEl('transition-x-left', passwordScreen);
+
+                        await rafAwait();
+
+                        removeClassEl('dni', passwordScreen);
+                    }, befriend.variables.login_signup_screen_transition + 50);
+                } catch(e) {
+                    console.error(e);
+                }
+            });
         }
 
         async function transitionToApp(fromScreen) {
@@ -878,7 +933,7 @@ befriend.events = {
                 //reset login/signup screens
                 addElsClass(allScreens, 'hidden');
                 showScreen(allScreens[0]);
-            }, 250);
+            }, befriend.variables.login_signup_screen_transition + 30);
         }
 
         let loginObj = {
@@ -897,6 +952,7 @@ befriend.events = {
         let createAccountScreen = document.getElementById('create-account-screen');
         let verificationScreen = document.getElementById('verification-screen');
         let passwordScreen = document.getElementById('password-screen');
+        let resetPasswordScreen = document.getElementById('reset-password-screen');
         let createPasswordScreen = document.getElementById('create-password-screen');
         let postSignupScreen = document.getElementById('post-signup-screen');
 
@@ -904,16 +960,19 @@ befriend.events = {
         let usePhoneBtn = document.getElementById('use-phone');
         let backFromVerificationBtn = document.getElementById('back-from-verification');
         let backFromPasswordBtn = document.getElementById('back-from-password');
+        let backFromResetPasswordBtn = document.getElementById('back-from-reset-password');
         let continuePhoneBtn = document.getElementById('continue-phone');
         let continueEmailBtn = document.getElementById('continue-email');
         let continueLoginPassword = document.getElementById('login-password-btn');
         let continueSetPasswordBtn = document.getElementById('set-password-btn');
+        let forgotPasswordLink = document.querySelector('.forgot-password');
 
         //verify els
         let verifyMessageEl = verificationScreen.querySelector('.heading p');
         let verifyButtonEl = verificationScreen.querySelector('.continue-button');
         let spamMessageEl = verificationScreen.querySelector('.check-spam-message');
         let verificationInputs = document.querySelectorAll('.verification-code input');
+        let passwordResetCodeInputs = document.querySelectorAll('.password-verification-code input');
 
         //inputs
         let countryCodeEl = document.getElementById('country-code');

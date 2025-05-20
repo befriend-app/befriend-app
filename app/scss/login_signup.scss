@@ -6,7 +6,7 @@
 
     display: none;
     margin-top: var(--sbh);
-    transition: transform 220ms;
+    transition: transform $login_signup_screen_transition;
     transform: translateX(0);
 
     &.transition-out {
@@ -61,8 +61,9 @@
         padding: 0 $plr;
         display: flex;
         flex-direction: column;
-        transition: transform 0.3s ease;
+        transition: transform $login_signup_screen_transition ease;
         background-color: white;
+        transform: translate(0, 0);
 
         &.no-transition {
             transition: none;
@@ -73,7 +74,7 @@
                 transform: translateX(-100%);
             }
 
-            &.create-account-screen, &.verification-screen,
+            &.create-account-screen, &.verification-screen, &.reset-password-screen,
             &.password-screen, &.create-password-screen, &.post-signup-screen {
                 transform: translateX(100%);
             }
@@ -314,7 +315,7 @@
     }
 
     // Verification code
-    .verification-code {
+    .verification-code, .password-verification-code {
         display: flex;
         justify-content: space-between;
         margin-bottom: $input_mtb;
