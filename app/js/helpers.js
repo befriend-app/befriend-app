@@ -698,3 +698,37 @@ function getDistanceStr(location_1, location_2) {
 
     return `${formatRound(distance_miles)} m`;
 }
+
+function isValidEmail(email) {
+    let re =
+        /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}
+
+function isValidPhone(phoneNumber, countryCode = '+1') {
+    if (!phoneNumber) {
+        return false;
+    }
+
+    // Strip all non-numeric characters
+    const stripped = phoneNumber.replace(/\D/g, '');
+
+    switch (countryCode) {
+        case '+1':
+            // US numbers should be 10 digits (or 11 with leading 1)
+            if (stripped.length === 10) {
+                return true;
+            } else if (stripped.length === 11 && stripped.charAt(0) === '1') {
+                return true;
+            }
+            return false;
+
+        case '+44':
+            // UK numbers should be 10 or 11 digits
+            return (stripped.length === 10 || stripped.length === 11);
+
+        default:
+            // Default: must be at least 8 digits
+            return stripped.length >= 8;
+    }
+}

@@ -517,11 +517,43 @@ window['befriend'] = {
             removeClassEl('show', 'transition-overlay');
         }
     },
-    showLoginSignup: function () {
+    setLoginSignup: function () {
+        return new Promise(async (resolve, reject) => {
+            //set country codes
+            let codes = ['+1'];
+
+            let countryCodeEl = document.getElementById('country-code');
+            let html = '';
+
+            try {
+
+                let r = await befriend.api.get(`/sms/country-codes`);
+
+                codes = r.data;
+            } catch(e) {
+                console.error(e);
+            }
+
+            for(let code of codes) {
+                html += `<option value="${code}">${code}</div>`;
+            }
+
+            countryCodeEl.innerHTML = html;
+
+            resolve();
+        });
+    },
+    showLoginSignup: async function () {
+        try {
+            await befriend.setLoginSignup();
+        } catch(e) {
+
+        }
+
         befriend.events.loginSignupEvents();
+
         let appEl = document.getElementById('app');
-        console.log('Show login');
 
         addClassEl('show-login-signup', appEl);
-    }
+    },
 };

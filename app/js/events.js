@@ -167,7 +167,7 @@ befriend.events = {
         }
     },
     onDrag: function () {
-        const events = {
+        let events = {
             touch: {
                 start: 'touchstart',
                 move: 'touchmove',
@@ -180,8 +180,8 @@ befriend.events = {
             },
         };
 
-        const deviceType = isTouchDevice() ? 'touch' : 'mouse';
-        const deviceEvents = events[deviceType];
+        let deviceType = isTouchDevice() ? 'touch' : 'mouse';
+        let deviceEvents = events[deviceType];
 
         let itemReorder = befriend.me.events.itemReorder;
         let sectionReorder = befriend.me.events.sectionReorder;
@@ -190,14 +190,14 @@ befriend.events = {
             // Handle item reordering
             if (itemReorder.ip && itemReorder.el) {
                 e.preventDefault();
-                const coords = getEventCoords(e);
-                const offsetX = coords.x - itemReorder.start.x;
-                const offsetY = coords.y - itemReorder.start.y;
+                let coords = getEventCoords(e);
+                let offsetX = coords.x - itemReorder.start.x;
+                let offsetY = coords.y - itemReorder.start.y;
 
                 // Only start repositioning other items after some movement
                 if (!itemReorder.dragStarted && (Math.abs(offsetX) > 5 || Math.abs(offsetY) > 5)) {
                     itemReorder.dragStarted = true;
-                    const idleItems = itemReorder.getIdleItems(itemReorder.el.parentElement);
+                    let idleItems = itemReorder.getIdleItems(itemReorder.el.parentElement);
                     itemReorder.setItemsGap(idleItems);
                     itemReorder.initItemsState(itemReorder.el, idleItems);
                 }
@@ -208,12 +208,12 @@ befriend.events = {
                     itemReorder.updateIdleItemsStateAndPosition(itemReorder.el);
 
                     // Check for scroll needed
-                    const container = itemReorder.el.closest('.items-container');
-                    const containerRect = container.getBoundingClientRect();
-                    const itemRect = itemReorder.el.getBoundingClientRect();
-                    const itemHeight = itemRect.height;
-                    const itemGap = itemReorder.itemsGap;
-                    const scrollAmount = itemHeight + itemGap;
+                    let container = itemReorder.el.closest('.items-container');
+                    let containerRect = container.getBoundingClientRect();
+                    let itemRect = itemReorder.el.getBoundingClientRect();
+                    let itemHeight = itemRect.height;
+                    let itemGap = itemReorder.itemsGap;
+                    let scrollAmount = itemHeight + itemGap;
 
                     if (!itemReorder.autoScroll.scrolling) {
                         if (itemRect.top < containerRect.top) {
@@ -236,9 +236,9 @@ befriend.events = {
             // Handle section reordering
             if (sectionReorder.ip && sectionReorder.el) {
                 e.preventDefault();
-                const coords = getEventCoords(e);
-                const offsetX = coords.x - sectionReorder.start.x;
-                const offsetY = coords.y - sectionReorder.start.y;
+                let coords = getEventCoords(e);
+                let offsetX = coords.x - sectionReorder.start.x;
+                let offsetY = coords.y - sectionReorder.start.y;
 
                 // Only start repositioning other sections after some movement
                 if (
@@ -246,7 +246,7 @@ befriend.events = {
                     (Math.abs(offsetX) > 5 || Math.abs(offsetY) > 5)
                 ) {
                     sectionReorder.dragStarted = true;
-                    const idleSections = sectionReorder.getIdleSections(
+                    let idleSections = sectionReorder.getIdleSections(
                         sectionReorder.el.parentElement,
                     );
                     sectionReorder.setSectionsGap(idleSections);
@@ -259,12 +259,12 @@ befriend.events = {
                     sectionReorder.updateIdleSectionsStateAndPosition(sectionReorder.el, coords.y);
 
                     // Check for scroll needed
-                    const container = sectionReorder.el.closest('.view-me');
-                    const containerRect = container.getBoundingClientRect();
-                    const sectionRect = sectionReorder.el.getBoundingClientRect();
-                    const sectionHeight = sectionRect.height;
-                    const sectionGap = sectionReorder.itemsGap;
-                    const scrollAmount = sectionHeight + sectionGap;
+                    let container = sectionReorder.el.closest('.view-me');
+                    let containerRect = container.getBoundingClientRect();
+                    let sectionRect = sectionReorder.el.getBoundingClientRect();
+                    let sectionHeight = sectionRect.height;
+                    let sectionGap = sectionReorder.itemsGap;
+                    let scrollAmount = sectionHeight + sectionGap;
 
                     if (!sectionReorder.autoScroll.scrolling) {
                         if (sectionRect.top < containerRect.top) {
@@ -296,16 +296,16 @@ befriend.events = {
                 itemReorder.ip = false;
                 itemReorder.dragStarted = false;
 
-                const reorderEl = itemReorder.el;
+                let reorderEl = itemReorder.el;
                 if (!reorderEl) return;
 
-                const scrollContainer = reorderEl.closest('.items-container');
+                let scrollContainer = reorderEl.closest('.items-container');
                 if (scrollContainer) {
                     scrollContainer.style.removeProperty('overflow');
                 }
 
-                const section_el = reorderEl.closest('.section');
-                const section_key = section_el.getAttribute('data-key');
+                let section_el = reorderEl.closest('.section');
+                let section_key = section_el.getAttribute('data-key');
 
                 itemReorder.applyNewItemOrder(reorderEl, section_el, section_key);
                 itemReorder.el = null;
@@ -321,10 +321,10 @@ befriend.events = {
                 sectionReorder.ip = false;
                 sectionReorder.dragStarted = false;
 
-                const reorderEl = sectionReorder.el;
+                let reorderEl = sectionReorder.el;
                 if (!reorderEl) return;
 
-                const scrollContainer = reorderEl.closest('.view-me');
+                let scrollContainer = reorderEl.closest('.view-me');
                 if (scrollContainer) {
                     scrollContainer.style.removeProperty('overflow');
                 }
@@ -355,13 +355,13 @@ befriend.events = {
             }
 
             function animate(currentTime) {
-                const elapsed = currentTime - autoScrollState.startTime;
-                const progress = Math.min(elapsed / autoScrollState.duration, 1);
+                let elapsed = currentTime - autoScrollState.startTime;
+                let progress = Math.min(elapsed / autoScrollState.duration, 1);
 
                 // Ease out cubic function
-                const easeOut = 1 - Math.pow(1 - progress, 3);
+                let easeOut = 1 - Math.pow(1 - progress, 3);
 
-                const currentPosition =
+                let currentPosition =
                     autoScrollState.startPosition +
                     (autoScrollState.targetPosition - autoScrollState.startPosition) * easeOut;
 
@@ -407,17 +407,107 @@ befriend.events = {
         document.addEventListener('resume', onResume, false);
     },
     loginSignupEvents: function () {
+        function setErrorMessage(el, bool, message = '') {
+            let parentEl = el.closest('.screen');
+
+            let errorMessageEl = parentEl.querySelector('.error-message');
+
+            if(bool) {
+                addClassEl('show', errorMessageEl);
+            } else {
+                removeClassEl('show', errorMessageEl);
+            }
+
+            errorMessageEl.innerHTML = message;
+        }
+
+        function toggleSpinner(el, bool) {
+            let parentEl = el.closest('.screen');
+            let spinnerEl = parentEl.querySelector('.spinner');
+
+            if(bool) {
+                addClassEl('show', spinnerEl);
+            } else {
+                removeClassEl('show', spinnerEl);
+            }
+        }
+
+        async function submitVerification() {
+            if(verifyButtonEl._ip) {
+                return false;
+            }
+
+            setErrorMessage(verifyButtonEl, false, ``);
+
+            verifyButtonEl._ip = true;
+
+            toggleSpinner(verifyButtonEl, true);
+
+            let code = '';
+
+            for(let input of Array.from(verificationInputs)) {
+                code += input.value;
+            }
+
+            if(code.length < verificationInputs.length) {
+                setErrorMessage(verifyButtonEl, true, `Invalid code`);
+                toggleSpinner(verifyButtonEl, false);
+                verifyButtonEl._ip = false;
+            } else {
+                try {
+                    let data = {
+                        code
+                    }
+
+                    //dynamically set either phone or email data on request object
+                    data[loginObj.method] = loginObj[loginObj.method];
+
+                    let r = await befriend.api.put(`/auth/code/verify`, data);
+                } catch(e) {
+
+                }
+            }
+
+            toggleSpinner(verifyButtonEl, false);
+
+            verifyButtonEl._ip = false;
+        }
+
+        let loginObj = {
+            action: 'signup', //[login, signup]
+            method: 'phone', //[phone, email]
+            email: null,
+            phone: {
+                countryCode: null,
+                number: null
+            }
+        };
+
         let phoneScreen = document.getElementById('phone-screen');
         let emailScreen = document.getElementById('email-screen');
+        let createAccountScreen = document.getElementById('create-account-screen');
         let verificationScreen = document.getElementById('verification-screen');
         let passwordScreen = document.getElementById('password-screen');
 
         let useEmailBtn = document.getElementById('use-email');
         let usePhoneBtn = document.getElementById('use-phone');
+        let backFromCreateAccountBtn = document.getElementById('back-from-create-account');
         let backFromVerificationBtn = document.getElementById('back-from-verification');
         let backFromPasswordBtn = document.getElementById('back-from-password');
         let continuePhoneBtn = document.getElementById('continue-phone');
         let continueEmailBtn = document.getElementById('continue-email');
+
+        //verify els
+        let verifyH1El = verificationScreen.querySelector('h1');
+        let verifyMessageEl = verificationScreen.querySelector('.heading p');
+        let verifyButtonEl = verificationScreen.querySelector('.continue-button');
+        let spamMessageEl = verificationScreen.querySelector('.spam-message');
+        let verificationInputs = document.querySelectorAll('.verification-code input');
+
+        //inputs
+        let countryCodeEl = document.getElementById('country-code');
+        let phoneInputEl = document.getElementById('phone-input');
+        let emailInputEl = document.getElementById('email-input');
 
         // prevent duplicate event handlers
         if(phoneScreen._listener) {
@@ -426,9 +516,14 @@ befriend.events = {
 
         phoneScreen._listener = true;
 
+        let lastScreen = phoneScreen;
+
         // Toggle between phone and email screens
         useEmailBtn.addEventListener('click', async function(e) {
             e.preventDefault();
+
+            loginObj.method = 'email';
+
             addClassEl('no-transition', phoneScreen);
             addClassEl('no-transition', emailScreen);
 
@@ -439,10 +534,14 @@ befriend.events = {
 
             removeClassEl('no-transition', phoneScreen);
             removeClassEl('no-transition', emailScreen);
+
+            lastScreen = emailScreen;
         });
 
         usePhoneBtn.addEventListener('click', async function(e) {
             e.preventDefault();
+
+            loginObj.method = 'phone';
 
             addClassEl('no-transition', phoneScreen);
             addClassEl('no-transition', emailScreen);
@@ -454,21 +553,132 @@ befriend.events = {
 
             removeClassEl('no-transition', phoneScreen);
             removeClassEl('no-transition', emailScreen);
+
+            lastScreen = phoneScreen;
         });
 
         // Navigate to verification screen (from phone)
-        continuePhoneBtn.addEventListener('click', function() {
-            addClassEl('hidden', phoneScreen);
-            removeClassEl('hidden', verificationScreen);
+        continuePhoneBtn.addEventListener('click', async function() {
+            if(this._ip) {
+                return false;
+            }
+
+            this._ip = true;
+
+            setErrorMessage(this, false, '');
+
+            let value = phoneInputEl.value;
+            let code = countryCodeEl.value;
+
+            if(!isValidPhone(value, code)) {
+                this._ip = false;
+                toggleSpinner(this, false);
+
+                return setErrorMessage(this, true, 'Please provide a valid phone number');
+            }
+
+            removeClassEl('show', spamMessageEl);
+            toggleSpinner(this, true);
+
+            loginObj.phone.countryCode = code;
+            loginObj.phone.number = value;
+
+            //check if account exists
+            try {
+                let exists = await befriend.user.checkAccountExists(loginObj.phone);
+
+                addClassEl('hidden', phoneScreen);
+
+                verifyMessageEl.innerHTML = 'Enter the code sent to your phone';
+
+                if(exists) {
+                    loginObj.action = 'login';
+                    removeClassEl('hidden', verificationScreen);
+                    verifyButtonEl.innerHTML = 'Verify';
+                } else {
+                    loginObj.action = 'signup';
+                    verifyButtonEl.innerHTML = 'Create account <span class="spinner"></span>';
+
+                    removeClassEl('hidden', createAccountScreen);
+                }
+            } catch(e) {
+                setErrorMessage(this, true, e?.response?.data || 'Login error');
+                console.error(e);
+            }
+
+            this._ip = false;
+
+            toggleSpinner(this, false);
+        });
+
+        phoneInputEl.addEventListener('input', async function(e) {
+            setErrorMessage(this, false, '');
         });
 
         // Navigate to password screen (from email)
-        continueEmailBtn.addEventListener('click', function() {
-            addClassEl('hidden', emailScreen);
-            removeClassEl('hidden', passwordScreen);
+        continueEmailBtn.addEventListener('click', async function() {
+            if(this._ip) {
+                return false;
+            }
+
+            this._ip = true;
+
+            toggleSpinner(this, true);
+
+            setErrorMessage(this, false, '');
+
+            let value = emailInputEl.value;
+
+            loginObj.email = value;
+
+            if(!isValidEmail(value)) {
+                this._ip = false;
+                toggleSpinner(this, false);
+
+                return setErrorMessage(this, true, 'Please provide a valid email');
+            }
+
+            addClassEl('show', spamMessageEl);
+
+            //check if account exists
+            try {
+                let exists = await befriend.user.checkAccountExists(null, value);
+
+                addClassEl('hidden', emailScreen);
+
+                if(exists) {
+                    loginObj.action = 'login';
+
+                    removeClassEl('hidden', passwordScreen);
+                } else {
+                    loginObj.action = 'signup';
+
+                    //set email specific language on verification screen
+                    verifyMessageEl.innerHTML = 'Enter the code sent to your email';
+                    verifyButtonEl.innerHTML = 'Create account <span class="spinner"></span>';
+
+                    removeClassEl('hidden', verificationScreen);
+                }
+            } catch(e) {
+                setErrorMessage(this, true, e?.response?.data || 'Error checking account');
+                console.error(e);
+            }
+
+            this._ip = false;
+            toggleSpinner(this, false);
+        });
+
+        emailInputEl.addEventListener('input', async function(e) {
+            setErrorMessage(this, false, '');
         });
 
         // Back button functionality
+        backFromCreateAccountBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            addClassEl('hidden', createAccountScreen);
+            removeClassEl('hidden', lastScreen);
+        });
+
         backFromVerificationBtn.addEventListener('click', function(e) {
             e.preventDefault();
             addClassEl('hidden', verificationScreen);
@@ -481,21 +691,79 @@ befriend.events = {
             removeClassEl('hidden', emailScreen);
         });
 
-        // Auto-focus next input in verification code
-        let verificationInputs = document.querySelectorAll('.verification-code input');
-
+        // Handle keyboard input
         verificationInputs.forEach((input, index) => {
-            input.addEventListener('keyup', function(e) {
-                if (e.key >= '0' && e.key <= '9') {
+            input.addEventListener('input', function(e) {
+                setErrorMessage(verifyButtonEl, false, ``);
+
+                // Get the current value
+                let currentValue = this.value;
+
+                // If the input has a value and it's a digit
+                if (currentValue && /^\d$/.test(currentValue)) {
+                    // Move to the next input if available
                     if (index < verificationInputs.length - 1) {
                         verificationInputs[index + 1].focus();
+                    } else {
+                        //last input field
+                        let code = '';
+
+                        for(let input of Array.from(verificationInputs)) {
+                            code += input.value;
+                        }
+
+                        if(code.length === verificationInputs.length) {
+                            submitVerification();
+                        }
                     }
-                } else if (e.key === 'Backspace') {
-                    if (index > 0) {
+                }
+            });
+
+            // Handle backspace for deleting
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace') {
+                    // If the input is empty and not the first one, focus the previous input
+                    if (this.value === '' && index > 0) {
+                        e.preventDefault();
                         verificationInputs[index - 1].focus();
                     }
                 }
             });
+
+            // Handle paste event on each input
+            input.addEventListener('paste', function(e) {
+                e.preventDefault();
+                // Get pasted data
+                let pastedData = (e.clipboardData || window.clipboardData).getData('text');
+
+                // Clean the pasted data to only include digits
+                pastedData = pastedData.replace(/\D/g, '');
+
+                // Limit to the number of inputs we have
+                pastedData = pastedData.substring(0, verificationInputs.length);
+
+                // Fill each input with the corresponding digit
+                for (let i = 0; i < pastedData.length; i++) {
+                    verificationInputs[i].value = pastedData.charAt(i);
+
+                    // If we've filled all inputs, focus the last one
+                    if (i === pastedData.length - 1 && i < verificationInputs.length - 1) {
+                        verificationInputs[i + 1].focus();
+                    }
+                }
+
+                // If we've filled all inputs, focus on the verify button
+                if (pastedData.length === verificationInputs.length) {
+                    submitVerification();
+                }
+            });
+        });
+
+        verifyButtonEl.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            submitVerification();
         });
 
         let phoneInput = document.getElementById('phone-input');

@@ -133,5 +133,20 @@ befriend.user = {
                 return reject(e);
             }
         });
+    },
+    checkAccountExists: function (phoneObj, email) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let r = await befriend.api.put(`/login/exists`, {
+                    phone: phoneObj,
+                    email
+                });
+
+                resolve(r.data);
+            } catch(e) {
+                console.error(e);
+                return reject(e);
+            }
+        });
     }
 };
