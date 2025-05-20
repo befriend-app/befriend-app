@@ -1190,6 +1190,35 @@ befriend.events = {
 
                 this._ip = false;
             });
+
+            let profilePictureContainerEl = document.querySelector('.profile-picture-container');
+
+            profilePictureContainerEl.addEventListener('click', function() {
+                // Show camera/gallery selection dialog
+                window.BefriendPlugin.camera.getPicture(
+                    function(imageData) {
+                        befriend.setProfilePictureData(imageData);
+                    },
+                    function(error) {
+                        console.warn('User cancelled picture selection');
+                    },
+                    {
+                        quality: 90,
+                        targetWidth: 1000,
+                        targetHeight: 1000,
+                        allowsEditing: true
+                    }
+                );
+            });
+
+            let clearPictureEl = profilePictureContainerEl.querySelector('.clear');
+
+            clearPictureEl.addEventListener('click', async function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                befriend.setProfilePictureData(null);
+            });
         }
 
         async function transitionToApp(fromScreen) {

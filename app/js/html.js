@@ -871,13 +871,14 @@ befriend.html = {
                                 
                                 <div class="profile-picture-container">
                                     <div class="profile-picture-wrapper">
+                                        <div class="clear">Clear</div>
+                                    
                                         <div class="profile-picture" id="profile-picture">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                                                 <circle cx="12" cy="7" r="4"></circle>
                                             </svg>
                                         </div>
-                                        <input type="file" id="profile-picture-input" accept="image/*" capture="user">
                                     </div>
                                     <div class="upload-text">Upload Profile Photo</div>
                                 </div>

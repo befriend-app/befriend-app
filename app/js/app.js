@@ -611,5 +611,29 @@ window['befriend'] = {
 
             resolve();
         });
+    },
+    setProfilePictureData: function (imageData) {
+        window.profilePictureData = imageData;
+
+        let profilePictureContainerEl = document.querySelector('.profile-picture-container');
+        let uploadTextEl = profilePictureContainerEl.querySelector('.upload-text');
+
+        document.getElementById('profile-picture').innerHTML =
+            `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>`;
+
+        let img = document.createElement('img');
+
+        if(imageData) {
+            img.src = "data:image/jpeg;base64," + imageData;
+            document.getElementById('profile-picture').appendChild(img);
+            addClassEl('picture-selected', profilePictureContainerEl);
+            uploadTextEl.textContent = 'Change Photo';
+        } else {
+            uploadTextEl.textContent = 'Upload Profile Picture';
+            removeClassEl('picture-selected', profilePictureContainerEl);
+        }
     }
 };

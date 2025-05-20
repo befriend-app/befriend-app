@@ -152,6 +152,27 @@
             flex-direction: column;
             align-items: center;
             margin-bottom: 24px;
+            position: relative;
+
+            &.picture-selected {
+                .clear {
+                    display: block;
+                }
+            }
+
+            .clear {
+                position: absolute;
+                right: 0;
+                transform: translate(60px, -5px);
+                cursor: pointer;
+                font-weight: 500;
+                font-size: 13px;
+                padding: 3px 9px;
+                background-color: lighten($color_lightgray, 5%);
+                display: none;
+                border-radius: 9px;
+
+            }
 
             .upload-text {
                 color: $color_blue;
