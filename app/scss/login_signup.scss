@@ -55,18 +55,18 @@
         background-color: white;
         border-radius: 16px;
         overflow-x: hidden;
-        overflow-y: hidden;
+        overflow-y: scroll;
         position: relative;
         //height: $container_height;
-        height: calc(100vh - var(--sab));
-        height: calc(100dvh - var(--sab));
+        height: calc(100vh - var(--sab) - 50px);
+        height: calc(100dvh - var(--sab) - 50px);
     }
 
     .screens-container {
         position: relative;
         margin-top: $screens_mt;
-        height: calc(100vh - var(--sab));
-        height: calc(100dvh - var(--sab));
+        //height: calc(100vh - var(--sab));
+        //height: calc(100dvh - var(--sab));
     }
 
     .logo-container {
@@ -150,9 +150,25 @@
         gap: 20px 0;
     }
 
+    .form-group {
+        display: flex;
+        gap: 0 1.5rem;
+
+        .input-container {
+            flex: 1;
+        }
+    }
+
+    .optional {
+        font-weight: 600;
+        font-size: 12px;
+        margin-left: 6px;
+    }
+
     .input-container {
         label {
             display: flex;
+            align-items: center;
             font-size: 16px;
             margin-bottom: 6px;
         }
@@ -487,7 +503,6 @@
                 }
             }
         }
-
     }
 
 

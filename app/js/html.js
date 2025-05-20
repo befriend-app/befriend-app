@@ -868,14 +868,16 @@ befriend.html = {
                                 </div>
                                 
                                 <div class="inputs">
-                                    <div class="input-container">
-                                        <label for="create-first-name">First name</label>
-                                        <input type="text" id="create-first-name" placeholder="Your first name">
-                                    </div>
-                                    
-                                    <div class="input-container">
-                                        <label for="create-last-name">Last name (optional)</label>
-                                        <input type="text" id="create-last-name" placeholder="Your last name">
+                                    <div class="form-group">
+                                        <div class="input-container">
+                                            <label for="create-first-name">First name</label>
+                                            <input type="text" id="create-first-name" placeholder="Your first name">
+                                        </div>
+                                        
+                                        <div class="input-container">
+                                            <label for="create-last-name">Last name <span class="optional">(optional)</span></label>
+                                            <input type="text" id="create-last-name" placeholder="Your last name">
+                                        </div>
                                     </div>
                                     
                                     <div class="input-container">
