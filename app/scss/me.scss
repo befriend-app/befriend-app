@@ -201,8 +201,8 @@ html.#{$class_confirm_me_action} {
             padding: 0 20px;
             display: flex;
             align-items: center;
-            background-color: $brand_color_a;
-            color: white;
+            background-color: lighten($color_lightgray, 10%);
+            //color: white;
             border-top-right-radius: $section_br;
             border-top-left-radius: $section_br;
             border: 0.5px solid lighten(black, 50%);
@@ -238,6 +238,12 @@ html.#{$class_confirm_me_action} {
                 padding: 8px;
                 cursor: pointer;
                 box-sizing: border-box;
+
+                .row {
+                    display: flex;
+                    align-items: center;
+                    gap: 0 6px;
+                }
 
                 &[data-mode='mode-solo'] {
                     flex-basis: 90px;
@@ -279,8 +285,8 @@ html.#{$class_confirm_me_action} {
                 &.mode-kids {
                     .icon {
                         svg {
-                            height: 24px;
-                            transform: translateY(-2px);
+                            //height: 24px;
+                            //transform: translateY(-2px);
                         }
                     }
                 }
@@ -292,7 +298,8 @@ html.#{$class_confirm_me_action} {
                     height: 20px;
 
                     svg {
-                        height: 20px;
+                        height: 18px;
+
                         .outline {
                             fill: black;
                             opacity: 1;
@@ -313,28 +320,15 @@ html.#{$class_confirm_me_action} {
 
                 .name {
                     font-weight: 500;
-                    font-size: 16px;
+                    font-size: 15px;
                     display: flex;
                     justify-content: center;
                     align-items: center;
                     transition: all 200ms;
-                    margin-top: 6px;
-
-                    .plus {
-                        $dim: 15px;
-                        fill: lighten(black, 5%);
-                        width: $dim;
-                        height: $dim;
-                        @include flex-center-col;
-                        margin-right: 6px;
-                        box-sizing: border-box;
-                        transition: all 200ms;
-                        transform: translateY(1px);
-                    }
                 }
 
                 .description {
-                    font-size: 12px;
+                    font-size: 13px;
                     opacity: 0.8;
                     text-align: center;
                     margin-top: 3px;

@@ -362,8 +362,11 @@ befriend.html = {
                                                             (option) => `
                                                         <div class="mode-option ${option.id} ${option.id === befriend.me.modes.selected ? 'selected' : ''}" data-mode="${option.id}">
                                                             <div class="content">
-                                                                <div class="icon">${option.icon}</div>
-                                                                <div class="name">${option.name}</div>
+                                                                <div class="row">
+                                                                    <div class="icon">${option.icon}</div>
+                                                                    <div class="name">${option.name}</div>
+                                                                </div>  
+                                                                
                                                                 <div class="description">${option.description}</div>
                                                             </div>
                                                         </div>

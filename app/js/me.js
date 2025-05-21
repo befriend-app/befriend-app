@@ -230,6 +230,7 @@ befriend.me = {
             let kids_list_el = befriend.els.me.querySelector(
                 '.selected-mode-container .kids-section .kids-list',
             );
+
             kids_list_el.insertAdjacentHTML('beforeend', html);
 
             befriend.me.events.onKids();
@@ -997,6 +998,13 @@ befriend.me = {
         let html = `<div id="me-online">
                         ${toggleHtml(isOnline, isOnline ? 'Online' : 'Offline', null, true)}
                     </div>`;
+
+        //remove previous
+        let prevOnlineEl = document.getElementById('me-online');
+
+        if(prevOnlineEl) {
+            prevOnlineEl.remove();
+        }
 
         let top_el = befriend.els.me.querySelector('.top');
 
@@ -2802,7 +2810,10 @@ befriend.me = {
             let active_btns = befriend.els.me.querySelectorAll('.kids-section .kid .kid-active');
 
             for (let btn of active_btns) {
-                if (btn._listener) continue;
+                if (btn._listener) {
+                    continue;
+                }
+
                 btn._listener = true;
 
                 btn.addEventListener('click', async function (e) {
@@ -2837,7 +2848,10 @@ befriend.me = {
             let remove_btns = befriend.els.me.querySelectorAll('.kids-section .kid .remove');
 
             for (let btn of remove_btns) {
-                if (btn._listener) continue;
+                if (btn._listener) {
+                    continue;
+                }
+
                 btn._listener = true;
 
                 btn.addEventListener('click', async function (e) {
@@ -2879,7 +2893,10 @@ befriend.me = {
             for (let i = 0; i < list_els.length; i++) {
                 let list_el = list_els[i];
 
-                if (list_el._listener) continue;
+                if (list_el._listener) {
+                    continue;
+                }
+
                 list_el._listener = true;
 
                 list_el.querySelector('.current-selected').addEventListener('click', function (e) {
@@ -2955,7 +2972,10 @@ befriend.me = {
             let gender_els = befriend.els.me.querySelectorAll('.kids-section .kid .gender .option');
 
             for (let el of gender_els) {
-                if (el._listener) continue;
+                if (el._listener) {
+                    continue;
+                }
+
                 el._listener = true;
 
                 el.addEventListener('click', async function (e) {
