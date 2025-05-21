@@ -6,6 +6,12 @@ html.#{$class_create_activity_shown} {
     }
 }
 
+body.loading {
+    .reset-to-marker {
+        opacity: 0;
+    }
+}
+
 #activities-map-wrapper {
     margin-bottom: 10px;
     width: 100%;
@@ -39,10 +45,12 @@ html.#{$class_create_activity_shown} {
         }
 
         .reset-to-marker {
+            @include flex-center-col;
+
             position: absolute;
             border: 1px solid $color_gray;
             border-radius: 6px;
-            transition: height 300ms ease-in-out;
+            transition: height 300ms ease-in-out, opacity 100ms 100ms ease-in-out;
             overflow-y: hidden;
             width: 27px;
             height: 27px;
@@ -50,7 +58,6 @@ html.#{$class_create_activity_shown} {
             top: $icon_pos_x_y;
             right: $icon_pos_x_y;
             background: white;
-            @include flex-center-col;
 
             svg {
                 height: 17px;
