@@ -413,7 +413,8 @@ befriend.events = {
                 await befriend.me.getMe();
 
                 if(befriend.user.isProfileReady()) {
-
+                    await befriend.init(true);
+                    transitionToApp(profileScreen);
                 } else {
                     showProfileScreen();
                 }
@@ -1217,9 +1218,7 @@ befriend.events = {
                         }
                     }
 
-                    await befriend.init(true);
-
-                    transitionToApp(profileScreen);
+                    await afterLoginLogic();
                 } catch(e) {
                     setErrorMessage(this, true, e?.response?.data || 'Error saving profile');
 
