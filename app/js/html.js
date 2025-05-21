@@ -926,7 +926,7 @@ befriend.html = {
                                                         </select>
                                                     </div>
                                                     
-                                                    <div class="select-wrapper">
+                                                    <div class="select-wrapper year">
                                                         <label for="birthday-year">Year</label>
                                                         <select id="birthday-year" name="year" required>
                                                             <option value="" selected disabled>Year</option>

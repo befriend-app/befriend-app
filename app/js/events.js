@@ -407,17 +407,6 @@ befriend.events = {
         document.addEventListener('resume', onResume, false);
     },
     loginSignupEvents: function () {
-        // if(!skip_init) {
-        //     try {
-        //         await befriend.init(true);
-        //
-        //         //transition from login to app
-        //         transitionToApp(passwordScreen);
-        //     } catch(e) {
-        //         console.error(e);
-        //     }
-        // }
-
         async function afterLoginLogic() {
             //determine whether to transition to app or show screen
             try {
@@ -1115,6 +1104,9 @@ befriend.events = {
 
             // Function to populate days based on month and year
             function populateDays(month, year) {
+                // Store the currently selected day (if any)
+                let selectedDay = daySelect.value ? parseInt(daySelect.value) : null;
+
                 // Clear existing days
                 daySelect.innerHTML = '<option value="" selected disabled>Day</option>';
 
@@ -1126,6 +1118,12 @@ befriend.events = {
                     const option = document.createElement('option');
                     option.value = day;
                     option.textContent = day;
+
+                    // Re-select the previously selected day if it's valid for the new month/year
+                    if (selectedDay && day === selectedDay && day <= daysInMonth) {
+                        option.selected = true;
+                    }
+
                     daySelect.appendChild(option);
                 }
             }
@@ -1195,7 +1193,7 @@ befriend.events = {
                 let birthdayMonth = document.getElementById('birthday-month').value;
                 let birthdayDay = document.getElementById('birthday-day').value;
                 let birthdayYear = document.getElementById('birthday-year').value;
-                let profilePicture = profilePictureData;
+                let profilePicture = window.profilePictureData || null;
 
                 try {
                     let r = await befriend.auth.put(`/profile`, {
@@ -1209,6 +1207,17 @@ befriend.events = {
                             year: birthdayYear
                         }
                     });
+
+                    let data = r.data;
+
+                    if(befriend.me.data.me) {
+                        befriend.me.data.me = {
+                            ...befriend.me.data.me,
+                            ...data
+                        }
+                    }
+
+                    await befriend.init(true);
 
                     transitionToApp(profileScreen);
                 } catch(e) {
