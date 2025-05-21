@@ -453,6 +453,9 @@ befriend.events = {
             removeClassEl('hidden', screen);
             lastScreen = screen;
 
+            //this prevents previously selected input fields from keeping focus and breaking the view
+            document.activeElement?.blur();
+
             setErrorMessage(screen, false, '');
         }
 
@@ -608,7 +611,7 @@ befriend.events = {
 
                         // If we've filled all inputs, focus the last one
                         if (i === pastedData.length - 1 && i < verificationInputs.length - 1) {
-                            verificationInputs[i + 1].focus();
+                            // verificationInputs[i + 1].focus();
                         }
                     }
 
@@ -663,7 +666,7 @@ befriend.events = {
 
                         // If we've filled all inputs, focus the last one
                         if (i === pastedData.length - 1 && i < verificationInputs.length - 1) {
-                            passwordResetCodeInputs[i + 1].focus();
+                            // passwordResetCodeInputs[i + 1].focus();
                         }
                     }
                 });
@@ -693,12 +696,49 @@ befriend.events = {
             });
 
             //prevent shifting between screens on tab
-            let screensContainerEls = document.querySelectorAll('.screens-container button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            let screensContainer = document.querySelector('.screens-container');
+
+            let screensContainerEls = screensContainer.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
 
             for(let el of Array.from(screensContainerEls)) {
                 el.addEventListener('keydown', function(e) {
                     if(e.key === 'Tab') {
                         e.preventDefault();
+
+                        let container = this.closest('.screen');
+
+                        let focusableElements = container.querySelectorAll(
+                            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+                        );
+
+                        let index = null;
+
+                        for(let i = 0; i < focusableElements.length; i++) {
+                            let el = focusableElements[i];
+
+                            if(el === document.activeElement) {
+                                index = i;
+                                break;
+                            }
+                        }
+
+                        if(index > -1) {
+                            let nextIndex = null;
+
+                            if(e.shiftKey) {
+                                nextIndex = --index;
+                            } else {
+                                nextIndex = ++index;
+                            }
+
+                            if(nextIndex >= focusableElements.length) {
+                                nextIndex = 0;
+                            } else if(nextIndex < 0) {
+                                nextIndex = focusableElements.length - 1;
+                            }
+
+                            focusableElements[nextIndex].focus();
+                        }
                     }
                 });
             }
