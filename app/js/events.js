@@ -1115,6 +1115,31 @@ befriend.events = {
             });
         }
 
+        function oauthEvents() {
+            const oauthButtons = document.querySelectorAll('.oauth-button');
+
+            for(let i = 0; i < oauthButtons.length; i++) {
+                let button = oauthButtons[i];
+
+                if(button._listener) {
+                    continue;
+                }
+
+                button._listener = true;
+
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    let provider = elHasClass(button, 'google') ? 'google' : 'apple';
+
+                    let url = `/oauth/${provider}?intent=login&redirect=${encodeURIComponent(redirectUrl)}`;
+
+                    window.location.href = url;
+                });
+            }
+        }
+
         function birthdayEvents() {
             let monthSelect = document.getElementById('birthday-month');
             let daySelect = document.getElementById('birthday-day');
