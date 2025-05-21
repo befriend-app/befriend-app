@@ -19,6 +19,7 @@ befriend.maps = {
         return new Promise(async (resolve, reject) => {
             try {
                 await befriend.maps.loadActivityMap();
+                befriend.maps.centerMap();
             } catch (e) {
                 console.error(e);
             }
@@ -272,7 +273,7 @@ befriend.maps = {
         }
     },
     centerMap: function () {
-        befriend.maps.setMapCenter(befriend.maps.maps.activities, befriend.location.current, 14);
+        befriend.maps.setMapCenter(befriend.maps.maps.activities, befriend.location.current, befriend.maps.defaultZoom);
 
         befriend.maps.maps.activities.resize();
     },
@@ -379,7 +380,7 @@ befriend.maps = {
                 befriend.maps.setMapCenter(
                     befriend.maps.maps.activities,
                     befriend.location.current,
-                    14,
+                    befriend.maps.defaultZoom,
                     true,
                 );
             });
