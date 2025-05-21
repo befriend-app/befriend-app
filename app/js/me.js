@@ -345,7 +345,7 @@ befriend.me = {
                 befriend.filters.data.filters = data.filters;
 
                 if (data.me.country) {
-                    befriend.me.data.country = data.country;
+                    befriend.me.data.country = data.me.country;
                 }
 
                 //set debug settings from backend

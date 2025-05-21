@@ -691,6 +691,17 @@ befriend.events = {
                     }
                 }
             });
+
+            //prevent shifting between screens on tab
+            let screensContainerEls = document.querySelectorAll('.screens-container button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+
+            for(let el of Array.from(screensContainerEls)) {
+                el.addEventListener('keydown', function(e) {
+                    if(e.key === 'Tab') {
+                        e.preventDefault();
+                    }
+                });
+            }
         }
 
         function clickEvents() {

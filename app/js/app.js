@@ -278,7 +278,7 @@ window['befriend'] = {
                 return resolve();
             }
 
-            //if user missing first name/birthday show post signup screen
+            //if user missing first name/birthday/picture show post signup screen
             if(!befriend.user.isProfileReady()) {
                 befriend.showProfileScreen();
                 return resolve();
