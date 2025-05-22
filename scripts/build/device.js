@@ -50,6 +50,11 @@ let CONFIG = {
                 entitlement: 'com.apple.developer.usernotifications.time-sensitive',
                 infoPlistKey: 'UNUserNotificationCenterSupportsTimeSensitiveNotifications',
             },
+            appleSignIn: {
+                capability: 'com.apple.SignInWithApple',
+                entitlement: 'com.apple.developer.applesignin',
+                infoPlistKey: 'AppleSignInEnabled',
+            },
         },
     },
     android: {
@@ -284,6 +289,11 @@ async function addIOSCapabilities() {
                 enabled: 1,
             };
 
+            // Add Sign In with Apple Compatibility
+            project.attributes.TargetAttributes[targetUUID].SystemCapabilities['com.apple.SignInWithApple'] = {
+                enabled: 1,
+            };
+
             // Add entitlements file to build settings
             let configurations = proj.pbxXCBuildConfigurationSection();
             let buildConfigs = Object.keys(configurations)
@@ -325,6 +335,9 @@ async function addIOSCapabilities() {
             // Add time sensitive notification entitlement
             entitlements[CONFIG.ios.capabilities.timeSensitive.entitlement] = true;
 
+            // Add Apple Sign in entitlement
+            entitlements[CONFIG.ios.capabilities.appleSignIn.entitlement] = ['Default'];
+
             await writeFile(entitlementsFullPath, plist.build(entitlements));
 
             // Update Info.plist
@@ -343,6 +356,9 @@ async function addIOSCapabilities() {
 
             // Add time sensitive notifications support
             infoPlist[CONFIG.ios.capabilities.timeSensitive.infoPlistKey] = true;
+
+            // Add Apple sign in info.plist entry
+            infoPlist[CONFIG.ios.capabilities.appleSignIn.infoPlistKey] = true;
 
             // Add background modes if not present
             if (!infoPlist['UIBackgroundModes']) {

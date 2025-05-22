@@ -234,6 +234,122 @@
     [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
 
+- (void)signInWithApple:(CDVInvokedUrlCommand*)command API_AVAILABLE(ios(13.0)) {
+    // Check if Apple Sign In is available
+    if (@available(iOS 13.0, *)) {
+        ASAuthorizationAppleIDProvider *appleIDProvider = [[ASAuthorizationAppleIDProvider alloc] init];
+        ASAuthorizationAppleIDRequest *request = [appleIDProvider createRequest];
+
+        // Configure the request
+        request.requestedScopes = @[ASAuthorizationScopeFullName, ASAuthorizationScopeEmail];
+
+        // Create and configure the authorization controller
+        ASAuthorizationController *authorizationController = [[ASAuthorizationController alloc] initWithAuthorizationRequests:@[request]];
+
+        // Store the callback ID for later use
+        _pendingCallbackId = command.callbackId;
+
+        authorizationController.delegate = self;
+        authorizationController.presentationContextProvider = self;
+        [authorizationController performRequests];
+    } else {
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                                    messageAsString:@"Apple Sign In requires iOS 13.0 or later"];
+        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+    }
+}
+
+#pragma mark - ASAuthorizationControllerDelegate
+
+- (void)authorizationController:(ASAuthorizationController *)controller didCompleteWithAuthorization:(ASAuthorization *)authorization API_AVAILABLE(ios(13.0)) {
+    if ([authorization.credential isKindOfClass:[ASAuthorizationAppleIDCredential class]]) {
+        ASAuthorizationAppleIDCredential *credential = authorization.credential;
+
+        // Build response dictionary
+        NSMutableDictionary *response = [[NSMutableDictionary alloc] init];
+
+        // User identifier (required)
+        if (credential.user) {
+            [response setObject:credential.user forKey:@"id"];
+        }
+
+        // Email (may be nil if user chose not to share)
+        if (credential.email) {
+            [response setObject:credential.email forKey:@"email"];
+        }
+
+        // Full name (may be nil if user chose not to share)
+        if (credential.fullName) {
+            NSMutableDictionary *name = [[NSMutableDictionary alloc] init];
+            if (credential.fullName.givenName) {
+                [name setObject:credential.fullName.givenName forKey:@"givenName"];
+            }
+            if (credential.fullName.familyName) {
+                [name setObject:credential.fullName.familyName forKey:@"familyName"];
+            }
+            if (name.count > 0) {
+                [response setObject:name forKey:@"name"];
+            }
+        }
+
+        // Identity token (JWT)
+        if (credential.identityToken) {
+            NSString *identityToken = [[NSString alloc] initWithData:credential.identityToken encoding:NSUTF8StringEncoding];
+            if (identityToken) {
+                [response setObject:identityToken forKey:@"idToken"];
+            }
+        }
+
+        // Authorization code
+        if (credential.authorizationCode) {
+            NSString *authCode = [[NSString alloc] initWithData:credential.authorizationCode encoding:NSUTF8StringEncoding];
+            if (authCode) {
+                [response setObject:authCode forKey:@"authorizationCode"];
+            }
+        }
+
+        // Real user status
+        switch (credential.realUserStatus) {
+            case ASUserDetectionStatusLikelyReal:
+                [response setObject:@"likelyReal" forKey:@"realUserStatus"];
+                break;
+            case ASUserDetectionStatusUnknown:
+                [response setObject:@"unknown" forKey:@"realUserStatus"];
+                break;
+            case ASUserDetectionStatusUnsupported:
+                [response setObject:@"unsupported" forKey:@"realUserStatus"];
+                break;
+        }
+
+        // Send success result
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                                    messageAsDictionary:[response copy]];
+        [self.commandDelegate sendPluginResult:result callbackId:_pendingCallbackId];
+        _pendingCallbackId = nil;
+    }
+}
+
+- (void)authorizationController:(ASAuthorizationController *)controller didCompleteWithError:(NSError *)error API_AVAILABLE(ios(13.0)) {
+    NSString *errorMessage;
+
+    if (error.code == ASAuthorizationErrorCanceled) {
+        errorMessage = @"User cancelled Apple Sign In";
+    } else if (error.code == ASAuthorizationErrorFailed) {
+        errorMessage = @"Apple Sign In failed";
+    } else if (error.code == ASAuthorizationErrorInvalidResponse) {
+        errorMessage = @"Invalid response from Apple Sign In";
+    } else if (error.code == ASAuthorizationErrorNotHandled) {
+        errorMessage = @"Apple Sign In request not handled";
+    } else {
+        errorMessage = [NSString stringWithFormat:@"Apple Sign In error: %@", error.localizedDescription];
+    }
+
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                                messageAsString:errorMessage];
+    [self.commandDelegate sendPluginResult:result callbackId:_pendingCallbackId];
+    _pendingCallbackId = nil;
+}
+
 #pragma mark - Utility Methods
 
 - (NSString *)generateState {

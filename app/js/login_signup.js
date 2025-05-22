@@ -946,9 +946,16 @@ befriend.loginSignup = {
                         }
                     } else if (provider === 'apple') {
                         try {
-                            await befriend.oauth.signInWithApple();
-                        } catch(e) {
+                            let loginData = await befriend.oauth.signInWithApple();
 
+                            setUserLogin(loginData);
+
+                            await afterLoginLogic();
+
+                        } catch(e) {
+                            if(e) {
+                                setErrorMessage(this, true, e.toString());
+                            }
                         }
                     }
 
@@ -1026,12 +1033,16 @@ befriend.loginSignup = {
 
             // Event listeners
             monthSelect.addEventListener('change', function() {
+                setErrorMessage(this, false, '');
+
                 if (yearSelect.value) {
                     populateDays(parseInt(monthSelect.value), parseInt(yearSelect.value));
                 }
             });
 
             yearSelect.addEventListener('change', function() {
+                setErrorMessage(this, false, '');
+
                 if (monthSelect.value) {
                     populateDays(parseInt(monthSelect.value), parseInt(yearSelect.value));
                 }
@@ -1046,6 +1057,8 @@ befriend.loginSignup = {
                 // Show camera/gallery selection dialog
                 window.BefriendPlugin.camera.getPicture(
                     function(imageData) {
+                        setErrorMessage(profilePictureContainerEl, false, '');
+
                         befriend.loginSignup.setProfilePictureData(imageData);
                     },
                     function(error) {
@@ -1065,6 +1078,8 @@ befriend.loginSignup = {
             clearPictureEl.addEventListener('click', async function(e) {
                 e.preventDefault();
                 e.stopPropagation();
+
+                setErrorMessage(this, false, '');
 
                 befriend.loginSignup.setProfilePictureData(null);
             });
