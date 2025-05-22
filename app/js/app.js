@@ -296,7 +296,7 @@ window['befriend'] = {
                 return resolve();
             }
 
-            if(!fromProfileSetup) {
+            if(!afterSignupLogin) {
                 //location
                 try {
                     await befriend.location.init();
@@ -319,7 +319,7 @@ window['befriend'] = {
                 console.error(e);
             }
 
-            if(!fromProfileSetup) {
+            if(!afterSignupLogin) {
                 //map
                 try {
                     await befriend.maps.init();
@@ -367,10 +367,10 @@ window['befriend'] = {
 
             befriend.init_finished = true;
             
-            // if from profile setup,
+            // if after signup/login,
             // init location/device/map after small delay to
             // prevent permission dialogs from being shown during transition to app
-            if(fromProfileSetup) {
+            if(afterSignupLogin) {
                 setTimeout(async function () {
                     try {
                         await befriend.location.init();
@@ -379,7 +379,7 @@ window['befriend'] = {
                     } catch(e) {
                         console.error(e);
                     }
-                }, 500);
+                }, 1000);
             }
 
             //todo remove

@@ -18,7 +18,6 @@ befriend.maps = {
 
         return new Promise(async (resolve, reject) => {
             try {
-                // return resolve();
                 await befriend.maps.loadActivityMap();
                 befriend.maps.centerMap();
             } catch (e) {

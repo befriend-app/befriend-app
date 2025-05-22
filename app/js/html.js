@@ -187,7 +187,10 @@ befriend.html = {
                                                 </div>
                                             </div>
                                             
-                                            <div id="activities-map"></div>
+                                            <div id="activities-map">
+                                                <div class="placeholder">
+                                                </div>
+                                            </div>
                                         </div>
                                         
                                         <div class="activities"></div>
