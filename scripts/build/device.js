@@ -386,19 +386,94 @@ function copyIOSAppDelegate() {
     });
 }
 
+function addIOSURLScheme() {
+    return new Promise(async (resolve, reject) => {
+        try {
+            //google login on ios requires custom url scheme in info.plist
+
+            // Read bundle ID from config.xml
+            let configXmlPath = joinPaths(repoRoot(), 'config.xml');
+            let configXmlContent = await readFile(configXmlPath);
+
+            // Extract widget id using regex
+            let bundleIdMatch = configXmlContent.match(/widget\s+id="([^"]+)"/);
+            if (!bundleIdMatch || !bundleIdMatch[1]) {
+                console.warn('Could not find widget id in config.xml');
+                return resolve();
+            }
+
+            let bundleId = bundleIdMatch[1];
+
+            let { appName } = await getIOSNamePaths();
+            let infoPlistPath = joinPaths(CONFIG.ios.dir, appName, `${appName}-Info.plist`);
+
+            // Read current Info.plist
+            let infoPlist = {};
+
+            if (await checkPathExists(infoPlistPath)) {
+                let content = await readFile(infoPlistPath);
+                try {
+                    infoPlist = plist.parse(content);
+                } catch (error) {
+                    console.warn('Failed to parse Info.plist:', error);
+                    infoPlist = {};
+                }
+            }
+
+            // Configure URL scheme
+            if (!infoPlist.CFBundleURLTypes) {
+                infoPlist.CFBundleURLTypes = [];
+            }
+
+            // Check if URL scheme already exists
+            let schemes = [bundleId];
+
+            if(process.env.IOS_GOOGLE_URL_SCHEME) {
+                schemes.push(process.env.IOS_GOOGLE_URL_SCHEME);
+            }
+
+            for(let scheme of schemes) {
+                let schemeExists = false;
+
+                for (let urlType of infoPlist.CFBundleURLTypes) {
+                    if (urlType.CFBundleURLSchemes &&
+                        urlType.CFBundleURLSchemes.includes(scheme)) {
+                        schemeExists = true;
+                        break;
+                    }
+                }
+
+                // Add the URL scheme if it doesn't exist
+                if (!schemeExists) {
+                    infoPlist.CFBundleURLTypes.push({
+                        CFBundleURLSchemes: [scheme]
+                    });
+                }
+            }
+
+            // Write updated Info.plist
+            await writeFile(infoPlistPath, plist.build(infoPlist));
+            resolve();
+        } catch (error) {
+            console.error('Failed to configure iOS URL scheme:', error);
+            reject(error);
+        }
+    });
+}
+
 async function addIOSPhotoCapabilities() {
     console.log('Adding iOS photo capabilities...');
 
     return new Promise(async (resolve, reject) => {
         try {
-            const { appName, pbxprojPath } = await getIOSNamePaths();
+            let { appName, pbxprojPath } = await getIOSNamePaths();
             let infoPlistPath = joinPaths(CONFIG.ios.dir, appName, `${ appName}-Info.plist`);
 
             // Read current Info.plist
             let infoPlist = {};
 
             if (await checkPathExists(infoPlistPath)) {
-                const content = await readFile(infoPlistPath);
+                let content = await readFile(infoPlistPath);
                 try {
                     infoPlist = plist.parse(content);
                 } catch (error) {
@@ -440,7 +515,7 @@ function addAndroidPhotoCapabilities() {
 
     return new Promise(async (resolve, reject) => {
         try {
-            const androidManifestPath = joinPaths(
+            let androidManifestPath = joinPaths(
                 CONFIG.android.dir,
                 'app/src/main/AndroidManifest.xml'
             );
@@ -454,9 +529,9 @@ function addAndroidPhotoCapabilities() {
             let updated = false;
 
             // Check if permissions are already added
-            for (const permission of PHOTO_CONFIG.android.permissions) {
+            for (let permission of PHOTO_CONFIG.android.permissions) {
                 if (!manifestContent.includes(`<uses-permission android:name="${permission}"`)) {
-                    const permissionLine = `    <uses-permission android:name="${permission}" />`;
+                    let permissionLine = `    <uses-permission android:name="${permission}" />`;
 
                     // Add permission before the closing manifest tag
                     manifestContent = manifestContent.replace(
@@ -490,6 +565,7 @@ async function buildIOS(skipIcon) {
 
         await addIOSCapabilities();
         await addIOSPhotoCapabilities();
+        await addIOSURLScheme();
 
         if (!skipIcon) {
             await execCmd(`cordova-icon --icon=${CONFIG.icons.path}`);
