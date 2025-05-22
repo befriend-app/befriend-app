@@ -244,7 +244,7 @@ window['befriend'] = {
             });
         },
     },
-    init: function (afterSignupLogin = false) {
+    init: function (afterSignupLogin = false, fromProfileSetup = false) {
         console.log('Befriend: [init]');
 
         return new Promise(async (resolve, reject) => {
@@ -296,18 +296,20 @@ window['befriend'] = {
                 return resolve();
             }
 
-            //location
-            try {
-                await befriend.location.init();
-            } catch (e) {
-                console.error(e);
-            }
+            if(!fromProfileSetup) {
+                //location
+                try {
+                    await befriend.location.init();
+                } catch (e) {
+                    console.error(e);
+                }
 
-            //device
-            try {
-                await befriend.device.init();
-            } catch (e) {
-                console.error(e);
+                //device
+                try {
+                    await befriend.device.init();
+                } catch (e) {
+                    console.error(e);
+                }
             }
 
             //when
@@ -317,11 +319,13 @@ window['befriend'] = {
                 console.error(e);
             }
 
-            //map
-            try {
-                await befriend.maps.init();
-            } catch (e) {
-                console.error(e);
+            if(!fromProfileSetup) {
+                //map
+                try {
+                    await befriend.maps.init();
+                } catch (e) {
+                    console.error(e);
+                }    
             }
 
             //me
@@ -362,6 +366,21 @@ window['befriend'] = {
             befriend.reviews.init();
 
             befriend.init_finished = true;
+            
+            // if from profile setup,
+            // init location/device/map after small delay to
+            // prevent permission dialogs from being shown during transition to app
+            if(fromProfileSetup) {
+                setTimeout(async function () {
+                    try {
+                        await befriend.location.init();
+                        await befriend.device.init();
+                        await befriend.maps.init();
+                    } catch(e) {
+                        console.error(e);
+                    }
+                }, 500);
+            }
 
             //todo remove
             setTimeout(function () {

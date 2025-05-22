@@ -194,13 +194,13 @@ befriend.loginSignup = {
         }
     },
     events: function () {
-        async function afterLoginLogic() {
+        async function afterLoginLogic(fromProfile = false) {
             //determine whether to transition to app or show screen
             try {
                 await befriend.me.getMe();
 
                 if(befriend.user.isProfileReady()) {
-                    await befriend.init(true);
+                    await befriend.init(true, fromProfile);
                     transitionToApp(profileScreen);
                 } else {
                     showProfileScreen();
@@ -938,7 +938,6 @@ befriend.loginSignup = {
                             setUserLogin(loginData);
 
                             await afterLoginLogic();
-
                         } catch(e) {
                             if(e) {
                                 setErrorMessage(this, true, e.toString());
@@ -1128,7 +1127,7 @@ befriend.loginSignup = {
                         }
                     }
 
-                    await afterLoginLogic();
+                    await afterLoginLogic(true);
                 } catch(e) {
                     setErrorMessage(this, true, e?.response?.data || 'Error saving profile');
 
