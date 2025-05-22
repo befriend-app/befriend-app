@@ -39,6 +39,8 @@ let js_files = {
         'device.js',
         'notifications.js',
         'user.js',
+        'oauth.js',
+        'login_signup.js',
         'when.js',
         'friends.js',
         'maps.js',
