@@ -39,6 +39,27 @@ var Befriend = {
             ]);
         },
     },
+    oauth: {
+        nameSpace: 'OAuth',
+        signInWithGoogle: function(options, successCallback, errorCallback) {
+            exec(
+                successCallback,
+                errorCallback,
+                this.nameSpace,
+                'googleSignIn',
+                [options]
+            );
+        },
+        signInWithApple: function(options, successCallback, errorCallback) {
+            exec(
+                successCallback,
+                errorCallback,
+                this.nameSpace,
+                'signInWithApple',
+                [options]
+            );
+        }
+    },
     notifications: {
         nameSpace: 'Notifications',
         getToken: function (success, error) {
@@ -90,7 +111,7 @@ var Befriend = {
         cleanup: function(successCallback, errorCallback) {
             exec(successCallback, errorCallback, "Camera", "cleanup", []);
         }
-    }
+    },
 };
 
 module.exports = Befriend;

@@ -69,6 +69,12 @@
             </feature>
         </config-file>
 
+        <config-file target="config.xml" parent="/*">
+            <feature name="OAuth">
+                <param name="ios-package" value="OAuth" />
+            </feature>
+        </config-file>
+
         <!-- status bar-->
         <header-file src="src/ios/StatusBar.h" />
         <source-file src="src/ios/StatusBar.m" />
@@ -89,5 +95,8 @@
         <header-file src="src/ios/Camera.h" />
         <source-file src="src/ios/Camera.m" />
 
+        <!-- oauth -->
+        <header-file src="src/ios/OAuth.h" />
+        <source-file src="src/ios/OAuth.m" />
     </platform>
 </plugin>
