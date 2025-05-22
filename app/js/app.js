@@ -30,6 +30,8 @@ window['befriend'] = {
     styles: null,
     events: null,
     user: null,
+    loginSignup: null,
+    oauth: null,
     location: null,
     device: null,
     activities: null,
@@ -52,6 +54,9 @@ window['befriend'] = {
         return befriend.user.person.token;
     },
     api: {
+        url: function (route) {
+            return joinPaths(api_domain, route);
+        },
         get: function (route) {
             return new Promise(async (resolve, reject) => {
                 try {
@@ -267,20 +272,27 @@ window['befriend'] = {
                 console.error(e);
             }
 
+            //oauth
+            try {
+                await befriend.oauth.init();
+            } catch(e) {
+                console.error(e);
+            }
+
             //user
             try {
                 await befriend.user.init();
             } catch (e) {
                 //catch rejection if not logged in
                 //show login screen
-                befriend.showLoginSignup();
+                befriend.loginSignup.show();
 
                 return resolve();
             }
 
             //if user missing first name/birthday/picture show post signup screen
             if(!befriend.user.isProfileReady()) {
-                befriend.showProfileScreen();
+                befriend.loginSignup.showProfileScreen();
                 return resolve();
             }
 
@@ -367,6 +379,15 @@ window['befriend'] = {
 
             resolve();
         });
+    },
+    getPlatform: function () {
+        if(is_ios) {
+            return 'ios';
+        }
+
+        if(is_android) {
+            return 'android';
+        }
     },
     navigateToView: function (view, skip_transition, classes_only) {
         befriend.views.active = view;
@@ -521,119 +542,4 @@ window['befriend'] = {
             removeClassEl('show', 'transition-overlay');
         }
     },
-    setLoginSignup: function () {
-        return new Promise(async (resolve, reject) => {
-            //set country codes
-            let codes = ['+1'];
-
-            let countryCodeEl = document.getElementById('country-code');
-            let html = '';
-
-            try {
-
-                let r = await befriend.api.get(`/sms/country-codes`);
-
-                codes = r.data;
-            } catch(e) {
-                console.error(e);
-            }
-
-            for(let code of codes) {
-                html += `<option value="${code}">${code}</div>`;
-            }
-
-            countryCodeEl.innerHTML = html;
-
-            resolve();
-        });
-    },
-    showLoginSignup: async function () {
-        let appEl = document.getElementById('app');
-
-        try {
-            await befriend.setLoginSignup();
-        } catch(e) {
-
-        }
-
-        befriend.events.loginSignupEvents();
-
-        addClassEl('show-login-signup', appEl);
-    },
-    resetLoginScreens: function () {
-        let allScreens = document.querySelectorAll('.screens-container .screen');
-        let phoneScreen = document.getElementById('phone-screen');
-
-        addElsClass(allScreens, 'hidden');
-        removeClassEl('hidden', phoneScreen);
-    },
-    showProfileScreen: async function () {
-        try {
-            let allScreens = document.querySelectorAll('.screens-container .screen');
-            let profileScreen = document.getElementById('profile-screen');
-
-             addElsClass(allScreens, 'hidden');
-             removeClassEl('hidden', profileScreen);
-
-             await befriend.showLoginSignup();
-
-             await befriend.setProfileGenderOptions();
-        } catch(e) {
-            console.error(e);
-        }
-    },
-    setProfileGenderOptions: function () {
-        return new Promise(async (resolve, reject) => {
-            try {
-                if(!befriend.me.data.genders) {
-                    let r = await befriend.api.get('/genders');
-
-                    befriend.me.data.genders = r.data;
-                }
-
-                let genderSelectEl = document.getElementById('select-gender');
-
-                let genderOptionEls = genderSelectEl.querySelectorAll('option');
-
-                if(genderOptionEls.length < 2) {
-                    let genders = structuredClone(befriend.me.data.genders).filter(item => item.is_visible);
-
-                    for(let gender of genders) {
-                        let option = document.createElement('option');
-                        option.value = gender.token;
-                        option.textContent = gender.name;
-                        genderSelectEl.appendChild(option);
-                    }
-                }
-            } catch(e) {
-                console.error(e);
-            }
-
-            resolve();
-        });
-    },
-    setProfilePictureData: function (imageData) {
-        window.profilePictureData = imageData;
-
-        let profilePictureContainerEl = document.querySelector('.profile-picture-container');
-        let uploadTextEl = profilePictureContainerEl.querySelector('.upload-text');
-
-        document.getElementById('profile-picture').innerHTML =
-            `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-            </svg>`;
-
-        let img = document.createElement('img');
-
-        if(imageData) {
-            img.src = "data:image/jpeg;base64," + imageData;
-            document.getElementById('profile-picture').appendChild(img);
-            addClassEl('picture-selected', profilePictureContainerEl);
-            uploadTextEl.textContent = 'Change Photo';
-        } else {
-            uploadTextEl.textContent = 'Upload Profile Picture';
-            removeClassEl('picture-selected', profilePictureContainerEl);
-        }
-    }
 };

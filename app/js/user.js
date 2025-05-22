@@ -122,9 +122,9 @@ befriend.user = {
             befriend.user.setPersonToken(null);
             befriend.user.setLoginToken(null);
 
-            befriend.resetLoginScreens();
+            befriend.loginSignup.resetScreens();
 
-            befriend.showLoginSignup();
+            befriend.loginSignup.show();
         }
 
         return new Promise(async (resolve, reject) => {
