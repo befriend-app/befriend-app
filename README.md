@@ -90,10 +90,12 @@ https://github.com/user-attachments/assets/01ef0089-b464-4a3e-bfb1-a984487ba91c
     - Review categories: Safety, Trust, Timeliness, Friendliness, Fun
 
 ### Networks
+- Meet users on 3rd-party networks
+  - i.e. Nextdoor, Meetup, and Hinge users could meet each other in person
 - Cross-network communication
 - Network verification
 
-### Prerequisites
+## Prerequisites
 
 Ensure you have the following installed on your machine:
 
