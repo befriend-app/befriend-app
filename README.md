@@ -83,28 +83,22 @@ https://github.com/user-attachments/assets/01ef0089-b464-4a3e-bfb1-a984487ba91c
 <table>
   <tr>
     <td>
-         <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="200">
+      <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="200">
     </td>
     <td>
-         <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="200">
-
+      <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="200">
     </td>
     <td>
-             <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="200">
-
+      <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="200">
     </td>
     <td>
-             <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="200">
-
+      <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="200">
     </td>
     <td>
-             <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="200">
-
+      <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="200">
     </td>
-
-  <td>
-             <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="200">
-
+    <td>
+      <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="200">
     </td>
   </tr>
 </table>
