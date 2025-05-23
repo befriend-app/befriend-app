@@ -27,7 +27,7 @@ Befriend is re-imagining how life on Earth can be, where loneliness and social i
 
 Incorporated as a non-profit in December 2024, Befriend is developing an open-source global network of in-person networks to solve this multi-decade problem together.
 
-This project's aim is to increase the consciousness of happiness on Earth while contributing to increased quality of life, better health, and more meaningful lives filled with friendship and laughter every day of every year.
+This project's aim is to increase the consciousness of happiness on Earth while contributing to increased quality of life, better health, and more meaningful lives filled with in-person friendship and laughter every day of every year.
 
 
 ## Videos
