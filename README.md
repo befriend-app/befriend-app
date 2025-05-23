@@ -72,7 +72,7 @@ https://github.com/user-attachments/assets/01ef0089-b464-4a3e-bfb1-a984487ba91c
 - 20+ filters 
   - Bi-directional (i.e. female user with female gender filter will only receive/send notifications from/to female users)
   - Binary filters (i.e. gender, age, distance)
-  - Matching filters (i.e. TV shows, sports, music)
+  - Interests filters (i.e. TV shows, sports, music, movies)
   - Real-time send/receive counts
   - Independent send/receive option
 
@@ -92,7 +92,7 @@ https://github.com/user-attachments/assets/01ef0089-b464-4a3e-bfb1-a984487ba91c
 ### Networks
 - Meet users on 3rd-party networks
   - i.e. Nextdoor, Meetup, and Hinge users could meet each other in person
-- Cross-network communication
+- Cross-network notifications
 - Network verification
 
 ## Prerequisites
@@ -190,4 +190,22 @@ node scripts/build/device.js --dev http://192.168.1.1:3001
 
 | Drinking | Smoking | 
 |:---:|:---:|
-| ![Drinking](https://befriend.s3.amazonaws.com/preview/filters/drinking.png) | ![Smoking](https://befriend.s3.amazonaws.com/preview/filters/smoking.png) | 
+| ![Drinking](https://befriend.s3.amazonaws.com/preview/filters/drinking.png) | ![Smoking](https://befriend.s3.amazonaws.com/preview/filters/smoking.png) |
+
+## Support Us
+
+### Users
+1. **Sign Up** - Go to [befriend.app](https://befriend.app)
+2. **Spread the Word** - Ask friends, family, and social media followers to sign up at [befriend.app](https://befriend.app)
+
+### Developers
+3. **Host Your Own Network** - Create an in-person app with your own brand for your area or community
+4. **Contribute Code** - Check out our open source repositories
+5. **Report Issues** - Help us improve by reporting bugs and suggesting features
+
+
+### Sponsors/Foundations
+6. **Become a Sponsor** - Email us at [sponsor@befriend.app](mailto:sponsor@befriend.app)
+
+### Purchase a custom t-shirt
+7. Create an amazing custom t-shirt at [genaiwear.com](https://genaiwear.com)
