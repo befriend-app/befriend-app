@@ -6,10 +6,11 @@ The best human experience designed for meeting new and existing friends in perso
 - [Videos](#videos)
 - [Features](#features)
   - [Core](#core)
-  - [Networks](#networks)
   - [Connection & Matching](#connection--matching)
   - [Profile](#profile)
+  - [Filters](#filters)
   - [Safety & Trust](#safety--trust)
+  - [Networks](#networks)
 - [Install](#installation)
 - [Development Setup](#development-setup)
     - [Prerequisites](#prerequisites)
@@ -59,12 +60,6 @@ https://github.com/user-attachments/assets/01ef0089-b464-4a3e-bfb1-a984487ba91c
     - Schedule activities in advance
 - 20+ Filters
 
-
-### Networks
-
-- Cross-network communication
-- Network verification
-
 ### Connection & Matching
 - Friend selection
     - New
@@ -83,6 +78,33 @@ https://github.com/user-attachments/assets/01ef0089-b464-4a3e-bfb1-a984487ba91c
 ### Profile
 - Add data about yourself across 15 categories to find better matches
 
+### Filters
+
+![availability](https://github.com/user-attachments/assets/2a9b7050-282a-4d16-81df-a5117db3dc74)
+![activity-types](https://github.com/user-attachments/assets/0f7b2f8c-cc5c-4754-b8c8-475d98a6a169)
+![modes](https://github.com/user-attachments/assets/b39c28b5-395a-4c9d-a0bb-149de7646fb4)
+![networks](https://github.com/user-attachments/assets/2dcc28e8-7173-4c74-9700-f7c15d3c56ef)
+![reviews](https://github.com/user-attachments/assets/59e90e70-581f-46f6-8c14-1c77fca1afe9)
+![verifications](https://github.com/user-attachments/assets/67d0b259-4480-4285-9f90-ab1d39bb1a11)
+![distance](https://github.com/user-attachments/assets/986bf10e-d485-40a0-b58b-04f853804b78)
+![age](https://github.com/user-attachments/assets/213e1a0e-3950-47ac-8baf-aeed6a5720d6)
+![genders](https://github.com/user-attachments/assets/a9da534d-6ed7-4150-aba6-a565ff8c11fb)
+![movies](https://github.com/user-attachments/assets/4476574e-f0db-4739-905e-f36bea8113fa)
+![tv-shows](https://github.com/user-attachments/assets/222f5418-c475-4946-8ec6-d89ab1b254e9)
+![sports](https://github.com/user-attachments/assets/691afb25-058a-4f0e-b519-4e5612df77f8)
+![music](https://github.com/user-attachments/assets/07b13d8c-6118-476d-ac70-749f97f9816b)
+![instruments](https://github.com/user-attachments/assets/2ec019c6-9cb4-4485-8353-1bc7ce86c3eb)
+![schools](https://github.com/user-attachments/assets/b777ce75-ab3b-431a-a0b2-a347b22b6e37)
+![work](https://github.com/user-attachments/assets/c9e1c600-24b2-4883-9ab8-7048f172803d)
+![life-stages](https://github.com/user-attachments/assets/d16db38c-db37-4b89-8fc2-5d048496ab0e)
+![relationships](https://github.com/user-attachments/assets/67fdff26-d9c6-44f1-804f-1da96bd7f792)
+![languages](https://github.com/user-attachments/assets/70d61f94-239e-42bb-ac3a-f3a6fd1ce580)
+![politics](https://github.com/user-attachments/assets/8cb46cb5-b1a0-4669-92c3-9a4866862184)
+![religions](https://github.com/user-attachments/assets/b6f41749-a92b-4681-ae13-a392f5498c62)
+![drinking](https://github.com/user-attachments/assets/bfe6d544-42d8-4a23-87ca-d5fa5684c2c2)
+![smoking](https://github.com/user-attachments/assets/e55445c3-130b-48f3-abad-f2ec69077ec1)
+
+
 ### Safety & Trust
 - Bi-directional filters
 - Verification system
@@ -93,6 +115,9 @@ https://github.com/user-attachments/assets/01ef0089-b464-4a3e-bfb1-a984487ba91c
     - Filter notifications based on review type and score
     - Review categories: Safety, Trust, Timeliness, Friendliness, Fun
 
+### Networks
+- Cross-network communication
+- Network verification
 
 ### Prerequisites
 
