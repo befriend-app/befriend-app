@@ -81,10 +81,11 @@ https://github.com/user-attachments/assets/01ef0089-b464-4a3e-bfb1-a984487ba91c
 ### Filters
 
 <div class="test" style="flex-wrap: nowrap; display: flex; overflow-x: scroll">
+    <img src="![availability](https://github.com/user-attachments/assets/2a9b7050-282a-4d16-81df-a5117db3dc74)" width="150">
+<img src="![activity-types](https://github.com/user-attachments/assets/0f7b2f8c-cc5c-4754-b8c8-475d98a6a169)" width="150">
+
     
 
-    ![availability](https://github.com/user-attachments/assets/2a9b7050-282a-4d16-81df-a5117db3dc74)
-![activity-types](https://github.com/user-attachments/assets/0f7b2f8c-cc5c-4754-b8c8-475d98a6a169)
 ![modes](https://github.com/user-attachments/assets/b39c28b5-395a-4c9d-a0bb-149de7646fb4)
 ![networks](https://github.com/user-attachments/assets/2dcc28e8-7173-4c74-9700-f7c15d3c56ef)
 ![reviews](https://github.com/user-attachments/assets/59e90e70-581f-46f6-8c14-1c77fca1afe9)
