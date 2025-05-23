@@ -45,37 +45,49 @@ https://github.com/user-attachments/assets/01ef0089-b464-4a3e-bfb1-a984487ba91c
 
 ## Features
 
+### Core
 - Real-time notifications
-- Select time
-  - i.e. Now, in 30 mins, in 2 hours
-  - Schedule activities
-- Meet new or existing friends
-  - 1 to 10 persons per activity
+- Multi-network communication
 - Nearly 300 activity types
-  - Activity types mapped to places
-- Matching algorithm
-  - Send/receive notifications based on person-to-person filters+me score.
-- 20+ filters
-  - Bi-directional consent
-  - Real-time send/receive counts
-  - Independent send/receive option
-- Me
-  - Add data across 15 categories about yourself to find better matches 
-- Safety
-  - Bi-directional filters
-  - Reviews
-    - Give/receive reviews after an activity
-    - Filter out notifications from users based on review type and score
-    - Review categories
-      - Safety
-      - Trust
-      - Timeliness
-      - Friendliness
-      - Fun
-  - Verifications
-    - In-person
-    - LinkedIn
-  
+    - Activity types mapped to places
+- Flexible scheduling
+    - Now, in 30 mins, in 2 hours
+    - Schedule activities in advance
+- 20+ Filters
+
+
+### Networks
+
+- Cross-network communication
+- Network verification
+
+### Connection & Matching
+- Friend selection
+    - New
+    - Existing
+    - 1 to 10 person(s) per activity
+- Modes
+    - Solo, Partner, and Kids
+- Smart matching algorithm
+    - Send/receive notifications based on person-to-person score derived from filters and me data
+- 20+ filters with bi-directional consent
+    - Binary filters (i.e. gender, age, distance)
+    - Matching filters (i.e. TV shows, sports, music)
+    - Real-time send/receive counts
+    - Independent send/receive option
+
+### Profile
+- Add data about yourself across 15 categories to find better matches
+
+### Safety & Trust
+- Bi-directional filters
+- Verification system
+    - In-person verification
+    - LinkedIn verification
+- Review system
+    - Give/receive reviews after activities
+    - Filter notifications based on review type and score
+    - Review categories: Safety, Trust, Timeliness, Friendliness, Fun
 
 
 ### Prerequisites
