@@ -164,18 +164,75 @@ node scripts/build/device.js --dev http://192.168.1.1:3001
 `node scripts/dev/serve.js`
 
 ### Filters
-| Availability | Activity Types | Modes | Networks | Reviews | Distance |
-|:---:|:---:|:---:|:---:|:---:|:---:|
-| ![Availability](https://befriend.s3.amazonaws.com/preview/filters/availability.png) | ![Activity Types](https://befriend.s3.amazonaws.com/preview/filters/activity-types.png) | ![Modes](https://befriend.s3.amazonaws.com/preview/filters/modes.png) | ![Networks](https://befriend.s3.amazonaws.com/preview/filters/networks.png) | ![Reviews](https://befriend.s3.amazonaws.com/preview/filters/reviews.png) | ![Distance](https://befriend.s3.amazonaws.com/preview/filters/distance.png) |
 
-| Age | Genders | Movies | TV Shows | Sports | Music |
-|:---:|:---:|:---:|:---:|:---:|:---:|
-| ![Age](https://befriend.s3.amazonaws.com/preview/filters/age.png) | ![Genders](https://befriend.s3.amazonaws.com/preview/filters/genders.png) | ![Movies](https://befriend.s3.amazonaws.com/preview/filters/movies.png) | ![TV Shows](https://befriend.s3.amazonaws.com/preview/filters/tv-shows.png) | ![Sports](https://befriend.s3.amazonaws.com/preview/filters/sports.png) | ![Music](https://befriend.s3.amazonaws.com/preview/filters/music.png) |
+<table>
+  <tr>
+    <th width="200" align="center">Availability</th>
+    <th width="200" align="center">Activity Types</th>
+    <th width="200" align="center">Modes</th>
+    <th width="200" align="center">Networks</th>
+    <th width="200" align="center">Reviews</th>
+    <th width="200" align="center">Distance</th>
+  </tr>
+  <tr>
+    <td width="200" align="center"><img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="180"></td>
+    <td width="200" align="center"><img src="https://befriend.s3.amazonaws.com/preview/filters/activity-types.png" width="180"></td>
+    <td width="200" align="center"><img src="https://befriend.s3.amazonaws.com/preview/filters/modes.png" width="180"></td>
+    <td width="200" align="center"><img src="https://befriend.s3.amazonaws.com/preview/filters/networks.png" width="180"></td>
+    <td width="200" align="center"><img src="https://befriend.s3.amazonaws.com/preview/filters/reviews.png" width="180"></td>
+    <td width="200" align="center"><img src="https://befriend.s3.amazonaws.com/preview/filters/distance.png" width="180"></td>
+  </tr>
+</table>
 
-| Instruments | Schools | Work | Life Stages | Relationships | Languages |
-|:---:|:---:|:---:|:---:|:---:|:---:|
-| ![Instruments](https://befriend.s3.amazonaws.com/preview/filters/instruments.png) | ![Schools](https://befriend.s3.amazonaws.com/preview/filters/schools.png) | ![Work](https://befriend.s3.amazonaws.com/preview/filters/work.png) | ![Life Stages](https://befriend.s3.amazonaws.com/preview/filters/life-stages.png) | ![Relationships](https://befriend.s3.amazonaws.com/preview/filters/relationships.png) | ![Languages](https://befriend.s3.amazonaws.com/preview/filters/languages.png) |
+<table>
+  <tr>
+    <th width="200" align="center">Age</th>
+    <th width="200" align="center">Genders</th>
+    <th width="200" align="center">Movies</th>
+    <th width="200" align="center">TV Shows</th>
+    <th width="200" align="center">Sports</th>
+    <th width="200" align="center">Music</th>
+  </tr>
+  <tr>
+    <td width="200" align="center"><img src="https://befriend.s3.amazonaws.com/preview/filters/age.png" width="180"></td>
+    <td width="200" align="center"><img src="https://befriend.s3.amazonaws.com/preview/filters/genders.png" width="180"></td>
+    <td width="200" align="center"><img src="https://befriend.s3.amazonaws.com/preview/filters/movies.png" width="180"></td>
+    <td width="200" align="center"><img src="https://befriend.s3.amazonaws.com/preview/filters/tv-shows.png" width="180"></td>
+    <td width="200" align="center"><img src="https://befriend.s3.amazonaws.com/preview/filters/sports.png" width="180"></td>
+    <td width="200" align="center"><img src="https://befriend.s3.amazonaws.com/preview/filters/music.png" width="180"></td>
+  </tr>
+</table>
 
-| Politics | Religions | Drinking | Smoking |
-|:---:|:---:|:---:|:---:|
-| ![Politics](https://befriend.s3.amazonaws.com/preview/filters/politics.png) | ![Religions](https://befriend.s3.amazonaws.com/preview/filters/religions.png) | ![Drinking](https://befriend.s3.amazonaws.com/preview/filters/drinking.png) | ![Smoking](https://befriend.s3.amazonaws.com/preview/filters/smoking.png) |
+<table>
+  <tr>
+    <th width="200" align="center">Instruments</th>
+    <th width="200" align="center">Schools</th>
+    <th width="200" align="center">Work</th>
+    <th width="200" align="center">Life Stages</th>
+    <th width="200" align="center">Relationships</th>
+    <th width="200" align="center">Languages</th>
+  </tr>
+  <tr>
+    <td width="200" align="center"><img src="https://befriend.s3.amazonaws.com/preview/filters/instruments.png" width="180"></td>
+    <td width="200" align="center"><img src="https://befriend.s3.amazonaws.com/preview/filters/schools.png" width="180"></td>
+    <td width="200" align="center"><img src="https://befriend.s3.amazonaws.com/preview/filters/work.png" width="180"></td>
+    <td width="200" align="center"><img src="https://befriend.s3.amazonaws.com/preview/filters/life-stages.png" width="180"></td>
+    <td width="200" align="center"><img src="https://befriend.s3.amazonaws.com/preview/filters/relationships.png" width="180"></td>
+    <td width="200" align="center"><img src="https://befriend.s3.amazonaws.com/preview/filters/languages.png" width="180"></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th width="200" align="center">Politics</th>
+    <th width="200" align="center">Religions</th>
+    <th width="200" align="center">Drinking</th>
+    <th width="200" align="center">Smoking</th>
+  </tr>
+  <tr>
+    <td width="200" align="center"><img src="https://befriend.s3.amazonaws.com/preview/filters/politics.png" width="180"></td>
+    <td width="200" align="center"><img src="https://befriend.s3.amazonaws.com/preview/filters/religions.png" width="180"></td>
+    <td width="200" align="center"><img src="https://befriend.s3.amazonaws.com/preview/filters/drinking.png" width="180"></td>
+    <td width="200" align="center"><img src="https://befriend.s3.amazonaws.com/preview/filters/smoking.png" width="180"></td>
+  </tr>
+</table>
