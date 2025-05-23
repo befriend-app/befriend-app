@@ -165,26 +165,26 @@ node scripts/build/device.js --dev http://192.168.1.1:3001
 
 ### Filters
 <div>
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="300">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/activity-types.png" width="300">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/modes.png" width="300">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/networks.png" width="300">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/reviews.png" width="300">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/distance.png" width="300">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/age.png" width="300">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/genders.png" width="300">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/movies.png" width="300">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/tv-shows.png" width="300">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/sports.png" width="300">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/music.png" width="300">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/instruments.png" width="300">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/schools.png" width="300">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/work.png" width="300">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/life-stages.png" width="300">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/relationships.png" width="300">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/languages.png" width="300">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/politics.png" width="300">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/religions.png" width="300">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/drinking.png" width="300">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/smoking.png" width="300">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="200">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/activity-types.png" width="200">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/modes.png" width="200">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/networks.png" width="200">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/reviews.png" width="200">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/distance.png" width="200">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/age.png" width="200">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/genders.png" width="200">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/movies.png" width="200">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/tv-shows.png" width="200">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/sports.png" width="200">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/music.png" width="200">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/instruments.png" width="200">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/schools.png" width="200">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/work.png" width="200">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/life-stages.png" width="200">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/relationships.png" width="200">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/languages.png" width="200">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/politics.png" width="200">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/religions.png" width="200">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/drinking.png" width="200">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/smoking.png" width="200">
 </div>
