@@ -21,7 +21,7 @@ The best human experience designed for meeting new and existing friends in perso
 
 ## Vision
 
-For over 2 decades, making friends has become increasingly harder as social media companies exploited optimized for time spent in-app and ads served instead of optimal human experience.
+For over 2 decades, making friends has become increasingly harder as social media companies optimized for time spent in-app and ads served instead of optimal human experience.
 
 Befriend is re-imagining how life on Earth can be, where loneliness and social isolation are no longer programmed into our way of being through a lack of choice in how we choose to spend our time: in-person or online.
 
