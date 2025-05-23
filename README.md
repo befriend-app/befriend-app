@@ -8,7 +8,6 @@ The best human experience designed for meeting new and existing friends in perso
   - [Core](#core)
   - [Connection & Matching](#connection--matching)
   - [Profile](#profile)
-  - [Filters](#filters)
   - [Safety & Trust](#safety--trust)
   - [Networks](#networks)
 - [Installation](#installation)
