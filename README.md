@@ -7,6 +7,7 @@ The best human experience designed for meeting new and existing friends in perso
 - [Features](#features)
   - [Core](#core)
   - [Connection & Matching](#connection--matching)
+  - [20+ Filters](#20+-filters)
   - [Profile](#profile)
   - [Safety & Trust](#safety--trust)
   - [Networks](#networks)
@@ -69,12 +70,13 @@ https://github.com/user-attachments/assets/01ef0089-b464-4a3e-bfb1-a984487ba91c
     - Solo, Partner, and Kids
 - Smart matching algorithm
     - Send/receive notifications based on person-to-person matching scores derived from filters and me data
-- 20+ filters 
-  - Bi-directional (i.e. female user with female gender filter will only receive/send notifications from/to female users)
-  - Binary filters (i.e. gender, age, distance)
-  - Interests filters (i.e. TV shows, sports, music, movies)
-  - Real-time send/receive counts
-  - Independent send/receive option
+
+### 20+ filters
+- Bi-directional (i.e. female user with female gender filter will only receive/send notifications from/to female users)
+- Binary filters (i.e. gender, age, distance)
+- Interests filters (i.e. TV shows, sports, music, movies)
+- Real-time send/receive counts
+- Independent send/receive option
 
 ### Profile
 - Add data about yourself across 15 categories to find better matches
