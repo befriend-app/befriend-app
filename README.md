@@ -80,59 +80,7 @@ https://github.com/user-attachments/assets/01ef0089-b464-4a3e-bfb1-a984487ba91c
 
 ### Filters
 
-<div style="display: flex; overflow-x: auto; gap: 10px; padding: 10px 0;">
-  <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" alt="Description 1" style="height: 500px; flex-shrink: 0;">
-<img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" alt="Description 1" style="height: 500px; flex-shrink: 0;">
-<img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" alt="Description 1" style="height: 500px; flex-shrink: 0;">
-<img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" alt="Description 1" style="height: 500px; flex-shrink: 0;">
-<img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" alt="Description 1" style="height: 500px; flex-shrink: 0;">
-<img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" alt="Description 1" style="height: 500px; flex-shrink: 0;">
-<img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" alt="Description 1" style="height: 500px; flex-shrink: 0;">
-</div>
-
-<table>
-  <tr>
-    <td>
-      <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="300">
-    </td>
-    <td>
-      <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="300">
-    </td>
-    <td>
-      <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="300">
-    </td>
-    <td>
-      <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="300">
-    </td>
-    <td>
-      <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="300">
-    </td>
-    <td>
-      <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="300">
-    </td>
- <td>
-      <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="300">
-    </td>
-    <td>
-      <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="300">
-    </td>
-    <td>
-      <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="300">
-    </td>
-  </tr>
-</table>
-
-<div style="display: flex; overflow-x: auto; gap: 10px; padding: 10px 0;">
-     <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" style="height: 400px; flex-shrink: 0;">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/activity-types.png" style="height: 400px; flex-shrink: 0;">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/modes.png" style="height: 400px; flex-shrink: 0;">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/networks.png" style="height: 400px; flex-shrink: 0;">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/reviews.png" style="height: 400px; flex-shrink: 0;">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/distance.png" style="height: 400px; flex-shrink: 0;">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/age.png" style="height: 400px; flex-shrink: 0;">
-</div>
-
-<div class="test" style="flex-wrap: nowrap; display: flex; overflow-x: scroll">
+<div class="test" style="display: flex; overflow-x: scroll">
     <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="150">
     <img src="https://befriend.s3.amazonaws.com/preview/filters/activity-types.png" width="150">
     <img src="https://befriend.s3.amazonaws.com/preview/filters/modes.png" width="150">
