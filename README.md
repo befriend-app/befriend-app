@@ -81,7 +81,7 @@ https://github.com/user-attachments/assets/01ef0089-b464-4a3e-bfb1-a984487ba91c
 ### Filters
 
 <div class="test" style="flex-wrap: nowrap; display: flex; overflow-x: scroll">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/availability" width="150">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="150">
     <img src="https://befriend.s3.amazonaws.com/preview/filters/activity-types.png" width="150">
     <img src="https://befriend.s3.amazonaws.com/preview/filters/modes.png" width="150">
     <img src="https://befriend.s3.amazonaws.com/preview/filters/networks.png" width="150">
