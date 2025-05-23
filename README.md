@@ -215,8 +215,10 @@ node scripts/build/device.js --ws ws://192.168.1.1:8080
 4. **Contribute Code** - Clone our repositories, submit pull requests, implement new features, and fix bugs
 5. **Report Issues** - Help us improve by reporting bugs and suggesting features
 
-### Sponsors
+### Sponsorships
 6. **Become a Sponsor** - Email us at [sponsor@befriend.app](mailto:sponsor@befriend.app)
 
-### Purchase a custom t-shirt
-7. Create an amazing custom t-shirt at [genaiwear.com](https://genaiwear.com)
+### Current Sponsors
+
+#### Gen AI Wear
+Create an amazing custom t-shirt at [genaiwear.com](https://genaiwear.com)
