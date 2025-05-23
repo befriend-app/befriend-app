@@ -58,7 +58,7 @@ https://github.com/user-attachments/assets/01ef0089-b464-4a3e-bfb1-a984487ba91c
 - Flexible scheduling
     - Now, in 30 mins, in 2 hours
     - Schedule activities in advance
-- 20+ Filters
+- Intelligent bi-directional filters
 
 ### Connection & Matching
 - Friend selection
@@ -68,12 +68,13 @@ https://github.com/user-attachments/assets/01ef0089-b464-4a3e-bfb1-a984487ba91c
 - Modes
     - Solo, Partner, and Kids
 - Smart matching algorithm
-    - Send/receive notifications based on person-to-person score derived from filters and me data
-- 20+ filters with bi-directional consent
-    - Binary filters (i.e. gender, age, distance)
-    - Matching filters (i.e. TV shows, sports, music)
-    - Real-time send/receive counts
-    - Independent send/receive option
+    - Send/receive notifications based on person-to-person matching scores derived from filters and me data
+- 20+ filters 
+  - Bi-directional (i.e. female user with female gender filter will only receive/send notifications from/to female users)
+  - Binary filters (i.e. gender, age, distance)
+  - Matching filters (i.e. TV shows, sports, music)
+  - Real-time send/receive counts
+  - Independent send/receive option
 
 ### Profile
 - Add data about yourself across 15 categories to find better matches
