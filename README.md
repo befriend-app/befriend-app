@@ -24,7 +24,10 @@ This project's aim is to increase the consciousness of happiness on Earth while 
 
 ## Videos
 
-https://github.com/user-attachments/assets/1bf1a0dd-eeb8-4898-93ab-f85ff2733639
+| Video 1 | Video 2 |
+|---------|---------|
+| https://github.com/user-attachments/assets/1bf1a0dd-eeb8-4898-93ab-f85ff2733639 | https://github.com/user-attachments/assets/1bf1a0dd-eeb8-4898-93ab-f85ff2733639 |
+| *Caption for first video* | *Caption for second video* |
 
 ### Prerequisites
 
