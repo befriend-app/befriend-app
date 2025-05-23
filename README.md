@@ -167,30 +167,24 @@ node scripts/build/device.js --dev http://192.168.1.1:3001
 
 | Availability | Activity Types | Modes | Networks |
 |:---:|:---:|:---:|:---:|
-| <img width=200 src="https://befriend.s3.amazonaws.com/preview/empty-width.png"/> | <img width=200 src="https://befriend.s3.amazonaws.com/preview/empty-width.png"/> | <img width=200 src="https://befriend.s3.amazonaws.com/preview/empty-width.png"/> | <img width=200 src="https://befriend.s3.amazonaws.com/preview/empty-width.png"/> |
 | ![Availability](https://befriend.s3.amazonaws.com/preview/filters/availability.png) | ![Activity Types](https://befriend.s3.amazonaws.com/preview/filters/activity-types.png) | ![Modes](https://befriend.s3.amazonaws.com/preview/filters/modes.png) | ![Networks](https://befriend.s3.amazonaws.com/preview/filters/networks.png) |
 
 | Reviews | Distance | Age | Genders |
 |:---:|:---:|:---:|:---:|
-| <img width=200 src="https://befriend.s3.amazonaws.com/preview/empty-width.png"/> | <img width=200 src="https://befriend.s3.amazonaws.com/preview/empty-width.png"/> | <img width=200 src="https://befriend.s3.amazonaws.com/preview/empty-width.png"/> | <img width=200 src="https://befriend.s3.amazonaws.com/preview/empty-width.png"/> |
 | ![Reviews](https://befriend.s3.amazonaws.com/preview/filters/reviews.png) | ![Distance](https://befriend.s3.amazonaws.com/preview/filters/distance.png) | ![Age](https://befriend.s3.amazonaws.com/preview/filters/age.png) | ![Genders](https://befriend.s3.amazonaws.com/preview/filters/genders.png) |
 
 | Movies | TV Shows | Sports | Music |
 |:---:|:---:|:---:|:---:|
-| <img width=200 src="https://befriend.s3.amazonaws.com/preview/empty-width.png"/> | <img width=200 src="https://befriend.s3.amazonaws.com/preview/empty-width.png"/> | <img width=200 src="https://befriend.s3.amazonaws.com/preview/empty-width.png"/> | <img width=200 src="https://befriend.s3.amazonaws.com/preview/empty-width.png"/> |
 | ![Movies](https://befriend.s3.amazonaws.com/preview/filters/movies.png) | ![TV Shows](https://befriend.s3.amazonaws.com/preview/filters/tv-shows.png) | ![Sports](https://befriend.s3.amazonaws.com/preview/filters/sports.png) | ![Music](https://befriend.s3.amazonaws.com/preview/filters/music.png) |
 
 | Instruments | Schools | Work | Life Stages |
 |:---:|:---:|:---:|:---:|
-| <img width=200 src="https://befriend.s3.amazonaws.com/preview/empty-width.png"/> | <img width=200 src="https://befriend.s3.amazonaws.com/preview/empty-width.png"/> | <img width=200 src="https://befriend.s3.amazonaws.com/preview/empty-width.png"/> | <img width=200 src="https://befriend.s3.amazonaws.com/preview/empty-width.png"/> |
 | ![Instruments](https://befriend.s3.amazonaws.com/preview/filters/instruments.png) | ![Schools](https://befriend.s3.amazonaws.com/preview/filters/schools.png) | ![Work](https://befriend.s3.amazonaws.com/preview/filters/work.png) | ![Life Stages](https://befriend.s3.amazonaws.com/preview/filters/life-stages.png) |
 
 | Relationships | Languages | Politics | Religions |
 |:---:|:---:|:---:|:---:|
-| <img width=200 src="https://befriend.s3.amazonaws.com/preview/empty-width.png"/> | <img width=200 src="https://befriend.s3.amazonaws.com/preview/empty-width.png"/> | <img width=200 src="https://befriend.s3.amazonaws.com/preview/empty-width.png"/> | <img width=200 src="https://befriend.s3.amazonaws.com/preview/empty-width.png"/> |
 | ![Relationships](https://befriend.s3.amazonaws.com/preview/filters/relationships.png) | ![Languages](https://befriend.s3.amazonaws.com/preview/filters/languages.png) | ![Politics](https://befriend.s3.amazonaws.com/preview/filters/politics.png) | ![Religions](https://befriend.s3.amazonaws.com/preview/filters/religions.png) |
 
 | Drinking | Smoking | | |
 |:---:|:---:|:---:|:---:|
-| <img width=200 src="https://befriend.s3.amazonaws.com/preview/empty-width.png"/> | <img width=200 src="https://befriend.s3.amazonaws.com/preview/empty-width.png"/> | <img width=200 src="https://befriend.s3.amazonaws.com/preview/empty-width.png"/> | <img width=200 src="https://befriend.s3.amazonaws.com/preview/empty-width.png"/> |
 | ![Drinking](https://befriend.s3.amazonaws.com/preview/filters/drinking.png) | ![Smoking](https://befriend.s3.amazonaws.com/preview/filters/smoking.png) | | |
