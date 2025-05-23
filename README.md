@@ -1,4 +1,34 @@
-## Getting Started
+# Befriend App (Frontend)
+
+The best human experience designed for meeting new and existing friends in person.
+
+- [Vision](#vision)
+- [Videos](#videos)
+- [Features](#features)
+- [Install](#installation)
+- [Development Setup](#development-setup)
+    - [Prerequisites](#prerequisites)
+    - [Setting up the project](#setting-up-the-project)
+    - [Running the app](#running-the-app)
+- [Roadmap](#roadmap)
+
+## Vision
+
+For over 2 decades, billions of humans have continued to grow farther apart as technology companies have created a superficial world that optimizes for time spent in-app, number of ads served, and subscription revenue.
+
+Befriend is re-imagining how life on Earth can be, where loneliness and social isolation are no longer programmed into our way of being through a lack of choice in how we choose to spend our time: in-person or online.
+
+Incorporated as a non-profit in December 2024, Befriend is developing an open-source global network of in-person networks to solve this multi-decade problem together.
+
+This project's aim is to increase the consciousness of happiness on Earth while contributing to increased quality of life, better health, and more meaningful lives filled with friendship and laughter every day of every year.
+
+## Videos
+
+<video controls="" muted="muted" playsinline="" poster="https://befriend.s3.amazonaws.com/preview/multi-person.jpg">
+    <source src="https://befriend.s3.amazonaws.com/preview/multi-person.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 
 ### Prerequisites
 
