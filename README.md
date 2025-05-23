@@ -80,7 +80,8 @@ https://github.com/user-attachments/assets/01ef0089-b464-4a3e-bfb1-a984487ba91c
 
 ### Filters
 
-![availability](https://github.com/user-attachments/assets/2a9b7050-282a-4d16-81df-a5117db3dc74)
+<div class="test" style="flex-wrap: nowrap; display: flex; overflow-x: scroll">
+    ![availability](https://github.com/user-attachments/assets/2a9b7050-282a-4d16-81df-a5117db3dc74)
 ![activity-types](https://github.com/user-attachments/assets/0f7b2f8c-cc5c-4754-b8c8-475d98a6a169)
 ![modes](https://github.com/user-attachments/assets/b39c28b5-395a-4c9d-a0bb-149de7646fb4)
 ![networks](https://github.com/user-attachments/assets/2dcc28e8-7173-4c74-9700-f7c15d3c56ef)
@@ -103,6 +104,9 @@ https://github.com/user-attachments/assets/01ef0089-b464-4a3e-bfb1-a984487ba91c
 ![religions](https://github.com/user-attachments/assets/b6f41749-a92b-4681-ae13-a392f5498c62)
 ![drinking](https://github.com/user-attachments/assets/bfe6d544-42d8-4a23-87ca-d5fa5684c2c2)
 ![smoking](https://github.com/user-attachments/assets/e55445c3-130b-48f3-abad-f2ec69077ec1)
+</div>
+
+
 
 
 ### Safety & Trust
