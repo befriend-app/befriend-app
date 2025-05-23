@@ -22,18 +22,23 @@ Incorporated as a non-profit in December 2024, Befriend is developing an open-so
 
 This project's aim is to increase the consciousness of happiness on Earth while contributing to increased quality of life, better health, and more meaningful lives filled with friendship and laughter every day of every year.
 
+
 ## Videos
 
 ### Real-time Activities
 
-Invite one or more person(s) to meet for one of nearly 300 activity categories
+Invite one or more person(s) to meet for one of nearly 300 activity categories.
 
 https://github.com/user-attachments/assets/1bf1a0dd-eeb8-4898-93ab-f85ff2733639
 
-### Partner and Family Mode
+### Solo, Partner, and Family Mode
+
+Designed for everybody: 
+
+- Couples can meet one or more couples in real-time. 
+- Families with kids can meet one or more families with similar-aged kids. 
 
 https://github.com/user-attachments/assets/01ef0089-b464-4a3e-bfb1-a984487ba91c
-
 
 ---
 
