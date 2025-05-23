@@ -5,6 +5,7 @@ The best human experience designed for meeting new and existing friends in perso
 - [Vision](#vision)
 - [Videos](#videos)
 - [Features](#features)
+  - Test 
 - [Install](#installation)
 - [Development Setup](#development-setup)
     - [Prerequisites](#prerequisites)
@@ -41,6 +42,40 @@ Designed for everybody:
 https://github.com/user-attachments/assets/01ef0089-b464-4a3e-bfb1-a984487ba91c
 
 ---
+
+## Features
+
+- Real-time notifications
+- Select time
+  - i.e. Now, in 30 mins, in 2 hours
+  - Schedule activities
+- Meet new or existing friends
+  - 1 to 10 persons per activity
+- Nearly 300 activity types
+  - Activity types mapped to places
+- Matching algorithm
+  - Send/receive notifications based on person-to-person filters+me score.
+- 20+ filters
+  - Bi-directional consent
+  - Real-time send/receive counts
+  - Independent send/receive option
+- Me
+  - Add data across 15 categories about yourself to find better matches 
+- Safety
+  - Bi-directional filters
+  - Reviews
+    - Give/receive reviews after an activity
+    - Filter out notifications from users based on review type and score
+    - Review categories
+      - Safety
+      - Trust
+      - Timeliness
+      - Friendliness
+      - Fun
+  - Verifications
+    - In-person
+    - LinkedIn
+  
 
 
 ### Prerequisites
