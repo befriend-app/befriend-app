@@ -78,36 +78,6 @@ https://github.com/user-attachments/assets/01ef0089-b464-4a3e-bfb1-a984487ba91c
 ### Profile
 - Add data about yourself across 15 categories to find better matches
 
-### Filters
-
-<div class="test" style="display: flex; overflow-x: scroll">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="150">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/activity-types.png" width="150">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/modes.png" width="150">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/networks.png" width="150">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/reviews.png" width="150">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/distance.png" width="150">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/age.png" width="150">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/genders.png" width="150">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/movies.png" width="150">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/tv-shows.png" width="150">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/sports.png" width="150">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/music.png" width="150">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/instruments.png" width="150">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/schools.png" width="150">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/work.png" width="150">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/life-stages.png" width="150">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/relationships.png" width="150">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/languages.png" width="150">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/politics.png" width="150">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/religions.png" width="150">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/drinking.png" width="150">
-    <img src="https://befriend.s3.amazonaws.com/preview/filters/smoking.png" width="150">
-</div>
-
-
-
-
 ### Safety & Trust
 - Bi-directional filters
 - Verification system
@@ -192,3 +162,29 @@ node scripts/build/device.js --dev http://192.168.1.1:3001
 ## Dev Server
 
 `node scripts/dev/serve.js`
+
+### Filters
+<div>
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="300">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/activity-types.png" width="300">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/modes.png" width="300">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/networks.png" width="300">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/reviews.png" width="300">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/distance.png" width="300">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/age.png" width="300">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/genders.png" width="300">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/movies.png" width="300">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/tv-shows.png" width="300">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/sports.png" width="300">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/music.png" width="300">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/instruments.png" width="300">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/schools.png" width="300">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/work.png" width="300">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/life-stages.png" width="300">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/relationships.png" width="300">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/languages.png" width="300">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/politics.png" width="300">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/religions.png" width="300">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/drinking.png" width="300">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/smoking.png" width="300">
+</div>
