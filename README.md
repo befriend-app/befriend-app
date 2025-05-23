@@ -100,6 +100,15 @@ https://github.com/user-attachments/assets/01ef0089-b464-4a3e-bfb1-a984487ba91c
     <td>
       <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="300">
     </td>
+ <td>
+      <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="300">
+    </td>
+    <td>
+      <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="300">
+    </td>
+    <td>
+      <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="300">
+    </td>
   </tr>
 </table>
 
