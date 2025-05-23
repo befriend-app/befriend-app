@@ -24,7 +24,7 @@ This project's aim is to increase the consciousness of happiness on Earth while 
 
 ## Videos
 
-https://github.com/user-attachments/assets/1bf1a0dd-eeb8-4898-93ab-f85ff2733639 {width=300px}
+https://github.com/user-attachments/assets/1bf1a0dd-eeb8-4898-93ab-f85ff2733639
 
 *This shows the original slower loading behavior*
 
