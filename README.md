@@ -24,17 +24,12 @@ This project's aim is to increase the consciousness of happiness on Earth while 
 
 ## Videos
 
-**Video 1: Original Implementation**
 https://github.com/user-attachments/assets/1bf1a0dd-eeb8-4898-93ab-f85ff2733639
 
 *This shows the original slower loading behavior*
 
 ---
 
-**Video 2: Improved Version**
-https://github.com/user-attachments/assets/1bf1a0dd-eeb8-4898-93ab-f85ff2733639
-
-*This demonstrates the optimized fast loading*
 
 ### Prerequisites
 
