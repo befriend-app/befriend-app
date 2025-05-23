@@ -215,7 +215,7 @@ node scripts/build/device.js --ws ws://192.168.1.1:8080
 4. **Contribute Code** - Clone our repositories, submit pull requests, implement new features, and fix bugs
 5. **Report Issues** - Help us improve by reporting bugs and suggesting features
 
-### Sponsorships
+### Organizations
 6. **Become a Sponsor** - Email us at [sponsor@befriend.app](mailto:sponsor@befriend.app)
 
 ### Current Sponsors
