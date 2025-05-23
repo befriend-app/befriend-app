@@ -24,11 +24,7 @@ This project's aim is to increase the consciousness of happiness on Earth while 
 
 ## Videos
 
-<video controls="" muted="muted" playsinline="" poster="https://befriend.s3.amazonaws.com/preview/multi-person.jpg">
-    <source src="https://befriend.s3.amazonaws.com/preview/multi-person.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
-
+https://github.com/user-attachments/assets/1bf1a0dd-eeb8-4898-93ab-f85ff2733639
 
 ### Prerequisites
 
