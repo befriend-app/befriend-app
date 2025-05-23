@@ -1,6 +1,14 @@
+<div align="left">
+
+<img src="https://befriend.s3.amazonaws.com/befriend-logo-new.png" alt="Befriend Logo" height="60">
+
+</div>
+
 # Befriend App (Frontend)
 
 The best human experience designed for meeting new and existing friends in person.
+
+
 
 - [Vision](#vision)
 - [Videos](#videos)
