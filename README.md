@@ -5,7 +5,11 @@ The best human experience designed for meeting new and existing friends in perso
 - [Vision](#vision)
 - [Videos](#videos)
 - [Features](#features)
-  - Test 
+  - [Core](#core)
+  - [Networks](#networks)
+  - [Connection & Matching](#connection--matching)
+  - [Profile](#profile)
+  - [Safety & Trust](#safety--trust)
 - [Install](#installation)
 - [Development Setup](#development-setup)
     - [Prerequisites](#prerequisites)
