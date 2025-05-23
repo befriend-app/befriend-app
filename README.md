@@ -81,8 +81,8 @@ https://github.com/user-attachments/assets/01ef0089-b464-4a3e-bfb1-a984487ba91c
 ### Filters
 
 <div class="test" style="flex-wrap: nowrap; display: flex; overflow-x: scroll">
-    <img src="![availability](https://github.com/user-attachments/assets/2a9b7050-282a-4d16-81df-a5117db3dc74)" width="150">
-<img src="![activity-types](https://github.com/user-attachments/assets/0f7b2f8c-cc5c-4754-b8c8-475d98a6a169)" width="150">
+    <img src="https://befriend.s3.amazonaws.com/preview/filters/availability" width="150">
+<img src="https://befriend.s3.amazonaws.com/preview/filters/activity-types.png" width="150">
 
     
 
