@@ -26,11 +26,13 @@ This project's aim is to increase the consciousness of happiness on Earth while 
 
 ### Real-time Activities
 
+Invite one or more person(s) to meet for one of nearly 300 activity categories
+
 https://github.com/user-attachments/assets/1bf1a0dd-eeb8-4898-93ab-f85ff2733639
 
 ### Partner and Family Mode
 
-https://github.com/user-attachments/assets/c0b99db2-396b-49e4-b824-122ab373497e
+https://github.com/user-attachments/assets/01ef0089-b464-4a3e-bfb1-a984487ba91c
 
 
 ---
