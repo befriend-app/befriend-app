@@ -16,7 +16,7 @@ The best human experience designed for meeting new and existing friends in perso
     - [Prerequisites](#prerequisites)
     - [Setting up the project](#setting-up-the-project)
     - [Running the app](#running-the-app)
-- [Roadmap](#roadmap)
+- [Filters](#filters)
 
 ## Vision
 
