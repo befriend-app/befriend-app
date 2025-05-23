@@ -7,7 +7,7 @@ The best human experience designed for meeting new and existing friends in perso
 - [Features](#features)
   - [Core](#core)
   - [Connection & Matching](#connection--matching)
-  - [20+ Filters](#20+-filters)
+  - [20+ Filters](#20-filters)
   - [Profile](#profile)
   - [Safety & Trust](#safety--trust)
   - [Networks](#networks)
