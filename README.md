@@ -80,6 +80,35 @@ https://github.com/user-attachments/assets/01ef0089-b464-4a3e-bfb1-a984487ba91c
 
 ### Filters
 
+<table>
+  <tr>
+    <td>
+         <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="200">
+    </td>
+    <td>
+         <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="200">
+
+    </td>
+    <td>
+             <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="200">
+
+    </td>
+    <td>
+             <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="200">
+
+    </td>
+    <td>
+             <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="200">
+
+    </td>
+
+  <td>
+             <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" width="200">
+
+    </td>
+  </tr>
+</table>
+
 <div style="display: flex; overflow-x: auto; gap: 10px; padding: 10px 0;">
      <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" style="height: 400px; flex-shrink: 0;">
     <img src="https://befriend.s3.amazonaws.com/preview/filters/activity-types.png" style="height: 400px; flex-shrink: 0;">
