@@ -185,6 +185,6 @@ node scripts/build/device.js --dev http://192.168.1.1:3001
 |:---:|:---:|:---:|:---:|
 | ![Relationships](https://befriend.s3.amazonaws.com/preview/filters/relationships.png) | ![Languages](https://befriend.s3.amazonaws.com/preview/filters/languages.png) | ![Politics](https://befriend.s3.amazonaws.com/preview/filters/politics.png) | ![Religions](https://befriend.s3.amazonaws.com/preview/filters/religions.png) |
 
-| Drinking | Smoking | | |
-|:---:|:---:|:---:|:---:|
-| ![Drinking](https://befriend.s3.amazonaws.com/preview/filters/drinking.png) | ![Smoking](https://befriend.s3.amazonaws.com/preview/filters/smoking.png) | | |
+| Drinking | Smoking | 
+|:---:|:---:|
+| ![Drinking](https://befriend.s3.amazonaws.com/preview/filters/drinking.png) | ![Smoking](https://befriend.s3.amazonaws.com/preview/filters/smoking.png) | 
