@@ -144,7 +144,7 @@ Ensure you have the following installed on your machine:
 
 ### Dev Server
 
-Run this script to run the app locally. This script also watches for file changes and updates the compiled JS/CSS on change.
+Run the app locally and watch for file changes.
 
 `node scripts/dev/serve.js`
 
