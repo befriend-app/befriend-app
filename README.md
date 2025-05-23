@@ -81,6 +81,8 @@ https://github.com/user-attachments/assets/01ef0089-b464-4a3e-bfb1-a984487ba91c
 ### Filters
 
 <div class="test" style="flex-wrap: nowrap; display: flex; overflow-x: scroll">
+    
+
     ![availability](https://github.com/user-attachments/assets/2a9b7050-282a-4d16-81df-a5117db3dc74)
 ![activity-types](https://github.com/user-attachments/assets/0f7b2f8c-cc5c-4754-b8c8-475d98a6a169)
 ![modes](https://github.com/user-attachments/assets/b39c28b5-395a-4c9d-a0bb-149de7646fb4)
