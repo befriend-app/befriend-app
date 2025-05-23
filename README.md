@@ -80,6 +80,16 @@ https://github.com/user-attachments/assets/01ef0089-b464-4a3e-bfb1-a984487ba91c
 
 ### Filters
 
+<div style="display: flex; overflow-x: auto; gap: 10px; padding: 10px 0;">
+  <img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" alt="Description 1" style="height: 200px; flex-shrink: 0;">
+<img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" alt="Description 1" style="height: 200px; flex-shrink: 0;">
+<img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" alt="Description 1" style="height: 200px; flex-shrink: 0;">
+<img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" alt="Description 1" style="height: 200px; flex-shrink: 0;">
+<img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" alt="Description 1" style="height: 200px; flex-shrink: 0;">
+<img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" alt="Description 1" style="height: 200px; flex-shrink: 0;">
+<img src="https://befriend.s3.amazonaws.com/preview/filters/availability.png" alt="Description 1" style="height: 200px; flex-shrink: 0;">
+</div>
+
 <table>
   <tr>
     <td>
