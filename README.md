@@ -11,12 +11,13 @@ The best human experience designed for meeting new and existing friends in perso
   - [Filters](#filters)
   - [Safety & Trust](#safety--trust)
   - [Networks](#networks)
-- [Install](#installation)
-- [Development Setup](#development-setup)
+- [Installation](#installation)
     - [Prerequisites](#prerequisites)
-    - [Setting up the project](#setting-up-the-project)
-    - [Running the app](#running-the-app)
+    - [Setup](#setup)
+    - [Dev Server](#dev-server)
+    - [Building](#building) 
 - [Filters](#filters)
+- [Support Us](#support-us)
 
 ## Vision
 
@@ -95,7 +96,8 @@ https://github.com/user-attachments/assets/01ef0089-b464-4a3e-bfb1-a984487ba91c
 - Cross-network notifications
 - Network verification
 
-## Prerequisites
+## Installation
+### Prerequisites
 
 Ensure you have the following installed on your machine:
 
@@ -103,7 +105,7 @@ Ensure you have the following installed on your machine:
 -   [Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12)
 -   [Android Studio](https://developer.android.com/studio)
 
-### Installation
+### Setup
 
 1. **Clone repository**
 
@@ -139,32 +141,41 @@ Ensure you have the following installed on your machine:
     node scripts/install/android.js
 ```
 
-## Building
+### Dev Server
 
-### iOS and Android
+Run this script to run the app locally. This script also watches for file changes and updates the compiled JS/CSS on change.
+
+`node scripts/dev/serve.js`
+
+### Building
+
+#### iOS and Android
 
 `node scripts/build/device.js`
 
-### Development
+#### Development
 
 ```
 node scripts/build/device.js --dev
 
 # custom dev host:port
 node scripts/build/device.js --dev http://192.168.1.1:3001
+
+# custom api host:port
+node scripts/build/device.js --api http://192.168.1.1:4000
+
+# custom ws host:port
+node scripts/build/device.js --ws ws://192.168.1.1:8080
 ```
 
-### iOS only
+#### iOS only
 
 `node scripts/build/device.js --ios`
 
-### Android only
+#### Android only
 
 `node scripts/build/device.js --android`
 
-## Dev Server
-
-`node scripts/dev/serve.js`
 
 ### Filters
 
@@ -196,15 +207,14 @@ node scripts/build/device.js --dev http://192.168.1.1:3001
 
 ### Users
 1. **Sign Up** - Go to [befriend.app](https://befriend.app)
-2. **Spread the Word** - Ask friends, family, and social media followers to sign up at [befriend.app](https://befriend.app)
+2. **Spread the Word** - Ask friends, family, and social media followers to sign up
 
 ### Developers
-3. **Host Your Own Network** - Create an in-person app with your own brand for your area or community
-4. **Contribute Code** - Check out our open source repositories
+3. **Run Own Network** - Join the Befriend network and bring real-time in-person friends to your area or community with your own brand name and logo
+4. **Contribute Code** - Clone our repositories, submit pull requests, implement new features, and fix bugs
 5. **Report Issues** - Help us improve by reporting bugs and suggesting features
 
-
-### Sponsors/Foundations
+### Sponsors
 6. **Become a Sponsor** - Email us at [sponsor@befriend.app](mailto:sponsor@befriend.app)
 
 ### Purchase a custom t-shirt
