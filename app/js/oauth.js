@@ -126,7 +126,6 @@ befriend.oauth = {
                         return reject('Unknown login error');
                     }
                 }, function (err) {
-                    debugger;
                     console.error(err);
                     return reject();
                 });

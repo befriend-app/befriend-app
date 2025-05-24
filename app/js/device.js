@@ -56,6 +56,9 @@ befriend.device = {
             }
         }
     },
+    clearToken: function () {
+        befriend.device.token = null;
+    },
     sameDeviceToken: function (token) {
         return token === this.token;
     },

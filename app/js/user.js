@@ -119,12 +119,17 @@ befriend.user = {
                 window.localStorage.removeItem(key);
             }
 
+            befriend.device.clearToken();
             befriend.user.setPersonToken(null);
             befriend.user.setLoginToken(null);
 
             befriend.loginSignup.resetScreens();
 
             befriend.loginSignup.show();
+
+            //remove data in local memory
+            befriend.user.local.data = {};
+            befriend.user.saveLocal();
         }
 
         return new Promise(async (resolve, reject) => {
