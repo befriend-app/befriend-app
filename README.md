@@ -106,7 +106,7 @@ https://github.com/user-attachments/assets/01ef0089-b464-4a3e-bfb1-a984487ba91c
 
 Ensure you have the following installed on your machine:
 
--   [Node.js](https://nodejs.org/)
+-   [Node.js](https://nodejs.org/) (v22 or higher)
 -   [Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12)
 -   [Android Studio](https://developer.android.com/studio)
 
@@ -164,13 +164,13 @@ Run the app locally and watch for file changes.
 node scripts/build/device.js --dev
 
 # custom dev host:port
-node scripts/build/device.js --dev http://192.168.1.1:3001
+node scripts/build/device.js --dev http://localhost:3001
 
 # custom api host:port
-node scripts/build/device.js --api http://192.168.1.1:4000
+node scripts/build/device.js --api http://localhost:4000
 
 # custom ws host:port
-node scripts/build/device.js --ws ws://192.168.1.1:8080
+node scripts/build/device.js --ws ws://localhost:8080
 ```
 
 #### iOS only
