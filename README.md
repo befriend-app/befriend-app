@@ -225,4 +225,4 @@ node scripts/build/device.js --ws ws://localhost:8080
 ### Our sponsors
 
 #### Gen AI Wear
-Create an amazing custom t-shirt at [genaiwear.com](https://genaiwear.com)
+Create unique custom apparel at [genaiwear.com](https://genaiwear.com)
