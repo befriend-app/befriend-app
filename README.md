@@ -7,9 +7,6 @@
 The best human experience designed for meeting new and existing friends in person.
 
 - [Repositories](#repositories)
-    - [Backend](#backend)
-    - [Data](#data)
-    - [Web](#web)
 - [Vision](#vision)
 - [Videos](#videos)
 - [Features](#features)
