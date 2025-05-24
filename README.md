@@ -200,13 +200,13 @@ node scripts/build/device.js --ws ws://192.168.1.1:8080
 |:---:|:---:|:---:|:---:|
 | ![Instruments](https://befriend.s3.amazonaws.com/preview/filters/instruments.png) | ![Schools](https://befriend.s3.amazonaws.com/preview/filters/schools.png) | ![Work](https://befriend.s3.amazonaws.com/preview/filters/work.png) | ![Life Stages](https://befriend.s3.amazonaws.com/preview/filters/life-stages.png) |
 
-| Relationships | Languages | Politics | Religions |
-|:---:|:---:|:---:|:---:|
-| ![Relationships](https://befriend.s3.amazonaws.com/preview/filters/relationships.png) | ![Languages](https://befriend.s3.amazonaws.com/preview/filters/languages.png) | ![Politics](https://befriend.s3.amazonaws.com/preview/filters/politics.png) | ![Religions](https://befriend.s3.amazonaws.com/preview/filters/religions.png) |
+| Relationships | Languages | Politics | 
+|:---:|:---:|:---:|
+| ![Relationships](https://befriend.s3.amazonaws.com/preview/filters/relationships.png) | ![Languages](https://befriend.s3.amazonaws.com/preview/filters/languages.png) | ![Politics](https://befriend.s3.amazonaws.com/preview/filters/politics.png) |
 
-| Drinking | Smoking | 
-|:---:|:---:|
-| ![Drinking](https://befriend.s3.amazonaws.com/preview/filters/drinking.png) | ![Smoking](https://befriend.s3.amazonaws.com/preview/filters/smoking.png) |
+|                                   Religions                                   | Drinking | Smoking | 
+|:-----------------------------------------------------------------------------:|:---:| :---:|
+| ![Religions](https://befriend.s3.amazonaws.com/preview/filters/religions.png) | ![Drinking](https://befriend.s3.amazonaws.com/preview/filters/drinking.png) | ![Smoking](https://befriend.s3.amazonaws.com/preview/filters/smoking.png) |
 
 ## Support Us
 
