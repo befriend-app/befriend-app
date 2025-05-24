@@ -10,18 +10,18 @@ The best human experience designed for meeting new and existing friends in perso
 - [Videos](#videos)
 - [Features](#features)
     - [Core](#core)
-    - [Connection & Matching](#connection--matching)
-    - [20+ Filters](#20-filters)
+    - [Connection & matching](#connection--matching)
+    - [20+ filters](#20-filters)
     - [Profile](#profile)
-    - [Safety & Trust](#safety--trust)
+    - [Safety & trust](#safety--trust)
     - [Networks](#networks)
 - [Installation](#installation)
     - [Prerequisites](#prerequisites)
     - [Setup](#setup)
-    - [Dev Server](#dev-server)
+    - [Dev server](#dev-server)
     - [Building](#building)
 - [Filters](#filters)
-- [Support Us](#support-us)
+- [Support us](#support-us)
 
 ## Vision
 
@@ -36,13 +36,13 @@ This project's aim is to increase the consciousness of happiness on Earth while 
 
 ## Videos
 
-### Real-time Activities
+### Real-time activities
 
 Invite one or more person(s) to meet for one of nearly 300 activity categories.
 
 https://github.com/user-attachments/assets/1bf1a0dd-eeb8-4898-93ab-f85ff2733639
 
-### Solo, Partner, and Family Mode
+### Solo, partner, and family Mode
 
 Designed for everybody:
 
@@ -65,7 +65,7 @@ https://github.com/user-attachments/assets/01ef0089-b464-4a3e-bfb1-a984487ba91c
     - Schedule activities in advance
 - Intelligent bi-directional filters
 
-### Connection & Matching
+### Connection & matching
 - Friend selection
     - New
     - Existing
@@ -85,7 +85,7 @@ https://github.com/user-attachments/assets/01ef0089-b464-4a3e-bfb1-a984487ba91c
 ### Profile
 - Add data about yourself across 15 categories to find better matches
 
-### Safety & Trust
+### Safety & trust
 - Bi-directional filters
 - Verification system
     - In-person verification
@@ -146,7 +146,7 @@ Ensure you have the following installed on your machine:
     node scripts/install/android.js
 ```
 
-### Dev Server
+### Dev server
 
 Run the app locally and watch for file changes.
 
@@ -208,21 +208,21 @@ node scripts/build/device.js --ws ws://192.168.1.1:8080
 |:-----------------------------------------------------------------------------:|:---:| :---:|
 | ![Religions](https://befriend.s3.amazonaws.com/preview/filters/religions.png) | ![Drinking](https://befriend.s3.amazonaws.com/preview/filters/drinking.png) | ![Smoking](https://befriend.s3.amazonaws.com/preview/filters/smoking.png) |
 
-## Support Us
+## Support us
 
 ### Users
-1. **Sign Up** - Go to [befriend.app](https://befriend.app)
-2. **Spread the Word** - Ask friends, family, and social media followers to sign up
+1. **Sign up** - Go to [befriend.app](https://befriend.app)
+2. **Spread the word** - Ask friends, family, and social media followers to sign up
 
 ### Developers
-3. **Run Own Network** - Join the Befriend network and bring real-time in-person friends to your area or community with your own brand name and logo
-4. **Contribute Code** - Clone our repositories, submit pull requests, implement new features, and fix bugs
-5. **Report Issues** - Help us improve by reporting bugs and suggesting features
+3. **Run own network** - Join the Befriend network and bring real-time in-person friends to your area or community with your own brand name and logo
+4. **Contribute code** - Clone our repositories, submit pull requests, implement new features, and fix bugs
+5. **Report issues** - Help us improve by reporting bugs and suggesting features
 
 ### Organizations
-6. **Become a Sponsor** - Email us at [sponsor@befriend.app](mailto:sponsor@befriend.app)
+6. **Become a sponsor** - Email us at [sponsor@befriend.app](mailto:sponsor@befriend.app)
 
-### Current Sponsors
+### Our sponsors
 
 #### Gen AI Wear
 Create an amazing custom t-shirt at [genaiwear.com](https://genaiwear.com)
