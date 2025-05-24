@@ -159,6 +159,7 @@ befriend.user = {
     isProfileReady: function () {
         let data = befriend.me?.data?.me;
 
-        return data?.birth_date && data?.first_name && data?.gender_id;
+        return data.image_url && data?.birth_date
+            && data?.first_name && data?.gender_id;
     }
 };

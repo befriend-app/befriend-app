@@ -179,7 +179,11 @@ module.exports = {
 
             //compile scss to css
             try {
-                let css_obj = await sass.compile(inputs.scss);
+                let css_obj = await sass.compile(inputs.scss, {
+                    quietDeps: true,
+                    verbose: false,
+                    silenceDeprecations: ['import', 'global-builtin', 'color-functions']
+                });
 
                 let css_code = css_obj.css;
 
