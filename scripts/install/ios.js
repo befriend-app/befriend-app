@@ -16,17 +16,46 @@ function getPlatformCmd(cmd) {
 function iosTargetVersion() {
     // https://github.com/apache/cordova-ios/issues/1379#issuecomment-2052414835
 
-    function findFilePathsByFilename(directory, filename) {
-        const files = fs.readdirSync(directory);
+    function findFilePathsByFilename(directory, filename, visitedPaths = new Set()) {
+        // Get the absolute path to avoid issues with relative paths
+        const absoluteDir = path.resolve(directory);
+
+        // Check if we've already visited this directory (prevents infinite loops)
+        if (visitedPaths.has(absoluteDir)) {
+            return [];
+        }
+        visitedPaths.add(absoluteDir);
+
+        let files;
+        try {
+            files = fs.readdirSync(absoluteDir);
+        } catch (err) {
+            // Skip directories we can't read (permission issues, etc.)
+            console.warn(`Warning: Cannot read directory ${absoluteDir}: ${err.message}`);
+            return [];
+        }
+
         const filePaths = [];
 
         for (const file of files) {
-            const filePath = path.join(directory, file);
-            const stats = fs.statSync(filePath);
+            const filePath = path.join(absoluteDir, file);
 
-            if (stats.isDirectory()) {
-                // Recursively search in subdirectories
-                const subdirectoryFilePaths = findFilePathsByFilename(filePath, filename);
+            let stats;
+            try {
+                // Use lstat instead of stat to get info about the link itself, not what it points to
+                stats = fs.lstatSync(filePath);
+            } catch (err) {
+                // Skip files/directories we can't stat
+                console.warn(`Warning: Cannot stat ${filePath}: ${err.message}`);
+                continue;
+            }
+
+            if (stats.isSymbolicLink()) {
+                // Skip symbolic links to avoid infinite loops
+                continue;
+            } else if (stats.isDirectory()) {
+                // Recursively search in subdirectories, passing along visitedPaths
+                const subdirectoryFilePaths = findFilePathsByFilename(filePath, filename, visitedPaths);
                 filePaths.push(...subdirectoryFilePaths);
             } else if (stats.isFile() && file === filename) {
                 // If the file matches the filename, add its path to the result
@@ -40,13 +69,18 @@ function iosTargetVersion() {
     const paths2 = findFilePathsByFilename('../', 'Pods.xcodeproj');
     const paths = paths1.concat(paths2);
 
-    for (let path of paths) {
-        let content = fs.readFileSync(path, { encoding: 'utf-8' });
-        content = content.replace(
-            /IPHONEOS_DEPLOYMENT_TARGET = [0-9]+.0;/g,
-            'IPHONEOS_DEPLOYMENT_TARGET = 12.0;',
-        );
-        fs.writeFileSync(path, content);
+    for (let filePath of paths) {
+        try {
+            let content = fs.readFileSync(filePath, { encoding: 'utf-8' });
+            content = content.replace(
+                /IPHONEOS_DEPLOYMENT_TARGET = [0-9]+.0;/g,
+                'IPHONEOS_DEPLOYMENT_TARGET = 12.0;',
+            );
+            fs.writeFileSync(filePath, content);
+            console.log(`Updated IPHONEOS_DEPLOYMENT_TARGET in: ${filePath}`);
+        } catch (err) {
+            console.error(`Error processing file ${filePath}: ${err.message}`);
+        }
     }
 
     console.log('Done setting IPHONEOS_DEPLOYMENT_TARGET');
