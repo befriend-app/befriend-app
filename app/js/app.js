@@ -376,6 +376,8 @@ window['befriend'] = {
                         await befriend.location.init();
                         await befriend.device.init();
                         await befriend.maps.init();
+
+                        await befriend.filters.matches.init();
                     } catch(e) {
                         console.error(e);
                     }

@@ -9,6 +9,7 @@ befriend.filters = {
         needsUpdate: false,
         init: function () {
             return new Promise(async (resolve, reject) => {
+                console.log('matches init');
                 befriend.filters.matches.updateCounts();
 
                 setInterval(befriend.filters.matches.updateCounts, 60 * 10 * 1000); //update every 10 minutes automatically
@@ -4461,8 +4462,6 @@ befriend.filters = {
     },
     init: function () {
         return new Promise(async (resolve, reject) => {
-            console.log('[init] Filters');
-
             try {
                 if (befriend.user.local.data?.filters?.collapsed) {
                     this.data.collapsed = befriend.user.local.data.filters.collapsed;
