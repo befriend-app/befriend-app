@@ -10,6 +10,7 @@ The best human experience designed for meeting new and existing friends in perso
   - [Backend](https://github.com/befriend-app/befriend-backend)
   - [Data](https://github.com/befriend-app/befriend-data)
   - [Web](https://github.com/befriend-app/befriend-web)
+- [Setup & Installation](#setup-installation)
 - [Vision](#vision)
 - [Videos](#videos)
 - [Features](#features)
@@ -19,14 +20,12 @@ The best human experience designed for meeting new and existing friends in perso
     - [Profile](#profile)
     - [Safety & trust](#safety--trust)
     - [Networks](#networks)
-- [Installation](#installation)
-    - [Prerequisites](#prerequisites)
-    - [Setup](#setup)
-    - [Dev server](#dev-server)
-    - [Building](#building)
 - [Filters](#filters)
 - [Support us](#support-us)
 
+## Setup & Installation
+
+This repository is designed to work together with our [backend repository](https://github.com/befriend-app/befriend-backend). Please watch our [setup video](https://www.youtube.com/watch?v=DAP_-f7f5fs) (~15 minutes) while following along our [step-by-step guide](https://github.com/befriend-app/befriend-backend?tab=readme-ov-file#installation-steps) for running the app locally successfully.   
 
 ## Vision
 
@@ -106,88 +105,7 @@ https://github.com/user-attachments/assets/01ef0089-b464-4a3e-bfb1-a984487ba91c
 - Cross-network notifications
 - Network verification
 
-## Installation
-### Prerequisites
-
-Ensure you have the following installed on your machine:
-
--   [Node.js](https://nodejs.org/) (v22 or higher)
--   [Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12)
--   [Android Studio](https://developer.android.com/studio)
-
-### Setup
-
-1. **Clone repository**
-
-```
-    git clone https://github.com/befriend-app/befriend-app
-    cd befriend-app
-```
-
-2. **Install packages**
-
-```
-    npm install -g cordova
-    npm install cordova-icon -g
-    npm install
-```
-
-3. **Add platforms**
-
-```
-    cordova platform add ios@7
-    cordova platform add android@12
-```
-
-4. **iOS**
-
-```
-    node scripts/install/ios.js
-```
-
-5. **Android**
-
-```
-    node scripts/install/android.js
-```
-
-### Dev server
-
-Run the app locally and watch for file changes.
-
-`node scripts/dev/serve.js`
-
-### Building
-
-#### iOS and Android
-
-`node scripts/build/device.js`
-
-#### Development
-
-```
-node scripts/build/device.js --dev
-
-# custom dev host:port
-node scripts/build/device.js --dev http://localhost:3001
-
-# custom api host:port
-node scripts/build/device.js --api http://localhost:4000
-
-# custom ws host:port
-node scripts/build/device.js --ws ws://localhost:8080
-```
-
-#### iOS only
-
-`node scripts/build/device.js --ios`
-
-#### Android only
-
-`node scripts/build/device.js --android`
-
-
-### Filters
+## Filters
 
 | Availability | Activity Types | Modes | Networks |
 |:---:|:---:|:---:|:---:|
