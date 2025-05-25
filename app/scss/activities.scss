@@ -315,8 +315,9 @@
                     width: $dim;
                     height: $dim;
                     border-radius: 50%;
-                    background-size: contain;
+                    background-size: cover;
                     background-repeat: no-repeat;
+                    background-position: center;
                 }
             }
 
@@ -1196,7 +1197,8 @@
                 width: $dim;
                 height: $dim;
                 background-repeat: no-repeat;
-                background-size: contain;
+                background-size: cover;
+                background-position: center;
                 //border: .5px solid lighten(black, 50%);
             }
 
@@ -3061,7 +3063,8 @@
                             width: $dim;
                             height: $dim;
                             background-repeat: no-repeat;
-                            background-size: contain;
+                            background-size: cover;
+                            background-position: center;
                             //border: .5px solid lighten(black, 50%);
                         }
 
@@ -3798,7 +3801,8 @@
                                 width: $dim;
                                 height: $dim;
                                 background-repeat: no-repeat;
-                                background-size: contain;
+                                background-size: cover;
+                                background-position: center;
                             }
 
                             .name {
@@ -3990,7 +3994,8 @@
                     width: $dim;
                     height: $dim;
                     background-repeat: no-repeat;
-                    background-size: contain;
+                    background-size: cover;
+                    background-position: center;
                 }
 
                 .name {
