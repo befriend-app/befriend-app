@@ -10,7 +10,7 @@ The best human experience designed for meeting new and existing friends in perso
   - [Backend](https://github.com/befriend-app/befriend-backend)
   - [Data](https://github.com/befriend-app/befriend-data)
   - [Web](https://github.com/befriend-app/befriend-web)
-- [Setup & Installation](#setup-installation)
+- [Setup & Installation](#setup--installation)
 - [Vision](#vision)
 - [Videos](#videos)
 - [Features](#features)
