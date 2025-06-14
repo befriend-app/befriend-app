@@ -3,7 +3,7 @@
     <name>Befriend</name>
     <description>Befriend App</description>
     <author email="eugene@befriend.app">
-        Eugene Gekhter
+        Eugene Light
     </author>
     <content src="index.html" />
     <allow-intent href="http://*/*" />

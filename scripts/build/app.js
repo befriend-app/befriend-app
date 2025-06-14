@@ -1,4 +1,4 @@
-// https://github.com/egekhter/life-minute-photos/blob/main/scripts/build_frontend.js
+// https://github.com/eugenelight16/life-minute-photos/blob/main/scripts/build_frontend.js
 
 const {
     joinPaths,

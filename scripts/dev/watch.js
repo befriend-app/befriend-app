@@ -1,4 +1,4 @@
-// https://github.com/egekhter/life-minute-photos/blob/main/scripts/watch.js
+// https://github.com/eugenelight16/life-minute-photos/blob/main/scripts/watch.js
 
 const { joinPaths, dateTimeStr, repoRoot } = require('../helpers');
 
